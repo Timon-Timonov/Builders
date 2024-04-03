@@ -4,5 +4,6 @@ public enum ObjectStatus {
 
     PREPARATION,
     IN_PROCESS,
-    COMPLETED
+    COMPLETED,
+    CANCELED
 }

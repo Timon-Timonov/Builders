@@ -1,6 +1,7 @@
 package it.academy.pojo;
 
 import it.academy.pojo.enums.Roles;
+import it.academy.pojo.enums.UserStatus;
 import it.academy.pojo.legalEntities.LegalEntity;
 import lombok.*;
 
@@ -25,9 +26,15 @@ public class User {
     private String email;
 
     @Column(nullable = false)
+    private String password;
+
+    @Column(nullable = false)
     private Roles role;
 
-    @OneToOne(mappedBy = "user", cascade = CascadeType.PERSIST,
-        fetch = FetchType.LAZY)
+    @Column(nullable = false)
+    @Builder.Default
+    private UserStatus status = UserStatus.AKTIVE;
+
+    @OneToOne(mappedBy = "user", fetch = FetchType.LAZY)
     private LegalEntity legalEntity;
 }

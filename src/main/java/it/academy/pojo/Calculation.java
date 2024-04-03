@@ -1,8 +1,6 @@
 package it.academy.pojo;
 
 import it.academy.pojo.enums.PaymentType;
-import it.academy.pojo.legalEntities.Contractor;
-import it.academy.pojo.legalEntities.Developer;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
@@ -29,7 +27,6 @@ public class Calculation {
     private Date month;
 
     @ManyToOne
-    @Column(nullable = false)
     private Chapter chapter;
 
     @Column

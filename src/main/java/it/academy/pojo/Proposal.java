@@ -5,7 +5,6 @@ import it.academy.pojo.enums.ProposalStatus;
 import it.academy.pojo.legalEntities.Contractor;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
@@ -31,21 +30,19 @@ public class Proposal {
     private ProposalStatus status = ProposalStatus.CONSIDERATION;
 
     @ManyToOne
-    @Column(nullable = false)
     private Chapter chapter;
 
     @ManyToOne
-    @Column(nullable = false)
     private Contractor contractor;
 
-    @Column(name = "created_date",updatable = false)
+    @Column(name = "created_date", updatable = false)
     @CreationTimestamp
     private Timestamp createdDate;
 
-    public void setStatus( ProposalStatus status) {
+    public void setStatus(ProposalStatus status) {
 
-        if(ProposalStatus.APPROVED.equals(this.status)
-               &&ProposalStatus.ACCEPTED_BY_CONTRACTOR.equals(status)){
+        if (ProposalStatus.APPROVED.equals(this.status)
+                && ProposalStatus.ACCEPTED_BY_CONTRACTOR.equals(status)) {
             this.chapter.setContractor(this.contractor);
         }
         this.status = status;

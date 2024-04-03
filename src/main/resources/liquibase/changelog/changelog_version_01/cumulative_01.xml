@@ -4,7 +4,11 @@
         xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                  https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.9.xsd">
-    <include file="15_03_24__01_createTableStudents.xml" relativeToChangelogFile="true"/>
-    <include file="15_03_24__02_createTableCountries.xml" relativeToChangelogFile="true"/>
-    <include file="15_03_24__03_alterTableStudents.xml" relativeToChangelogFile="true"/>
+    <include file="03_04_24__01_createTableLegal_entities.xml" relativeToChangelogFile="true"/>
+    <include file="03_04_24__02_createTableBuilding_objects.xml" relativeToChangelogFile="true"/>
+    <include file="03_04_24__03_createTableChapters.xml" relativeToChangelogFile="true"/>
+    <include file="03_04_24__04_createTableCalculations.xml" relativeToChangelogFile="true"/>
+    <include file="03_04_24__05_createTableChapters_calculations.xml" relativeToChangelogFile="true"/>
+    <include file="03_04_24__06_createTableProposals.xml" relativeToChangelogFile="true"/>
+    <include file="03_04_24__07_createTableUsers.xml" relativeToChangelogFile="true"/>
 </databaseChangeLog>

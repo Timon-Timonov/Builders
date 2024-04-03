@@ -19,18 +19,17 @@
 
 
         <properties>
-            <property name="javax.persistence.jdbc.driver" value="com.mysql.cj.jdbc.Driver"/>
-            <property name="javax.persistence.jdbc.url"
-                      value="jdbc:mysql://localhost:3306/task_12"/>
-            <property name="javax.persistence.jdbc.user" value="root"/>
-            <property name="javax.persistence.jdbc.password" value="1234"/>
+            <property name="javax.persistence.jdbc.driver" value="org.h2.Driver"/>
+            <property name="javax.persistence.jdbc.url" value="jdbc:h2:./target/h2db/dbForTests"/>
+            <property name="javax.persistence.jdbc.user" value="sa"/>
+            <property name="javax.persistence.jdbc.password" value=""/>
             <property name="hibernate.dialect.storage_engine" value="innodb"/>
             <property name="hibernate.hbm2ddl.auto" value="validate"/>
             <property name="hibernate.use_sql_comments" value="true"/>
             <property name="hibernate.show_sql" value="true"/>
             <property name="hibernate.connection.pool_size" value="10"/>
             <property name="hibernate.connection.isolation" value="2"/>
-           <!-- <property name="hibernate.dialect" value="org.hibernate.dialect.MySQLDialect"/>-->
+            <property name="hibernate.dialect" value="org.hibernate.dialect.H2Dialect"/>
         </properties>
     </persistence-unit>
 </persistence>

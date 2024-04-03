@@ -5,7 +5,6 @@ import it.academy.pojo.Proposal;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
-import javax.persistence.CascadeType;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
@@ -16,20 +15,19 @@ import java.util.Set;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(callSuper = true, exclude = {"chapters","proposalSet"})
-@ToString(callSuper = true, exclude =  {"chapters","proposalSet"})
+@EqualsAndHashCode(callSuper = true, exclude = {"chapters", "proposalSet"})
+@ToString(callSuper = true, exclude = {"chapters", "proposalSet"})
 @SuperBuilder
 @Entity
-//@Table(name = "contractors")
 @DiscriminatorValue("C")
 public class Contractor extends LegalEntity {
 
     @Builder.Default
-    @OneToMany
+    @OneToMany(mappedBy = "contractor")
     private Set<Chapter> chapters = new HashSet<>();
 
     @Builder.Default
-    @OneToMany(cascade = CascadeType.ALL)
-    private Set<Proposal> proposalSet=new HashSet<>();
+    @OneToMany(mappedBy = "contractor")
+    private Set<Proposal> proposalSet = new HashSet<>();
 }
 

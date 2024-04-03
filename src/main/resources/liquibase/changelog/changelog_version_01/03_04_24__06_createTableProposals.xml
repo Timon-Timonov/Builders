@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.9.xsd">
+
+    <changeSet author="Timonov_Timon" id="01">
+        <createTable tableName="proposals">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="created_date" type="datetime(6)"/>
+            <column name="status" type="int"/>
+            <column name="chapter_id" type="bigint"/>
+            <column name="contractor_id" type="bigint"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="Timonov_Timon" id="02">
+        <addForeignKeyConstraint baseTableName="proposals"
+                                 baseColumnNames="contractor_id"
+                                 constraintName="FK6ocgsojci25vh7ixkve5syw2d"
+                                 referencedTableName="legal_entities"
+                                 referencedColumnNames="id"/>
+    </changeSet>
+
+    <changeSet author="Timonov_Timon" id="03">
+        <addForeignKeyConstraint baseTableName="proposals"
+                                 baseColumnNames="chapter_id"
+                                 constraintName="FKflkbb5gra0tcatc591unraa3j"
+                                 referencedTableName="chapters"
+                                 referencedColumnNames="id"/>
+    </changeSet>
+</databaseChangeLog>
+
+
+        <!--
+
+                create table proposals
+                (
+                id            bigint auto_increment
+                primary key,
+                created_date  datetime(6) null,
+                status        int         null,
+                chapter_id    bigint      null,
+                contractor_id bigint      null,
+
+                constraint FK6ocgsojci25vh7ixkve5syw2d
+                foreign key (contractor_id) references legal_entities (id),
+
+                constraint FKflkbb5gra0tcatc591unraa3j
+                foreign key (chapter_id) references chapters (id)
+                );
+
+        -->

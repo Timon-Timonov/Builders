@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.9.xsd">
+
+    <changeSet author="Timonov_Timon" id="01">
+        <createTable tableName="calculations">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="calculationDate" type="datetime(6)"/>
+            <column name="month" type="date"/>
+            <column name="sum" type="int"/>
+            <column name="type" type="int">
+                <constraints nullable="false"/>
+            </column>
+            <column name="chapter_id" type="bigint"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="Timonov_Timon" id="02">
+        <addForeignKeyConstraint baseTableName="calculations"
+                                 baseColumnNames="chapter_id"
+                                 constraintName="FKfgs8r6ahev3lmxdq9s2q7mrc7"
+                                 referencedTableName="chapters"
+                                 referencedColumnNames="id"/>
+    </changeSet>
+</databaseChangeLog>
+
+<!--
+
+        create table calculations
+        (
+        id              bigint auto_increment
+        primary key,
+        calculationDate datetime(6) null,
+        month           date        not null,
+        sum             int         null,
+        type            int         not null,
+        chapter_id      bigint      null,
+
+        constraint FKfgs8r6ahev3lmxdq9s2q7mrc7
+        foreign key (chapter_id) references chapters (id)
+        );
+
+-->
+
+

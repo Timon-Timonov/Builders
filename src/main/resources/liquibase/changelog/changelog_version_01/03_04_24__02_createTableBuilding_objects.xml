@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.9.xsd">
+
+    <changeSet author="Timonov_Timon" id="01">
+        <createTable tableName="building_objects">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="building" type="int"/>
+            <column name="city" type="varchar(255)"/>
+            <column name="street" type="varchar(255)"/>
+            <column name="name" type="varchar(255)"/>
+            <column name="status" type="int"/>
+            <column name="developer_id" type="bigint"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="Timonov_Timon" id="02">
+        <addForeignKeyConstraint baseTableName="building_objects"
+                                 baseColumnNames="developer_id"
+                                 constraintName="FKmob0i9melpx8tmatrd78o7pus"
+                                 referencedTableName="legal_entities"
+                                 referencedColumnNames="id"/>
+    </changeSet>
+</databaseChangeLog>
+
+<!--
+
+        create table building_objects
+        (
+        id           bigint auto_increment
+        primary key,
+        building     int          null,
+        city         varchar(255) null,
+        street       varchar(255) null,
+        name         varchar(255) null,
+        status       int          null,
+        developer_id bigint       null,
+
+        constraint FKmob0i9melpx8tmatrd78o7pus
+        foreign key (developer_id) references legal_entities (id)
+        );
+
+-->
+

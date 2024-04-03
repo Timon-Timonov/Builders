@@ -8,7 +8,6 @@ import lombok.experimental.SuperBuilder;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
-import javax.persistence.Table;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -20,11 +19,10 @@ import java.util.Set;
 @ToString(callSuper = true, exclude = "buildingObjects")
 @SuperBuilder
 @Entity
-//@Table(name = "developers")
 @DiscriminatorValue("D")
 public class Developer extends LegalEntity {
 
     @Builder.Default
-    @OneToMany
-    private Set<BuildingObject> buildingObjects=new HashSet<>();
+    @OneToMany(mappedBy = "developer")
+    private Set<BuildingObject> buildingObjects = new HashSet<>();
 }

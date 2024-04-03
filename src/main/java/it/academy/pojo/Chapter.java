@@ -1,5 +1,6 @@
 package it.academy.pojo;
 
+import it.academy.pojo.enums.ChapterStatus;
 import it.academy.pojo.legalEntities.Contractor;
 import lombok.*;
 
@@ -28,17 +29,37 @@ public class Chapter {
     @Column
     private int price;
 
+    @Column
+    @Builder.Default
+    private ChapterStatus status = ChapterStatus.AKTIVE;
+
     @ManyToOne
-    private BuildingObject object;
+    private BuildingObject buildingObject;
 
     @ManyToOne
     private Contractor contractor;
 
     @Builder.Default
-    @OneToMany(cascade = CascadeType.ALL)
-    private Set<Proposal> proposalSet=new HashSet<>();
+    @OneToMany(mappedBy = "chapter")
+    private Set<Proposal> proposalSet = new HashSet<>();
 
     @Builder.Default
     @OneToMany
-    private Set<Calculation> calculationSet=new HashSet<>();
+    private Set<Calculation> calculationSet = new HashSet<>();
+
+    public void addCalculation(Calculation calculation) {
+
+        if (calculation != null) {
+            calculation.setChapter(this);
+            calculationSet.add(calculation);
+        }
+    }
+
+    public void addProposal(Proposal proposal) {
+
+        if (proposal != null) {
+            proposal.setChapter(this);
+            proposalSet.add(proposal);
+        }
+    }
 }

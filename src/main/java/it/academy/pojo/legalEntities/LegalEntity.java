@@ -2,7 +2,6 @@ package it.academy.pojo.legalEntities;
 
 import it.academy.pojo.Address;
 import it.academy.pojo.User;
-import it.academy.pojo.enums.Roles;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.GenericGenerator;
@@ -13,24 +12,23 @@ import javax.persistence.*;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode
-@ToString
+@EqualsAndHashCode(exclude = "user")
+@ToString(exclude = "user")
 @SuperBuilder
 @Entity
-@Table(name = "legal_entity")
+@Table(name = "legal_entities")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "entity_type", discriminatorType = DiscriminatorType.CHAR)
 @DiscriminatorValue("E")
 public class LegalEntity {
 
 
-    @GenericGenerator(name = "one-one",
+    @GenericGenerator(name = "one-to-one",
         strategy = "foreign",
         parameters = @org.hibernate.annotations.Parameter(name = "property",
             value = "user"))
-    @GeneratedValue(generator = "one-one")
+    @GeneratedValue(generator = "one-to-one")
     @Id
-    @Column(name = "user_id")
     private Long id;
 
     @Column

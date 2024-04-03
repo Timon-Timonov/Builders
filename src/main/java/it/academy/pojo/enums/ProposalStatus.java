@@ -5,5 +5,6 @@ public enum ProposalStatus {
     CONSIDERATION,
     APPROVED,
     REJECTED,
-    ACCEPTED_BY_CONTRACTOR
+    ACCEPTED_BY_CONTRACTOR,
+    CANCELED
 }

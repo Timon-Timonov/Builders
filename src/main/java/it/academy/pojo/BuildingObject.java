@@ -37,6 +37,14 @@ public class BuildingObject {
     private Address address;
 
     @Builder.Default
-    @OneToMany
+    @OneToMany(mappedBy = "buildingObject")
     private Set<Chapter> chapters = new HashSet<>();
+
+    public void addChapter(Chapter chapter) {
+
+        if (chapter != null) {
+            chapter.setBuildingObject(this);
+            this.chapters.add(chapter);
+        }
+    }
 }

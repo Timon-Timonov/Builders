@@ -14,7 +14,7 @@ public final class HibernateUtil {
     public static EntityManager getEntityManager() {
 
         if (entityManagerFactory == null) {
-            entityManagerFactory = Persistence.createEntityManagerFactory("university");
+            entityManagerFactory = Persistence.createEntityManagerFactory("builders");
         }
         return entityManagerFactory.createEntityManager();
     }

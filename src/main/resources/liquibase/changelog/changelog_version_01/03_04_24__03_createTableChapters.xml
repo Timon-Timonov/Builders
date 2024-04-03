@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.9.xsd">
+
+    <changeSet author="Timonov_Timon" id="01">
+        <createTable tableName="chapters">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="name" type="varchar(255)"/>
+            <column name="price" type="int"/>
+            <column name="status" type="int"/>
+            <column name="buildingObject_id" type="bigint"/>
+            <column name="contractor_id" type="bigint"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="Timonov_Timon" id="02">
+        <addForeignKeyConstraint baseTableName="chapters"
+                                 baseColumnNames="contractor_id"
+                                 constraintName="FKl0j0qmfhdiwim8xhu6455bm0f"
+                                 referencedTableName="legal_entities"
+                                 referencedColumnNames="id"/>
+    </changeSet>
+
+    <changeSet author="Timonov_Timon" id="03">
+        <addForeignKeyConstraint baseTableName="chapters"
+                                 baseColumnNames="buildingObject_id"
+                                 constraintName="FKpvfu83c4goan9f3w9s4uaiebv"
+                                 referencedTableName="building_objects"
+                                 referencedColumnNames="id"/>
+    </changeSet>
+</databaseChangeLog>
+
+<!--
+
+        create table chapters
+        (
+        id                bigint auto_increment
+        primary key,
+        name              varchar(255) null,
+        price             int          null,
+        status            int          null,
+        buildingObject_id bigint       null,
+        contractor_id     bigint       null,
+
+        constraint FKl0j0qmfhdiwim8xhu6455bm0f
+        foreign key (contractor_id) references legal_entities (id),
+
+        constraint FKpvfu83c4goan9f3w9s4uaiebv
+        foreign key (buildingObject_id) references building_objects (id)
+        );
+
+-->
+
