@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.9.xsd">
+
+    <changeSet author="Timonov_Timon" id="01">
+        <createTable tableName="students">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="name" type="varchar(255)"/>
+            <column name="surname" type="varchar(255)"/>
+            <column name="age" type="int"/>
+            <column name="mark" type="int"/>
+            <column name="building" type="int"/>
+            <column name="city" type="varchar(255)"/>
+            <column name="street" type="varchar(255)"/>
+            <column name="country_id" type="bigint"/>
+        </createTable>
+    </changeSet>
+</databaseChangeLog>
+
+
+<!--
+
+        create table task11.students
+        (
+        id         bigint auto_increment
+        primary key,
+        building   int          not null,
+        city       varchar(255) null,
+        street     varchar(255) null,
+        age        int          null,
+        mark       int          null,
+        name       varchar(255) null,
+        surname    varchar(255) null,
+        country_id bigint       null,
+        );
+
+-->
+
+

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.9.xsd">
+
+    <changeSet author="Timonov_Timon" id="01">
+        <addForeignKeyConstraint baseTableName="students"
+                                 baseColumnNames="country_id"
+                                 constraintName="FKiby4xfq5w8qpcjllenrbql0ij"
+                                 referencedTableName="countries"
+                                 referencedColumnNames="id"/>
+    </changeSet>
+</databaseChangeLog>
+
+
+<!--
+
+        constraint FKiby4xfq5w8qpcjllenrbql0ij
+        foreign key (country_id) references task11.countries (id)
+
+-->
+
