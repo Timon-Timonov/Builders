@@ -25,6 +25,7 @@
     </changeSet>
 </databaseChangeLog>
 
+
         <!--
 
                 create table users
@@ -40,4 +41,5 @@
                 );
 
         -->
+
 

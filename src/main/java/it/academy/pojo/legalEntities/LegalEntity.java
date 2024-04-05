@@ -22,7 +22,6 @@ import javax.persistence.*;
 @DiscriminatorValue("E")
 public class LegalEntity {
 
-
     @GenericGenerator(name = "one-to-one",
         strategy = "foreign",
         parameters = @org.hibernate.annotations.Parameter(name = "property",

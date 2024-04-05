@@ -13,8 +13,8 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@EqualsAndHashCode(exclude = "proposalSet")
-@ToString(exclude = "proposalSet")
+@EqualsAndHashCode(exclude = {"proposalSet", "calculationSet"})
+@ToString(exclude = {"proposalSet", "calculationSet"})
 @Entity
 @Table(name = "chapters")
 public class Chapter {
@@ -31,10 +31,10 @@ public class Chapter {
 
     @Column
     @Builder.Default
-    private ChapterStatus status = ChapterStatus.AKTIVE;
+    private ChapterStatus status = ChapterStatus.FREE;
 
     @ManyToOne
-    private BuildingObject buildingObject;
+    private Project project;
 
     @ManyToOne
     private Contractor contractor;
@@ -44,8 +44,17 @@ public class Chapter {
     private Set<Proposal> proposalSet = new HashSet<>();
 
     @Builder.Default
-    @OneToMany
+    @OneToMany(mappedBy = "chapter", fetch = FetchType.EAGER)
     private Set<Calculation> calculationSet = new HashSet<>();
+
+    public void setContractor(Contractor contractor) {
+
+        if (ChapterStatus.FREE.equals(status) && contractor != null) {
+            this.status = ChapterStatus.OCCUPIED;
+            this.contractor = contractor;
+            this.contractor.getChapters().add(this);
+        }
+    }
 
     public void addCalculation(Calculation calculation) {
 

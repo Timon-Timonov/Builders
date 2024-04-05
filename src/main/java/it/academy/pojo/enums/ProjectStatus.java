@@ -1,6 +1,6 @@
 package it.academy.pojo.enums;
 
-public enum ObjectStatus {
+public enum ProjectStatus {
 
     PREPARATION,
     IN_PROCESS,

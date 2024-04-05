@@ -1,6 +1,6 @@
 package it.academy.pojo;
 
-import it.academy.pojo.enums.ObjectStatus;
+import it.academy.pojo.enums.ProjectStatus;
 import it.academy.pojo.legalEntities.Developer;
 import lombok.*;
 
@@ -16,8 +16,8 @@ import java.util.Set;
 @EqualsAndHashCode(exclude = "chapters")
 @ToString(exclude = "chapters")
 @Entity
-@Table(name = "building_objects")
-public class BuildingObject {
+@Table(name = "projects")
+public class Project {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,7 +28,7 @@ public class BuildingObject {
 
     @Column
     @Builder.Default
-    private ObjectStatus status = ObjectStatus.PREPARATION;
+    private ProjectStatus status = ProjectStatus.PREPARATION;
 
     @ManyToOne
     private Developer developer;
@@ -37,13 +37,13 @@ public class BuildingObject {
     private Address address;
 
     @Builder.Default
-    @OneToMany(mappedBy = "buildingObject")
+    @OneToMany(mappedBy = "project", fetch = FetchType.EAGER)
     private Set<Chapter> chapters = new HashSet<>();
 
     public void addChapter(Chapter chapter) {
 
         if (chapter != null) {
-            chapter.setBuildingObject(this);
+            chapter.setProject(this);
             this.chapters.add(chapter);
         }
     }

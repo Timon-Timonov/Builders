@@ -1,6 +1,7 @@
 package it.academy.pojo;
 
 
+import it.academy.pojo.enums.ChapterStatus;
 import it.academy.pojo.enums.ProposalStatus;
 import it.academy.pojo.legalEntities.Contractor;
 import lombok.*;
@@ -44,6 +45,7 @@ public class Proposal {
         if (ProposalStatus.APPROVED.equals(this.status)
                 && ProposalStatus.ACCEPTED_BY_CONTRACTOR.equals(status)) {
             this.chapter.setContractor(this.contractor);
+            this.chapter.setStatus(ChapterStatus.OCCUPIED);
         }
         this.status = status;
     }

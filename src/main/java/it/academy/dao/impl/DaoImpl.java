@@ -1,15 +1,23 @@
 package it.academy.dao.impl;
 
 import it.academy.dao.Dao;
+import it.academy.exceptions.EmailOccupaidException;
 import it.academy.util.HibernateUtil;
 import it.academy.util.functionalInterfaces.TransactionBody;
+import lombok.extern.log4j.Log4j2;
+import org.hibernate.exception.ConstraintViolationException;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityNotFoundException;
+import javax.persistence.NoResultException;
+import javax.persistence.RollbackException;
+import java.io.IOException;
 import java.util.List;
 
-import static it.academy.util.Constants.*;
+import static it.academy.util.Constants.SELECT_ALL_FROM_TABLE;
+import static it.academy.util.Constants.SELECT_COUNT_FROM_TABLE;
 
+@Log4j2
 public class DaoImpl<T, R> implements Dao<T, R> {
 
     private final Class<T> clazz;
@@ -39,7 +47,7 @@ public class DaoImpl<T, R> implements Dao<T, R> {
     }
 
     @Override
-    public void delete(R key) {
+    public void delete(R key) throws EntityNotFoundException {
 
         Object rootEntity = getEm().getReference(clazz, key);
         getEm().remove(rootEntity);
@@ -49,6 +57,7 @@ public class DaoImpl<T, R> implements Dao<T, R> {
     public void create(T object) {
 
         getEm().persist(object);
+        log.info("Created successful"+ object);
     }
 
     @Override
@@ -68,18 +77,18 @@ public class DaoImpl<T, R> implements Dao<T, R> {
     }
 
     @Override
-    public void executeInOneTransaction(TransactionBody body) throws Exception {
-
-        getEm().getTransaction().begin();
+    public void executeInOneTransaction(TransactionBody body)
+        throws RollbackException, IOException, EntityNotFoundException, NoResultException, ConstraintViolationException {
 
         try {
+            getEm().getTransaction().begin();
             body.execute();
-        } catch (Exception e) {
-            getEm().getTransaction().rollback();
-            throw e;
+            getEm().getTransaction().commit();
+        } finally {
+            getEm().close();
         }
-        getEm().getTransaction().commit();
     }
+
 
     protected EntityManager getEm() {
 

@@ -20,20 +20,19 @@
     </changeSet>
 </databaseChangeLog>
 
-<!--
+        <!--
 
-        create table legal_entities
-        (
-        entity_type char         not null,
-        id          bigint       not null
-        primary key,
-        building    int          null,
-        city        varchar(255) null,
-        street      varchar(255) null,
-        name        varchar(255) null
-        );
+                create table legal_entities
+                (
+                entity_type char         not null,
+                id          bigint       not null
+                primary key,
+                building    int          null,
+                city        varchar(255) null,
+                street      varchar(255) null,
+                name        varchar(255) null
+                );
 
--->
-
+        -->
 
 

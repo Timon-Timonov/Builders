@@ -9,12 +9,10 @@
             <column name="id" type="bigint" autoIncrement="true">
                 <constraints primaryKey="true"/>
             </column>
-            <column name="calculationDate" type="datetime(6)"/>
-            <column name="month" type="date"/>
-            <column name="sum" type="int"/>
-            <column name="type" type="int">
+            <column name="month" type="date">
                 <constraints nullable="false"/>
             </column>
+            <column name="work_price" type="int"/>
             <column name="chapter_id" type="bigint"/>
         </createTable>
     </changeSet>
@@ -28,22 +26,20 @@
     </changeSet>
 </databaseChangeLog>
 
-<!--
 
-        create table calculations
-        (
-        id              bigint auto_increment
-        primary key,
-        calculationDate datetime(6) null,
-        month           date        not null,
-        sum             int         null,
-        type            int         not null,
-        chapter_id      bigint      null,
+        <!--
 
-        constraint FKfgs8r6ahev3lmxdq9s2q7mrc7
-        foreign key (chapter_id) references chapters (id)
-        );
+                create table calculations
+                (
+                id         bigint auto_increment
+                primary key,
+                month      date   not null,
+                work_price int    null,
+                chapter_id bigint null,
 
--->
+                constraint FKfgs8r6ahev3lmxdq9s2q7mrc7
+                foreign key (chapter_id) references chapters (id)
+                );
 
+        -->
 

@@ -33,7 +33,6 @@
     </changeSet>
 </databaseChangeLog>
 
-
         <!--
 
                 create table proposals
@@ -53,3 +52,4 @@
                 );
 
         -->
+

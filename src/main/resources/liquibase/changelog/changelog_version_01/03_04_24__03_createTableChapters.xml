@@ -12,46 +12,46 @@
             <column name="name" type="varchar(255)"/>
             <column name="price" type="int"/>
             <column name="status" type="int"/>
-            <column name="buildingObject_id" type="bigint"/>
             <column name="contractor_id" type="bigint"/>
+            <column name="project_id" type="bigint"/>
         </createTable>
     </changeSet>
 
     <changeSet author="Timonov_Timon" id="02">
+        <addForeignKeyConstraint baseTableName="chapters"
+                                 baseColumnNames="project_id"
+                                 constraintName="FK604bxshwgn96ocix1ht72wifg"
+                                 referencedTableName="projects"
+                                 referencedColumnNames="id"/>
+    </changeSet>
+
+    <changeSet author="Timonov_Timon" id="03">
         <addForeignKeyConstraint baseTableName="chapters"
                                  baseColumnNames="contractor_id"
                                  constraintName="FKl0j0qmfhdiwim8xhu6455bm0f"
                                  referencedTableName="legal_entities"
                                  referencedColumnNames="id"/>
     </changeSet>
-
-    <changeSet author="Timonov_Timon" id="03">
-        <addForeignKeyConstraint baseTableName="chapters"
-                                 baseColumnNames="buildingObject_id"
-                                 constraintName="FKpvfu83c4goan9f3w9s4uaiebv"
-                                 referencedTableName="building_objects"
-                                 referencedColumnNames="id"/>
-    </changeSet>
 </databaseChangeLog>
 
-<!--
 
-        create table chapters
-        (
-        id                bigint auto_increment
-        primary key,
-        name              varchar(255) null,
-        price             int          null,
-        status            int          null,
-        buildingObject_id bigint       null,
-        contractor_id     bigint       null,
+        <!--
 
-        constraint FKl0j0qmfhdiwim8xhu6455bm0f
-        foreign key (contractor_id) references legal_entities (id),
+                create table chapters
+                (
+                id            bigint auto_increment
+                primary key,
+                name          varchar(255) null,
+                price         int          null,
+                status        int          null,
+                contractor_id bigint       null,
+                project_id    bigint       null,
 
-        constraint FKpvfu83c4goan9f3w9s4uaiebv
-        foreign key (buildingObject_id) references building_objects (id)
-        );
+                constraint FK604bxshwgn96ocix1ht72wifg
+                foreign key (project_id) references projects (id),
 
--->
+                constraint FKl0j0qmfhdiwim8xhu6455bm0f
+                foreign key (contractor_id) references legal_entities (id)
+                );
 
+        -->

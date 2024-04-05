@@ -1,7 +1,7 @@
 package it.academy.pojo.legalEntities;
 
 
-import it.academy.pojo.BuildingObject;
+import it.academy.pojo.Project;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
@@ -15,8 +15,8 @@ import java.util.Set;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(callSuper = true, exclude = "buildingObjects")
-@ToString(callSuper = true, exclude = "buildingObjects")
+@EqualsAndHashCode(callSuper = true, exclude = "projects")
+@ToString(callSuper = true, exclude = "projects")
 @SuperBuilder
 @Entity
 @DiscriminatorValue("D")
@@ -24,5 +24,5 @@ public class Developer extends LegalEntity {
 
     @Builder.Default
     @OneToMany(mappedBy = "developer")
-    private Set<BuildingObject> buildingObjects = new HashSet<>();
+    private Set<Project> projects = new HashSet<>();
 }

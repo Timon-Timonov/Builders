@@ -2,6 +2,7 @@ package it.academy.pojo.enums;
 
 public enum ChapterStatus {
 
-    AKTIVE,
+    FREE,
+    OCCUPIED,
     CANCELED
 }

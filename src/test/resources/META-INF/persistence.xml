@@ -11,9 +11,10 @@
         <class>it.academy.pojo.legalEntities.Developer</class>
         <class>it.academy.pojo.legalEntities.LegalEntity</class>
         <class>it.academy.pojo.Address</class>
-        <class>it.academy.pojo.BuildingObject</class>
         <class>it.academy.pojo.Calculation</class>
         <class>it.academy.pojo.Chapter</class>
+        <class>it.academy.pojo.MoneyTransfer</class>
+        <class>it.academy.pojo.Project</class>
         <class>it.academy.pojo.Proposal</class>
         <class>it.academy.pojo.User</class>
 

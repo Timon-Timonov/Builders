@@ -29,5 +29,12 @@ public class Contractor extends LegalEntity {
     @Builder.Default
     @OneToMany(mappedBy = "contractor")
     private Set<Proposal> proposalSet = new HashSet<>();
+
+    void addChapter(Chapter chapter) {
+
+        if (chapter != null) {
+            chapter.setContractor(this);
+        }
+    }
 }
 

@@ -1,20 +1,19 @@
 package it.academy.pojo;
 
-import it.academy.pojo.enums.PaymentType;
 import lombok.*;
-import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
 import java.sql.Date;
-import java.sql.Timestamp;
+import java.util.HashSet;
+import java.util.Set;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@EqualsAndHashCode
-@ToString
+@EqualsAndHashCode(exclude = "transferSet")
+@ToString(exclude = "transferSet")
 @Entity
 @Table(name = "calculations")
 public class Calculation {
@@ -26,16 +25,13 @@ public class Calculation {
     @Column(nullable = false)
     private Date month;
 
+    @Column(name = "work_price")
+    private Integer workPrice;
+
     @ManyToOne
     private Chapter chapter;
 
-    @Column
-    private Integer sum;
-
-    @CreationTimestamp
-    @Column(updatable = false)
-    private Timestamp calculationDate;
-
-    @Column(nullable = false)
-    private PaymentType type;
+    @Builder.Default
+    @OneToMany(mappedBy = "calculation", fetch = FetchType.EAGER)
+    private Set<MoneyTransfer> transferSet = new HashSet<>();
 }
