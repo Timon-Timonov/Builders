@@ -7,13 +7,11 @@ import it.academy.exceptions.NotCreateDataInDbException;
 import it.academy.exceptions.NotUpdateDataInDbException;
 import it.academy.exceptions.RoleException;
 import it.academy.pojo.*;
-import it.academy.pojo.enums.ProjectStatus;
-import it.academy.pojo.enums.ProposalStatus;
-import it.academy.pojo.enums.Roles;
-import it.academy.pojo.enums.UserStatus;
+import it.academy.pojo.enums.*;
 import it.academy.pojo.legalEntities.Contractor;
 import it.academy.pojo.legalEntities.Developer;
 import it.academy.service.ContractorService;
+import it.academy.util.Util;
 import lombok.extern.log4j.Log4j2;
 
 import javax.persistence.EntityNotFoundException;
@@ -121,6 +119,9 @@ public class ContractorServiceImpl implements ContractorService {
     public List<Project> getMyProjects(Long contractorId, ProjectStatus status, int page, int count)
         throws IOException {
 
+        int totalCount = projectDao.getCountOfProjectsByContractorId(contractorId, status);
+        page = Util.getCorrectPageNumber(page, count, totalCount);
+
         List<Project> list = new ArrayList<>();
         try {
             list.addAll(projectDao.getProjectsByContractorId(contractorId, status, page, count));
@@ -131,12 +132,16 @@ public class ContractorServiceImpl implements ContractorService {
     }
 
     @Override
-    public List<Project> getMyProjectsByDeveloper(Long developerId, Long contractorId, int page, int count)
+    public List<Project> getMyProjectsByDeveloper(
+        Long developerId, Long contractorId, ProjectStatus status, int page, int count)
         throws IOException {
+
+        int totalCount = projectDao.getCountOfProjectsByDeveloperIdContractorId(developerId, contractorId, status);
+        page = Util.getCorrectPageNumber(page, count, totalCount);
 
         List<Project> list = new ArrayList<>();
         try {
-            list.addAll(projectDao.getProjectsByDeveloperIdContractorId(developerId, contractorId, page, count));
+            list.addAll(projectDao.getProjectsByDeveloperIdContractorId(developerId, contractorId, status, page, count));
         } catch (NoResultException e) {
             log.error("There is no such data in DB with contractorId=" + contractorId +
                           " and deleloperId=" + developerId);
@@ -159,6 +164,9 @@ public class ContractorServiceImpl implements ContractorService {
     @Override
     public List<Chapter> getFreeChapters(String chapterName, int page, int count) throws IOException {
 
+        int totalCount = chapterDao.getCountOfFreeChaptersByName(chapterName);
+        page = Util.getCorrectPageNumber(page, count, totalCount);
+
         List<Chapter> list = new ArrayList<>();
         try {
             list.addAll(chapterDao.getFreeChapters(chapterName, page, count));
@@ -172,6 +180,9 @@ public class ContractorServiceImpl implements ContractorService {
     public List<Developer> getMyDevelopers(Long contractorId, ProjectStatus status, int page, int count)
         throws IOException {
 
+        int totalCount = developerDao.getCountOfDevelopers(contractorId, status);
+        page = Util.getCorrectPageNumber(page, count, totalCount);
+
         List<Developer> list = new ArrayList<>();
         try {
             list.addAll(developerDao.getDevelopersByContractorId(contractorId, status, page, count));
@@ -184,6 +195,9 @@ public class ContractorServiceImpl implements ContractorService {
     @Override
     public List<Proposal> getMyProposals(Long contractorId, ProposalStatus status, int page, int count)
         throws IOException {
+
+        int totalCount = proposalDao.getCountOfProposalsByContractorId(contractorId, status);
+        page = Util.getCorrectPageNumber(page, count, totalCount);
 
         List<Proposal> list = new ArrayList<>();
         try {
@@ -212,6 +226,9 @@ public class ContractorServiceImpl implements ContractorService {
     public List<Calculation> getCalculationsByChapter(Long chapterId, int page, int count)
         throws IOException {
 
+        int totalCount = calculationDao.getCountOfCalculationsByChapterId(chapterId);
+        page = Util.getCorrectPageNumber(page, count, totalCount);
+
         List<Calculation> list = new ArrayList<>();
         try {
             list.addAll(calculationDao.getCalculationsByChapterId(chapterId, page, count));
@@ -222,7 +239,7 @@ public class ContractorServiceImpl implements ContractorService {
     }
 
     @Override
-    public void updateWorkPrice(Integer workPrice, Long calculationId)
+    public void updateWorkPriceFact(Integer workPriceFact, Long calculationId)
         throws IOException, NotUpdateDataInDbException {
 
         AtomicBoolean isUpdated = new AtomicBoolean(false);
@@ -234,9 +251,9 @@ public class ContractorServiceImpl implements ContractorService {
                 log.error("Calculation not found. id=" + calculationId);
             }
             if (calculationFromDb != null) {
-                calculationFromDb.setWorkPrice(workPrice);
+                calculationFromDb.setWorkPriceFact(workPriceFact);
                 calculationDao.update(calculationFromDb);
-                log.trace("Workprice updated. id=" + calculationId + ", value=" + workPrice);
+                log.trace("Workprice updated. id=" + calculationId + ", value=" + workPriceFact);
                 isUpdated.set(true);
             } else {
                 log.debug("Workprice not updated. id=" + calculationId);
@@ -248,7 +265,7 @@ public class ContractorServiceImpl implements ContractorService {
     }
 
     @Override
-    public Calculation createCalculation(Long chapterId, Date month)
+    public Calculation createCalculation(Long chapterId, Integer YYYY, Integer MM, Integer workPricePlan)
         throws IOException, NotCreateDataInDbException {
 
         AtomicReference<Calculation> calculation = new AtomicReference<>();
@@ -259,10 +276,11 @@ public class ContractorServiceImpl implements ContractorService {
             } catch (EntityNotFoundException e) {
                 log.error("Chapter not found. id=" + chapterId);
             }
-            if (chapter != null) {
+            if (chapter != null && ChapterStatus.OCCUPIED.equals(chapter.getStatus())) {
                 Calculation newCalculation = Calculation.builder()
                                                  .chapter(chapter)
-                                                 .month(month)
+                                                 .month(Date.valueOf("" + YYYY + "-" + MM + "-" + "01"))
+                                                 .workPricePlan(workPricePlan)
                                                  .build();
                 calculationDao.create(newCalculation);
                 log.trace("Calculation created. id=" + newCalculation.getId());
@@ -278,7 +296,7 @@ public class ContractorServiceImpl implements ContractorService {
     }
 
     @Override
-    public void starWork(Long proposalId) throws IOException, NotUpdateDataInDbException {
+    public void startWork(Long proposalId) throws IOException, NotUpdateDataInDbException {
 
         setProposalStatus(proposalId, ProposalStatus.ACCEPTED_BY_CONTRACTOR);
     }

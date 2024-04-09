@@ -8,11 +8,25 @@ import java.util.List;
 
 public interface ProposalDao extends Dao<Proposal, Long> {
 
-    List<Proposal> getProposalsByContractorId(Long contractorId, ProposalStatus status, int page, int count) throws NoResultException;
+    List<Proposal> getProposalsByContractorId(Long contractorId, ProposalStatus status, int page, int count)
+        throws NoResultException;
 
     Proposal getProposalByChapterIdContractorId(Long chapterId, Long contractorId) throws NoResultException;
 
-    List<Proposal> getProposalsByChapterId(Long chapterId, ProposalStatus status, int page, int count) throws NoResultException;
+    List<Proposal> getProposalsByChapterId(Long chapterId, ProposalStatus status, int page, int count)
+        throws NoResultException;
 
-    List<Proposal> getProposalsByDeveloperId(Long developerId, ProposalStatus status, int page, int count);
+    List<Proposal> getProposalsByDeveloperId(Long developerId, ProposalStatus status, int page, int count)
+        throws NoResultException;
+
+
+
+   Integer getCountOfProposalsByContractorId(Long contractorId, ProposalStatus status)
+        throws NoResultException;
+
+    Integer getCountOfProposalsByChapterId(Long chapterId, ProposalStatus status)
+        throws NoResultException;
+
+   Integer getCountOfProposalsByDeveloperId(Long developerId, ProposalStatus status)
+        throws NoResultException;
 }

@@ -12,7 +12,8 @@
             <column name="month" type="date">
                 <constraints nullable="false"/>
             </column>
-            <column name="work_price" type="int"/>
+            <column name="work_price_plan" type="int"/>
+            <column name="work_price_fact" type="int"/>
             <column name="chapter_id" type="bigint"/>
         </createTable>
     </changeSet>

@@ -11,6 +11,7 @@ import it.academy.pojo.enums.*;
 import it.academy.pojo.legalEntities.Contractor;
 import it.academy.pojo.legalEntities.Developer;
 import it.academy.service.DeveloperService;
+import it.academy.util.Util;
 import lombok.extern.log4j.Log4j2;
 
 import javax.persistence.EntityNotFoundException;
@@ -35,7 +36,7 @@ public class DeveloperServiceImpl implements DeveloperService {
 
     @Override
     public Developer createDeveloper(
-        Long userId, String email, String password, String name, String city, String street, Integer building)
+        String email, String password, String name, String city, String street, Integer building)
         throws IOException, NotCreateDataInDbException, EmailOccupaidException {
 
         AtomicReference<Developer> developer = new AtomicReference<>();
@@ -115,6 +116,9 @@ public class DeveloperServiceImpl implements DeveloperService {
     public List<Project> getMyProjects(Long developerId, ProjectStatus status, int page, int count)
         throws IOException {
 
+        int totalCount = projectDao.getCountOfProjectsByDeveloperId(developerId, status);
+        page = Util.getCorrectPageNumber(page, count, totalCount);
+
         List<Project> list = new ArrayList<>();
         try {
             list.addAll(projectDao.getProjectsByDeveloperId(developerId, status, page, count));
@@ -128,6 +132,9 @@ public class DeveloperServiceImpl implements DeveloperService {
     public List<Contractor> getMyContractors(Long developerId, ProjectStatus status, int page, int count)
         throws IOException {
 
+        int totalCount = contractorDao.getCountOfContractorsByDeveloperId(developerId, status);
+        page = Util.getCorrectPageNumber(page, count, totalCount);
+
         List<Contractor> list = new ArrayList<>();
         try {
             list.addAll(contractorDao.getContractorsByDeveloperId(developerId, status, page, count));
@@ -140,6 +147,9 @@ public class DeveloperServiceImpl implements DeveloperService {
     @Override
     public List<Proposal> getAllMyProposals(Long developerId, ProposalStatus status, int page, int count)
         throws IOException {
+
+        int totalCount = proposalDao.getCountOfProposalsByDeveloperId(developerId, status);
+        page = Util.getCorrectPageNumber(page, count, totalCount);
 
         List<Proposal> list = new ArrayList<>();
         try {
@@ -228,6 +238,9 @@ public class DeveloperServiceImpl implements DeveloperService {
     public List<Chapter> getChaptersByContractorId(Long contractorId, ChapterStatus status, int page, int count)
         throws IOException {
 
+        int totalCount = chapterDao.getCountOfChaptersByContractorId(contractorId, status);
+        page = Util.getCorrectPageNumber(page, count, totalCount);
+
         List<Chapter> list = new ArrayList<>();
         try {
             list.addAll(chapterDao.getChaptersByContractorId(contractorId, status, page, count));
@@ -273,7 +286,7 @@ public class DeveloperServiceImpl implements DeveloperService {
         changeStatusOfProposal(proposalId, ProposalStatus.APPROVED);
     }
 
-    private void changeStatusOfProposal(Long proposalId, ProposalStatus status)
+    private void changeStatusOfProposal(Long proposalId, ProposalStatus newStatus)
         throws IOException, NotUpdateDataInDbException {
 
         AtomicBoolean isUpdated = new AtomicBoolean(false);
@@ -287,10 +300,35 @@ public class DeveloperServiceImpl implements DeveloperService {
                 log.error("There is no such data in DB proposalId=" + proposalId);
             }
             if (proposal != null) {
-                proposal.setStatus(status);
-                proposalDao.update(proposal);
-                log.trace("Proposal status changed " + proposal.getId() + status);
-                isUpdated.set(true);
+                ProposalStatus currentStatus = proposal.getStatus();
+
+                switch (currentStatus) {
+                    case CONSIDERATION:
+                        if (ProposalStatus.APPROVED.equals(newStatus) ||
+                                ProposalStatus.REJECTED.equals(newStatus)) {
+                            proposal.setStatus(newStatus);
+                            proposalDao.update(proposal);
+                            log.trace("Proposal status changed " + proposal.getId() + newStatus);
+                            isUpdated.set(true);
+                        }
+                        break;
+                    case APPROVED:
+                        if (ProposalStatus.REJECTED.equals(newStatus)) {
+                            proposal.setStatus(newStatus);
+                            proposalDao.update(proposal);
+                            log.trace("Proposal status changed " + proposal.getId() + newStatus);
+                            isUpdated.set(true);
+                        }
+                        break;
+                    case REJECTED:
+                        if (ProposalStatus.APPROVED.equals(newStatus)) {
+                            proposal.setStatus(newStatus);
+                            proposalDao.update(proposal);
+                            log.trace("Proposal status changed " + proposal.getId() + newStatus);
+                            isUpdated.set(true);
+                        }
+                        break;
+                }
             }
         });
         if (!isUpdated.get()) {
@@ -301,6 +339,9 @@ public class DeveloperServiceImpl implements DeveloperService {
     @Override
     public List<Proposal> getProposalsByChapterId(Long chapterId, ProposalStatus status, int page, int count)
         throws IOException {
+
+        int totalCount = proposalDao.getCountOfProposalsByChapterId(chapterId, status);
+        page = Util.getCorrectPageNumber(page, count, totalCount);
 
         List<Proposal> list = new ArrayList<>();
         try {
@@ -329,7 +370,7 @@ public class DeveloperServiceImpl implements DeveloperService {
         changeProjectStatus(projectId, ProjectStatus.CANCELED);
     }
 
-    private void changeProjectStatus(Long projectId, ProjectStatus status) throws IOException, NotUpdateDataInDbException {
+    private void changeProjectStatus(Long projectId, ProjectStatus newStatus) throws IOException, NotUpdateDataInDbException {
 
         AtomicBoolean isUpdated = new AtomicBoolean(false);
         projectDao.executeInOneTransaction(() -> {
@@ -340,10 +381,35 @@ public class DeveloperServiceImpl implements DeveloperService {
                 log.error("There is no such data in DB projectId=" + projectId);
             }
             if (project != null) {
-                project.setStatus(status);
-                projectDao.update(project);
-                log.trace("Project status changed " + project.getId() + status);
-                isUpdated.set(true);
+
+                switch (project.getStatus()) {
+                    case PREPARATION:
+                        if (ProjectStatus.IN_PROCESS.equals(newStatus) ||
+                                ProjectStatus.CANCELED.equals(newStatus)) {
+                            project.setStatus(newStatus);
+                            projectDao.update(project);
+                            log.trace("Project status changed " + project.getId() + newStatus);
+                            isUpdated.set(true);
+                        }
+                        break;
+                    case IN_PROCESS:
+                        if (ProjectStatus.COMPLETED.equals(newStatus) ||
+                                ProjectStatus.CANCELED.equals(newStatus)) {
+                            project.setStatus(newStatus);
+                            projectDao.update(project);
+                            log.trace("Project status changed " + project.getId() + newStatus);
+                            isUpdated.set(true);
+                        }
+                        break;
+                }
+                if (ProjectStatus.CANCELED.equals(newStatus)) {
+
+                    chapterDao.executeInOneTransaction(() -> chapterDao.getChaptersByProjectId(projectId)
+                        .forEach(chapter -> {
+                            chapter.setStatus(ChapterStatus.CANCELED);
+                            chapterDao.update(chapter);
+                        }));
+                }
             }
         });
         if (!isUpdated.get()) {
@@ -354,6 +420,9 @@ public class DeveloperServiceImpl implements DeveloperService {
     @Override
     public List<Calculation> getCalculationsByChapterId(Long chapterId, int page, int count)
         throws IOException {
+
+        int totalCount = calculationDao.getCountOfCalculationsByChapterId(chapterId);
+        page = Util.getCorrectPageNumber(page, count, totalCount);
 
         List<Calculation> list = new ArrayList<>();
         try {

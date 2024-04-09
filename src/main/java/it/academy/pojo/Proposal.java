@@ -30,23 +30,23 @@ public class Proposal {
     @Column
     private ProposalStatus status = ProposalStatus.CONSIDERATION;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     private Chapter chapter;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     private Contractor contractor;
 
     @Column(name = "created_date", updatable = false)
     @CreationTimestamp
     private Timestamp createdDate;
 
-    public void setStatus(ProposalStatus status) {
+    public void setStatus(ProposalStatus newStatus) {
 
         if (ProposalStatus.APPROVED.equals(this.status)
-                && ProposalStatus.ACCEPTED_BY_CONTRACTOR.equals(status)) {
+                && ProposalStatus.ACCEPTED_BY_CONTRACTOR.equals(newStatus)) {
             this.chapter.setContractor(this.contractor);
             this.chapter.setStatus(ChapterStatus.OCCUPIED);
         }
-        this.status = status;
+        this.status = newStatus;
     }
 }

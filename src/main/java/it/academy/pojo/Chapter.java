@@ -1,6 +1,7 @@
 package it.academy.pojo;
 
 import it.academy.pojo.enums.ChapterStatus;
+import it.academy.pojo.enums.ProposalStatus;
 import it.academy.pojo.legalEntities.Contractor;
 import lombok.*;
 
@@ -54,6 +55,14 @@ public class Chapter {
             this.contractor = contractor;
             this.contractor.getChapters().add(this);
         }
+    }
+
+    public void setStatus(ChapterStatus newStatus) {
+
+        if (ChapterStatus.CANCELED.equals(newStatus)) {
+            proposalSet.forEach(proposal -> proposal.setStatus(ProposalStatus.CANCELED));
+        }
+        this.status = newStatus;
     }
 
     public void addCalculation(Calculation calculation) {

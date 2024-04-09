@@ -25,8 +25,12 @@ public class Calculation {
     @Column(nullable = false)
     private Date month;
 
-    @Column(name = "work_price")
-    private Integer workPrice;
+    @Column(name = "work_price_plan")
+    private Integer workPricePlan;
+
+    @Column(name = "work_price_fact")
+    private Integer workPriceFact;
+
 
     @ManyToOne
     private Chapter chapter;

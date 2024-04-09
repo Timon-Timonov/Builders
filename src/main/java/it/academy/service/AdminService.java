@@ -1,5 +1,7 @@
 package it.academy.service;
 
+import it.academy.exceptions.EmailOccupaidException;
+import it.academy.exceptions.NotCreateDataInDbException;
 import it.academy.exceptions.NotUpdateDataInDbException;
 import it.academy.pojo.Project;
 import it.academy.pojo.User;
@@ -13,6 +15,8 @@ import java.util.List;
 
 public interface AdminService {
 
+    User createAdmin(String email, String password) throws IOException, EmailOccupaidException, NotCreateDataInDbException;
+
     User getUser(String email) throws IOException;
 
     List<Contractor> getAllContractors(UserStatus status, int page, int count) throws IOException;
@@ -20,9 +24,6 @@ public interface AdminService {
     List<Developer> getAllDevelopers(UserStatus status, int page, int count) throws IOException;
 
     List<Project> getAllProjects(ProjectStatus status, int page, int count) throws IOException;
-
-
-
 
 
     void cancelUser(Long userId) throws IOException, NotUpdateDataInDbException;

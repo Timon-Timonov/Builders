@@ -14,7 +14,6 @@ import it.academy.pojo.legalEntities.Contractor;
 import it.academy.pojo.legalEntities.Developer;
 
 import java.io.IOException;
-import java.sql.Date;
 import java.util.List;
 
 public interface ContractorService {
@@ -27,7 +26,9 @@ public interface ContractorService {
 
     List<Project> getMyProjects(Long contractorId, ProjectStatus status, int page, int count) throws IOException;
 
-    List<Project> getMyProjectsByDeveloper(Long developerId, Long contractorId, int page, int count) throws IOException;
+    List<Project> getMyProjectsByDeveloper
+        (Long developerId, Long contractorId, ProjectStatus status, int page, int count)
+        throws IOException;
 
     List<String> getAllChapterNames() throws IOException;
 
@@ -41,11 +42,11 @@ public interface ContractorService {
 
     List<Calculation> getCalculationsByChapter(Long chapterId, int page, int count) throws IOException;
 
-    void updateWorkPrice(Integer workPrice, Long calculationId) throws IOException, NotUpdateDataInDbException;
+    void updateWorkPriceFact(Integer workPrice, Long calculationId) throws IOException, NotUpdateDataInDbException;
 
-    Calculation createCalculation(Long chapterId, Date month) throws IOException, NotCreateDataInDbException;
+    Calculation createCalculation(Long chapterId, Integer YYYY, Integer MM, Integer workPricePlan) throws IOException, NotCreateDataInDbException;
 
-    void starWork(Long proposalId) throws IOException, NotUpdateDataInDbException;
+    void startWork(Long proposalId) throws IOException, NotUpdateDataInDbException;
 
     void cancelProposal(Long proposalId) throws IOException, NotUpdateDataInDbException;
 

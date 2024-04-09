@@ -1,7 +1,6 @@
 package it.academy.dao.impl;
 
 import it.academy.dao.Dao;
-import it.academy.exceptions.EmailOccupaidException;
 import it.academy.util.HibernateUtil;
 import it.academy.util.functionalInterfaces.TransactionBody;
 import lombok.extern.log4j.Log4j2;
@@ -57,17 +56,9 @@ public class DaoImpl<T, R> implements Dao<T, R> {
     public void create(T object) {
 
         getEm().persist(object);
-        log.info("Created successful"+ object);
+        log.info("Created successful" + object);
     }
 
-    @Override
-    public void closeManager() {
-
-        if (em == null || !em.isOpen()) {
-            return;
-        }
-        em.close();
-    }
 
     @Override
     public long countOfEntitiesInBase() {
@@ -85,7 +76,7 @@ public class DaoImpl<T, R> implements Dao<T, R> {
             body.execute();
             getEm().getTransaction().commit();
         } finally {
-            getEm().close();
+            closeManager();
         }
     }
 
@@ -96,6 +87,15 @@ public class DaoImpl<T, R> implements Dao<T, R> {
             em = HibernateUtil.getEntityManager();
         }
         return em;
+    }
+
+    @Override
+    public void closeManager() {
+
+        if (em == null || !em.isOpen()) {
+            return;
+        }
+        em.close();
     }
 
     protected String getAllQuery() {

@@ -2,14 +2,18 @@ package it.academy.service.impl;
 
 import it.academy.dao.*;
 import it.academy.dao.impl.*;
+import it.academy.exceptions.EmailOccupaidException;
+import it.academy.exceptions.NotCreateDataInDbException;
 import it.academy.exceptions.NotUpdateDataInDbException;
 import it.academy.pojo.Project;
 import it.academy.pojo.User;
 import it.academy.pojo.enums.ProjectStatus;
+import it.academy.pojo.enums.Roles;
 import it.academy.pojo.enums.UserStatus;
 import it.academy.pojo.legalEntities.Contractor;
 import it.academy.pojo.legalEntities.Developer;
 import it.academy.service.AdminService;
+import it.academy.util.Util;
 import lombok.extern.log4j.Log4j2;
 import org.hibernate.exception.ConstraintViolationException;
 
@@ -19,6 +23,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 
 @Log4j2
 public class AdminServiceImpl implements AdminService {
@@ -42,6 +47,40 @@ public class AdminServiceImpl implements AdminService {
             log.error("There is no such data in DB with email=" + email);
         }
         return user;
+    }
+
+    @Override
+    public User createAdmin(String email, String password) throws IOException, EmailOccupaidException, NotCreateDataInDbException {
+
+        AtomicReference<User> userFromDB = new AtomicReference<>();
+        AtomicBoolean isEmailOccupaid = new AtomicBoolean(false);
+        userDao.executeInOneTransaction(() -> {
+            User user = null;
+            try {
+                user = userDao.getUser(email);
+            } catch (NoResultException e) {
+                log.trace("Email " + email + " not occupied", e);
+            }
+            if (user != null) {
+                log.trace("Email " + email + " occupied");
+                isEmailOccupaid.set(true);
+            } else {
+                User newUser = User.builder()
+                                   .email(email)
+                                   .password(password)
+                                   .role(Roles.ADMIN)
+                                   .status(UserStatus.AKTIVE)
+                                   .build();
+                userDao.create(newUser);
+                userFromDB.set(newUser);
+            }
+        });
+        if (isEmailOccupaid.get()) {
+            throw new EmailOccupaidException("Email " + email + " occupied");
+        } else if (userFromDB.get() == null) {
+            throw new NotCreateDataInDbException();
+        }
+        return userFromDB.get();
     }
 
     @Override
@@ -70,6 +109,9 @@ public class AdminServiceImpl implements AdminService {
     public List<Project> getAllProjects(ProjectStatus status, int page, int count)
         throws IOException {
 
+        int totalCount = projectDao.getCountOfProjects(status);
+        page = Util.getCorrectPageNumber(page, count, totalCount);
+
         List<Project> list = new ArrayList<>();
         try {
             list.addAll(new ArrayList<>(projectDao.getProjects(status, page, count)));
@@ -83,6 +125,9 @@ public class AdminServiceImpl implements AdminService {
     public List<Contractor> getAllContractors(UserStatus status, int page, int count)
         throws IOException {
 
+        int totalCount = contractorDao.getCountOfContractors(status);
+        page = Util.getCorrectPageNumber(page, count, totalCount);
+
         List<Contractor> list = new ArrayList<>();
         try {
             list.addAll(contractorDao.getContractors(status, page, count));
@@ -95,6 +140,9 @@ public class AdminServiceImpl implements AdminService {
     @Override
     public List<Developer> getAllDevelopers(UserStatus status, int page, int count)
         throws IOException {
+
+        int totalCount = developerDao.getCountOfDevelopers(status);
+        page = Util.getCorrectPageNumber(page, count, totalCount);
 
         List<Developer> list = new ArrayList<>();
         try {

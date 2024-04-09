@@ -17,7 +17,7 @@ import java.util.List;
 public interface DeveloperService {
 
     Developer createDeveloper(
-        Long userId, String email, String password, String name, String city, String street, Integer building)
+        String email, String password, String name, String city, String street, Integer building)
         throws IOException, NotCreateDataInDbException, EmailOccupaidException;
 
     Developer getDeveloper(Long userId) throws IOException, RoleException;
@@ -58,4 +58,5 @@ public interface DeveloperService {
     MoneyTransfer payAdvance(Integer sum, Long calculationId) throws IOException, NotCreateDataInDbException;
 
     MoneyTransfer payForWork(Integer sum, Long calculationId) throws IOException, NotCreateDataInDbException;
+
 }
