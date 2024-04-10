@@ -19,13 +19,15 @@ public class ProjectDto {
 
     private Long id;
 
+    private Long developerId;
+
     private String projectName;
 
     private String developerName;
 
     private AddressDto projectAddress;
 
-    private Integer debtByObject;
+    private Integer debtByProject;
 
     private Integer projectPrice;
 

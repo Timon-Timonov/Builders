@@ -22,15 +22,15 @@ public interface ProjectDao extends Dao<Project, Long> {
 
 
 
-    Integer getCountOfProjects(ProjectStatus status) throws NoResultException;
+    Long getCountOfProjects(ProjectStatus status) throws NoResultException;
 
-    Integer getCountOfProjectsByContractorId(Long contractorId, ProjectStatus status)
+    Long getCountOfProjectsByContractorId(Long contractorId, ProjectStatus status)
         throws NoResultException;
 
-    Integer getCountOfProjectsByDeveloperIdContractorId
+    Long getCountOfProjectsByDeveloperIdContractorId
         (Long developerId, Long contractorId, ProjectStatus status)
         throws NoResultException;
 
-    Integer getCountOfProjectsByDeveloperId(Long developerId, ProjectStatus status)
+    Long getCountOfProjectsByDeveloperId(Long developerId, ProjectStatus status)
         throws NoResultException;
 }

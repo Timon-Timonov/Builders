@@ -20,9 +20,12 @@ public interface ChapterDao extends Dao<Chapter, Long> {
     List<Chapter> getChaptersByContractorId(Long contractorId, ChapterStatus status, int page, int count)
         throws NoResultException, IOException;
 
-    Integer getCountOfFreeChaptersByName(String chapterName) throws NoResultException, IOException;
+    Long getCountOfFreeChaptersByName(String chapterName) throws NoResultException, IOException;
 
-   Integer getCountOfChaptersByContractorId(Long contractorId, ChapterStatus status)
+   Long getCountOfChaptersByContractorId(Long contractorId, ChapterStatus status)
         throws NoResultException, IOException;
+
+    List<Chapter> getAllChaptersByDeveloperIdContractorId(Long developerId, Long contractorId) throws NoResultException, IOException;
+
 
 }

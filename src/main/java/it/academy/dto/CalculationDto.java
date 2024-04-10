@@ -23,11 +23,11 @@ public class CalculationDto {
 
     private Integer workPriceFact;
 
-    private Integer sumSForWork;
+    private Integer sumForWork;
 
-    private Integer sumSAdvance;
+    private Integer sumAdvance;
 
-    private Integer chapterDebt;
+    private Integer calculationDebt;
 
     private String chapterName;
 

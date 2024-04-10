@@ -94,11 +94,11 @@ public class ChapterDaoImpl extends DaoImpl<Chapter, Long> implements ChapterDao
     }
 
     @Override
-    public Integer getCountOfFreeChaptersByName(String chapterName) throws NoResultException, IOException {
+    public Long getCountOfFreeChaptersByName(String chapterName) throws NoResultException, IOException {
 
-        TypedQuery<Integer> query = getEm().createQuery(
+        TypedQuery<Long> query = getEm().createQuery(
             "SELECT Count(ch) FROM Chapter ch WHERE ch.name=:chapterName AND ch.status=:status AND ch.project.status<>:cancelStatus AND ch.project.status<>:completeStatus",
-            Integer.class);
+            Long.class);
         return query.setParameter("chapterName", chapterName)
                    .setParameter("status", ChapterStatus.FREE)
                    .setParameter("cancelStatus", ProjectStatus.CANCELED)
@@ -107,13 +107,25 @@ public class ChapterDaoImpl extends DaoImpl<Chapter, Long> implements ChapterDao
     }
 
     @Override
-    public Integer getCountOfChaptersByContractorId(Long contractorId, ChapterStatus status) throws NoResultException, IOException {
+    public Long getCountOfChaptersByContractorId(Long contractorId, ChapterStatus status) throws NoResultException, IOException {
 
-        TypedQuery<Integer> query = getEm().createQuery(
+        TypedQuery<Long> query = getEm().createQuery(
             "SELECT COUNT(ch) FROM Chapter ch WHERE ch.contractor.id=:contractorId AND ch.status=:status ORDER BY ch.name ASC",
-            Integer.class);
+            Long.class);
         return query.setParameter("contractorId", contractorId)
                    .setParameter("status", status)
                    .getSingleResult();
+    }
+
+    @Override
+    public List<Chapter> getAllChaptersByDeveloperIdContractorId(Long developerId, Long contractorId) throws NoResultException, IOException {
+
+
+        TypedQuery<Chapter> query = getEm().createQuery(
+            "SELECT ch FROM Chapter ch WHERE ch.project.developer.id=:developerId AND ch.contractor.id=:contractorId",
+            Chapter.class);
+        return query.setParameter("developerId", developerId)
+                   .setParameter("contractorId", contractorId)
+                   .getResultList();
     }
 }

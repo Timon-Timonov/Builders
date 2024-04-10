@@ -12,7 +12,7 @@
             <column name="id" type="bigint">
                 <constraints nullable="false" primaryKey="true"/>
             </column>
-            <column name="building" type="int"/>
+            <column name="building" type="varchar(255)"/>
             <column name="city" type="varchar(255)"/>
             <column name="street" type="varchar(255)"/>
             <column name="name" type="varchar(255)"/>

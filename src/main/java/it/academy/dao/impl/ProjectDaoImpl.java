@@ -73,32 +73,32 @@ public class ProjectDaoImpl extends DaoImpl<Project, Long> implements ProjectDao
     }
 
     @Override
-    public Integer getCountOfProjects(ProjectStatus status) throws NoResultException {
+    public Long getCountOfProjects(ProjectStatus status) throws NoResultException {
 
-        TypedQuery<Integer> query = getEm().createQuery(
+        TypedQuery<Long> query = getEm().createQuery(
             "SELECT COUNT(p) FROM Project p WHERE p.status=:status",
-            Integer.class);
+            Long.class);
         return query.setParameter("status", status)
                    .getSingleResult();
     }
 
     @Override
-    public Integer getCountOfProjectsByContractorId(Long contractorId, ProjectStatus status) throws NoResultException {
+    public Long getCountOfProjectsByContractorId(Long contractorId, ProjectStatus status) throws NoResultException {
 
-        TypedQuery<Integer> query = getEm().createQuery(
+        TypedQuery<Long> query = getEm().createQuery(
             "SELECT COUNT(p) FROM Project p, Chapter ch WHERE p.status=:status AND ch MEMBER OF p.chapters AND ch.contractor=:contractorId",
-            Integer.class);
+            Long.class);
         return query.setParameter("contractorId", contractorId)
                    .setParameter("status", status)
                    .getSingleResult();
     }
 
     @Override
-    public Integer getCountOfProjectsByDeveloperIdContractorId(Long developerId, Long contractorId, ProjectStatus status) throws NoResultException {
+    public Long getCountOfProjectsByDeveloperIdContractorId(Long developerId, Long contractorId, ProjectStatus status) throws NoResultException {
 
-        TypedQuery<Integer> query = getEm().createQuery(
+        TypedQuery<Long> query = getEm().createQuery(
             "SELECT COUNT(p) FROM Project p, Chapter ch WHERE p.developer.id=:developerId AND p.status=:status AND ch MEMBER OF p.chapters AND ch.contractor=:contractorId",
-            Integer.class);
+            Long.class);
         return query.setParameter("contractorId", contractorId)
                    .setParameter("developerId", developerId)
                    .setParameter("status", status)
@@ -106,11 +106,11 @@ public class ProjectDaoImpl extends DaoImpl<Project, Long> implements ProjectDao
     }
 
     @Override
-    public Integer getCountOfProjectsByDeveloperId(Long developerId, ProjectStatus status) throws NoResultException {
+    public Long getCountOfProjectsByDeveloperId(Long developerId, ProjectStatus status) throws NoResultException {
 
-        TypedQuery<Integer> query = getEm().createQuery(
+        TypedQuery<Long> query = getEm().createQuery(
             "SELECT COUNT(p) FROM Project p WHERE p.developer.id=:developerId AND p.status=:status",
-            Integer.class);
+            Long.class);
         return query.setParameter("developerId", developerId)
                    .setParameter("status", status)
                    .getSingleResult();

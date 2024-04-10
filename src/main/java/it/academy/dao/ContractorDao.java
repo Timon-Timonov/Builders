@@ -15,8 +15,8 @@ public interface ContractorDao extends Dao<Contractor, Long> {
     List<Contractor> getContractorsByDeveloperId(Long developerId, ProjectStatus status, int page, int count)
         throws NoResultException, IOException;
 
-    Integer getCountOfContractors(UserStatus status) throws NoResultException, IOException;
+    Long getCountOfContractors(UserStatus status) throws NoResultException, IOException;
 
-    Integer getCountOfContractorsByDeveloperId(Long developerId, ProjectStatus status)
+    Long getCountOfContractorsByDeveloperId(Long developerId, ProjectStatus status)
         throws NoResultException, IOException;
 }

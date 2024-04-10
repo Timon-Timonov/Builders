@@ -72,34 +72,34 @@ public class ProposalDaoImpl extends DaoImpl<Proposal, Long> implements Proposal
 
 
     @Override
-    public Integer getCountOfProposalsByContractorId(Long contractorId, ProposalStatus status) throws NoResultException {
+    public Long getCountOfProposalsByContractorId(Long contractorId, ProposalStatus status) throws NoResultException {
 
-        TypedQuery<Integer> query = getEm().createQuery(
+        TypedQuery<Long> query = getEm().createQuery(
             "SELECT COUNT(p) FROM Proposal p WHERE p.chapter.contractor.id=:contractorId AND p.status=:proposalStatus" +
                 " ORDER BY p.chapter.project.developer.name ASC, p.chapter.project.name ASC, chapter.name ASC",
-            Integer.class);
+            Long.class);
         return query.setParameter("contractorId", contractorId)
                    .setParameter("proposalStatus", status)
                    .getSingleResult();
     }
 
     @Override
-    public Integer getCountOfProposalsByChapterId(Long chapterId, ProposalStatus status) throws NoResultException {
+    public Long getCountOfProposalsByChapterId(Long chapterId, ProposalStatus status) throws NoResultException {
 
-        TypedQuery<Integer> query = getEm().createQuery(
+        TypedQuery<Long> query = getEm().createQuery(
             "SELECT COUNT(p) FROM Proposal p WHERE p.chapter.id=:chapterId AND p.status=:proposalStatus",
-            Integer.class);
+            Long.class);
         return query.setParameter("chapterId", chapterId)
                    .setParameter("proposalStatus", status)
                    .getSingleResult();
     }
 
     @Override
-    public Integer getCountOfProposalsByDeveloperId(Long developerId, ProposalStatus status) throws NoResultException {
+    public Long getCountOfProposalsByDeveloperId(Long developerId, ProposalStatus status) throws NoResultException {
 
-        TypedQuery<Integer> query = getEm().createQuery(
+        TypedQuery<Long> query = getEm().createQuery(
             "SELECT COUNT(p) FROM Proposal p WHERE p.chapter.project.developer.id=:developerId AND p.status=:proposalStatus",
-            Integer.class);
+            Long.class);
         return query.setParameter("developerId", developerId)
                    .setParameter("proposalStatus", status)
                    .getSingleResult();

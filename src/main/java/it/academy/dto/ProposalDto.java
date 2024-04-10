@@ -14,10 +14,15 @@ public class ProposalDto {
 
     private Long id;
 
+    private Long contractorId;
+
+    private Long chapterId;
+
     @Builder.Default
     private ProposalStatus status = ProposalStatus.CONSIDERATION;
 
     private String ProjectName;
+
     private String chapterName;
 
     private Integer chapterPrice;

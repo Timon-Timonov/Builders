@@ -20,13 +20,12 @@ public interface ProposalDao extends Dao<Proposal, Long> {
         throws NoResultException;
 
 
-
-   Integer getCountOfProposalsByContractorId(Long contractorId, ProposalStatus status)
+    Long getCountOfProposalsByContractorId(Long contractorId, ProposalStatus status)
         throws NoResultException;
 
-    Integer getCountOfProposalsByChapterId(Long chapterId, ProposalStatus status)
+    Long getCountOfProposalsByChapterId(Long chapterId, ProposalStatus status)
         throws NoResultException;
 
-   Integer getCountOfProposalsByDeveloperId(Long developerId, ProposalStatus status)
+    Long getCountOfProposalsByDeveloperId(Long developerId, ProposalStatus status)
         throws NoResultException;
 }

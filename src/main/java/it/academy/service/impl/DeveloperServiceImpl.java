@@ -36,7 +36,7 @@ public class DeveloperServiceImpl implements DeveloperService {
 
     @Override
     public Developer createDeveloper(
-        String email, String password, String name, String city, String street, Integer building)
+        String email, String password, String name, String city, String street, String building)
         throws IOException, NotCreateDataInDbException, EmailOccupaidException {
 
         AtomicReference<Developer> developer = new AtomicReference<>();
@@ -116,7 +116,7 @@ public class DeveloperServiceImpl implements DeveloperService {
     public List<Project> getMyProjects(Long developerId, ProjectStatus status, int page, int count)
         throws IOException {
 
-        int totalCount = projectDao.getCountOfProjectsByDeveloperId(developerId, status);
+        long totalCount = projectDao.getCountOfProjectsByDeveloperId(developerId, status);
         page = Util.getCorrectPageNumber(page, count, totalCount);
 
         List<Project> list = new ArrayList<>();
@@ -132,7 +132,7 @@ public class DeveloperServiceImpl implements DeveloperService {
     public List<Contractor> getMyContractors(Long developerId, ProjectStatus status, int page, int count)
         throws IOException {
 
-        int totalCount = contractorDao.getCountOfContractorsByDeveloperId(developerId, status);
+        long totalCount = contractorDao.getCountOfContractorsByDeveloperId(developerId, status);
         page = Util.getCorrectPageNumber(page, count, totalCount);
 
         List<Contractor> list = new ArrayList<>();
@@ -148,7 +148,7 @@ public class DeveloperServiceImpl implements DeveloperService {
     public List<Proposal> getAllMyProposals(Long developerId, ProposalStatus status, int page, int count)
         throws IOException {
 
-        int totalCount = proposalDao.getCountOfProposalsByDeveloperId(developerId, status);
+        long totalCount = proposalDao.getCountOfProposalsByDeveloperId(developerId, status);
         page = Util.getCorrectPageNumber(page, count, totalCount);
 
         List<Proposal> list = new ArrayList<>();
@@ -161,7 +161,7 @@ public class DeveloperServiceImpl implements DeveloperService {
     }
 
     @Override
-    public Project createProject(Long developerId, String name, String city, String street, Integer building)
+    public void createProject(Long developerId, String name, String city, String street, String building)
         throws IOException, NotCreateDataInDbException {
 
         AtomicReference<Project> project = new AtomicReference<>();
@@ -189,11 +189,11 @@ public class DeveloperServiceImpl implements DeveloperService {
         if (project.get() == null) {
             throw new NotCreateDataInDbException();
         }
-        return project.get();
+        project.get();
     }
 
     @Override
-    public Chapter createChapter(Long projectId, String name, Integer price)
+    public void createChapter(Long projectId, String name, Integer price)
         throws IOException, NotCreateDataInDbException {
 
         AtomicReference<Chapter> chapter = new AtomicReference<>();
@@ -217,7 +217,6 @@ public class DeveloperServiceImpl implements DeveloperService {
         if (chapter.get() == null) {
             throw new NotCreateDataInDbException();
         }
-        return chapter.get();
     }
 
 
@@ -238,7 +237,7 @@ public class DeveloperServiceImpl implements DeveloperService {
     public List<Chapter> getChaptersByContractorId(Long contractorId, ChapterStatus status, int page, int count)
         throws IOException {
 
-        int totalCount = chapterDao.getCountOfChaptersByContractorId(contractorId, status);
+        long totalCount = chapterDao.getCountOfChaptersByContractorId(contractorId, status);
         page = Util.getCorrectPageNumber(page, count, totalCount);
 
         List<Chapter> list = new ArrayList<>();
@@ -340,7 +339,7 @@ public class DeveloperServiceImpl implements DeveloperService {
     public List<Proposal> getProposalsByChapterId(Long chapterId, ProposalStatus status, int page, int count)
         throws IOException {
 
-        int totalCount = proposalDao.getCountOfProposalsByChapterId(chapterId, status);
+        long totalCount = proposalDao.getCountOfProposalsByChapterId(chapterId, status);
         page = Util.getCorrectPageNumber(page, count, totalCount);
 
         List<Proposal> list = new ArrayList<>();
@@ -405,10 +404,10 @@ public class DeveloperServiceImpl implements DeveloperService {
                 if (ProjectStatus.CANCELED.equals(newStatus)) {
 
                     chapterDao.executeInOneTransaction(() -> chapterDao.getChaptersByProjectId(projectId)
-                        .forEach(chapter -> {
-                            chapter.setStatus(ChapterStatus.CANCELED);
-                            chapterDao.update(chapter);
-                        }));
+                                                                 .forEach(chapter -> {
+                                                                     chapter.setStatus(ChapterStatus.CANCELED);
+                                                                     chapterDao.update(chapter);
+                                                                 }));
                 }
             }
         });
@@ -421,7 +420,7 @@ public class DeveloperServiceImpl implements DeveloperService {
     public List<Calculation> getCalculationsByChapterId(Long chapterId, int page, int count)
         throws IOException {
 
-        int totalCount = calculationDao.getCountOfCalculationsByChapterId(chapterId);
+        long totalCount = calculationDao.getCountOfCalculationsByChapterId(chapterId);
         page = Util.getCorrectPageNumber(page, count, totalCount);
 
         List<Calculation> list = new ArrayList<>();
@@ -434,18 +433,18 @@ public class DeveloperServiceImpl implements DeveloperService {
     }
 
     @Override
-    public MoneyTransfer payAdvance(Integer sum, Long calculationId) throws IOException, NotCreateDataInDbException {
+    public void payAdvance(Integer sum, Long calculationId) throws IOException, NotCreateDataInDbException {
 
-        return payMoney(sum, calculationId, PaymentType.ADVANCE_PAYMENT);
+        payMoney(sum, calculationId, PaymentType.ADVANCE_PAYMENT);
     }
 
     @Override
-    public MoneyTransfer payForWork(Integer sum, Long calculationId) throws IOException, NotCreateDataInDbException {
+    public void payForWork(Integer sum, Long calculationId) throws IOException, NotCreateDataInDbException {
 
-        return payMoney(sum, calculationId, PaymentType.PAYMENT_FOR_WORK);
+        payMoney(sum, calculationId, PaymentType.PAYMENT_FOR_WORK);
     }
 
-    private MoneyTransfer payMoney(Integer sum, Long calculationId, PaymentType paymentForWork)
+    private void payMoney(Integer sum, Long calculationId, PaymentType paymentForWork)
         throws IOException, NotCreateDataInDbException {
 
         AtomicBoolean isCreated = new AtomicBoolean(false);
@@ -466,6 +465,23 @@ public class DeveloperServiceImpl implements DeveloperService {
         if (!isCreated.get()) {
             throw new NotCreateDataInDbException();
         }
-        return transfer.get();
+    }
+
+    @Override
+    public Integer getProjectDept(Project project) {
+
+        return project.getChapters()
+                   .stream()
+                   .map(Util::getDebtByChapter)
+                   .reduce(0, Integer::sum);
+    }
+
+    @Override
+    public Integer getTotalDeptByContractor(Long contractorId, Long developerId) throws IOException {
+
+        return chapterDao.getAllChaptersByDeveloperIdContractorId(developerId, contractorId)
+                   .stream()
+                   .map(Util::getDebtByChapter)
+                   .reduce(0, Integer::sum);
     }
 }

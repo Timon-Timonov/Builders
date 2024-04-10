@@ -272,27 +272,28 @@ public class TestFullingBase {
 
         ADMIN_SERVICE.createAdmin(getUniqEmail(), getPassword());
         for (int i = 0; i < DEVELOPER_COUNT; i++) {
-            Developer dev = DEVELOPER_SERVICE.createDeveloper(getUniqEmail(), getPassword(), getUserName(), NEY_YORK, getStreet(), userCount);
+            Developer dev = DEVELOPER_SERVICE.createDeveloper(getUniqEmail(), getPassword(), getUserName(), NEY_YORK, getStreet(), String.valueOf(userCount*4/3));
             int thisProjectCount = RANDOM.nextInt(5);
             for (int j = 0; j < thisProjectCount; j++) {
-                Project project = DEVELOPER_SERVICE.createProject(dev.getId(), getProjectName(), NEY_YORK, getStreet(), projectCount);
+                DEVELOPER_SERVICE.createProject(dev.getId(), getProjectName(), NEY_YORK, getStreet(), String.valueOf(projectCount*4/3));
+                projectCount++;
                 int thisChapterCount = RANDOM.nextInt(15);
                 for (int k = 0; k < thisChapterCount; k++) {
-                    Chapter chapter = DEVELOPER_SERVICE.createChapter(project.getId(), CHAPTER_NAMES[k % CHAPTER_NAMES.length], RANDOM.nextInt(50_000));
+                    DEVELOPER_SERVICE.createChapter((long)projectCount, CHAPTER_NAMES[k % CHAPTER_NAMES.length], RANDOM.nextInt(50_000));
                     chapterCount++;
                     if (thisChapterCount % 5 == 0) {
-                        DEVELOPER_SERVICE.cancelChapter(chapter.getId());
+                        DEVELOPER_SERVICE.cancelChapter((long)chapterCount);
                     }
                 }
+
                 if (thisProjectCount % 5 == 0) {
-                    DEVELOPER_SERVICE.cancelProject(project.getId());
+                    DEVELOPER_SERVICE.cancelProject((long)projectCount);
                 }
-                projectCount++;
             }
         }
         for (int i = 0; i < CONTRACTOR_COUNT; i++) {
 
-            Contractor con = CONTRACTOR_SERVICE.createContractor(getUniqEmail(), getPassword(), getUserName(), NEY_YORK, getStreet(), userCount);
+            Contractor con = CONTRACTOR_SERVICE.createContractor(getUniqEmail(), getPassword(), getUserName(), NEY_YORK, getStreet(), String.valueOf(userCount*4/3));
             int thisProposalCount = RANDOM.nextInt(MAX_PROPOSAL_COUNT_PER_CONTRACTOR);
             for (int j = 0; j < thisProposalCount; j++) {
                 Proposal proposal;

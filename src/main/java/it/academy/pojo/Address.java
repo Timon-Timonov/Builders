@@ -19,5 +19,5 @@ public class Address {
 
     private String street;
 
-    private Integer building;
+    private String building;
 }

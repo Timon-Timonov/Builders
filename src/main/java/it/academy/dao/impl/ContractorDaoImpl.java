@@ -46,21 +46,21 @@ public class ContractorDaoImpl extends DaoImpl<Contractor, Long> implements Cont
     }
 
     @Override
-    public Integer getCountOfContractors(UserStatus status) throws NoResultException, IOException {
+    public Long getCountOfContractors(UserStatus status) throws NoResultException, IOException {
 
-        TypedQuery<Integer> query = getEm().createQuery(
+        TypedQuery<Long> query = getEm().createQuery(
             "SELECT COUNT(co) FROM Contractor co WHERE co.user.status=:status",
-            Integer.class);
+            Long.class);
         return query.setParameter("status", status)
                    .getSingleResult();
     }
 
     @Override
-    public Integer getCountOfContractorsByDeveloperId(Long developerId, ProjectStatus status) throws NoResultException, IOException {
+    public Long getCountOfContractorsByDeveloperId(Long developerId, ProjectStatus status) throws NoResultException, IOException {
 
-        TypedQuery<Integer> query = getEm().createQuery(
+        TypedQuery<Long> query = getEm().createQuery(
             "SELECT COUNT(co) FROM Contractor co, Chapter ch WHERE co=ch.contractor AND ch.project.developer.id=:developerId AND ch.project.status=:status ",
-            Integer.class);
+            Long.class);
         return query.setParameter("developerId", developerId)
                    .setParameter("status", status)
                    .getSingleResult();

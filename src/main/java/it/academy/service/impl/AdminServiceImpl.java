@@ -109,7 +109,7 @@ public class AdminServiceImpl implements AdminService {
     public List<Project> getAllProjects(ProjectStatus status, int page, int count)
         throws IOException {
 
-        int totalCount = projectDao.getCountOfProjects(status);
+        long totalCount = projectDao.getCountOfProjects(status);
         page = Util.getCorrectPageNumber(page, count, totalCount);
 
         List<Project> list = new ArrayList<>();
@@ -125,7 +125,7 @@ public class AdminServiceImpl implements AdminService {
     public List<Contractor> getAllContractors(UserStatus status, int page, int count)
         throws IOException {
 
-        int totalCount = contractorDao.getCountOfContractors(status);
+        long totalCount = contractorDao.getCountOfContractors(status);
         page = Util.getCorrectPageNumber(page, count, totalCount);
 
         List<Contractor> list = new ArrayList<>();
@@ -141,7 +141,7 @@ public class AdminServiceImpl implements AdminService {
     public List<Developer> getAllDevelopers(UserStatus status, int page, int count)
         throws IOException {
 
-        int totalCount = developerDao.getCountOfDevelopers(status);
+        long totalCount = developerDao.getCountOfDevelopers(status);
         page = Util.getCorrectPageNumber(page, count, totalCount);
 
         List<Developer> list = new ArrayList<>();

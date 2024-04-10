@@ -36,7 +36,7 @@ public class ContractorServiceImpl implements ContractorService {
 
     @Override
     public Contractor createContractor(
-        String email, String password, String name, String city, String street, Integer building)
+        String email, String password, String name, String city, String street, String building)
         throws IOException, NotCreateDataInDbException, EmailOccupaidException {
 
         AtomicReference<Contractor> contractor = new AtomicReference<>();
@@ -119,7 +119,7 @@ public class ContractorServiceImpl implements ContractorService {
     public List<Project> getMyProjects(Long contractorId, ProjectStatus status, int page, int count)
         throws IOException {
 
-        int totalCount = projectDao.getCountOfProjectsByContractorId(contractorId, status);
+        long totalCount = projectDao.getCountOfProjectsByContractorId(contractorId, status);
         page = Util.getCorrectPageNumber(page, count, totalCount);
 
         List<Project> list = new ArrayList<>();
@@ -136,7 +136,7 @@ public class ContractorServiceImpl implements ContractorService {
         Long developerId, Long contractorId, ProjectStatus status, int page, int count)
         throws IOException {
 
-        int totalCount = projectDao.getCountOfProjectsByDeveloperIdContractorId(developerId, contractorId, status);
+        long totalCount = projectDao.getCountOfProjectsByDeveloperIdContractorId(developerId, contractorId, status);
         page = Util.getCorrectPageNumber(page, count, totalCount);
 
         List<Project> list = new ArrayList<>();
@@ -164,7 +164,7 @@ public class ContractorServiceImpl implements ContractorService {
     @Override
     public List<Chapter> getFreeChapters(String chapterName, int page, int count) throws IOException {
 
-        int totalCount = chapterDao.getCountOfFreeChaptersByName(chapterName);
+        long totalCount = chapterDao.getCountOfFreeChaptersByName(chapterName);
         page = Util.getCorrectPageNumber(page, count, totalCount);
 
         List<Chapter> list = new ArrayList<>();
@@ -180,7 +180,7 @@ public class ContractorServiceImpl implements ContractorService {
     public List<Developer> getMyDevelopers(Long contractorId, ProjectStatus status, int page, int count)
         throws IOException {
 
-        int totalCount = developerDao.getCountOfDevelopers(contractorId, status);
+        long totalCount = developerDao.getCountOfDevelopers(contractorId, status);
         page = Util.getCorrectPageNumber(page, count, totalCount);
 
         List<Developer> list = new ArrayList<>();
@@ -196,7 +196,7 @@ public class ContractorServiceImpl implements ContractorService {
     public List<Proposal> getMyProposals(Long contractorId, ProposalStatus status, int page, int count)
         throws IOException {
 
-        int totalCount = proposalDao.getCountOfProposalsByContractorId(contractorId, status);
+        long totalCount = proposalDao.getCountOfProposalsByContractorId(contractorId, status);
         page = Util.getCorrectPageNumber(page, count, totalCount);
 
         List<Proposal> list = new ArrayList<>();
@@ -226,7 +226,7 @@ public class ContractorServiceImpl implements ContractorService {
     public List<Calculation> getCalculationsByChapter(Long chapterId, int page, int count)
         throws IOException {
 
-        int totalCount = calculationDao.getCountOfCalculationsByChapterId(chapterId);
+        long totalCount = calculationDao.getCountOfCalculationsByChapterId(chapterId);
         page = Util.getCorrectPageNumber(page, count, totalCount);
 
         List<Calculation> list = new ArrayList<>();
@@ -244,15 +244,8 @@ public class ContractorServiceImpl implements ContractorService {
 
         AtomicBoolean isUpdated = new AtomicBoolean(false);
         calculationDao.executeInOneTransaction(() -> {
-            Calculation calculationFromDb = null;
-            try {
-                calculationFromDb = calculationDao.get(calculationId);
-            } catch (EntityNotFoundException e) {
-                log.error("Calculation not found. id=" + calculationId);
-            }
-            if (calculationFromDb != null) {
-                calculationFromDb.setWorkPriceFact(workPriceFact);
-                calculationDao.update(calculationFromDb);
+            int count = calculationDao.updateWorkPriceFact(workPriceFact, calculationId);
+            if (1 == count) {
                 log.trace("Workprice updated. id=" + calculationId + ", value=" + workPriceFact);
                 isUpdated.set(true);
             } else {
@@ -376,5 +369,14 @@ public class ContractorServiceImpl implements ContractorService {
             throw new NotCreateDataInDbException();
         }
         return proposal.get();
+    }
+
+    @Override
+    public Integer getTotalDeptByDeveloper(Long contractorId, Long developerId) throws IOException {
+
+        return chapterDao.getAllChaptersByDeveloperIdContractorId(developerId, contractorId)
+                   .stream()
+                   .map(Util::getDebtByChapter)
+                   .reduce(0, Integer::sum);
     }
 }

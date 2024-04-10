@@ -13,7 +13,7 @@ public class AddressDto {
 
     private String street;
 
-    private Integer building;
+    private String building;
 
     @Override
     public String toString() {
