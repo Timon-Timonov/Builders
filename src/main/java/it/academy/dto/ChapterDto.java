@@ -30,5 +30,10 @@ public class ChapterDto {
     private String contractorName;
 
     private String DeveloperName;
+
+    public ChapterDto(AddressDto projectAddress) {
+
+        this.projectAddress = projectAddress;
+    }
 }
 

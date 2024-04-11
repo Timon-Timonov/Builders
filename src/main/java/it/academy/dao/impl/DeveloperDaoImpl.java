@@ -35,7 +35,7 @@ public class DeveloperDaoImpl extends DaoImpl<Developer, Long> implements Develo
         throws IOException {
 
         TypedQuery<Developer> query = getEm().createQuery(
-            "SELECT d FROM Developer d, Chapter c WHERE c.project.developer=d AND c.contractor.id=:contractorId AND c.project.status=:status ORDER BY d.name",
+            "SELECT d FROM Developer d, Chapter c WHERE c.project.developer.id=d.id AND c.contractor.id=:contractorId AND c.project.status=:status ORDER BY d.name",
             Developer.class);
         return query.setParameter("contractorId", contractorId)
                    .setParameter("status", status)
@@ -58,7 +58,7 @@ public class DeveloperDaoImpl extends DaoImpl<Developer, Long> implements Develo
     public Long getCountOfDevelopers(Long contractorId, ProjectStatus status) throws NoResultException, IOException {
 
         TypedQuery<Long> query = getEm().createQuery(
-            "SELECT COUNT (d) FROM Developer d, Chapter c WHERE c.project.developer=d AND c.contractor.id=:contractorId AND c.project.status=:status",
+            "SELECT COUNT (d) FROM Developer d, Chapter c WHERE c.project.developer.id=d.id AND c.contractor.id=:contractorId AND c.project.status=:status",
 
             Long.class);
         return query.setParameter("contractorId", contractorId)

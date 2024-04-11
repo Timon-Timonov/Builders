@@ -40,7 +40,7 @@ public class ContractorControllerImpl implements ContractorController {
     }
 
     @Override
-    public List<ProjectDto> getMyProjects(Long contractorId, ProjectStatus status, int page, int count) throws IOException {
+    public List<ProjectDto> getMyProjects(Long contractorId, ProjectStatus status, Integer page, int count) throws IOException {
 
         return contractorService.getMyProjects(contractorId, status, page, count)
                    .stream()

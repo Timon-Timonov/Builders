@@ -24,7 +24,7 @@ public interface ContractorService {
 
     Contractor getContractor(Long userId) throws IOException, RoleException;
 
-    List<Project> getMyProjects(Long contractorId, ProjectStatus status, int page, int count) throws IOException;
+    List<Project> getMyProjects(Long contractorId, ProjectStatus status, Integer page, int count) throws IOException;
 
     List<Project> getMyProjectsByDeveloper
         (Long developerId, Long contractorId, ProjectStatus status, int page, int count)

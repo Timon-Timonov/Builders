@@ -5,14 +5,8 @@ import it.academy.exceptions.EmailOccupaidException;
 import it.academy.exceptions.NotCreateDataInDbException;
 import it.academy.exceptions.NotUpdateDataInDbException;
 import it.academy.exceptions.RoleException;
-import it.academy.pojo.Calculation;
-import it.academy.pojo.Chapter;
-import it.academy.pojo.Project;
-import it.academy.pojo.Proposal;
 import it.academy.pojo.enums.ProjectStatus;
 import it.academy.pojo.enums.ProposalStatus;
-import it.academy.pojo.legalEntities.Contractor;
-import it.academy.pojo.legalEntities.Developer;
 
 import java.io.IOException;
 import java.util.List;
@@ -25,7 +19,7 @@ public interface ContractorController {
 
     ContractorDto getContractor(Long userId) throws IOException, RoleException;
 
-    List<ProjectDto> getMyProjects(Long contractorId, ProjectStatus status, int page, int count) throws IOException;
+    List<ProjectDto> getMyProjects(Long contractorId, ProjectStatus status, Integer page, int count) throws IOException;
 
     List<ProjectDto> getMyProjectsByDeveloper
         (Long developerId, Long contractorId, ProjectStatus status, int page, int count)

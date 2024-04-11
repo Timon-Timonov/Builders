@@ -116,7 +116,7 @@ public class ContractorServiceImpl implements ContractorService {
     }
 
     @Override
-    public List<Project> getMyProjects(Long contractorId, ProjectStatus status, int page, int count)
+    public List<Project> getMyProjects(Long contractorId, ProjectStatus status, Integer page, int count)
         throws IOException {
 
         long totalCount = projectDao.getCountOfProjectsByContractorId(contractorId, status);
