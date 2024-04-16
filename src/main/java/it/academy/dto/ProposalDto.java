@@ -1,5 +1,6 @@
 package it.academy.dto;
 
+import it.academy.pojo.enums.ProjectStatus;
 import it.academy.pojo.enums.ProposalStatus;
 import lombok.*;
 
@@ -30,6 +31,10 @@ public class ProposalDto {
     private String developerName;
 
     private String contractorName;
+
+    private String projectAddress;
+
+    private ProjectStatus projectStatus;
 
     private Timestamp createdDate;
 }

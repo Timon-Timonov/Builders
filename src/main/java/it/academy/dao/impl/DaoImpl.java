@@ -2,7 +2,8 @@ package it.academy.dao.impl;
 
 import it.academy.dao.Dao;
 import it.academy.util.HibernateUtil;
-import it.academy.util.functionalInterfaces.TransactionBody;
+import it.academy.util.functionalInterfaces.TransactionObjectBody;
+import it.academy.util.functionalInterfaces.TransactionVoidBody;
 import lombok.extern.log4j.Log4j2;
 import org.hibernate.exception.ConstraintViolationException;
 
@@ -13,8 +14,7 @@ import javax.persistence.RollbackException;
 import java.io.IOException;
 import java.util.List;
 
-import static it.academy.util.Constants.SELECT_ALL_FROM_TABLE;
-import static it.academy.util.Constants.SELECT_COUNT_FROM_TABLE;
+import static it.academy.util.Constants.*;
 
 @Log4j2
 public class DaoImpl<T, R> implements Dao<T, R> {
@@ -56,9 +56,8 @@ public class DaoImpl<T, R> implements Dao<T, R> {
     public void create(T object) {
 
         getEm().persist(object);
-        log.info("Created successful" + object);
+        log.info(CREATED_SUCCESSFUL + object);
     }
-
 
     @Override
     public long countOfEntitiesInBase() {
@@ -68,16 +67,37 @@ public class DaoImpl<T, R> implements Dao<T, R> {
     }
 
     @Override
-    public void executeInOneTransaction(TransactionBody body)
+    public void executeInOneTransaction(TransactionVoidBody body)
         throws RollbackException, IOException, EntityNotFoundException, NoResultException, ConstraintViolationException {
 
         try {
             getEm().getTransaction().begin();
             body.execute();
             getEm().getTransaction().commit();
+        } catch (Exception e) {
+            getEm().getTransaction().rollback();
+            throw e;
         } finally {
             closeManager();
         }
+    }
+
+    @Override
+    public Object executeInOneTransaction(TransactionObjectBody body)
+        throws RollbackException, IOException, EntityNotFoundException, NoResultException, ConstraintViolationException {
+
+        Object o;
+        try {
+            getEm().getTransaction().begin();
+            o = body.execute();
+            getEm().getTransaction().commit();
+        } catch (Exception e) {
+            getEm().getTransaction().rollback();
+            throw e;
+        } finally {
+            closeManager();
+        }
+        return o;
     }
 
 

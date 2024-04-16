@@ -21,11 +21,11 @@ public interface DeveloperController {
 
     DeveloperDto getDeveloper(Long userId) throws IOException, RoleException;
 
-    List<ProjectDto> getMyProjects(Long developerId, ProjectStatus status, int page, int count) throws IOException;
+    Page<ProjectDto> getMyProjects(Long developerId, ProjectStatus status, int page, int count) throws IOException;
 
-    List<ContractorDto> getMyContractors(Long developerId, ProjectStatus status, int page, int count) throws IOException;
+    Page<ContractorDto> getMyContractors(Long developerId, ProjectStatus status, int page, int count) throws IOException;
 
-    List<ProposalDto> getAllMyProposals(Long developerId, ProposalStatus status, int page, int count) throws IOException;
+    Page<ProposalDto> getAllMyProposals(Long developerId, ProposalStatus status, int page, int count) throws IOException;
 
     void createProject(Long developerId, String name, String city, String street, String building)
         throws IOException, NotCreateDataInDbException;
@@ -36,14 +36,14 @@ public interface DeveloperController {
 
     List<ChapterDto> getChaptersByProjectId(Long projectId) throws IOException;
 
-    List<ChapterDto> getChaptersByContractorId(Long contractorId, ChapterStatus status, int page, int count)
+    Page<ChapterDto> getChaptersByContractorId(Long contractorId, ChapterStatus status, int page, int count)
         throws IOException;
 
     void rejectProposal(Long proposalId) throws IOException, NotUpdateDataInDbException;
 
     void approveProposal(Long proposalId) throws IOException, NotUpdateDataInDbException;
 
-    List<ProposalDto> getProposalsByChapterId(Long chapterId, ProposalStatus status, int page, int count)
+    Page<ProposalDto> getProposalsByChapterId(Long chapterId, ProposalStatus status, int page, int count)
         throws IOException;
 
     void startProject(Long projectId) throws IOException, NotUpdateDataInDbException;
@@ -52,11 +52,11 @@ public interface DeveloperController {
 
     void cancelProject(Long projectId) throws IOException, NotUpdateDataInDbException;
 
-    List<CalculationDto> getCalculationsByChapterId(Long chapterId, int page, int count) throws IOException;
+    Page<CalculationDto> getCalculationsByChapterId(Long chapterId, int page, int count) throws IOException;
 
-    void payAdvance(Integer sum, Long calculationId) throws IOException, NotCreateDataInDbException;
+    void payAdvance(int sum, Long calculationId) throws IOException, NotCreateDataInDbException;
 
-    void payForWork(Integer sum, Long calculationId) throws IOException, NotCreateDataInDbException;
+    void payForWork(int sum, Long calculationId) throws IOException, NotCreateDataInDbException;
 
     Integer getProjectDept(Project project);
 

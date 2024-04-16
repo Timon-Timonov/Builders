@@ -48,7 +48,7 @@ public class ProjectDaoImpl extends DaoImpl<Project, Long> implements ProjectDao
         throws NoResultException {
 
         TypedQuery<Project> query = getEm().createQuery(
-            "SELECT p FROM Project p, Chapter ch WHERE p.developer.id=:developerId AND p.status=:status AND ch MEMBER OF p.chapters AND ch.contractor.id=:contractorId ORDER BY p.developer.name ASC",
+            "SELECT DISTINCT (p) FROM Project p, Chapter ch WHERE p.developer.id=:developerId AND p.status=:status AND ch MEMBER OF p.chapters AND ch.contractor.id=:contractorId ORDER BY p.name ASC",
             Project.class);
         return query.setParameter("contractorId", contractorId)
                    .setParameter("developerId", developerId)

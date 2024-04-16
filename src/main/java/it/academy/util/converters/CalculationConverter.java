@@ -4,7 +4,11 @@ import it.academy.dto.CalculationDto;
 import it.academy.pojo.Calculation;
 import it.academy.pojo.Chapter;
 
+import static it.academy.util.Constants.MONTH;
+import static it.academy.util.Constants.YEAR;
+
 public class CalculationConverter {
+
 
     private CalculationConverter() {
     }
@@ -15,8 +19,8 @@ public class CalculationConverter {
         if (chapter == null) {
             chapter = new Chapter();
         }
-        int YYYY = from.getMonth().getYear() + 1900;
-        int MM = from.getMonth().getMonth() + 1;
+        int YYYY = from.getMonth().getYear() + YEAR;
+        int MM = from.getMonth().getMonth() + MONTH;
 
         return CalculationDto.builder()
 

@@ -47,37 +47,4 @@ public class Chapter {
     @Builder.Default
     @OneToMany(mappedBy = "chapter", fetch = FetchType.EAGER)
     private Set<Calculation> calculationSet = new HashSet<>();
-
-    public void setContractor(Contractor contractor) {
-
-        if (ChapterStatus.FREE.equals(status) && contractor != null) {
-            this.status = ChapterStatus.OCCUPIED;
-            this.contractor = contractor;
-            this.contractor.getChapters().add(this);
-        }
-    }
-
-    public void setStatus(ChapterStatus newStatus) {
-
-        if (ChapterStatus.CANCELED.equals(newStatus)) {
-            proposalSet.forEach(proposal -> proposal.setStatus(ProposalStatus.CANCELED));
-        }
-        this.status = newStatus;
-    }
-
-    public void addCalculation(Calculation calculation) {
-
-        if (calculation != null) {
-            calculation.setChapter(this);
-            calculationSet.add(calculation);
-        }
-    }
-
-    public void addProposal(Proposal proposal) {
-
-        if (proposal != null) {
-            proposal.setChapter(this);
-            proposalSet.add(proposal);
-        }
-    }
 }

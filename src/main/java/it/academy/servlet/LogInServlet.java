@@ -14,7 +14,9 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
-@WebServlet(name = "logInServlet", urlPatterns = "/login_servlet")
+import static it.academy.util.Constants.*;
+
+@WebServlet(name = "logInServlet", urlPatterns = SLASH_STRING + LOGIN_SERVLET)
 public class LogInServlet extends HttpServlet {
 
     private final AdminController adminController = new AdminControllerImpl();
@@ -22,15 +24,15 @@ public class LogInServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
-        getServletContext().getRequestDispatcher("/login_page.jsp").forward(req, resp);
+        getServletContext().getRequestDispatcher(LOGIN_PAGE_JSP).forward(req, resp);
     }
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
         HttpSession session = req.getSession();
-        String email = req.getParameter("email");
-        String password = req.getParameter("password");
+        String email = req.getParameter(EMAIL_PARAM);
+        String password = req.getParameter(PASSWORD_PARAM);
         if (email != null && !email.isEmpty()) {
             UserDto userDto = adminController.getUser(email);
             if (userDto.getId() != null) {
@@ -38,45 +40,44 @@ public class LogInServlet extends HttpServlet {
                     if (password.equals(userDto.getPassword())) {
 
                         if (UserStatus.CANCELED.equals(userDto.getUserStatus())) {
-                            forwardToException1(req, resp, "User has not active status. It is impossible to use this account!");
+                            forwardToException1(req, resp, USER_HAS_NOT_ACTIVE_STATUS_IT_IS_IMPOSSIBLE_TO_USE_THIS_ACCOUNT);
                         }
-                        session.setAttribute("email", email);
-                        session.setAttribute("password", password);
+                        session.setAttribute(EMAIL_PARAM, email);
+                        session.setAttribute(PASSWORD_PARAM, password);
                         Roles role = userDto.getUserRole();
-                        session.setAttribute("role", role);
-                        session.setAttribute("id", userDto.getId());
+                        session.setAttribute(ROLE_PARAM, role);
+                        session.setAttribute(ID_PARAM, userDto.getId());
 
                         switch (role) {
                             case CONTRACTOR:
-                                getServletContext().getRequestDispatcher("/contractor_pages/main.jsp").forward(req, resp);
+                                getServletContext().getRequestDispatcher(CONTRACTOR_PAGES_MAIN_JSP).forward(req, resp);
                                 break;
                             case DEVELOPER:
-                                getServletContext().getRequestDispatcher("/developer_pages/main.jsp").forward(req, resp);
+                                getServletContext().getRequestDispatcher(DEVELOPER_PAGES_MAIN_JSP).forward(req, resp);
                                 break;
                             case ADMIN:
-                                getServletContext().getRequestDispatcher("/admin_pages/main.jsp").forward(req, resp);
+                                getServletContext().getRequestDispatcher(ADMIN_PAGES_MAIN_JSP).forward(req, resp);
                                 break;
                             default:
-                                forwardToException1(req, resp, "Role is invalid!");
+                                forwardToException1(req, resp, ROLE_IS_INVALID);
                         }
                     } else {
-                        forwardToException1(req, resp, "Password is invalid!");
+                        forwardToException1(req, resp, PASSWORD_IS_INVALID);
                     }
                 } else {
-                    forwardToException1(req, resp, "Password is empty!");
+                    forwardToException1(req, resp, PASSWORD_IS_EMPTY);
                 }
             } else {
-                forwardToException1(req, resp, "Email is invalid!");
+                forwardToException1(req, resp, EMAIL_IS_INVALID);
             }
         } else {
-            forwardToException1(req, resp, "Email is empty!");
+            forwardToException1(req, resp, EMAIL_IS_EMPTY);
         }
     }
 
     private void forwardToException1(HttpServletRequest req, HttpServletResponse resp, String s) throws ServletException, IOException {
 
-        req.setAttribute("message", s);
-        req.setAttribute("url","login_servlet");
-        getServletContext().getRequestDispatcher("/exception_pages/exception_page_1.jsp").forward(req, resp);
+        req.setAttribute(MESSAGE_PARAM, s);
+        getServletContext().getRequestDispatcher(EXCEPTION_PAGES_EXCEPTION_PAGE_1_JSP).forward(req, resp);
     }
 }

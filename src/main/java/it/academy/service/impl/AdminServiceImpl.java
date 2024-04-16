@@ -2,6 +2,7 @@ package it.academy.service.impl;
 
 import it.academy.dao.*;
 import it.academy.dao.impl.*;
+import it.academy.dto.Page;
 import it.academy.exceptions.EmailOccupaidException;
 import it.academy.exceptions.NotCreateDataInDbException;
 import it.academy.exceptions.NotUpdateDataInDbException;
@@ -25,6 +26,8 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
+import static it.academy.util.Constants.*;
+
 @Log4j2
 public class AdminServiceImpl implements AdminService {
 
@@ -44,7 +47,9 @@ public class AdminServiceImpl implements AdminService {
         try {
             user = userDao.getUser(email);
         } catch (NoResultException e) {
-            log.error("There is no such data in DB with email=" + email);
+            log.error(THERE_IS_NO_SUCH_DATA_IN_DB_WITH_EMAIL + email);
+        } finally {
+            userDao.closeManager();
         }
         return user;
     }
@@ -59,10 +64,10 @@ public class AdminServiceImpl implements AdminService {
             try {
                 user = userDao.getUser(email);
             } catch (NoResultException e) {
-                log.trace("Email " + email + " not occupied", e);
+                log.trace(EMAIL + email + NOT_OCCUPIED, e);
             }
             if (user != null) {
-                log.trace("Email " + email + " occupied");
+                log.trace(EMAIL + email + OCCUPIED);
                 isEmailOccupaid.set(true);
             } else {
                 User newUser = User.builder()
@@ -76,7 +81,7 @@ public class AdminServiceImpl implements AdminService {
             }
         });
         if (isEmailOccupaid.get()) {
-            throw new EmailOccupaidException("Email " + email + " occupied");
+            throw new EmailOccupaidException(EMAIL + email + OCCUPIED);
         } else if (userFromDB.get() == null) {
             throw new NotCreateDataInDbException();
         }
@@ -92,11 +97,11 @@ public class AdminServiceImpl implements AdminService {
             try {
                 user = userDao.get(userId);
             } catch (EntityNotFoundException e) {
-                log.error("There is no such data in DB with userId=" + userId);
+                log.error(THERE_IS_NO_SUCH_DATA_IN_DB_WITH_USER_ID + userId);
             }
             if (user != null) {
                 user.setStatus(UserStatus.CANCELED);
-                log.trace("User canceled userId=" + userId);
+                log.trace(USER_CANCELED_USER_ID + userId);
                 isUpdated.set(true);
             }
         });
@@ -106,51 +111,57 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
-    public List<Project> getAllProjects(ProjectStatus status, int page, int count)
+    public Page<Project> getAllProjects(ProjectStatus status, int page, int count)
         throws IOException {
 
-        long totalCount = projectDao.getCountOfProjects(status);
-        page = Util.getCorrectPageNumber(page, count, totalCount);
-
+        int correctPage = FIRST_PAGE_NUMBER;
         List<Project> list = new ArrayList<>();
         try {
-            list.addAll(new ArrayList<>(projectDao.getProjects(status, page, count)));
+            long totalCount = projectDao.getCountOfProjects(status);
+            correctPage = Util.getCorrectPageNumber(page, count, totalCount);
+            list.addAll(new ArrayList<>(projectDao.getProjects(status, correctPage, count)));
         } catch (NoResultException e) {
-            log.error("There is no such data in DB with projectStatus=" + status);
+            log.error(THERE_IS_NO_SUCH_DATA_IN_DB_WITH_PROJECT_STATUS + status);
+        } finally {
+            projectDao.closeManager();
         }
-        return list;
+        return new Page<>(list, correctPage);
     }
 
     @Override
-    public List<Contractor> getAllContractors(UserStatus status, int page, int count)
+    public Page<Contractor> getAllContractors(UserStatus status, int page, int count)
         throws IOException {
 
-        long totalCount = contractorDao.getCountOfContractors(status);
-        page = Util.getCorrectPageNumber(page, count, totalCount);
-
+        int correctPage = FIRST_PAGE_NUMBER;
         List<Contractor> list = new ArrayList<>();
         try {
-            list.addAll(contractorDao.getContractors(status, page, count));
+            long totalCount = contractorDao.getCountOfContractors(status);
+            correctPage = Util.getCorrectPageNumber(page, count, totalCount);
+            list.addAll(contractorDao.getContractors(status, correctPage, count));
         } catch (Exception e) {
-            log.error("There is no such data in DB with userStatus=" + status);
+            log.error(THERE_IS_NO_SUCH_DATA_IN_DB_WITH_USER_STATUS + status);
+        } finally {
+            contractorDao.closeManager();
         }
-        return list;
+        return new Page<>(list, correctPage);
     }
 
     @Override
-    public List<Developer> getAllDevelopers(UserStatus status, int page, int count)
+    public Page<Developer> getAllDevelopers(UserStatus status, int page, int count)
         throws IOException {
 
-        long totalCount = developerDao.getCountOfDevelopers(status);
-        page = Util.getCorrectPageNumber(page, count, totalCount);
-
+        int correctPage = FIRST_PAGE_NUMBER;
         List<Developer> list = new ArrayList<>();
         try {
-            list = new ArrayList<>(developerDao.getDevelopers(status, page, count));
+            long totalCount = developerDao.getCountOfDevelopers(status);
+            correctPage = Util.getCorrectPageNumber(page, count, totalCount);
+            list = new ArrayList<>(developerDao.getDevelopers(status, correctPage, count));
         } catch (Exception e) {
-            log.error("There is no such data in DB with userStatus=" + status);
+            log.error(THERE_IS_NO_SUCH_DATA_IN_DB_WITH_USER_STATUS + status);
+        } finally {
+            developerDao.closeManager();
         }
-        return list;
+        return new Page<>(list, correctPage);
     }
 
 
@@ -161,16 +172,16 @@ public class AdminServiceImpl implements AdminService {
         userDao.executeInOneTransaction(() -> {
             try {
                 userDao.delete(userId);
-                log.debug("User delete id=" + userId);
+                log.debug(USER_DELETE_ID + userId);
                 isDeleted.set(true);
             } catch (EntityNotFoundException e) {
-                log.error("There is no such data in DB with id=" + userId);
+                log.error(THERE_IS_NO_SUCH_DATA_IN_DB_WITH_ID + userId);
             } catch (ConstraintViolationException e) {
-                log.error("delete fail user id=" + userId, e);
+                log.error(DELETE_FAIL_USER_ID + userId, e);
             }
         });
         if (!isDeleted.get()) {
-            throw new NotUpdateDataInDbException("Failed by constraint.");
+            throw new NotUpdateDataInDbException(FAILED_BY_CONSTRAINT);
         }
     }
 
@@ -181,16 +192,16 @@ public class AdminServiceImpl implements AdminService {
         calculationDao.executeInOneTransaction(() -> {
             try {
                 userDao.delete(calculationId);
-                log.debug("Calculation delete id=" + calculationId);
+                log.debug(CALCULATION_DELETE_ID + calculationId);
                 isDeleted.set(true);
             } catch (EntityNotFoundException e) {
-                log.error("There is no such data in DB with id=" + calculationId);
+                log.error(THERE_IS_NO_SUCH_DATA_IN_DB_WITH_ID1 + calculationId);
             } catch (ConstraintViolationException e) {
-                log.error("delete fail calculation id=" + calculationId, e);
+                log.error(DELETE_FAIL_CALCULATION_ID + calculationId, e);
             }
         });
         if (!isDeleted.get()) {
-            throw new NotUpdateDataInDbException("Failed by constraint.");
+            throw new NotUpdateDataInDbException(FAILED_BY_CONSTRAINT);
         }
     }
 
@@ -201,16 +212,16 @@ public class AdminServiceImpl implements AdminService {
         chapterDao.executeInOneTransaction(() -> {
             try {
                 userDao.delete(chapterId);
-                log.debug("Chapter delete id=" + chapterId);
+                log.debug(CHAPTER_DELETE_ID + chapterId);
                 isDeleted.set(true);
             } catch (EntityNotFoundException e) {
-                log.error("There is no such data in DB with id=" + chapterId);
+                log.error(THERE_IS_NO_SUCH_DATA_IN_DB_WITH_ID + chapterId);
             } catch (ConstraintViolationException e) {
-                log.error("delete failchapter id=" + chapterId, e);
+                log.error(DELETE_FAIL_CHAPTER_ID + chapterId, e);
             }
         });
         if (!isDeleted.get()) {
-            throw new NotUpdateDataInDbException("Failed by constraint.");
+            throw new NotUpdateDataInDbException(FAILED_BY_CONSTRAINT);
         }
     }
 
@@ -221,16 +232,16 @@ public class AdminServiceImpl implements AdminService {
         moneyTransferDao.executeInOneTransaction(() -> {
             try {
                 userDao.delete(transferId);
-                log.debug("MoneyTransfer delete id=" + transferId);
+                log.debug(MONEY_TRANSFER_DELETE_ID + transferId);
                 isDeleted.set(true);
             } catch (EntityNotFoundException e) {
-                log.error("There is no such data in DB with id=" + transferId);
+                log.error(THERE_IS_NO_SUCH_DATA_IN_DB_WITH_ID + transferId);
             } catch (ConstraintViolationException e) {
-                log.error("delete fail moneyTransfer id=" + transferId, e);
+                log.error(DELETE_FAIL_MONEY_TRANSFER_ID + transferId, e);
             }
         });
         if (!isDeleted.get()) {
-            throw new NotUpdateDataInDbException("Failed by constraint.");
+            throw new NotUpdateDataInDbException(FAILED_BY_CONSTRAINT);
         }
     }
 
@@ -241,16 +252,16 @@ public class AdminServiceImpl implements AdminService {
         projectDao.executeInOneTransaction(() -> {
             try {
                 userDao.delete(projectId);
-                log.debug("Project delete id=" + projectId);
+                log.debug(PROJECT_DELETE_ID + projectId);
                 isDeleted.set(true);
             } catch (EntityNotFoundException e) {
-                log.error("There is no such data in DB with id=" + projectId);
+                log.error(THERE_IS_NO_SUCH_DATA_IN_DB_WITH_ID + projectId);
             } catch (ConstraintViolationException e) {
-                log.error("delete fail project id=" + projectId, e);
+                log.error(DELETE_FAIL_PROJECT_ID + projectId, e);
             }
         });
         if (!isDeleted.get()) {
-            throw new NotUpdateDataInDbException("Failed by constraint.");
+            throw new NotUpdateDataInDbException(FAILED_BY_CONSTRAINT);
         }
     }
 
@@ -261,16 +272,16 @@ public class AdminServiceImpl implements AdminService {
         proposalDao.executeInOneTransaction(() -> {
             try {
                 userDao.delete(proposalId);
-                log.debug("Proposal delete id=" + proposalId);
+                log.debug(PROPOSAL_DELETE_ID + proposalId);
                 isDeleted.set(true);
             } catch (EntityNotFoundException e) {
-                log.error("There is no such data in DB with id=" + proposalId);
+                log.error(THERE_IS_NO_SUCH_DATA_IN_DB_WITH_ID + proposalId);
             } catch (ConstraintViolationException e) {
-                log.error("delete fail proposal id=" + proposalId, e);
+                log.error(DELETE_FAIL_PROPOSAL_ID + proposalId, e);
             }
         });
         if (!isDeleted.get()) {
-            throw new NotUpdateDataInDbException("Failed by constraint.");
+            throw new NotUpdateDataInDbException(FAILED_BY_CONSTRAINT);
         }
     }
 }

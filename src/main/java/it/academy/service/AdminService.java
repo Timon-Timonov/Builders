@@ -1,5 +1,6 @@
 package it.academy.service;
 
+import it.academy.dto.Page;
 import it.academy.exceptions.EmailOccupaidException;
 import it.academy.exceptions.NotCreateDataInDbException;
 import it.academy.exceptions.NotUpdateDataInDbException;
@@ -19,11 +20,11 @@ public interface AdminService {
 
     User getUser(String email) throws IOException;
 
-    List<Contractor> getAllContractors(UserStatus status, int page, int count) throws IOException;
+    Page<Contractor> getAllContractors(UserStatus status, int page, int count) throws IOException;
 
-    List<Developer> getAllDevelopers(UserStatus status, int page, int count) throws IOException;
+    Page<Developer> getAllDevelopers(UserStatus status, int page, int count) throws IOException;
 
-    List<Project> getAllProjects(ProjectStatus status, int page, int count) throws IOException;
+    Page<Project> getAllProjects(ProjectStatus status, int page, int count) throws IOException;
 
 
     void cancelUser(Long userId) throws IOException, NotUpdateDataInDbException;

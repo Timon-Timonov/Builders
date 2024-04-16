@@ -1,3 +1,4 @@
+<%@ page import="static it.academy.util.Constants.*" %>
 <%@ page contentType="text/html;charset=UTF-8" %>
 <html>
 <head>
@@ -10,7 +11,7 @@
 <body>
 <div class="container text-center">
     <p>Ups... It is problem:</p>
-    <%String message = (String) request.getAttribute("message");%>
+    <%String message = (String) request.getAttribute(MESSAGE_PARAM);%>
     <p><%=message%>
     </p>
     <%String ExitButtonName = "Back";%>

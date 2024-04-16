@@ -23,22 +23,22 @@ public class ChapterDaoImpl extends DaoImpl<Chapter, Long> implements ChapterDao
         throws IOException {
 
         TypedQuery<String> query = getEm().createQuery(
-            "SELECT ch.name FROM Chapter ch ORDER BY ch.name ASC ",
+            "SELECT DISTINCT (ch.name) FROM Chapter ch ORDER BY ch.name ASC ",
             String.class);
         return query.getResultList();
     }
 
     @Override
-    public List<Chapter> getFreeChapters(String chapterName, int page, int count)
+    public List<Chapter> getFreeChapters(Long contractorId,String chapterName, ProjectStatus projectStatus, int page, int count)
         throws IOException {
 
         TypedQuery<Chapter> query = getEm().createQuery(
-            "SELECT ch FROM Chapter ch WHERE ch.name=:chapterName AND ch.status=:status AND ch.project.status<>:cancelStatus AND ch.project.status<>:completeStatus ORDER BY ch.name ASC",
+            "SELECT ch FROM Chapter ch, Proposal  prop WHERE prop.contractor.id=:contractorId AND prop.chapter<>ch AND ch.name=:chapterName AND ch.status=:status AND ch.project.status=:projectStatus ORDER BY ch.name ASC",
             Chapter.class);
         return query.setParameter("chapterName", chapterName)
                    .setParameter("status", ChapterStatus.FREE)
-                   .setParameter("cancelStatus", ProjectStatus.CANCELED)
-                   .setParameter("completeStatus", ProjectStatus.COMPLETED)
+                   .setParameter("projectStatus", projectStatus)
+                   .setParameter("contractorId", contractorId)
                    .setMaxResults(count)
                    .setFirstResult((page - 1) * count)
                    .getResultList();
@@ -94,15 +94,15 @@ public class ChapterDaoImpl extends DaoImpl<Chapter, Long> implements ChapterDao
     }
 
     @Override
-    public Long getCountOfFreeChaptersByName(String chapterName) throws NoResultException, IOException {
+    public Long getCountOfFreeChaptersByName(Long contractorId,String chapterName, ProjectStatus projectStatus) throws NoResultException, IOException {
 
         TypedQuery<Long> query = getEm().createQuery(
-            "SELECT Count(ch) FROM Chapter ch WHERE ch.name=:chapterName AND ch.status=:status AND ch.project.status<>:cancelStatus AND ch.project.status<>:completeStatus",
+            "SELECT Count(ch) FROM Chapter ch,Proposal prop WHERE prop.chapter<>ch AND prop.contractor.id=:contractorId AND ch.name=:chapterName AND ch.status=:status AND ch.project.status=:projectStatus",
             Long.class);
         return query.setParameter("chapterName", chapterName)
                    .setParameter("status", ChapterStatus.FREE)
-                   .setParameter("cancelStatus", ProjectStatus.CANCELED)
-                   .setParameter("completeStatus", ProjectStatus.COMPLETED)
+                   .setParameter("projectStatus", projectStatus)
+                   .setParameter("contractorId", contractorId)
                    .getSingleResult();
     }
 

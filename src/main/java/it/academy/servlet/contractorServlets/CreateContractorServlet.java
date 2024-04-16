@@ -16,43 +16,45 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
+import static it.academy.util.Constants.*;
+
 @Log4j2
-@WebServlet(name = "createContractorServlet", urlPatterns = "/create_contractor_servlet")
+@WebServlet(name = "createContractorServlet", urlPatterns = SLASH_STRING + CREATE_CONTRACTOR_SERVLET)
 public class CreateContractorServlet extends HttpServlet {
 
-    ContractorController contractorController = new ContractorControllerImpl();
+    private final ContractorController contractorController = new ContractorControllerImpl();
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
-        String email = req.getParameter("email");
-        String password = req.getParameter("password");
-        String name = req.getParameter("name");
-        String city = req.getParameter("city");
-        String street = req.getParameter("street");
-        String building = req.getParameter("building");
+        String email = req.getParameter(EMAIL_PARAM);
+        String password = req.getParameter(PASSWORD_PARAM);
+        String name = req.getParameter(NAME_PARAM);
+        String city = req.getParameter(CITY_PARAM);
+        String street = req.getParameter(STREET_PARAM);
+        String building = req.getParameter(BUILDING_PARAM);
 
         ContractorDto contractorDto = new ContractorDto();
         try {
             contractorDto = contractorController.createContractor(email, password, name, city, street, building);
         } catch (NotCreateDataInDbException e) {
-            req.setAttribute("message", "Account not create!");
-            getServletContext().getRequestDispatcher("/exception_pages/exception_creation_page_2.jsp").forward(req, resp);
+            req.setAttribute(MESSAGE_PARAM, ACCOUNT_NOT_CREATE);
+            getServletContext().getRequestDispatcher(EXCEPTION_PAGES_EXCEPTION_CREATION_PAGE_2_JSP).forward(req, resp);
         } catch (EmailOccupaidException e) {
-            log.debug("Email " + email + " is occupaid!", e);
-            req.setAttribute("message", "Email " + email + " is occupaid!");
-            getServletContext().getRequestDispatcher("/exception_pages/exception_creation_page_2.jsp").forward(req, resp);
+            log.debug(EMAIL + email + IS_OCCUPIED, e);
+            req.setAttribute(MESSAGE_PARAM, EMAIL + email + IS_OCCUPIED);
+            getServletContext().getRequestDispatcher(EXCEPTION_PAGES_EXCEPTION_CREATION_PAGE_2_JSP).forward(req, resp);
         }
 
         if (contractorDto.getId() != null) {
             HttpSession session = req.getSession();
-            session.setAttribute("email", email);
-            session.setAttribute("password", password);
-            session.setAttribute("role", Roles.CONTRACTOR);
-            getServletContext().getRequestDispatcher("/contractor_pages/main.jsp").forward(req, resp);
+            session.setAttribute(EMAIL_PARAM, email);
+            session.setAttribute(PASSWORD_PARAM, password);
+            session.setAttribute(ROLE_PARAM, Roles.CONTRACTOR);
+            getServletContext().getRequestDispatcher(CONTRACTOR_PAGES_MAIN_JSP).forward(req, resp);
         } else {
-            req.setAttribute("message", "Account not create!");
-            getServletContext().getRequestDispatcher("/exception_pages/exception_creation_page_2.jsp").forward(req, resp);
+            req.setAttribute(MESSAGE_PARAM, ACCOUNT_NOT_CREATE);
+            getServletContext().getRequestDispatcher(EXCEPTION_PAGES_EXCEPTION_CREATION_PAGE_2_JSP).forward(req, resp);
         }
     }
 }

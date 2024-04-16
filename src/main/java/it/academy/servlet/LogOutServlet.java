@@ -8,7 +8,9 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
-@WebServlet(name = "logOutServlet", urlPatterns = "/logout_servlet")
+import static it.academy.util.Constants.*;
+
+@WebServlet(name = "logOutServlet", urlPatterns = SLASH_STRING + LOGOUT_SERVLET)
 public class LogOutServlet extends HttpServlet {
 
     @Override
@@ -16,14 +18,20 @@ public class LogOutServlet extends HttpServlet {
 
         HttpSession session = req.getSession();
 
-
         ToMainServlet.clearSession(session);
 
+        session.removeAttribute(EMAIL_PARAM);
+        session.removeAttribute(PASSWORD_PARAM);
+        session.removeAttribute(ROLE_PARAM);
+        session.removeAttribute(ID_PARAM);
 
-        session.removeAttribute("login");
-        session.removeAttribute("password");
-        session.removeAttribute("role");
-        getServletContext().getRequestDispatcher("/index.jsp").forward(req, resp);
+        session.removeAttribute(TODO_PARAM);
+        session.removeAttribute(DEVELOPER_COUNT_ON_PAGE_PARAM);
+        session.removeAttribute(DEVELOPER_PAGE_PARAM);
+        session.removeAttribute(PROJECT_STATUS_PARAM);
+        session.removeAttribute(PROJECT_PAGE_PARAM);
+        session.removeAttribute(PROJECT_COUNT_ON_PAGE_PARAM);
+        getServletContext().getRequestDispatcher(INDEX_JSP).forward(req, resp);
     }
 
     @Override

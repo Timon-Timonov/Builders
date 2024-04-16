@@ -1,4 +1,5 @@
 <%@ page import="it.academy.pojo.enums.Roles" %>
+<%@ page import="static it.academy.util.Constants.*" %>
 <%@ page contentType="text/html;charset=UTF-8" %>
 <html>
 <head>
@@ -16,13 +17,13 @@
 </div>
 <div class="container text-center">
 
-    <form action="create_user_servlet" method="post">
-        <input type="hidden" value="<%=Roles.CONTRACTOR.toString()%>" name="role">
+    <form action="<%=CREATE_USER_SERVLET%>" method="post">
+        <input type="hidden" value="<%=Roles.CONTRACTOR.toString()%>" name="<%=ROLE_PARAM%>">
         <button class="btn btn-primary" type="submit">Create new contractor account</button>
     </form>
 
-    <form action="create_user_servlet" method="post">
-        <input type="hidden" value="<%=Roles.DEVELOPER.toString()%>" name="role">
+    <form action="<%=CREATE_USER_SERVLET%>" method="post">
+        <input type="hidden" value="<%=Roles.DEVELOPER.toString()%>" name="<%=ROLE_PARAM%>">
         <button class="btn btn-primary" type="submit">Create new developer account</button>
     </form>
     <br>

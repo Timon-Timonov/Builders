@@ -62,7 +62,7 @@ public class TestFullingBase {
 
     private void startInteraction() throws IOException, NotUpdateDataInDbException {
 
-        List<Project> allProjectList = ADMIN_SERVICE.getAllProjects(ProjectStatus.PREPARATION, 1, projectCount);
+        List<Project> allProjectList = ADMIN_SERVICE.getAllProjects(ProjectStatus.PREPARATION, 1, projectCount).getList();
         changeProjectStatus(allProjectList);
         List<Proposal> proposalList = getAllConsiderationsProposals();
         rejectAnyProposals(proposalList);
@@ -79,13 +79,13 @@ public class TestFullingBase {
         List<Chapter> aktivChapterList = new ArrayList<>();
         try {
             allAktiveDevelopers.addAll(
-                ADMIN_SERVICE.getAllDevelopers(UserStatus.AKTIVE, 1, DEVELOPER_COUNT));
+                ADMIN_SERVICE.getAllDevelopers(UserStatus.AKTIVE, 1, DEVELOPER_COUNT).getList());
         } catch (IOException ignored) {
         }
         allAktiveDevelopers.forEach(developer -> {
             try {
-                List<Project> prepProjectList = DEVELOPER_SERVICE.getMyProjects(developer.getId(), ProjectStatus.PREPARATION, 1, projectCount);
-                List<Project> proccProjectList = DEVELOPER_SERVICE.getMyProjects(developer.getId(), ProjectStatus.IN_PROCESS, 1, projectCount);
+                List<Project> prepProjectList = DEVELOPER_SERVICE.getMyProjects(developer.getId(), ProjectStatus.PREPARATION, 1, projectCount).getList();
+                List<Project> proccProjectList = DEVELOPER_SERVICE.getMyProjects(developer.getId(), ProjectStatus.IN_PROCESS, 1, projectCount).getList();
 
                 prepProjectList.forEach(project -> {
                     try {
@@ -105,7 +105,7 @@ public class TestFullingBase {
         });
         aktivChapterList.forEach(chapter -> {
             try {
-                proposalList.addAll(DEVELOPER_SERVICE.getProposalsByChapterId(chapter.getId(), ProposalStatus.CONSIDERATION, 1, proposalCount));
+                proposalList.addAll(DEVELOPER_SERVICE.getProposalsByChapterId(chapter.getId(), ProposalStatus.CONSIDERATION, 1, proposalCount).getList());
             } catch (IOException ignored) {
             }
         });
@@ -158,7 +158,7 @@ public class TestFullingBase {
         return approvedList.stream()
                    .peek(proposal -> {
                        try {
-                           CONTRACTOR_SERVICE.startWork(proposal.getId());
+                           CONTRACTOR_SERVICE.setProposalStatus(proposal.getId(),ProposalStatus.ACCEPTED_BY_CONTRACTOR);
                        } catch (IOException | NotUpdateDataInDbException ignored) {
                        }
                    })
@@ -197,7 +197,7 @@ public class TestFullingBase {
     private void cancelAnyDevelopers() throws IOException {
 
         AtomicInteger develIndex = new AtomicInteger(1);
-        ADMIN_SERVICE.getAllDevelopers(UserStatus.AKTIVE, 1, DEVELOPER_COUNT)
+        ADMIN_SERVICE.getAllDevelopers(UserStatus.AKTIVE, 1, DEVELOPER_COUNT).getList()
             .forEach(developer -> {
                 if (develIndex.get() % 6 == 0) {
                     try {
@@ -216,7 +216,7 @@ public class TestFullingBase {
     private void cancelAnyContractors() throws IOException {
 
         AtomicInteger contrIndex = new AtomicInteger(1);
-        ADMIN_SERVICE.getAllContractors(UserStatus.AKTIVE, 1, CONTRACTOR_COUNT)
+        ADMIN_SERVICE.getAllContractors(UserStatus.AKTIVE, 1, CONTRACTOR_COUNT).getList()
             .forEach(contractor -> {
                 if (contrIndex.get() % 8 == 0) {
                     try {
@@ -272,28 +272,28 @@ public class TestFullingBase {
 
         ADMIN_SERVICE.createAdmin(getUniqEmail(), getPassword());
         for (int i = 0; i < DEVELOPER_COUNT; i++) {
-            Developer dev = DEVELOPER_SERVICE.createDeveloper(getUniqEmail(), getPassword(), getUserName(), NEY_YORK, getStreet(), String.valueOf(userCount*4/3));
+            Developer dev = DEVELOPER_SERVICE.createDeveloper(getUniqEmail(), getPassword(), getUserName(), NEY_YORK, getStreet(), String.valueOf(userCount * 4 / 3));
             int thisProjectCount = RANDOM.nextInt(5);
             for (int j = 0; j < thisProjectCount; j++) {
-                DEVELOPER_SERVICE.createProject(dev.getId(), getProjectName(), NEY_YORK, getStreet(), String.valueOf(projectCount*4/3));
-                projectCount++;
+                DEVELOPER_SERVICE.createProject(dev.getId(), getProjectName(), NEY_YORK, getStreet(), String.valueOf(projectCount * 4 / 3));
+
                 int thisChapterCount = RANDOM.nextInt(15);
                 for (int k = 0; k < thisChapterCount; k++) {
-                    DEVELOPER_SERVICE.createChapter((long)projectCount, CHAPTER_NAMES[k % CHAPTER_NAMES.length], RANDOM.nextInt(50_000));
-                    chapterCount++;
+                    DEVELOPER_SERVICE.createChapter((long) projectCount, CHAPTER_NAMES[k % CHAPTER_NAMES.length], RANDOM.nextInt(50_000));
                     if (thisChapterCount % 5 == 0) {
-                        DEVELOPER_SERVICE.cancelChapter((long)chapterCount);
+                        DEVELOPER_SERVICE.cancelChapter((long) chapterCount);
                     }
+                    chapterCount++;
                 }
-
+                projectCount++;
                 if (thisProjectCount % 5 == 0) {
-                    DEVELOPER_SERVICE.cancelProject((long)projectCount);
+                    DEVELOPER_SERVICE.cancelProject((long) projectCount);
                 }
             }
         }
         for (int i = 0; i < CONTRACTOR_COUNT; i++) {
 
-            Contractor con = CONTRACTOR_SERVICE.createContractor(getUniqEmail(), getPassword(), getUserName(), NEY_YORK, getStreet(), String.valueOf(userCount*4/3));
+            Contractor con = CONTRACTOR_SERVICE.createContractor(getUniqEmail(), getPassword(), getUserName(), NEY_YORK, getStreet(), String.valueOf(userCount * 4 / 3));
             int thisProposalCount = RANDOM.nextInt(MAX_PROPOSAL_COUNT_PER_CONTRACTOR);
             for (int j = 0; j < thisProposalCount; j++) {
                 Proposal proposal;

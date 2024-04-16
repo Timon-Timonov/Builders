@@ -41,6 +41,8 @@ public class ProposalConverter {
                    .status(proposal.getStatus())
                    .chapterId(chapter.getId())
                    .contractorId(contractor.getId())
+                   .projectAddress(project.getAddress().toString())
+                   .projectStatus(project.getStatus())
                    .build();
     }
 

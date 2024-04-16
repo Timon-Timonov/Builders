@@ -2,8 +2,8 @@ package it.academy.util;
 
 import it.academy.pojo.Calculation;
 import it.academy.pojo.Chapter;
-import it.academy.pojo.enums.PaymentType;
-import it.academy.pojo.enums.ProjectStatus;
+import it.academy.pojo.enums.*;
+import lombok.extern.log4j.Log4j2;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -11,6 +11,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import static it.academy.util.Constants.*;
 
+@Log4j2
 public class Util {
 
     private Util() {
@@ -34,6 +35,9 @@ public class Util {
 
     public static Integer[] getDebtFromCalculation(Calculation calculation) {
 
+        if (calculation == null) {
+            return new Integer[]{0, 0, 0};
+        }
         AtomicReference<Integer> sumAdvance = new AtomicReference<>(0);
         AtomicReference<Integer> sumForWork = new AtomicReference<>(0);
         calculation.getTransferSet()
@@ -44,53 +48,138 @@ public class Util {
                     sumForWork.updateAndGet(v -> v + moneyTransfer.getSum());
                 }
             });
-        int calculationDebt = calculation.getWorkPriceFact() - sumAdvance.get() - sumForWork.get();
+        int workPriceFact = calculation.getWorkPriceFact() == null ? 0 : calculation.getWorkPriceFact();
+        int calculationDebt = workPriceFact - sumAdvance.get() - sumForWork.get();
         return new Integer[]{calculationDebt, sumAdvance.get(), sumForWork.get()};
     }
 
     public static Integer getDebtByChapter(Chapter chapter) {
 
+        if (chapter == null) {
+            return 0;
+        }
         return chapter.getCalculationSet()
                    .stream()
                    .map(Util::getDebtFromCalculation)
-                   .map(integers -> integers[2])
+                   .map(integers -> integers[0])
                    .reduce(0, Integer::sum);
     }
 
-    public static ProjectStatus getProjectStatus
-        (HttpServletRequest req, String parametrName, ProjectStatus defaultProjectStatus) {
+    public static ProposalStatus getProposalStatus
+        (HttpServletRequest req, String parameterName, ProposalStatus defaultValue) {
+
+        HttpSession session = req.getSession();
+        ProposalStatus status = null;
+        String proposalStatusFromReq = req.getParameter(parameterName);
+        if (proposalStatusFromReq != null) {
+            try {
+                status = ProposalStatus.valueOf(proposalStatusFromReq);
+            } catch (IllegalArgumentException e) {
+                log.debug(parameterName + proposalStatusFromReq, e);
+            }
+        }
+        return status != null ?
+                   status
+                   : (session.getAttribute(parameterName) != null ?
+                          (ProposalStatus) session.getAttribute(parameterName)
+                          : defaultValue);
+
+    }
+
+    public static ProjectStatus getProjectStatusFromParameter
+        (HttpServletRequest req, String parameterName, ProjectStatus defaultValue) {
 
         HttpSession session = req.getSession();
         ProjectStatus status = null;
-        String projectStatusFromReq = req.getParameter(parametrName);
-
+        String projectStatusFromReq = req.getParameter(parameterName);
         if (projectStatusFromReq != null) {
-            if (ProjectStatus.CANCELED.toString().equals(projectStatusFromReq)) {
-                status = ProjectStatus.CANCELED;
-            } else if (ProjectStatus.COMPLETED.toString().equals(projectStatusFromReq)) {
-                status = ProjectStatus.COMPLETED;
-            } else if (ProjectStatus.IN_PROCESS.toString().equals(projectStatusFromReq)) {
-                status = ProjectStatus.IN_PROCESS;
-            } else if (ProjectStatus.PREPARATION.toString().equals(projectStatusFromReq)) {
-                status = ProjectStatus.PREPARATION;
+            try {
+                status = ProjectStatus.valueOf(projectStatusFromReq);
+            } catch (IllegalArgumentException e) {
+                log.debug(parameterName + projectStatusFromReq, e);
             }
         }
-
         return status != null ?
                    status
-                   : (session.getAttribute(parametrName) != null ?
-                          (ProjectStatus) session.getAttribute(parametrName)
-                          : defaultProjectStatus);
+                   : (session.getAttribute(parameterName) != null ?
+                          (ProjectStatus) session.getAttribute(parameterName)
+                          : defaultValue);
     }
 
-    public static int getNumberValueFromParametr(HttpServletRequest req, String parametrName, Integer defaultValue) {
 
-        String pageFromReq = req.getParameter(parametrName);
+    public static ChapterStatus getChapterStatus
+        (HttpServletRequest req, String parameterName, ChapterStatus defaultValue) {
+
         HttpSession session = req.getSession();
-        return pageFromReq != null ?
-                   Integer.parseInt(pageFromReq)
-                   : (session.getAttribute(parametrName) != null ?
-                          (Integer) session.getAttribute(parametrName)
+        ChapterStatus status = null;
+        String chapterStatusFromReq = req.getParameter(parameterName);
+        if (chapterStatusFromReq != null) {
+            try {
+                status = ChapterStatus.valueOf(chapterStatusFromReq);
+            } catch (IllegalArgumentException e) {
+                log.debug(parameterName + chapterStatusFromReq, e);
+            }
+        }
+        return status != null ?
+                   status
+                   : (session.getAttribute(parameterName) != null ?
+                          (ChapterStatus) session.getAttribute(parameterName)
+                          : defaultValue);
+    }
+
+    public static int getNumberValueFromParameter(HttpServletRequest req, String parameterName, Integer
+                                                                                                    defaultValue)
+        throws NumberFormatException {
+
+        String valueFromReq = req.getParameter(parameterName);
+        HttpSession session = req.getSession();
+        return valueFromReq != null ?
+                   Integer.parseInt(valueFromReq)
+                   : (session.getAttribute(parameterName) != null ?
+                          (Integer) session.getAttribute(parameterName)
+                          : defaultValue);
+    }
+
+    public static long getNumberValueFromParameter(HttpServletRequest req, String parameterName, Long defaultValue)
+        throws NumberFormatException {
+
+        String valueFromReq = req.getParameter(parameterName);
+        HttpSession session = req.getSession();
+        return valueFromReq != null ?
+                   Long.parseLong(valueFromReq)
+                   : (session.getAttribute(parameterName) != null ?
+                          (Long) session.getAttribute(parameterName)
+                          : defaultValue);
+    }
+
+    public static String getStringValueFromParameter(
+        HttpServletRequest req, String parameterName, String defaultValue) {
+
+        String valueFromReq = req.getParameter(parameterName);
+        HttpSession session = req.getSession();
+        return valueFromReq != null ?
+                   valueFromReq
+                   : (session.getAttribute(parameterName) != null ?
+                          (String) session.getAttribute(parameterName)
+                          : defaultValue);
+    }
+
+    public static UserStatus getUserStatus(HttpServletRequest req, String parameterName, UserStatus defaultValue) {
+
+        String valueFromReq = req.getParameter(parameterName);
+        HttpSession session = req.getSession();
+        UserStatus status = null;
+        if (valueFromReq != null) {
+            try {
+                status = UserStatus.valueOf(valueFromReq);
+            } catch (IllegalArgumentException e) {
+                log.error(INVALID_VALUE, e);
+            }
+        }
+        return status != null ?
+                   status
+                   : (session.getAttribute(parameterName) != null ?
+                          (UserStatus) session.getAttribute(parameterName)
                           : defaultValue);
     }
 }

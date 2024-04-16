@@ -33,7 +33,7 @@ public class CalculationDaoImpl extends DaoImpl<Calculation, Long> implements Ca
     public Long getCountOfCalculationsByChapterId(Long chapterId) throws NoResultException, IOException {
 
         TypedQuery<Long> query = getEm().createQuery(
-            "SELECT CONT(ca) FROM Calculation ca WHERE ca.chapter.id=:chapterId ",
+            "SELECT COUNT(ca) FROM Calculation ca WHERE ca.chapter.id=:chapterId ",
             Long.class);
         return query.setParameter("chapterId", chapterId)
                    .getSingleResult();

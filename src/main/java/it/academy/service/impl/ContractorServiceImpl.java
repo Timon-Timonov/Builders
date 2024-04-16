@@ -2,6 +2,7 @@ package it.academy.service.impl;
 
 import it.academy.dao.*;
 import it.academy.dao.impl.*;
+import it.academy.dto.Page;
 import it.academy.exceptions.EmailOccupaidException;
 import it.academy.exceptions.NotCreateDataInDbException;
 import it.academy.exceptions.NotUpdateDataInDbException;
@@ -23,8 +24,11 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
+import static it.academy.util.Constants.*;
+
 @Log4j2
 public class ContractorServiceImpl implements ContractorService {
+
 
     private final ContractorDao contractorDao = new ContractorDaoImpl();
     private final DeveloperDao developerDao = new DeveloperDaoImpl();
@@ -48,10 +52,10 @@ public class ContractorServiceImpl implements ContractorService {
                 try {
                     user = userDao.getUser(email);
                 } catch (NoResultException e) {
-                    log.trace("Email " + email + " not occupied", e);
+                    log.trace(EMAIL + email + NOT_OCCUPIED, e);
                 }
                 if (user != null) {
-                    log.trace("Email " + email + " occupied");
+                    log.trace(EMAIL + email + OCCUPIED);
                     isEmailOccupaid.set(true);
                 } else {
                     User newUser = User.builder()
@@ -75,12 +79,12 @@ public class ContractorServiceImpl implements ContractorService {
                                                .user(userFromDB.get())
                                                .build();
                 contractorDao.create(newContractor);
-                log.trace("Contractor created: id=" + newContractor.getId());
+                log.trace(CONTRACTOR_CREATED_ID + newContractor.getId());
                 contractor.set(newContractor);
             }
         });
         if (isEmailOccupaid.get()) {
-            throw new EmailOccupaidException("Email " + email + " occupied");
+            throw new EmailOccupaidException(EMAIL + email + OCCUPIED);
         } else if (contractor.get() == null) {
             throw new NotCreateDataInDbException();
         }
@@ -97,7 +101,7 @@ public class ContractorServiceImpl implements ContractorService {
             try {
                 user = userDao.get(userId);
             } catch (EntityNotFoundException e) {
-                log.error("Contractor not found with id=" + userId);
+                log.error(CONTRACTOR_NOT_FOUND_WITH_ID + userId);
                 throw e;
             }
             if (user != null) {
@@ -105,48 +109,54 @@ public class ContractorServiceImpl implements ContractorService {
                     contractor.set((Contractor) user.getLegalEntity());
                     roleChecked.set(true);
                 } else {
-                    log.error("User not Contractor. id=" + userId);
+                    log.error(USER_NOT_CONTRACTOR_ID + userId);
                 }
             }
         });
         if (!roleChecked.get()) {
-            throw new RoleException("User not Contractor");
+            throw new RoleException(USER_NOT_CONTRACTOR);
         }
         return contractor.get();
     }
 
     @Override
-    public List<Project> getMyProjects(Long contractorId, ProjectStatus status, Integer page, int count)
+    public Page<Project> getMyProjects(Long contractorId, ProjectStatus status, int page, int count)
         throws IOException {
 
-        long totalCount = projectDao.getCountOfProjectsByContractorId(contractorId, status);
-        page = Util.getCorrectPageNumber(page, count, totalCount);
-
+        int correctPage = FIRST_PAGE_NUMBER;
         List<Project> list = new ArrayList<>();
         try {
-            list.addAll(projectDao.getProjectsByContractorId(contractorId, status, page, count));
+            long totalCount = projectDao.getCountOfProjectsByContractorId(contractorId, status);
+            correctPage = Util.getCorrectPageNumber(page, count, totalCount);
+            list.addAll(projectDao.getProjectsByContractorId(contractorId, status, correctPage, count));
         } catch (NoResultException e) {
-            log.error("There is no such data in DB with contractorId=" + contractorId);
+            log.error(THERE_IS_NO_SUCH_DATA_IN_DB_WITH_CONTRACTOR_ID + contractorId);
+        } finally {
+            projectDao.closeManager();
         }
-        return list;
+        return new Page<>(list, correctPage);
     }
 
     @Override
-    public List<Project> getMyProjectsByDeveloper(
+    public Page<Project> getMyProjectsByDeveloper(
         Long developerId, Long contractorId, ProjectStatus status, int page, int count)
         throws IOException {
 
-        long totalCount = projectDao.getCountOfProjectsByDeveloperIdContractorId(developerId, contractorId, status);
-        page = Util.getCorrectPageNumber(page, count, totalCount);
-
+        int correctPage = FIRST_PAGE_NUMBER;
         List<Project> list = new ArrayList<>();
         try {
-            list.addAll(projectDao.getProjectsByDeveloperIdContractorId(developerId, contractorId, status, page, count));
+            long totalCount = projectDao.getCountOfProjectsByDeveloperIdContractorId(
+                developerId, contractorId, status);
+            correctPage = Util.getCorrectPageNumber(page, count, totalCount);
+            list.addAll(projectDao.getProjectsByDeveloperIdContractorId(
+                developerId, contractorId, status, correctPage, count));
         } catch (NoResultException e) {
-            log.error("There is no such data in DB with contractorId=" + contractorId +
-                          " and deleloperId=" + developerId);
+            log.error(THERE_IS_NO_SUCH_DATA_IN_DB_WITH_CONTRACTOR_ID + contractorId +
+                          AND_DELELOPER_ID + developerId);
+        } finally {
+            projectDao.closeManager();
         }
-        return list;
+        return new Page<>(list, correctPage);
     }
 
     @Override
@@ -156,56 +166,64 @@ public class ContractorServiceImpl implements ContractorService {
         try {
             list.addAll(chapterDao.getAllChapterNames());
         } catch (NoResultException e) {
-            log.error("There is no such data in DB");
+            log.error(THERE_IS_NO_SUCH_DATA_IN_DB);
+        } finally {
+            chapterDao.closeManager();
         }
         return list;
     }
 
     @Override
-    public List<Chapter> getFreeChapters(String chapterName, int page, int count) throws IOException {
+    public Page<Chapter> getFreeChapters(Long contractorId,String chapterName,ProjectStatus projectStatus, int page, int count) throws IOException {
 
-        long totalCount = chapterDao.getCountOfFreeChaptersByName(chapterName);
-        page = Util.getCorrectPageNumber(page, count, totalCount);
-
+        int correctPage = FIRST_PAGE_NUMBER;
         List<Chapter> list = new ArrayList<>();
         try {
-            list.addAll(chapterDao.getFreeChapters(chapterName, page, count));
+            long totalCount = chapterDao.getCountOfFreeChaptersByName(contractorId,chapterName,projectStatus);
+            correctPage = Util.getCorrectPageNumber(page, count, totalCount);
+            list.addAll(chapterDao.getFreeChapters(contractorId,chapterName,projectStatus, correctPage, count));
         } catch (NoResultException e) {
-            log.error("There is no such data in DB with chpterName=" + chapterName);
+            log.error(THERE_IS_NO_SUCH_DATA_IN_DB_WITH_CHPTER_NAME + chapterName);
+        } finally {
+            chapterDao.closeManager();
         }
-        return list;
+        return new Page<>(list, correctPage);
     }
 
     @Override
-    public List<Developer> getMyDevelopers(Long contractorId, ProjectStatus status, int page, int count)
+    public Page<Developer> getMyDevelopers(Long contractorId, ProjectStatus status, int page, int count)
         throws IOException {
 
-        long totalCount = developerDao.getCountOfDevelopers(contractorId, status);
-        page = Util.getCorrectPageNumber(page, count, totalCount);
-
+        int correctPage = FIRST_PAGE_NUMBER;
         List<Developer> list = new ArrayList<>();
         try {
-            list.addAll(developerDao.getDevelopersByContractorId(contractorId, status, page, count));
+            long totalCount = developerDao.getCountOfDevelopers(contractorId, status);
+            correctPage = Util.getCorrectPageNumber(page, count, totalCount);
+            list.addAll(developerDao.getDevelopersByContractorId(contractorId, status, correctPage, count));
         } catch (NoResultException e) {
-            log.error("There is no such data in DB with contractorId=" + contractorId);
+            log.error(THERE_IS_NO_SUCH_DATA_IN_DB_WITH_CONTRACTOR_ID + contractorId);
+        } finally {
+            developerDao.closeManager();
         }
-        return list;
+        return new Page<>(list, correctPage);
     }
 
     @Override
-    public List<Proposal> getMyProposals(Long contractorId, ProposalStatus status, int page, int count)
+    public Page<Proposal> getMyProposals(Long contractorId, ProposalStatus status, int page, int count)
         throws IOException {
 
-        long totalCount = proposalDao.getCountOfProposalsByContractorId(contractorId, status);
-        page = Util.getCorrectPageNumber(page, count, totalCount);
-
+        int correctPage = FIRST_PAGE_NUMBER;
         List<Proposal> list = new ArrayList<>();
         try {
-            list.addAll(proposalDao.getProposalsByContractorId(contractorId, status, page, count));
+            long totalCount = proposalDao.getCountOfProposalsByContractorId(contractorId, status);
+            correctPage = Util.getCorrectPageNumber(page, count, totalCount);
+            list.addAll(proposalDao.getProposalsByContractorId(contractorId, status, correctPage, count));
         } catch (NoResultException e) {
-            log.error("There is no such data in DB with contractorId=" + contractorId);
+            log.error(THERE_IS_NO_SUCH_DATA_IN_DB_WITH_CONTRACTOR_ID + contractorId);
+        } finally {
+            proposalDao.closeManager();
         }
-        return list;
+        return new Page<>(list, correctPage);
     }
 
     @Override
@@ -216,26 +234,30 @@ public class ContractorServiceImpl implements ContractorService {
         try {
             list.addAll(chapterDao.getChaptersByProjectIdContractorId(projectId, contractorId));
         } catch (NoResultException e) {
-            log.error("There is no such data in DB with contractorId=" + contractorId +
-                          " and projectId=" + projectId);
+            log.error(THERE_IS_NO_SUCH_DATA_IN_DB_WITH_CONTRACTOR_ID + contractorId +
+                          AND_PROJECT_ID + projectId);
+        } finally {
+            chapterDao.closeManager();
         }
         return list;
     }
 
     @Override
-    public List<Calculation> getCalculationsByChapter(Long chapterId, int page, int count)
+    public Page<Calculation> getCalculationsByChapter(Long chapterId, int page, int count)
         throws IOException {
 
-        long totalCount = calculationDao.getCountOfCalculationsByChapterId(chapterId);
-        page = Util.getCorrectPageNumber(page, count, totalCount);
-
+        int correctPage = FIRST_PAGE_NUMBER;
         List<Calculation> list = new ArrayList<>();
         try {
-            list.addAll(calculationDao.getCalculationsByChapterId(chapterId, page, count));
+            long totalCount = calculationDao.getCountOfCalculationsByChapterId(chapterId);
+            correctPage = (Util.getCorrectPageNumber(page, count, totalCount));
+            list.addAll(calculationDao.getCalculationsByChapterId(chapterId, correctPage, count));
         } catch (NoResultException e) {
-            log.error("There is no such data in DB with chapterId=" + chapterId);
+            log.error(THERE_IS_NO_SUCH_DATA_IN_DB_WITH_CHAPTER_ID + chapterId);
+        } finally {
+            calculationDao.closeManager();
         }
-        return list;
+        return new Page<>(list, correctPage);
     }
 
     @Override
@@ -246,10 +268,10 @@ public class ContractorServiceImpl implements ContractorService {
         calculationDao.executeInOneTransaction(() -> {
             int count = calculationDao.updateWorkPriceFact(workPriceFact, calculationId);
             if (1 == count) {
-                log.trace("Workprice updated. id=" + calculationId + ", value=" + workPriceFact);
+                log.trace(WORKPRICE_UPDATED_ID + calculationId + VALUE + workPriceFact);
                 isUpdated.set(true);
             } else {
-                log.debug("Workprice not updated. id=" + calculationId);
+                log.debug(WORKPRICE_NOT_UPDATED_ID + calculationId);
             }
         });
         if (!isUpdated.get()) {
@@ -267,7 +289,9 @@ public class ContractorServiceImpl implements ContractorService {
             try {
                 chapter = chapterDao.get(chapterId);
             } catch (EntityNotFoundException e) {
-                log.error("Chapter not found. id=" + chapterId);
+                log.error(CHAPTER_NOT_FOUND_ID + chapterId);
+            } finally {
+                chapterDao.closeManager();
             }
             if (chapter != null && ChapterStatus.OCCUPIED.equals(chapter.getStatus())) {
                 Calculation newCalculation = Calculation.builder()
@@ -276,10 +300,10 @@ public class ContractorServiceImpl implements ContractorService {
                                                  .workPricePlan(workPricePlan)
                                                  .build();
                 calculationDao.create(newCalculation);
-                log.trace("Calculation created. id=" + newCalculation.getId());
+                log.trace(CALCULATION_CREATED_ID + newCalculation.getId());
                 calculation.set(newCalculation);
             } else {
-                log.debug("Calculation not created. chapterId=" + chapterId);
+                log.debug(CALCULATION_NOT_CREATED_CHAPTER_ID + chapterId);
             }
         });
         if (calculation.get() == null) {
@@ -289,19 +313,7 @@ public class ContractorServiceImpl implements ContractorService {
     }
 
     @Override
-    public void startWork(Long proposalId) throws IOException, NotUpdateDataInDbException {
-
-        setProposalStatus(proposalId, ProposalStatus.ACCEPTED_BY_CONTRACTOR);
-    }
-
-    @Override
-    public void cancelProposal(Long proposalId) throws IOException, NotUpdateDataInDbException {
-
-        setProposalStatus(proposalId, ProposalStatus.CANCELED);
-    }
-
-    private void setProposalStatus(Long proposalId, ProposalStatus canceled)
-        throws IOException, NotUpdateDataInDbException {
+    public void setProposalStatus(Long proposalId, ProposalStatus newStatus) throws IOException, NotUpdateDataInDbException {
 
         AtomicBoolean isUpdated = new AtomicBoolean(false);
         proposalDao.executeInOneTransaction(() -> {
@@ -309,15 +321,15 @@ public class ContractorServiceImpl implements ContractorService {
             try {
                 proposal = proposalDao.get(proposalId);
             } catch (EntityNotFoundException e) {
-                log.error("Proposal not found. id=" + proposalId);
+                log.error(PROPOSAL_NOT_FOUND_ID + proposalId);
             }
             if (proposal != null) {
-                proposal.setStatus(ProposalStatus.ACCEPTED_BY_CONTRACTOR);
+                proposal.setStatus(newStatus);
                 proposalDao.update(proposal);
-                log.trace("Proposal status update to " + canceled);
+                log.trace(PROPOSAL_STATUS_UPDATE_TO + newStatus.toString());
                 isUpdated.set(true);
             } else {
-                log.debug("Proposal status not update. id=" + proposalId);
+                log.debug(PROPOSAL_STATUS_NOT_UPDATE_ID + proposalId);
             }
         });
         if (!isUpdated.get()) {
@@ -335,25 +347,29 @@ public class ContractorServiceImpl implements ContractorService {
             try {
                 chapter = chapterDao.get(chapterId);
             } catch (EntityNotFoundException e) {
-                log.error("There is no such data in DB with chapterId " + chapterId);
+                log.error(THERE_IS_NO_SUCH_DATA_IN_DB_WITH_CHAPTER_ID + chapterId);
                 return;
+            } finally {
+                chapterDao.closeManager();
             }
             Contractor contractor;
             try {
                 contractor = contractorDao.get(contractorId);
             } catch (EntityNotFoundException e) {
-                log.error("There is no such data in DB with contractorId " + contractorId);
+                log.error(THERE_IS_NO_SUCH_DATA_IN_DB_WITH_CONTRACTOR_ID + contractorId);
                 return;
+            } finally {
+                contractorDao.closeManager();
             }
             try {
                 Proposal proposalFromDB = proposalDao
                                               .getProposalByChapterIdContractorId(chapterId, contractorId);
                 proposal.set(proposalFromDB);
-                log.debug("Data alredy exist in DB. id=" + proposalFromDB.getId());
+                log.debug(DATA_ALREDY_EXIST_IN_DB_ID + proposalFromDB.getId());
                 return;
             } catch (NoResultException e) {
-                log.trace("There is no such proposal in DB with chapterId " + chapterId +
-                              " and contractorId " + contractorId);
+                log.trace(THERE_IS_NO_SUCH_PROPOSAL_IN_DB_WITH_CHAPTER_ID + chapterId +
+                              AND_CONTRACTOR_ID + contractorId);
             }
             if (chapter != null && contractor != null) {
                 Proposal newProposal = Proposal.builder()
@@ -361,7 +377,7 @@ public class ContractorServiceImpl implements ContractorService {
                                            .contractor(contractor)
                                            .build();
                 proposalDao.create(newProposal);
-                log.trace("Created proposal with id=" + newProposal.getId());
+                log.trace(CREATED_PROPOSAL_WITH_ID + newProposal.getId());
                 proposal.set(newProposal);
             }
         });
@@ -374,9 +390,17 @@ public class ContractorServiceImpl implements ContractorService {
     @Override
     public Integer getTotalDeptByDeveloper(Long contractorId, Long developerId) throws IOException {
 
-        return chapterDao.getAllChaptersByDeveloperIdContractorId(developerId, contractorId)
-                   .stream()
-                   .map(Util::getDebtByChapter)
-                   .reduce(0, Integer::sum);
+        Integer debt = null;
+        try {
+            debt = chapterDao.getAllChaptersByDeveloperIdContractorId(developerId, contractorId)
+                       .stream()
+                       .map(Util::getDebtByChapter)
+                       .reduce(0, Integer::sum);
+        } catch (NoResultException | IOException e) {
+            log.debug(e);
+        } finally {
+            chapterDao.closeManager();
+        }
+        return debt;
     }
 }

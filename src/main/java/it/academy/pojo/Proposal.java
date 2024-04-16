@@ -39,14 +39,4 @@ public class Proposal {
     @Column(name = "created_date", updatable = false)
     @CreationTimestamp
     private Timestamp createdDate;
-
-    public void setStatus(ProposalStatus newStatus) {
-
-        if (ProposalStatus.APPROVED.equals(this.status)
-                && ProposalStatus.ACCEPTED_BY_CONTRACTOR.equals(newStatus)) {
-            this.chapter.setContractor(this.contractor);
-            this.chapter.setStatus(ChapterStatus.OCCUPIED);
-        }
-        this.status = newStatus;
-    }
 }

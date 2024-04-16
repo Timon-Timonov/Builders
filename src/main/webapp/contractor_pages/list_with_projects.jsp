@@ -1,14 +1,14 @@
 <%@ page import="it.academy.dto.AddressDto" %>
 <%@ page import="it.academy.dto.ProjectDto" %>
 <%@ page import="it.academy.pojo.enums.ProjectStatus" %>
-<%@ page import="it.academy.servlet.contractorServlets.WhatToDo" %>
+<%@ page import="it.academy.servlet.WhatToDo" %>
 <%@ page import="java.util.List" %>
 <%@ page import="java.util.Optional" %>
-<%@ page import="it.academy.util.Constants" %>
+<%@ page import="static it.academy.util.Constants.*" %>
 <%@ page contentType="text/html;charset=UTF-8" %>
 <html>
 <head>
-    <title>List_of_developers</title>
+    <title>List_of_projects</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
           rel="stylesheet"
           integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
@@ -16,29 +16,41 @@
 </head>
 
 <body>
-<div class="container text-center">
-    <h2>The list of my projects</h2>
-</div>
 <%
-    String actionName = Constants.MAIN_CONTRACTOR_SERVLET;
-    String todoName = "todo";
-    String countName = "project_count_on_page";
-    String pageNumberParamName = "project_page";
-    String projectStatus = "project_status";
-    String projectDtoParamName = "project_dto_list";
+    boolean showListByDeveloper = Optional.ofNullable((Boolean) session.getAttribute(SHOW_PROJECT_LIST_BY_DEVELOPER_PARAM)).orElse(false);
 
-    String actionParametrToDoValue = WhatToDo.SHOW_PROJECTS.toString();
-    int countOnPage = (Integer) session.getAttribute(countName);
-    int pageNumber = (Integer) session.getAttribute(pageNumberParamName);
-    ProjectStatus status = (ProjectStatus) session.getAttribute(projectStatus);
-    List<ProjectDto> projectDtoList = (List<ProjectDto>) request.getAttribute(projectDtoParamName);
+    String actionName = showListByDeveloper ?
+            GET_MY_PROJECTS_BY_DEVELOPER_SERVLET
+            : MAIN_CONTRACTOR_SERVLET;
+    String countName = PROJECT_COUNT_ON_PAGE_PARAM;
+    String pageNumberParamName = PROJECT_PAGE_PARAM;
+
+    String actionParameterToDoValue = WhatToDo.SHOW_PROJECTS.toString();
+    int countOnPage = (Integer) session.getAttribute(PROJECT_COUNT_ON_PAGE_PARAM);
+    int pageNumber = (Integer) session.getAttribute(PROJECT_PAGE_PARAM);
+    ProjectStatus status = (ProjectStatus) session.getAttribute(PROJECT_STATUS_PARAM);
+    List<ProjectDto> projectDtoList = (List<ProjectDto>) request.getAttribute(PROJECT_DTO_LIST_PARAM);
 %>
 <div class="container text-center">
-    <%@include file="/include_files/count_on_page_buttons_group.jsp" %>
+    <h2>The list of my projects</h2>
+
+    <% if (showListByDeveloper) {%>
+    <p>Developer name: <%= session.getAttribute(DEVELOPER_NAME_PARAM)%>
+    </p>
+    <p>Developer address: <%= session.getAttribute(DEVELOPER_ADDRESS_PARAM)%>
+    </p>
+    <p>Debt by developer:  <%=session.getAttribute(DEVELOPER_DEBT_PARAM)%>
+    </p>
+    <% }%>
 </div>
-<br>
+
+
 <div class="container text-center">
+    <%@include file="/include_files/count_on_page_buttons_group.jsp" %>
+    <br>
     <%@include file="/include_files/project_status_buttons_group.jsp" %>
+    <br>
+    <%@include file="/include_files/pagination_buttons_group.jsp" %>
 </div>
 <br>
 
@@ -46,49 +58,60 @@
     <table>
         <tr>
             <th>No</th>
-            <th></th>
+            <th> |</th>
             <th>Name</th>
-            <th></th>
+            <th> |</th>
             <th>Address of building object</th>
-            <th></th>
+            <th> |</th>
+            <%if (!showListByDeveloper) {%>
             <th>Developer name</th>
-            <th></th>
+            <th> |</th>
+            <%}%>
             <th>Debt by project</th>
-            <th></th>
+            <th> |</th>
             <th>Status of project</th>
-            <th></th>
+            <th> |</th>
             <th>Total price of project</th>
             <th></th>
             <th></th>
         </tr>
 
-        <%for (int i = 0; i < projectDtoList.size(); i++) {%>
-        <%ProjectDto projectDto = projectDtoList.get(i);%>
-
+        <%
+            for (int i = 0; i < projectDtoList.size(); i++) {
+                ProjectDto projectDto = projectDtoList.get(i);
+                String projectName = projectDto.getProjectName();
+                String projectAddress = Optional.ofNullable(projectDto.getProjectAddress()).orElse(new AddressDto()).toString();
+                String projectDeveloperName = projectDto.getDeveloperName();
+        %>
         <tr>
             <td><%=(i + 1)%>
             </td>
-            <td></td>
-            <td><%=projectDto.getProjectName()%>
+            <td> |</td>
+            <td><%=projectName%>
             </td>
-            <td></td>
-            <td><%=Optional.ofNullable(projectDto.getProjectAddress()).orElse(new AddressDto()).toString()%>
+            <td> |</td>
+            <td><%=projectAddress%>
             </td>
-            <td></td>
-            <td><%=projectDto.getDeveloperName()%>
+            <td> |</td>
+            <%if (!showListByDeveloper) {%>
+            <td><%=projectDeveloperName%>
             </td>
-            <td></td>
+            <td> |</td>
+            <%}%>
             <td><%=projectDto.getDebtByProject()%>
             </td>
-            <td></td>
+            <td> |</td>
             <td><%=projectDto.getStatus().toString()%>
             </td>
-            <td></td>
+            <td> |</td>
             <td><%=projectDto.getProjectPrice()%>
             </td>
             <td>
-                <form action="get_my_chapters_servlet" method="get">
-                    <input type="hidden" value="<%=projectDto.getId().toString()%>" name="project_id">
+                <form action="<%=GET_MY_CHAPTERS_SERVLET%>" method="get">
+                    <input type="hidden" value="<%=projectDto.getId().toString()%>" name="<%=PROJECT_ID_PARAM%>">
+                    <input type="hidden" value="<%=projectName%>" name="<%=PROJECT_NAME_PARAM%>">
+                    <input type="hidden" value="<%=projectAddress%>" name="<%=PROJECT_ADDRESS_PARAM%>">
+                    <input type="hidden" value="<%=projectDeveloperName%>" name="<%=PROJECT_DEVELOPER_PARAM%>">
                     <button class="btn btn-light" type="submit">Details</button>
                 </form>
             </td>
@@ -99,11 +122,15 @@
 </div>
 <br>
 <br>
-
 <div class="container text-center">
-    <%@include file="/include_files/pagination_buttons_group.jsp" %>
-    <br>
+
+    <% if (showListByDeveloper) {%>
+    <form action="<%=MAIN_CONTRACTOR_SERVLET%>" method="get">
+        <input type="hidden" value="<%= WhatToDo.SHOW_DEVELOPERS.toString()%>" name="<%=TODO_PARAM%>">
+        <button class="btn btn-secondary" type="submit">Return to list of developers</button>
+    </form>
+    <% }%>
+    <%@include file="/include_files/go_to_main_button_file.jsp" %>
 </div>
-<%@include file="/include_files/go_to_main_button_file.jsp" %>
 </body>
 </html>

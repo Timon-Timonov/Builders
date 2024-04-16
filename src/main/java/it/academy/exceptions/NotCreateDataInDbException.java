@@ -5,5 +5,5 @@ import lombok.Getter;
 @Getter
 public class NotCreateDataInDbException extends Exception {
 
-    private final String message = "Data not created";
+    private String message;
 }

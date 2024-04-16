@@ -1,10 +1,6 @@
 package it.academy.dto;
 
-import it.academy.pojo.Project;
 import lombok.*;
-
-import java.util.HashSet;
-import java.util.Set;
 
 @Getter
 @Setter
@@ -20,5 +16,4 @@ public class DeveloperDto {
     private AddressDto developerAddress;
 
     private Integer developerDebt;
-
 }

@@ -6,11 +6,14 @@ import it.academy.exceptions.EmailOccupaidException;
 import it.academy.exceptions.NotCreateDataInDbException;
 import it.academy.exceptions.NotUpdateDataInDbException;
 import it.academy.exceptions.RoleException;
+import it.academy.pojo.Calculation;
 import it.academy.pojo.Chapter;
 import it.academy.pojo.Project;
+import it.academy.pojo.Proposal;
 import it.academy.pojo.enums.ChapterStatus;
 import it.academy.pojo.enums.ProjectStatus;
 import it.academy.pojo.enums.ProposalStatus;
+import it.academy.pojo.legalEntities.Contractor;
 import it.academy.service.DeveloperService;
 import it.academy.service.impl.DeveloperServiceImpl;
 import it.academy.util.Util;
@@ -21,15 +24,20 @@ import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static it.academy.util.Constants.*;
+
 @Log4j2
 public class DeveloperControllerImpl implements DeveloperController {
 
     private final DeveloperService developerService = new DeveloperServiceImpl();
 
     @Override
-    public DeveloperDto createDeveloper(String email, String password, String name, String city, String street, String building) throws IOException, NotCreateDataInDbException, EmailOccupaidException {
+    public DeveloperDto createDeveloper(
+        String email, String password, String name, String city, String street, String building)
+        throws IOException, NotCreateDataInDbException, EmailOccupaidException {
 
-        return DeveloperConverter.convertToDto(developerService.createDeveloper(email, password, name, city, street, building), null);
+        return DeveloperConverter.convertToDto(
+            developerService.createDeveloper(email, password, name, city, street, building), null);
     }
 
     @Override
@@ -39,45 +47,58 @@ public class DeveloperControllerImpl implements DeveloperController {
     }
 
     @Override
-    public List<ProjectDto> getMyProjects(Long developerId, ProjectStatus status, int page, int count) throws IOException {
+    public Page<ProjectDto> getMyProjects(
+        Long developerId, ProjectStatus status, int page, int count) throws IOException {
 
-        return developerService.getMyProjects(developerId, status, page, count).stream()
-                   .map(project -> {
-                       Integer projectPrice = project.getChapters().stream()
-                                                  .map(Chapter::getPrice)
-                                                  .reduce(0, Integer::sum);
-                       Integer projectDebt = developerService.getProjectDept(project);
-                       return ProjectConverter.convertToDto(project, projectPrice, projectDebt);
-                   })
-                   .collect(Collectors.toList());
+        Page<Project> projectPage = developerService.getMyProjects(developerId, status, page, count);
+        int pageNumber = projectPage.getPageNumber();
+        List<ProjectDto> list = projectPage.getList().stream()
+                                    .map(project -> {
+                                        Integer projectPrice = project.getChapters().stream()
+                                                                   .map(Chapter::getPrice)
+                                                                   .reduce(0, Integer::sum);
+                                        Integer projectDebt = developerService.getProjectDept(project);
+                                        return ProjectConverter.convertToDto(project, projectPrice, projectDebt);
+                                    })
+                                    .collect(Collectors.toList());
+        return new Page<>(list, pageNumber);
     }
 
     @Override
-    public List<ContractorDto> getMyContractors(Long developerId, ProjectStatus status, int page, int count) throws IOException {
+    public Page<ContractorDto> getMyContractors(
+        Long developerId, ProjectStatus status, int page, int count) throws IOException {
 
-        return developerService.getMyContractors(developerId, status, page, count).stream()
-                   .map(contractor -> {
-                       Integer contractorDebt = null;
-                       try {
-                           contractorDebt = developerService.getTotalDeptByContractor(contractor.getId(), developerId);
-                       } catch (IOException e) {
-                           log.error("Geting of contractorDebt by contractorId " + contractor.getId() + " and developerId " + developerId + " failed.", e);
-                       }
-                       return ContractorConverter.convertToDto(contractor, contractorDebt);
-                   })
-                   .collect(Collectors.toList());
+        Page<Contractor> contractorPage = developerService.getMyContractors(developerId, status, page, count);
+        int pageNumber = contractorPage.getPageNumber();
+        List<ContractorDto> list = contractorPage.getList().stream()
+                                       .map(contractor -> {
+                                           Integer contractorDebt = null;
+                                           try {
+                                               contractorDebt = developerService.getTotalDeptByContractor(contractor.getId(), developerId);
+                                           } catch (IOException e) {
+                                               log.error(GETING_OF_CONTRACTOR_DEBT_BY_CONTRACTOR_ID + contractor.getId() + AND_DEVELOPER_ID + developerId + FAILED, e);
+                                           }
+                                           return ContractorConverter.convertToDto(contractor, contractorDebt);
+                                       })
+                                       .collect(Collectors.toList());
+        return new Page<>(list, pageNumber);
     }
 
     @Override
-    public List<ProposalDto> getAllMyProposals(Long developerId, ProposalStatus status, int page, int count) throws IOException {
+    public Page<ProposalDto> getAllMyProposals(Long developerId, ProposalStatus status, int page, int count) throws IOException {
 
-        return developerService.getAllMyProposals(developerId, status, page, count).stream()
-                   .map(ProposalConverter::convertToDto)
-                   .collect(Collectors.toList());
+        Page<Proposal> proposalPage = developerService.getAllMyProposals(developerId, status, page, count);
+        int pageNumber = proposalPage.getPageNumber();
+        List<ProposalDto> list = proposalPage.getList().stream()
+                                     .map(ProposalConverter::convertToDto)
+                                     .collect(Collectors.toList());
+        return new Page<>(list, pageNumber);
     }
 
     @Override
-    public void createProject(Long developerId, String name, String city, String street, String building) throws IOException, NotCreateDataInDbException {
+    public void createProject(
+        Long developerId, String name, String city, String street, String building)
+        throws IOException, NotCreateDataInDbException {
 
         developerService.createProject(developerId, name, city, street, building);
     }
@@ -103,11 +124,15 @@ public class DeveloperControllerImpl implements DeveloperController {
     }
 
     @Override
-    public List<ChapterDto> getChaptersByContractorId(Long contractorId, ChapterStatus status, int page, int count) throws IOException {
+    public Page<ChapterDto> getChaptersByContractorId(
+        Long contractorId, ChapterStatus status, int page, int count) throws IOException {
 
-        return developerService.getChaptersByContractorId(contractorId, status, page, count).stream()
-                   .map(this::getChapterDtoForDeveloper)
-                   .collect(Collectors.toList());
+        Page<Chapter> chapterPage = developerService.getChaptersByContractorId(contractorId, status, page, count);
+        int pageNumber = chapterPage.getPageNumber();
+        List<ChapterDto> list = chapterPage.getList().stream()
+                                    .map(this::getChapterDtoForDeveloper)
+                                    .collect(Collectors.toList());
+        return new Page<>(list, pageNumber);
     }
 
     @Override
@@ -123,11 +148,15 @@ public class DeveloperControllerImpl implements DeveloperController {
     }
 
     @Override
-    public List<ProposalDto> getProposalsByChapterId(Long chapterId, ProposalStatus status, int page, int count) throws IOException {
+    public Page<ProposalDto> getProposalsByChapterId(
+        Long chapterId, ProposalStatus status, int page, int count) throws IOException {
 
-        return developerService.getProposalsByChapterId(chapterId, status, page, count).stream()
-                   .map(ProposalConverter::convertToDto)
-                   .collect(Collectors.toList());
+        Page<Proposal> proposalPage = developerService.getProposalsByChapterId(chapterId, status, page, count);
+        int pageNumber = proposalPage.getPageNumber();
+        List<ProposalDto> list = proposalPage.getList().stream()
+                                     .map(ProposalConverter::convertToDto)
+                                     .collect(Collectors.toList());
+        return new Page<>(list, pageNumber);
     }
 
     @Override
@@ -149,24 +178,27 @@ public class DeveloperControllerImpl implements DeveloperController {
     }
 
     @Override
-    public List<CalculationDto> getCalculationsByChapterId(Long chapterId, int page, int count) throws IOException {
+    public Page<CalculationDto> getCalculationsByChapterId(Long chapterId, int page, int count) throws IOException {
 
-        return developerService.getCalculationsByChapterId(chapterId, page, count).stream()
-                   .map(calculation -> {
-                       Integer[] sums = Util.getDebtFromCalculation(calculation);
-                       return CalculationConverter.convertToDto(calculation, sums[0], sums[1], sums[2]);
-                   })
-                   .collect(Collectors.toList());
+        Page<Calculation> calculationPage = developerService.getCalculationsByChapterId(chapterId, page, count);
+        int pageNumber = calculationPage.getPageNumber();
+        List<CalculationDto> list = calculationPage.getList().stream()
+                                        .map(calculation -> {
+                                            Integer[] sums = Util.getDebtFromCalculation(calculation);
+                                            return CalculationConverter.convertToDto(calculation, sums[0], sums[1], sums[2]);
+                                        })
+                                        .collect(Collectors.toList());
+        return new Page<>(list, pageNumber);
     }
 
     @Override
-    public void payAdvance(Integer sum, Long calculationId) throws IOException, NotCreateDataInDbException {
+    public void payAdvance(int sum, Long calculationId) throws IOException, NotCreateDataInDbException {
 
         developerService.payAdvance(sum, calculationId);
     }
 
     @Override
-    public void payForWork(Integer sum, Long calculationId) throws IOException, NotCreateDataInDbException {
+    public void payForWork(int sum, Long calculationId) throws IOException, NotCreateDataInDbException {
 
         developerService.payForWork(sum, calculationId);
     }

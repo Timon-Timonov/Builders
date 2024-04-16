@@ -1,4 +1,7 @@
-<%@ page import="it.academy.servlet.contractorServlets.WhatToDo" %>
+<%@ page import="it.academy.servlet.WhatToDo" %>
+<%@ page import="static it.academy.util.Constants.MAIN_CONTRACTOR_SERVLET" %>
+<%@ page import="static it.academy.util.Constants.ROLE_PARAM" %>
+<%@ page import="static it.academy.util.Constants.*" %>
 <%@ page contentType="text/html;charset=UTF-8" %>
 <html>
 <head>
@@ -11,40 +14,37 @@
 <body>
 
 
-
-
-
-
-
-
-
 <div class="container text-center">
-    <h2>The main menu</h2>
+    <h2>The main contractor menu</h2>
 </div>
 <div class="container text-center">
     <table>
         <tr>
             <td>
-                <form action="main_contractor_servlet" method="get">
-                    <input type="hidden" value="<%=WhatToDo.SHOW_PROJECTS.toString()%>" name="todo">
+                <form action="<%=MAIN_CONTRACTOR_SERVLET%>" method="get">
+                    <input type="hidden" value="<%=WhatToDo.SHOW_PROJECTS.toString()%>" name="<%=TODO_PARAM%>">
                     <button class="btn btn-secondary" type="submit">Show all my projects</button>
                 </form>
             </td>
+            <td><p></p></td>
             <td>
-                <form action="main_contractor_servlet" method="get">
-                    <input type="hidden" value="<%=WhatToDo.SHOW_DEVELOPERS.toString()%>" name="todo">
+                <form action="<%=MAIN_CONTRACTOR_SERVLET%>" method="get">
+                    <input type="hidden" value="<%=WhatToDo.SHOW_DEVELOPERS.toString()%>" name="<%=TODO_PARAM%>">
                     <button class="btn btn-secondary" type="submit">Show all my developers</button>
                 </form>
             </td>
+            <td><p></p></td>
             <td>
-                <form action="main_contractor_servlet" method="get">
-                    <input type="hidden" value="<%=WhatToDo.SHOW_PROPOSALS.toString()%>" name="todo">
+                <form action="<%=MAIN_CONTRACTOR_SERVLET%>" method="get">
+                    <input type="hidden" value="<%=WhatToDo.SHOW_PROPOSALS.toString()%>" name="<%=TODO_PARAM%>">
                     <button class="btn btn-secondary" type="submit">Show all my proposals</button>
                 </form>
             </td>
+            <td><p></p></td>
             <td>
-                <form action="main_contractor_servlet" method="get">
-                    <input type="hidden" value="<%=WhatToDo.TRY_TO_CHOOSE_NEW_PROJECT.toString()%>" name="todo">
+                <form action="<%=MAIN_CONTRACTOR_SERVLET%>" method="get">
+                    <input type="hidden" value="<%=WhatToDo.TRY_TO_CHOOSE_NEW_PROJECT.toString()%>"
+                           name="<%=TODO_PARAM%>">
                     <button class="btn btn-secondary" type="submit">Try to choose new project</button>
                 </form>
             </td>
@@ -52,7 +52,7 @@
     </table>
     <br>
     <br>
-    <%String ExitButtonName = "Exit from " + session.getAttribute("role").toString().toLowerCase() + " account";%>
+    <%String ExitButtonName = EXIT_FROM + session.getAttribute(ROLE_PARAM).toString().toLowerCase() + ACCOUNT;%>
     <%@include file="/include_files/logout_button_file.jsp" %>
 </div>
 </body>

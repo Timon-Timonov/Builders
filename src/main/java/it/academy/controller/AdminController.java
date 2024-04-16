@@ -1,9 +1,6 @@
 package it.academy.controller;
 
-import it.academy.dto.ContractorDto;
-import it.academy.dto.DeveloperDto;
-import it.academy.dto.ProjectDto;
-import it.academy.dto.UserDto;
+import it.academy.dto.*;
 import it.academy.exceptions.EmailOccupaidException;
 import it.academy.exceptions.NotCreateDataInDbException;
 import it.academy.exceptions.NotUpdateDataInDbException;
@@ -11,7 +8,6 @@ import it.academy.pojo.enums.ProjectStatus;
 import it.academy.pojo.enums.UserStatus;
 
 import java.io.IOException;
-import java.util.List;
 
 public interface AdminController {
 
@@ -19,11 +15,11 @@ public interface AdminController {
 
     UserDto getUser(String email) throws IOException;
 
-    List<ContractorDto> getAllContractors(UserStatus status, int page, int count) throws IOException;
+    Page<ContractorDto> getAllContractors(UserStatus status, int page, int count) throws IOException;
 
-    List<DeveloperDto> getAllDevelopers(UserStatus status, int page, int count) throws IOException;
+    Page<DeveloperDto> getAllDevelopers(UserStatus status, int page, int count) throws IOException;
 
-    List<ProjectDto> getAllProjects(ProjectStatus status, int page, int count) throws IOException;
+    Page<ProjectDto> getAllProjects(ProjectStatus status, int page, int count) throws IOException;
 
 
     void cancelUser(Long userId) throws IOException, NotUpdateDataInDbException;

@@ -1,5 +1,6 @@
 package it.academy.service;
 
+import it.academy.dto.Page;
 import it.academy.exceptions.EmailOccupaidException;
 import it.academy.exceptions.NotCreateDataInDbException;
 import it.academy.exceptions.NotUpdateDataInDbException;
@@ -24,33 +25,31 @@ public interface ContractorService {
 
     Contractor getContractor(Long userId) throws IOException, RoleException;
 
-    List<Project> getMyProjects(Long contractorId, ProjectStatus status, Integer page, int count) throws IOException;
+    Page<Project> getMyProjects(Long contractorId, ProjectStatus status, int page, int count) throws IOException;
 
-    List<Project> getMyProjectsByDeveloper
+    Page<Project> getMyProjectsByDeveloper
         (Long developerId, Long contractorId, ProjectStatus status, int page, int count)
         throws IOException;
 
-    List<String> getAllChapterNames() throws IOException;
+    Page<Chapter> getFreeChapters(Long contractorId,String chapterName,ProjectStatus projectStatus, int page, int count) throws IOException;
 
-    List<Chapter> getFreeChapters(String chapterName, int page, int count) throws IOException;
+    Page<Developer> getMyDevelopers(Long contractorId, ProjectStatus status, int page, int count) throws IOException;
 
-    List<Developer> getMyDevelopers(Long contractorId, ProjectStatus status, int page, int count) throws IOException;
+    Page<Proposal> getMyProposals(Long contractorId, ProposalStatus status, int page, int count) throws IOException;
 
-    List<Proposal> getMyProposals(Long contractorId, ProposalStatus status, int page, int count) throws IOException;
+    Page<Calculation> getCalculationsByChapter(Long chapterId, int page, int count) throws IOException;
 
     List<Chapter> getMyChaptersByProjectId(Long ProjectId, Long ContractorId) throws IOException;
 
-    List<Calculation> getCalculationsByChapter(Long chapterId, int page, int count) throws IOException;
-
-    void updateWorkPriceFact(Integer workPrice, Long calculationId) throws IOException, NotUpdateDataInDbException;
+    List<String> getAllChapterNames() throws IOException;
 
     Calculation createCalculation(Long chapterId, Integer YYYY, Integer MM, Integer workPricePlan) throws IOException, NotCreateDataInDbException;
-
-    void startWork(Long proposalId) throws IOException, NotUpdateDataInDbException;
-
-    void cancelProposal(Long proposalId) throws IOException, NotUpdateDataInDbException;
 
     Proposal createProposal(Long chapterId, Long contractorId) throws IOException, NotCreateDataInDbException;
 
     Integer getTotalDeptByDeveloper(Long contractorId, Long developerId) throws IOException;
+
+    void updateWorkPriceFact(Integer workPrice, Long calculationId) throws IOException, NotUpdateDataInDbException;
+
+    void setProposalStatus(Long proposalId, ProposalStatus newStatus) throws IOException, NotUpdateDataInDbException;
 }

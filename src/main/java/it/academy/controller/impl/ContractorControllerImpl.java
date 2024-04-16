@@ -9,8 +9,10 @@ import it.academy.exceptions.RoleException;
 import it.academy.pojo.Calculation;
 import it.academy.pojo.Chapter;
 import it.academy.pojo.Project;
+import it.academy.pojo.Proposal;
 import it.academy.pojo.enums.ProjectStatus;
 import it.academy.pojo.enums.ProposalStatus;
+import it.academy.pojo.legalEntities.Developer;
 import it.academy.service.ContractorService;
 import it.academy.service.impl.ContractorServiceImpl;
 import it.academy.util.Util;
@@ -22,8 +24,11 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
+import static it.academy.util.Constants.*;
+
 @Log4j2
 public class ContractorControllerImpl implements ContractorController {
+
 
     private final ContractorService contractorService = new ContractorServiceImpl();
 
@@ -40,21 +45,27 @@ public class ContractorControllerImpl implements ContractorController {
     }
 
     @Override
-    public List<ProjectDto> getMyProjects(Long contractorId, ProjectStatus status, Integer page, int count) throws IOException {
+    public Page<ProjectDto> getMyProjects(Long contractorId, ProjectStatus status, int page, int count) throws IOException {
 
-        return contractorService.getMyProjects(contractorId, status, page, count)
-                   .stream()
-                   .map(project -> getProjectDtoForContractor(contractorId, project))
-                   .collect(Collectors.toList());
+        Page<Project> projectPage = contractorService.getMyProjects(contractorId, status, page, count);
+        int pageNumber = projectPage.getPageNumber();
+        List<ProjectDto> list = projectPage.getList()
+                                    .stream()
+                                    .map(project -> getProjectDtoForContractor(contractorId, project))
+                                    .collect(Collectors.toList());
+        return new Page<>(list, pageNumber);
     }
 
     @Override
-    public List<ProjectDto> getMyProjectsByDeveloper(Long developerId, Long contractorId, ProjectStatus status, int page, int count) throws IOException {
+    public Page<ProjectDto> getMyProjectsByDeveloper(Long developerId, Long contractorId, ProjectStatus status, int page, int count) throws IOException {
 
-        return contractorService.getMyProjectsByDeveloper(developerId, contractorId, status, page, count)
-                   .stream()
-                   .map(project -> getProjectDtoForContractor(contractorId, project))
-                   .collect(Collectors.toList());
+        Page<Project> projectPage = contractorService.getMyProjectsByDeveloper(developerId, contractorId, status, page, count);
+        int pageNumber = projectPage.getPageNumber();
+        List<ProjectDto> list = projectPage.getList().stream()
+                                    .map(project -> getProjectDtoForContractor(contractorId, project))
+                                    .collect(Collectors.toList());
+
+        return new Page<>(list, pageNumber);
     }
 
     @Override
@@ -64,38 +75,47 @@ public class ContractorControllerImpl implements ContractorController {
     }
 
     @Override
-    public List<ChapterDto> getFreeChapters(String chapterName, int page, int count) throws IOException {
+    public Page<ChapterDto> getFreeChapters(Long contractorId,String chapterName,ProjectStatus projectStatus, int page, int count) throws IOException {
 
-        return contractorService.getFreeChapters(chapterName, page, count).stream()
-                   .map(chapter -> ChapterConverter.convertToDto(chapter, null))
-                   .collect(Collectors.toList());
+        Page<Chapter> chapterPage = contractorService.getFreeChapters(contractorId,chapterName,projectStatus, page, count);
+        int pageNumber = chapterPage.getPageNumber();
+        List<ChapterDto> list = chapterPage.getList()
+                                    .stream()
+                                    .map(chapter -> ChapterConverter.convertToDto(chapter, null))
+                                    .collect(Collectors.toList());
+        return new Page<>(list, pageNumber);
     }
 
     @Override
-    public List<DeveloperDto> getMyDevelopers(Long contractorId, ProjectStatus status, int page, int count) throws IOException {
+    public Page<DeveloperDto> getMyDevelopers(Long contractorId, ProjectStatus status, int page, int count) throws IOException {
 
-        return contractorService.getMyDevelopers(contractorId, status, page, count)
-                   .stream()
-                   .map(developer -> {
-
-                       Integer developerDebt = null;
-                       try {
-                           developerDebt = contractorService.getTotalDeptByDeveloper(contractorId, developer.getId());
-                       } catch (IOException e) {
-                           log.error("Getting of debt " + contractorId + " with developerId " + developer.getId() + " failed.", e);
-                       }
-                       return DeveloperConverter.convertToDto(developer, developerDebt);
-                   })
-                   .collect(Collectors.toList());
+        Page<Developer> developerPage = contractorService.getMyDevelopers(contractorId, status, page, count);
+        int pageNumber = developerPage.getPageNumber();
+        List<DeveloperDto> list = developerPage.getList()
+                                      .stream()
+                                      .map(developer -> {
+                                          Integer developerDebt = null;
+                                          try {
+                                              developerDebt = contractorService.getTotalDeptByDeveloper(contractorId, developer.getId());
+                                          } catch (IOException e) {
+                                              log.error(GETTING_OF_DEBT + contractorId + WITH_DEVELOPER_ID + developer.getId() + FAILED, e);
+                                          }
+                                          return DeveloperConverter.convertToDto(developer, developerDebt);
+                                      })
+                                      .collect(Collectors.toList());
+        return new Page<>(list, pageNumber);
     }
 
     @Override
-    public List<ProposalDto> getMyProposals(Long contractorId, ProposalStatus status, int page, int count) throws IOException {
+    public Page<ProposalDto> getMyProposals(Long contractorId, ProposalStatus status, int page, int count) throws IOException {
 
-        return contractorService.getMyProposals(contractorId, status, page, count)
-                   .stream()
-                   .map(ProposalConverter::convertToDto)
-                   .collect(Collectors.toList());
+        Page<Proposal> proposalPage = contractorService.getMyProposals(contractorId, status, page, count);
+        int pageNumber = proposalPage.getPageNumber();
+        List<ProposalDto> list = proposalPage.getList()
+                                     .stream()
+                                     .map(ProposalConverter::convertToDto)
+                                     .collect(Collectors.toList());
+        return new Page<>(list, pageNumber);
     }
 
     @Override
@@ -111,14 +131,16 @@ public class ContractorControllerImpl implements ContractorController {
     }
 
     @Override
-    public List<CalculationDto> getCalculationsByChapter(Long chapterId, int page, int count) throws IOException {
+    public Page<CalculationDto> getCalculationsByChapter(Long chapterId, int page, int count) throws IOException {
 
-        return contractorService.getCalculationsByChapter(chapterId, page, count).stream()
-                   .map(calculation -> {
-                       Integer[] sums = Util.getDebtFromCalculation(calculation);
-                       return CalculationConverter.convertToDto(calculation, sums[0], sums[1], sums[2]);
-                   })
-                   .collect(Collectors.toList());
+        Page<Calculation> calculationPage = contractorService.getCalculationsByChapter(chapterId, page, count);
+        List<CalculationDto> list = calculationPage.getList().stream()
+                                        .map(calculation -> {
+                                            Integer[] sums = Util.getDebtFromCalculation(calculation);
+                                            return CalculationConverter.convertToDto(calculation, sums[0], sums[1], sums[2]);
+                                        })
+                                        .collect(Collectors.toList());
+        return new Page<>(list, calculationPage.getPageNumber());
     }
 
     @Override
@@ -135,15 +157,9 @@ public class ContractorControllerImpl implements ContractorController {
     }
 
     @Override
-    public void startWork(Long proposalId) throws IOException, NotUpdateDataInDbException {
+    public void setProposalStatus(Long proposalId, ProposalStatus newStatus) throws IOException, NotUpdateDataInDbException {
 
-        contractorService.startWork(proposalId);
-    }
-
-    @Override
-    public void cancelProposal(Long proposalId) throws IOException, NotUpdateDataInDbException {
-
-        contractorService.cancelProposal(proposalId);
+        contractorService.setProposalStatus(proposalId,newStatus);
     }
 
     @Override

@@ -1,11 +1,12 @@
 package it.academy.dao;
 
-import it.academy.exceptions.EmailOccupaidException;
-import it.academy.util.functionalInterfaces.TransactionBody;
+import it.academy.util.functionalInterfaces.TransactionObjectBody;
+import it.academy.util.functionalInterfaces.TransactionVoidBody;
 import org.hibernate.exception.ConstraintViolationException;
 
 import javax.persistence.EntityNotFoundException;
 import javax.persistence.NoResultException;
+import javax.persistence.RollbackException;
 import java.io.IOException;
 import java.util.List;
 
@@ -25,6 +26,9 @@ public interface Dao<T, R> {
 
     long countOfEntitiesInBase();
 
-    void executeInOneTransaction(TransactionBody body)
+    void executeInOneTransaction(TransactionVoidBody body)
         throws IOException, EntityNotFoundException, NoResultException, ConstraintViolationException;
+
+    Object executeInOneTransaction(TransactionObjectBody body)
+        throws RollbackException, IOException, EntityNotFoundException, NoResultException, ConstraintViolationException;
 }

@@ -8,7 +8,6 @@ import javax.persistence.Embeddable;
 @Getter
 @Setter
 @EqualsAndHashCode
-@ToString
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -20,4 +19,9 @@ public class Address {
     private String street;
 
     private String building;
+
+    @Override
+    public String toString() {
+        return city + ", " + street + ", " + building + ".";
+    }
 }

@@ -1,3 +1,4 @@
+<%@ page import="static it.academy.util.Constants.*" %>
 <%@ page contentType="text/html;charset=UTF-8" %>
 <html>
 <head>
@@ -10,15 +11,19 @@
 
 <body>
 <div class="container text-center">
-    <form action="login_servlet" method="post">
+    <form action="<%=LOGIN_SERVLET%>" method="post">
 
         Input email: <label>
-        <input name="email" value="<%=request.getParameter("email")!=null?request.getParameter("email"):""%>" type="text">
+        <input name="<%=EMAIL_PARAM%>"
+               value="<%=request.getParameter(EMAIL_PARAM)!=null?request.getParameter(EMAIL_PARAM):""%>"
+               type="text">
     </label><br/>
         <br>
 
         Input password: <label>
-        <input name="password" value="<%=request.getParameter("password")!=null?request.getParameter("password"):""%>" type="text">
+        <input name="<%=PASSWORD_PARAM%>"
+               value="<%=request.getParameter(PASSWORD_PARAM)!=null?request.getParameter(PASSWORD_PARAM):""%>"
+               type="text">
     </label><br/>
         <br>
         <br>

@@ -9,6 +9,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class NotUpdateDataInDbException extends Exception {
 
-    private String message = "Data not updated";
+    private String message;
 
 }

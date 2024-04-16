@@ -33,18 +33,11 @@ public class Project {
     @ManyToOne
     private Developer developer;
 
+    @Builder.Default
     @Embedded
-    private Address address;
+    private Address address=new Address();
 
     @Builder.Default
     @OneToMany(mappedBy = "project", fetch = FetchType.EAGER)
     private Set<Chapter> chapters = new HashSet<>();
-
-    public void addChapter(Chapter chapter) {
-
-        if (chapter != null) {
-            chapter.setProject(this);
-            this.chapters.add(chapter);
-        }
-    }
 }

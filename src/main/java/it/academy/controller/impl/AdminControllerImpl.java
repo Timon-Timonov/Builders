@@ -1,15 +1,15 @@
 package it.academy.controller.impl;
 
 import it.academy.controller.AdminController;
-import it.academy.dto.ContractorDto;
-import it.academy.dto.DeveloperDto;
-import it.academy.dto.ProjectDto;
-import it.academy.dto.UserDto;
+import it.academy.dto.*;
 import it.academy.exceptions.EmailOccupaidException;
 import it.academy.exceptions.NotCreateDataInDbException;
 import it.academy.exceptions.NotUpdateDataInDbException;
+import it.academy.pojo.Project;
 import it.academy.pojo.enums.ProjectStatus;
 import it.academy.pojo.enums.UserStatus;
+import it.academy.pojo.legalEntities.Contractor;
+import it.academy.pojo.legalEntities.Developer;
 import it.academy.service.AdminService;
 import it.academy.service.impl.AdminServiceImpl;
 import it.academy.util.converters.ContractorConverter;
@@ -38,30 +38,40 @@ public class AdminControllerImpl implements AdminController {
     }
 
     @Override
-    public List<ContractorDto> getAllContractors(UserStatus status, int page, int count) throws IOException {
+    public Page<ContractorDto> getAllContractors(UserStatus status, int page, int count) throws IOException {
 
-        return adminService.getAllContractors(status, page, count)
-                   .stream()
-                   .map(contractor -> ContractorConverter.convertToDto(contractor, null))
-                   .collect(Collectors.toList());
+        Page<Contractor> contractorPage = adminService.getAllContractors(status, page, count);
+        int pageNumber = contractorPage.getPageNumber();
+        List<ContractorDto> list = contractorPage.getList()
+                                       .stream()
+                                       .map(contractor -> ContractorConverter.convertToDto(contractor, null))
+                                       .collect(Collectors.toList());
+
+        return new Page<>(list, pageNumber);
     }
 
     @Override
-    public List<DeveloperDto> getAllDevelopers(UserStatus status, int page, int count) throws IOException {
+    public Page<DeveloperDto> getAllDevelopers(UserStatus status, int page, int count) throws IOException {
 
-        return adminService.getAllDevelopers(status, page, count)
-                   .stream()
-                   .map(developer -> DeveloperConverter.convertToDto(developer, null))
-                   .collect(Collectors.toList());
+        Page<Developer> developerPage = adminService.getAllDevelopers(status, page, count);
+        int pageNumber = developerPage.getPageNumber();
+        List<DeveloperDto> list = developerPage.getList()
+                                      .stream()
+                                      .map(developer -> DeveloperConverter.convertToDto(developer, null))
+                                      .collect(Collectors.toList());
+        return new Page<>(list, pageNumber);
     }
 
     @Override
-    public List<ProjectDto> getAllProjects(ProjectStatus status, int page, int count) throws IOException {
+    public Page<ProjectDto> getAllProjects(ProjectStatus status, int page, int count) throws IOException {
 
-        return adminService.getAllProjects(status, page, count)
-                   .stream()
-                   .map(project -> ProjectConverter.convertToDto(project, null, null))
-                   .collect(Collectors.toList());
+        Page<Project> projectPage = adminService.getAllProjects(status, page, count);
+        int pageNumber = projectPage.getPageNumber();
+        List<ProjectDto> list = projectPage.getList()
+                                    .stream()
+                                    .map(project -> ProjectConverter.convertToDto(project, null, null))
+                                    .collect(Collectors.toList());
+        return new Page<>(list, pageNumber);
     }
 
     @Override

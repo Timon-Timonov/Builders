@@ -35,7 +35,7 @@ public class DeveloperDaoImpl extends DaoImpl<Developer, Long> implements Develo
         throws IOException {
 
         TypedQuery<Developer> query = getEm().createQuery(
-            "SELECT d FROM Developer d, Chapter c WHERE c.project.developer.id=d.id AND c.contractor.id=:contractorId AND c.project.status=:status ORDER BY d.name",
+            "SELECT DISTINCT (d) FROM Developer d, Chapter c WHERE c.project.developer.id=d.id AND c.contractor.id=:contractorId AND c.project.status=:status ORDER BY d.name",
             Developer.class);
         return query.setParameter("contractorId", contractorId)
                    .setParameter("status", status)
@@ -65,5 +65,4 @@ public class DeveloperDaoImpl extends DaoImpl<Developer, Long> implements Develo
                    .setParameter("status", status)
                    .getSingleResult();
     }
-
 }

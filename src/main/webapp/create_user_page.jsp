@@ -1,4 +1,5 @@
 <%@ page import="it.academy.pojo.enums.Roles" %>
+<%@ page import="static it.academy.util.Constants.*" %>
 <%@ page contentType="text/html;charset=UTF-8" %>
 <html>
 <head>
@@ -14,56 +15,54 @@
     <h2>The create user form</h2>
 </div>
 
-<% Roles role = (Roles) session.getAttribute("role");
+<% Roles role = (Roles) session.getAttribute(ROLE_PARAM);
     String action;
     switch (role) {
         case CONTRACTOR:
-            action = "create_contractor_servlet";
+            action = CREATE_CONTRACTOR_SERVLET;
             break;
         case DEVELOPER:
-            action = "create_developer_servlet";
+            action = CREATE_DEVELOPER_SERVLET;
             break;
         default:
-            action = "logout_servlet";
+            action = LOGOUT_SERVLET;
     }
 %>
 <div class="container text-center">
     <form action="<%=action%>" method="post">
 
         Input email: <label>
-        <input name="email"  type="text">
+        <input name="<%=EMAIL_PARAM%>" type="text">
     </label><br/>
         <br>
 
         Input password: <label>
-        <input name="password"  type="text">
+        <input name="<%=PASSWORD_PARAM%>" type="text">
     </label><br/>
         <br>
 
         Input name: <label>
-        <input name="name"  type="text">
+        <input name="<%=NAME_PARAM%>" type="text">
     </label><br/>
         <br>
 
         Input city: <label>
-        <input name="city"  type="text">
+        <input name="<%=CITY_PARAM%>" type="text">
     </label><br/>
         <br>
 
         Input street: <label>
-        <input name="street"  type="text">
+        <input name="<%=STREET_PARAM%>" type="text">
     </label><br/>
         <br>
 
         Input building: <label>
-        <input name="building"  type="text">
+        <input name="<%=BUILDING_PARAM%>" type="text">
     </label><br/>
         <br>
         <br>
-
         <button class="btn btn-primary" type="submit">Create new <%=role.toString().toLowerCase()%> account</button>
     </form>
-
     <%String ExitButtonName = "Cancel";%>
     <%@include file="/include_files/logout_button_file.jsp" %>
 </div>
