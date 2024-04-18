@@ -84,7 +84,7 @@
             <td><%=projectDto.getProjectPrice()%>
             </td>
             <td>
-                <form action="<%=GET_CHAPTERS_OF_PROJECT_SERVLET%>" method="get">
+                <form action="<%=GET_CHAPTERS_OF_PROJECT_DEVELOPER_SERVLET%>" method="get">
                     <input type="hidden" value="<%=projectDto.getId().toString()%>" name="<%=PROJECT_ID_PARAM%>">
                     <input type="hidden" value="<%=projectName%>" name="<%=PROJECT_NAME_PARAM%>">
                     <input type="hidden" value="<%=projectAddress%>" name="<%=PROJECT_ADDRESS_PARAM%>">
@@ -97,6 +97,9 @@
     </table>
 </div>
 <br>
+<form action="<%=CREATE_PROJECT_DEVELOPER_SERVLET%>" method="get">
+    <button class="btn btn-light" type="submit">Create new project</button>
+</form>
 <br>
 <div class="container text-center">
     <%@include file="/include_files/go_to_main_button_file.jsp" %>

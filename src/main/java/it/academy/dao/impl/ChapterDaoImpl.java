@@ -19,6 +19,35 @@ public class ChapterDaoImpl extends DaoImpl<Chapter, Long> implements ChapterDao
     }
 
     @Override
+    public Long getCountOfFreeChaptersByName(Long contractorId, String chapterName, ProjectStatus projectStatus) throws NoResultException, IOException {
+
+        TypedQuery<Long> query = getEm().createQuery(
+            "SELECT COUNT (ch.id) FROM Chapter ch LEFT JOIN Proposal  prop ON ch.id=prop.chapter.id WHERE ch.name=:chapterName AND ch.status=:chapterStatus AND ch.project.status=:projectStatus AND ch.id NOT IN (SELECT prop.chapter.id FROM prop WHERE prop.contractor.id=:contractorId)",
+            Long.class);
+        return query.setParameter("chapterName", chapterName)
+                   .setParameter("chapterStatus", ChapterStatus.FREE)
+                   .setParameter("projectStatus", projectStatus)
+                   .setParameter("contractorId", contractorId)
+                   .getSingleResult();
+    }
+
+    @Override
+    public List<Chapter> getFreeChapters(Long contractorId, String chapterName, ProjectStatus projectStatus, int page, int count)
+        throws IOException {
+
+        TypedQuery<Chapter> query = getEm().createQuery(
+            "SELECT ch FROM Chapter ch LEFT JOIN Proposal  prop ON ch.id=prop.chapter.id WHERE ch.name=:chapterName AND ch.status=:chapterStatus AND ch.project.status=:projectStatus AND ch.id NOT IN (SELECT prop.chapter.id FROM prop WHERE prop.contractor.id=:contractorId) ORDER BY ch.project.name ASC",
+            Chapter.class);
+        return query.setParameter("chapterName", chapterName)
+                   .setParameter("chapterStatus", ChapterStatus.FREE)
+                   .setParameter("projectStatus", projectStatus)
+                   .setParameter("contractorId", contractorId)
+                   .setMaxResults(count)
+                   .setFirstResult((page - 1) * count)
+                   .getResultList();
+    }
+
+    @Override
     public List<String> getAllChapterNames()
         throws IOException {
 
@@ -26,22 +55,6 @@ public class ChapterDaoImpl extends DaoImpl<Chapter, Long> implements ChapterDao
             "SELECT DISTINCT (ch.name) FROM Chapter ch ORDER BY ch.name ASC ",
             String.class);
         return query.getResultList();
-    }
-
-    @Override
-    public List<Chapter> getFreeChapters(Long contractorId,String chapterName, ProjectStatus projectStatus, int page, int count)
-        throws IOException {
-
-        TypedQuery<Chapter> query = getEm().createQuery(
-            "SELECT ch FROM Chapter ch, Proposal  prop WHERE prop.contractor.id=:contractorId AND prop.chapter<>ch AND ch.name=:chapterName AND ch.status=:status AND ch.project.status=:projectStatus ORDER BY ch.name ASC",
-            Chapter.class);
-        return query.setParameter("chapterName", chapterName)
-                   .setParameter("status", ChapterStatus.FREE)
-                   .setParameter("projectStatus", projectStatus)
-                   .setParameter("contractorId", contractorId)
-                   .setMaxResults(count)
-                   .setFirstResult((page - 1) * count)
-                   .getResultList();
     }
 
     @Override
@@ -68,13 +81,14 @@ public class ChapterDaoImpl extends DaoImpl<Chapter, Long> implements ChapterDao
     }
 
     @Override
-    public List<Chapter> getChaptersByContractorId(Long contractorId, ChapterStatus status, int page, int count)
+    public List<Chapter> getChaptersByContractorIdAndDeveloperId(Long developerId, Long contractorId, ProjectStatus status, int page, int count)
         throws IOException {
 
         TypedQuery<Chapter> query = getEm().createQuery(
-            "SELECT ch FROM Chapter ch WHERE ch.contractor.id=:contractorId AND ch.status=:status ORDER BY ch.name ASC",
+            "SELECT ch  FROM Chapter ch LEFT JOIN Project proj ON ch.project.id=proj.id WHERE  proj.status=:status AND ch.contractor.id=:contractorId AND proj.developer.id=:developerId ORDER BY proj.name, ch.name",
             Chapter.class);
-        return query.setParameter("contractorId", contractorId)
+        return query.setParameter("developerId", developerId)
+                   .setParameter("contractorId", contractorId)
                    .setParameter("status", status)
                    .setMaxResults(count)
                    .setFirstResult((page - 1) * count)
@@ -94,25 +108,13 @@ public class ChapterDaoImpl extends DaoImpl<Chapter, Long> implements ChapterDao
     }
 
     @Override
-    public Long getCountOfFreeChaptersByName(Long contractorId,String chapterName, ProjectStatus projectStatus) throws NoResultException, IOException {
+    public Long getCountOfChaptersByContractorIdAndDeveloperId(Long developerId, Long contractorId, ProjectStatus status) throws NoResultException, IOException {
 
         TypedQuery<Long> query = getEm().createQuery(
-            "SELECT Count(ch) FROM Chapter ch,Proposal prop WHERE prop.chapter<>ch AND prop.contractor.id=:contractorId AND ch.name=:chapterName AND ch.status=:status AND ch.project.status=:projectStatus",
-            Long.class);
-        return query.setParameter("chapterName", chapterName)
-                   .setParameter("status", ChapterStatus.FREE)
-                   .setParameter("projectStatus", projectStatus)
-                   .setParameter("contractorId", contractorId)
-                   .getSingleResult();
-    }
-
-    @Override
-    public Long getCountOfChaptersByContractorId(Long contractorId, ChapterStatus status) throws NoResultException, IOException {
-
-        TypedQuery<Long> query = getEm().createQuery(
-            "SELECT COUNT(ch) FROM Chapter ch WHERE ch.contractor.id=:contractorId AND ch.status=:status ORDER BY ch.name ASC",
+            "SELECT COUNT(ch) FROM Chapter ch LEFT JOIN Project proj ON ch.project.id=proj.id WHERE  proj.status=:status AND ch.contractor.id=:contractorId AND proj.developer.id=:developerId",
             Long.class);
         return query.setParameter("contractorId", contractorId)
+                   .setParameter("developerId", developerId)
                    .setParameter("status", status)
                    .getSingleResult();
     }

@@ -6,7 +6,6 @@ import it.academy.exceptions.NotCreateDataInDbException;
 import it.academy.exceptions.NotUpdateDataInDbException;
 import it.academy.exceptions.RoleException;
 import it.academy.pojo.Project;
-import it.academy.pojo.enums.ChapterStatus;
 import it.academy.pojo.enums.ProjectStatus;
 import it.academy.pojo.enums.ProposalStatus;
 
@@ -27,7 +26,7 @@ public interface DeveloperController {
 
     Page<ProposalDto> getAllMyProposals(Long developerId, ProposalStatus status, int page, int count) throws IOException;
 
-    void createProject(Long developerId, String name, String city, String street, String building)
+    ProjectDto createProject(Long developerId, String name, String city, String street, String building)
         throws IOException, NotCreateDataInDbException;
 
     void createChapter(Long projectId, String name, Integer price) throws IOException, NotCreateDataInDbException;
@@ -36,10 +35,12 @@ public interface DeveloperController {
 
     List<ChapterDto> getChaptersByProjectId(Long projectId) throws IOException;
 
-    Page<ChapterDto> getChaptersByContractorId(Long contractorId, ChapterStatus status, int page, int count)
+    Page<ChapterDto> getChaptersByContractorIdAndDeveloperId(Long developerId, Long contractorId, ProjectStatus status, int page, int count)
         throws IOException;
 
     void rejectProposal(Long proposalId) throws IOException, NotUpdateDataInDbException;
+
+    void considerateProposal(Long proposalId) throws IOException, NotUpdateDataInDbException;
 
     void approveProposal(Long proposalId) throws IOException, NotUpdateDataInDbException;
 

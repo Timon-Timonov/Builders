@@ -58,38 +58,30 @@ public class MainContractorServlet extends HttpServlet {
                     chooseNewProject(req, resp);
                     break;
                 default:
-                    req.setAttribute(MESSAGE_PARAM, INVALID_VALUE);
-                    getServletContext().getRequestDispatcher(EXCEPTION_PAGES_EXCEPTION_IN_WORK_PAGE_3_JSP).forward(req, resp);
+                    Util.forwardToException3(req, resp, this, INVALID_VALUE);
             }
         } else {
-            req.setAttribute(MESSAGE_PARAM, INVALID_VALUE);
-            getServletContext().getRequestDispatcher(EXCEPTION_PAGES_EXCEPTION_IN_WORK_PAGE_3_JSP).forward(req, resp);
+            Util.forwardToException3(req, resp, this, INVALID_VALUE);
         }
     }
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
-        Long proposalId = null;
-        ProposalStatus newStatus = null;
-        String idString = req.getParameter(PROPOSAL_ID_PARAM);
-        try {
-            proposalId = Long.parseLong(idString);
-        } catch (NumberFormatException e) {
-            log.error(INVALID_VALUE + PROPOSAL_ID_PARAM + idString, e);
-        }
-        if (proposalId != null) {
-            String newStatusString = req.getParameter(NEW_PROPOSAL_STATUS_PARAM);
-            try {
-                newStatus = ProposalStatus.valueOf(newStatusString);
-            } catch (IllegalArgumentException e) {
-                log.error(INVALID_VALUE + NEW_PROPOSAL_STATUS_PARAM + newStatusString, e);
-            }
+        long proposalId = Util.getNumberValueFromParameter(req, PROPOSAL_ID_PARAM, ZERO_LONG_VALUE);
+        ProposalStatus newStatus = Util.getProposalStatusFromParameter(req, NEW_PROPOSAL_STATUS_PARAM, null);
+
+        if (proposalId != ZERO_LONG_VALUE && newStatus != null) {
             try {
                 controller.setProposalStatus(proposalId, newStatus);
             } catch (NotUpdateDataInDbException e) {
                 log.error(PROPOSAL_STATUS_NOT_UPDATE_ID + proposalId, e);
+                Util.forwardToException3(req, resp, this, PROPOSAL_NOT_UPDATE);
+            } catch (IOException e) {
+                Util.forwardToException3(req, resp, this, BAD_CONNECTION);
             }
+        } else {
+            Util.forwardToException3(req, resp, this, PROPOSAL_NOT_UPDATE);
         }
         doGet(req, resp);
     }
@@ -107,10 +99,8 @@ public class MainContractorServlet extends HttpServlet {
         try {
             developerDtoPage = controller.getMyDevelopers(id, status, page, count);
         } catch (IOException e) {
-            req.setAttribute(MESSAGE_PARAM, BAD_CONNECTION);
-            getServletContext().getRequestDispatcher(EXCEPTION_PAGES_EXCEPTION_IN_WORK_PAGE_3_JSP).forward(req, resp);
+            Util.forwardToException3(req, resp, this, BAD_CONNECTION);
         }
-
         page = developerDtoPage.getPageNumber();
         List<DeveloperDto> developerDtoList = developerDtoPage.getList();
 
@@ -136,10 +126,8 @@ public class MainContractorServlet extends HttpServlet {
         try {
             projectDtoPage = controller.getMyProjects(id, status, page, count);
         } catch (IOException e) {
-            req.setAttribute(MESSAGE_PARAM, BAD_CONNECTION);
-            getServletContext().getRequestDispatcher(EXCEPTION_PAGES_EXCEPTION_IN_WORK_PAGE_3_JSP).forward(req, resp);
+            Util.forwardToException3(req, resp, this, BAD_CONNECTION);
         }
-
         page = projectDtoPage.getPageNumber();
         List<ProjectDto> projectDtoList = projectDtoPage.getList();
 
@@ -157,7 +145,7 @@ public class MainContractorServlet extends HttpServlet {
         SessionCleaner.clearProposalAttributes(req);
 
         long id = Util.getNumberValueFromParameter(req, ID_PARAM, ZERO_LONG_VALUE);
-        ProposalStatus status = Util.getProposalStatus(req, PROPOSAL_STATUS_PARAM, DEFAULT_PROPOSAL_STATUS);
+        ProposalStatus status = Util.getProposalStatusFromParameter(req, PROPOSAL_STATUS_PARAM, DEFAULT_PROPOSAL_STATUS);
         int page = Util.getNumberValueFromParameter(req, PROPOSAL_PAGE_PARAM, FIRST_PAGE_NUMBER);
         int count = Util.getNumberValueFromParameter(req, PROPOSAL_COUNT_ON_PAGE_PARAM, DEFAULT_COUNT_ON_PAGE_5);
 
@@ -165,10 +153,8 @@ public class MainContractorServlet extends HttpServlet {
         try {
             proposalDtoPage = controller.getMyProposals(id, status, page, count);
         } catch (IOException e) {
-            req.setAttribute(MESSAGE_PARAM, BAD_CONNECTION);
-            getServletContext().getRequestDispatcher(EXCEPTION_PAGES_EXCEPTION_IN_WORK_PAGE_3_JSP).forward(req, resp);
+            Util.forwardToException3(req, resp, this, BAD_CONNECTION);
         }
-
         page = proposalDtoPage.getPageNumber();
         List<ProposalDto> proposalDtoList = proposalDtoPage.getList();
 
@@ -179,7 +165,6 @@ public class MainContractorServlet extends HttpServlet {
         session.setAttribute(PROPOSAL_COUNT_ON_PAGE_PARAM, count);
 
         getServletContext().getRequestDispatcher(CONTRACTOR_PAGES_LIST_WITH_PROPOSALS_JSP).forward(req, resp);
-
     }
 
     private void chooseNewProject(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -190,8 +175,7 @@ public class MainContractorServlet extends HttpServlet {
         try {
             chapterNamesList = controller.getAllChapterNames();
         } catch (IOException e) {
-            req.setAttribute(MESSAGE_PARAM, BAD_CONNECTION);
-            getServletContext().getRequestDispatcher(EXCEPTION_PAGES_EXCEPTION_IN_WORK_PAGE_3_JSP).forward(req, resp);
+            Util.forwardToException3(req, resp, this, BAD_CONNECTION);
         }
         req.setAttribute(CHAPTER_NAMES_LIST_PARAM, chapterNamesList);
 

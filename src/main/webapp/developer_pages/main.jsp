@@ -28,12 +28,18 @@
             </td>
             <td><p></p></td>
             <td>
-                <form action="<%=MAIN_CONTRACTOR_SERVLET%>" method="get">
+                <form action="<%=MAIN_DEVELOPER_SERVLET%>" method="get">
                     <input type="hidden" value="<%=WhatToDo.SHOW_CONTRACTORS.toString()%>" name="<%=TODO_PARAM%>">
                     <button class="btn btn-secondary" type="submit">Show all my contractors</button>
                 </form>
             </td>
             <td><p></p></td>
+            <td>
+                <form action="<%=MAIN_DEVELOPER_SERVLET%>" method="get">
+                    <input type="hidden" value="<%=WhatToDo.SHOW_PROPOSALS.toString()%>" name="<%=TODO_PARAM%>">
+                    <button class="btn btn-secondary" type="submit">Show all my proposals</button>
+                </form>
+            </td>
         </tr>
     </table>
     <br>

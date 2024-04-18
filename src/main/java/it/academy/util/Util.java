@@ -5,8 +5,12 @@ import it.academy.pojo.Chapter;
 import it.academy.pojo.enums.*;
 import lombok.extern.log4j.Log4j2;
 
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import java.io.IOException;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static it.academy.util.Constants.*;
@@ -65,7 +69,7 @@ public class Util {
                    .reduce(0, Integer::sum);
     }
 
-    public static ProposalStatus getProposalStatus
+    public static ProposalStatus getProposalStatusFromParameter
         (HttpServletRequest req, String parameterName, ProposalStatus defaultValue) {
 
         HttpSession session = req.getSession();
@@ -181,5 +185,26 @@ public class Util {
                    : (session.getAttribute(parameterName) != null ?
                           (UserStatus) session.getAttribute(parameterName)
                           : defaultValue);
+    }
+
+    public static void forwardToException1(HttpServletRequest req, HttpServletResponse resp, HttpServlet th, String message)
+        throws ServletException, IOException {
+
+        req.setAttribute(MESSAGE_PARAM, message);
+        th.getServletContext().getRequestDispatcher(EXCEPTION_PAGES_EXCEPTION_PAGE_1_JSP).forward(req, resp);
+    }
+
+    public static void forwardToException2(HttpServletRequest req, HttpServletResponse resp, HttpServlet th, String message)
+        throws ServletException, IOException {
+
+        req.setAttribute(MESSAGE_PARAM, message);
+        th.getServletContext().getRequestDispatcher(EXCEPTION_PAGES_EXCEPTION_CREATION_PAGE_2_JSP).forward(req, resp);
+    }
+
+    public static void forwardToException3(HttpServletRequest req, HttpServletResponse resp, HttpServlet th, String message)
+        throws ServletException, IOException {
+
+        req.setAttribute(MESSAGE_PARAM, message);
+        th.getServletContext().getRequestDispatcher(EXCEPTION_PAGES_EXCEPTION_IN_WORK_PAGE_3_JSP).forward(req, resp);
     }
 }

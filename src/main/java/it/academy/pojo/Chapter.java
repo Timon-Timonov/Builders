@@ -35,9 +35,11 @@ public class Chapter {
     private ChapterStatus status = ChapterStatus.FREE;
 
     @ManyToOne
+    @JoinColumn(name = "project_id")
     private Project project;
 
     @ManyToOne
+    @JoinColumn(name = "contractor_id")
     private Contractor contractor;
 
     @Builder.Default

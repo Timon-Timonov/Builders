@@ -10,7 +10,6 @@ import it.academy.pojo.Calculation;
 import it.academy.pojo.Chapter;
 import it.academy.pojo.Project;
 import it.academy.pojo.Proposal;
-import it.academy.pojo.enums.ChapterStatus;
 import it.academy.pojo.enums.ProjectStatus;
 import it.academy.pojo.enums.ProposalStatus;
 import it.academy.pojo.legalEntities.Contractor;
@@ -96,11 +95,11 @@ public class DeveloperControllerImpl implements DeveloperController {
     }
 
     @Override
-    public void createProject(
+    public ProjectDto createProject(
         Long developerId, String name, String city, String street, String building)
         throws IOException, NotCreateDataInDbException {
 
-        developerService.createProject(developerId, name, city, street, building);
+        return ProjectConverter.convertToDto(developerService.createProject(developerId, name, city, street, building), null, null);
     }
 
     @Override
@@ -124,10 +123,10 @@ public class DeveloperControllerImpl implements DeveloperController {
     }
 
     @Override
-    public Page<ChapterDto> getChaptersByContractorId(
-        Long contractorId, ChapterStatus status, int page, int count) throws IOException {
+    public Page<ChapterDto> getChaptersByContractorIdAndDeveloperId(
+        Long developerId, Long contractorId, ProjectStatus status, int page, int count) throws IOException {
 
-        Page<Chapter> chapterPage = developerService.getChaptersByContractorId(contractorId, status, page, count);
+        Page<Chapter> chapterPage = developerService.getChaptersByContractorIdAndDeveloperId(developerId,contractorId, status, page, count);
         int pageNumber = chapterPage.getPageNumber();
         List<ChapterDto> list = chapterPage.getList().stream()
                                     .map(this::getChapterDtoForDeveloper)
@@ -139,6 +138,12 @@ public class DeveloperControllerImpl implements DeveloperController {
     public void rejectProposal(Long proposalId) throws IOException, NotUpdateDataInDbException {
 
         developerService.rejectProposal(proposalId);
+    }
+
+    @Override
+    public void considerateProposal(Long proposalId) throws IOException, NotUpdateDataInDbException {
+
+        developerService.considerateProposal(proposalId);
     }
 
     @Override

@@ -35,8 +35,13 @@ public final class Constants {
     public static final String GET_MY_CALCULATION_SERVLET = "get_my_calculation_servlet";
     public static final String CREATE_CALCULATION_SERVLET = "create_calculation_servlet";
     public static final String CREATE_DEVELOPER_SERVLET = "create_developer_servlet";
+    public static final String CREATE_CHAPTER_DEVELOPER_SERVLET = "create_chapter_developer_servlet";
+    public static final String GET_MY_CALCULATION_DEVELOPER_SERVLET = "get_my_calculation_developer_servlet";
+    public static final String GET_MY_PROPOSALS_FROM_CHAPTER_DEVELOPER_SERVLET = "get_my_proposal_from_chapter_developer_servlet";
     public static final String MAIN_DEVELOPER_SERVLET = "main_developer_servlet";
-    public static final String GET_CHAPTERS_OF_PROJECT_SERVLET = "get_chapters_of_project_servlet";
+    public static final String GET_CHAPTERS_OF_CONTRACTOR_DEVELOPER_SERVLET = "get_chapters_of_contractor_developer_servlet";
+    public static final String CREATE_PROJECT_DEVELOPER_SERVLET = "create_project_developer_servlet";
+    public static final String GET_CHAPTERS_OF_PROJECT_DEVELOPER_SERVLET = "get_chapters_of_project_developer_servlet";
     public static final String CREATE_USER_SERVLET = "create_user_servlet";
     public static final String REDIRECTION_SERVLET = "redirection_servlet";
 
@@ -64,6 +69,13 @@ public final class Constants {
     public static final String DEVELOPER_PAGES_MAIN_JSP = "/developer_pages/main.jsp";
     public static final String DEVELOPER_PAGES_LIST_WITH_PROJECTS_JSP = "/developer_pages/list_with_projects.jsp";
     public static final String DEVELOPER_PAGES_LIST_WITH_CHAPTERS_JSP = "/developer_pages/list_with_chapters.jsp";
+    public static final String DEVELOPER_PAGES_LIST_WITH_CHAPTERS_BY_ONE_CONTRACTOR_JSP = "/developer_pages/list_with_chapters_by_one_contractor.jsp";
+    public static final String DEVELOPER_PAGES_LIST_WITH_CONTRACTORS_JSP = "/developer_pages/list_with_proposals_of_chapter.jsp";
+    public static final String DEVELOPER_PAGES_LIST_WITH_CALCULATIONS_JSP = "/developer_pages/list_with_calculations.jsp";
+    public static final String DEVELOPER_PAGES_LIST_WITH_PROPOSALS_OF_CHAPTER_JSP = "/developer_pages/list_with_proposals_of_chapter.jsp";
+    public static final String DEVELOPER_PAGES_LIST_WITH_ALL_PROPOSALS_JSP = "/developer_pages/list_with_all_proposals.jsp";
+    public static final String DEVELOPER_PAGES_CREATE_PROJECT_PAGE_JSP = "/developer_pages/create_project_page.jsp";
+    public static final String DEVELOPER_PAGES_CREATE_CHAPTER_PAGE_JSP = "/developer_pages/create_chapter_page.jsp";
 
     public static final String ADMIN_PAGES_MAIN_JSP = "/admin_pages/main.jsp";
 
@@ -79,10 +91,14 @@ public final class Constants {
     public static final String TODO_PARAM = "todo";
     public static final String PROJECT_COUNT_ON_PAGE_PARAM = "project_count_on_page";
     public static final String DEVELOPER_COUNT_ON_PAGE_PARAM = "developer_count_on_page";
+    public static final String CONTRACTOR_COUNT_ON_PAGE_PARAM = "contractor_count_on_page";
     public static final String PROJECT_PAGE_PARAM = "project_page";
     public static final String DEVELOPER_PAGE_PARAM = "developer_page";
+    public static final String CONTRACTOR_PAGE_PARAM = "contractor_page";
+    public static final String CONTRACTOR_ID_PARAM = "contractor_id";
     public static final String PROJECT_STATUS_PARAM = "project_status";
     public static final String PROJECT_DTO_LIST_PARAM = "project_dto_list";
+    public static final String CONTRACTOR_DTO_LIST_PARAM = "contractor_dto_list";
     public static final String CHAPTER_ID_PARAM = "chapter_id";
     public static final String DEVELOPER_ID_PARAM = "developer_id";
     public static final String WORK_PRICE_PLAN_PARAM = "work_price_plan";
@@ -110,6 +126,8 @@ public final class Constants {
     public static final String PROJECT_CONTRACTOR_PARAM = "project_contractor";
     public static final String CHAPTER_DTO_LIST_PARAM = "chapter_dto_list";
     public static final String CHAPTER_PAGE_PARAM = "chapter_page";
+    public static final String CHAPTER_DEBT_PARAM = "chapter_debt";
+    public static final String CHAPTER_CONTRACTOR_NAME_PARAM = "chapter_contractor_name";
     public static final String CHAPTER_COUNT_ON_PAGE_PARAM = "chapter_count_on_page";
     public static final String CHAPTER_STATUS_PARAM = "chapter_status";
     public static final String CHAPTER_NAME_PARAM = "chapter_name";
@@ -122,9 +140,13 @@ public final class Constants {
     public static final String PROPOSAL_PAGE_PARAM = "proposal_page";
     public static final String PROPOSAL_COUNT_ON_PAGE_PARAM = "proposal_count_on_page";
     public static final String PROPOSAL_STATUS_PARAM = "proposal_status";
+    public static final String PROPOSAL_NEW_STATUS_PARAM = "proposal_new_status";
     public static final String PROPOSAL_DTO_LIST_PARAM = "proposal_dto_list";
     public static final String NEW_PROPOSAL_STATUS_PARAM = "new_proposal_status";
     public static final String CHAPTER_NAMES_LIST_PARAM = "chapter_names_list";
+    public static final String PROJECT_TODO_PARAM = "project_todo";
+    public static final String SUM_FOR_WORK_PARAM = "sum_for_work";
+    public static final String SUM_ADVANCE_PARAM = "sum_advance";
 
 
 
@@ -182,6 +204,7 @@ public final class Constants {
     public static final String PROPOSAL_NOT_FOUND_ID = "Proposal not found. id=";
     public static final String PROPOSAL_STATUS_UPDATE_TO = "Proposal status update to ";
     public static final String PROPOSAL_STATUS_NOT_UPDATE_ID = "Proposal status not update. id=";
+    public static final String PROPOSAL_STATUS_NOT_UPDATE = "Proposal status not update.";
     public static final String DATA_ALREDY_EXIST_IN_DB_ID = "Data alredy exist in DB. id=";
     public static final String THERE_IS_NO_SUCH_PROPOSAL_IN_DB_WITH_CHAPTER_ID = "There is no such proposal in DB with chapterId ";
     public static final String AND_CONTRACTOR_ID = " and contractorId ";
@@ -213,6 +236,8 @@ public final class Constants {
     public static final String SLASH_STRING = "/";
     public static final String CALCULATION_NOT_FOUND_WITH_ID = "Calculation not found with id=";
     public static final String PROPOSAL_NOT_CREATE = "Proposal not create.";
+    public static final String NOT_SUCCESS_OPERATION = "Not success operation";
+    public static final String PROPOSAL_NOT_UPDATE = "Proposal not update.";
 
 
     private Constants() {

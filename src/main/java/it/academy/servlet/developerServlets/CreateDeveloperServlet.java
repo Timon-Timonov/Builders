@@ -6,6 +6,7 @@ import it.academy.dto.DeveloperDto;
 import it.academy.exceptions.EmailOccupaidException;
 import it.academy.exceptions.NotCreateDataInDbException;
 import it.academy.pojo.enums.Roles;
+import it.academy.util.Util;
 import lombok.extern.log4j.Log4j2;
 
 import javax.servlet.ServletException;
@@ -39,10 +40,10 @@ public class CreateDeveloperServlet extends HttpServlet {
         try {
             developerDto = developerController.createDeveloper(email, password, name, city, street, building);
         } catch (NotCreateDataInDbException e) {
-            forwardToException2(req, resp, ACCOUNT_NOT_CREATE);
+            Util.forwardToException2(req, resp, this, ACCOUNT_NOT_CREATE);
         } catch (EmailOccupaidException e) {
             log.debug(EMAIL + email + IS_OCCUPIED, e);
-            forwardToException2(req, resp, EMAIL + email + IS_OCCUPIED);
+            Util.forwardToException2(req, resp, this, EMAIL + email + IS_OCCUPIED);
         }
 
         if (developerDto.getId() != null) {
@@ -52,14 +53,8 @@ public class CreateDeveloperServlet extends HttpServlet {
             session.setAttribute(ROLE_PARAM, Roles.DEVELOPER);
             getServletContext().getRequestDispatcher(DEVELOPER_PAGES_MAIN_JSP).forward(req, resp);
         } else {
-            forwardToException2(req, resp, ACCOUNT_NOT_CREATE);
+            Util.forwardToException2(req, resp, this, ACCOUNT_NOT_CREATE);
         }
-    }
-
-    private void forwardToException2(HttpServletRequest req, HttpServletResponse resp, String message) throws ServletException, IOException {
-
-        req.setAttribute(MESSAGE_PARAM, message);
-        getServletContext().getRequestDispatcher(EXCEPTION_PAGES_EXCEPTION_CREATION_PAGE_2_JSP).forward(req, resp);
     }
 }
 

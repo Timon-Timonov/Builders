@@ -1,7 +1,6 @@
 package it.academy.pojo;
 
 
-import it.academy.pojo.enums.ChapterStatus;
 import it.academy.pojo.enums.ProposalStatus;
 import it.academy.pojo.legalEntities.Contractor;
 import lombok.*;
@@ -25,15 +24,16 @@ public class Proposal {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-
     @Builder.Default
     @Column
     private ProposalStatus status = ProposalStatus.CONSIDERATION;
 
     @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "chapter_id")
     private Chapter chapter;
 
     @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "contractor_id")
     private Contractor contractor;
 
     @Column(name = "created_date", updatable = false)

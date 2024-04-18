@@ -171,7 +171,7 @@ public class DeveloperServiceImpl implements DeveloperService {
     }
 
     @Override
-    public void createProject(Long developerId, String name, String city, String street, String building)
+    public Project createProject(Long developerId, String name, String city, String street, String building)
         throws IOException, NotCreateDataInDbException {
 
         AtomicReference<Project> project = new AtomicReference<>();
@@ -201,7 +201,7 @@ public class DeveloperServiceImpl implements DeveloperService {
         if (project.get() == null) {
             throw new NotCreateDataInDbException();
         }
-        project.get();
+        return project.get();
     }
 
     @Override
@@ -250,16 +250,16 @@ public class DeveloperServiceImpl implements DeveloperService {
     }
 
     @Override
-    public Page<Chapter> getChaptersByContractorId(
-        Long contractorId, ChapterStatus status, int page, int count)
+    public Page<Chapter> getChaptersByContractorIdAndDeveloperId(
+        Long developerId, Long contractorId, ProjectStatus status, int page, int count)
         throws IOException {
 
         int correctPage = FIRST_PAGE_NUMBER;
         List<Chapter> list = new ArrayList<>();
         try {
-            long totalCount = chapterDao.getCountOfChaptersByContractorId(contractorId, status);
+            long totalCount = chapterDao.getCountOfChaptersByContractorIdAndDeveloperId(developerId,contractorId, status);
             correctPage = Util.getCorrectPageNumber(page, count, totalCount);
-            list.addAll(chapterDao.getChaptersByContractorId(contractorId, status, correctPage, count));
+            list.addAll(chapterDao.getChaptersByContractorIdAndDeveloperId(developerId,contractorId, status, correctPage, count));
         } catch (NoResultException e) {
             log.error(THERE_IS_NO_SUCH_DATA_IN_DB_WITH_CONTRACTOR_ID + contractorId);
         } finally {
@@ -299,6 +299,12 @@ public class DeveloperServiceImpl implements DeveloperService {
     }
 
     @Override
+    public void considerateProposal(Long proposalId) throws IOException, NotUpdateDataInDbException {
+
+        changeStatusOfProposal(proposalId, ProposalStatus.CONSIDERATION);
+    }
+
+    @Override
     public void approveProposal(Long proposalId) throws IOException, NotUpdateDataInDbException {
 
         changeStatusOfProposal(proposalId, ProposalStatus.APPROVED);
@@ -322,11 +328,26 @@ public class DeveloperServiceImpl implements DeveloperService {
 
                 switch (currentStatus) {
                     case CONSIDERATION:
-                        if (ProposalStatus.APPROVED.equals(newStatus) ||
-                                ProposalStatus.REJECTED.equals(newStatus)) {
+                        if (ProposalStatus.REJECTED.equals(newStatus)) {
                             proposal.setStatus(newStatus);
                             proposalDao.update(proposal);
                             log.trace(PROPOSAL_STATUS_CHANGED + proposal.getId() + newStatus);
+                            isUpdated.set(true);
+                        } else if (ProposalStatus.APPROVED.equals(newStatus)) {
+
+                            Chapter chapter = proposal.getChapter();
+                            List<Proposal> proposalList = proposalDao.getProposalsByChapterId
+                                                                          (chapter.getId(), ProposalStatus.CONSIDERATION, FIRST_PAGE_NUMBER, Integer.MAX_VALUE);
+                            proposalList.forEach(prop -> prop.setStatus(ProposalStatus.REJECTED));
+                            proposal.setStatus(ProposalStatus.APPROVED);
+                            proposalList.forEach(prop -> {
+                                proposalDao.update(prop);
+                                if (!prop.getId().equals(proposalId)) {
+                                    log.trace(PROPOSAL_STATUS_CHANGED + prop.getId() + ProposalStatus.REJECTED);
+                                } else {
+                                    log.trace(PROPOSAL_STATUS_CHANGED + prop.getId() + ProposalStatus.APPROVED);
+                                }
+                            });
                             isUpdated.set(true);
                         }
                         break;
@@ -339,11 +360,16 @@ public class DeveloperServiceImpl implements DeveloperService {
                         }
                         break;
                     case REJECTED:
-                        if (ProposalStatus.APPROVED.equals(newStatus)) {
-                            proposal.setStatus(newStatus);
-                            proposalDao.update(proposal);
-                            log.trace(PROPOSAL_STATUS_CHANGED + proposal.getId() + newStatus);
-                            isUpdated.set(true);
+                        if (ProposalStatus.CONSIDERATION.equals(newStatus)) {
+                            Chapter chapter = proposal.getChapter();
+                            if (ChapterStatus.FREE.equals(chapter.getStatus()) && chapter.getContractor() == null) {
+                                proposal.setStatus(newStatus);
+                                proposalDao.update(proposal);
+                                log.trace(PROPOSAL_STATUS_CHANGED + proposal.getId() + newStatus);
+                                isUpdated.set(true);
+                            } else {
+                                log.debug(PROPOSAL_STATUS_NOT_UPDATE_ID + proposal.getId() + newStatus);
+                            }
                         }
                         break;
                 }

@@ -31,6 +31,7 @@ public class Project {
     private ProjectStatus status = ProjectStatus.PREPARATION;
 
     @ManyToOne
+    @JoinColumn(name = "developer_id")
     private Developer developer;
 
     @Builder.Default

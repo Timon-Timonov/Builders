@@ -22,6 +22,7 @@ import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static it.academy.util.Constants.*;
@@ -176,18 +177,19 @@ public class ContractorServiceImpl implements ContractorService {
     @Override
     public Page<Chapter> getFreeChapters(Long contractorId,String chapterName,ProjectStatus projectStatus, int page, int count) throws IOException {
 
-        int correctPage = FIRST_PAGE_NUMBER;
+        AtomicInteger correctPage = new AtomicInteger(FIRST_PAGE_NUMBER);
         List<Chapter> list = new ArrayList<>();
         try {
-            long totalCount = chapterDao.getCountOfFreeChaptersByName(contractorId,chapterName,projectStatus);
-            correctPage = Util.getCorrectPageNumber(page, count, totalCount);
-            list.addAll(chapterDao.getFreeChapters(contractorId,chapterName,projectStatus, correctPage, count));
+            chapterDao.executeInOneTransaction(()->{
+                long totalCount = chapterDao.getCountOfFreeChaptersByName(contractorId,chapterName,projectStatus);
+                correctPage.set(Util.getCorrectPageNumber(page, count, totalCount));
+                list.addAll(chapterDao.getFreeChapters(contractorId,chapterName,projectStatus, correctPage.get(), count));
+            });
+
         } catch (NoResultException e) {
             log.error(THERE_IS_NO_SUCH_DATA_IN_DB_WITH_CHPTER_NAME + chapterName);
-        } finally {
-            chapterDao.closeManager();
         }
-        return new Page<>(list, correctPage);
+        return new Page<>(list, correctPage.get());
     }
 
     @Override
@@ -212,18 +214,19 @@ public class ContractorServiceImpl implements ContractorService {
     public Page<Proposal> getMyProposals(Long contractorId, ProposalStatus status, int page, int count)
         throws IOException {
 
-        int correctPage = FIRST_PAGE_NUMBER;
+        AtomicInteger correctPage = new AtomicInteger(FIRST_PAGE_NUMBER);
         List<Proposal> list = new ArrayList<>();
         try {
-            long totalCount = proposalDao.getCountOfProposalsByContractorId(contractorId, status);
-            correctPage = Util.getCorrectPageNumber(page, count, totalCount);
-            list.addAll(proposalDao.getProposalsByContractorId(contractorId, status, correctPage, count));
+            proposalDao.executeInOneTransaction(()->{
+                long totalCount = proposalDao.getCountOfProposalsByContractorId(contractorId, status);
+                correctPage.set(Util.getCorrectPageNumber(page, count, totalCount));
+                list.addAll(proposalDao.getProposalsByContractorId(contractorId, status, correctPage.get(), count));
+            });
+
         } catch (NoResultException e) {
             log.error(THERE_IS_NO_SUCH_DATA_IN_DB_WITH_CONTRACTOR_ID + contractorId);
-        } finally {
-            proposalDao.closeManager();
         }
-        return new Page<>(list, correctPage);
+        return new Page<>(list, correctPage.get());
     }
 
     @Override

@@ -5,6 +5,7 @@ import it.academy.controller.impl.AdminControllerImpl;
 import it.academy.dto.UserDto;
 import it.academy.pojo.enums.Roles;
 import it.academy.pojo.enums.UserStatus;
+import it.academy.util.Util;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -40,7 +41,7 @@ public class LogInServlet extends HttpServlet {
                     if (password.equals(userDto.getPassword())) {
 
                         if (UserStatus.CANCELED.equals(userDto.getUserStatus())) {
-                            forwardToException1(req, resp, USER_HAS_NOT_ACTIVE_STATUS_IT_IS_IMPOSSIBLE_TO_USE_THIS_ACCOUNT);
+                            Util.forwardToException1(req, resp, this, USER_HAS_NOT_ACTIVE_STATUS_IT_IS_IMPOSSIBLE_TO_USE_THIS_ACCOUNT);
                         }
                         session.setAttribute(EMAIL_PARAM, email);
                         session.setAttribute(PASSWORD_PARAM, password);
@@ -59,25 +60,19 @@ public class LogInServlet extends HttpServlet {
                                 getServletContext().getRequestDispatcher(ADMIN_PAGES_MAIN_JSP).forward(req, resp);
                                 break;
                             default:
-                                forwardToException1(req, resp, ROLE_IS_INVALID);
+                                Util.forwardToException1(req, resp, this, ROLE_IS_INVALID);
                         }
                     } else {
-                        forwardToException1(req, resp, PASSWORD_IS_INVALID);
+                        Util.forwardToException1(req, resp, this, PASSWORD_IS_INVALID);
                     }
                 } else {
-                    forwardToException1(req, resp, PASSWORD_IS_EMPTY);
+                    Util.forwardToException1(req, resp, this, PASSWORD_IS_EMPTY);
                 }
             } else {
-                forwardToException1(req, resp, EMAIL_IS_INVALID);
+                Util.forwardToException1(req, resp, this, EMAIL_IS_INVALID);
             }
         } else {
-            forwardToException1(req, resp, EMAIL_IS_EMPTY);
+            Util.forwardToException1(req, resp, this, EMAIL_IS_EMPTY);
         }
-    }
-
-    private void forwardToException1(HttpServletRequest req, HttpServletResponse resp, String s) throws ServletException, IOException {
-
-        req.setAttribute(MESSAGE_PARAM, s);
-        getServletContext().getRequestDispatcher(EXCEPTION_PAGES_EXCEPTION_PAGE_1_JSP).forward(req, resp);
     }
 }

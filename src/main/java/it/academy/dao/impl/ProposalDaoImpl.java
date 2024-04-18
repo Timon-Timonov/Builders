@@ -2,6 +2,8 @@ package it.academy.dao.impl;
 
 import it.academy.dao.ProposalDao;
 import it.academy.pojo.Proposal;
+import it.academy.pojo.enums.ChapterStatus;
+import it.academy.pojo.enums.ProjectStatus;
 import it.academy.pojo.enums.ProposalStatus;
 
 import javax.persistence.NoResultException;
@@ -20,7 +22,7 @@ public class ProposalDaoImpl extends DaoImpl<Proposal, Long> implements Proposal
         throws NoResultException {
 
         TypedQuery<Proposal> query = getEm().createQuery(
-            "SELECT p FROM Proposal p WHERE p.chapter.contractor.id=:contractorId AND p.status=:proposalStatus" +
+            "SELECT p FROM Proposal p WHERE p.contractor.id=:contractorId AND p.status=:proposalStatus" +
                 " ORDER BY p.chapter.project.developer.name ASC, p.chapter.project.name ASC, chapter.name ASC",
             Proposal.class);
         return query.setParameter("contractorId", contractorId)
@@ -61,10 +63,12 @@ public class ProposalDaoImpl extends DaoImpl<Proposal, Long> implements Proposal
         throws NoResultException {
 
         TypedQuery<Proposal> query = getEm().createQuery(
-            "SELECT p FROM Proposal p WHERE p.chapter.project.developer.id=:developerId AND p.status=:proposalStatus ORDER BY p.chapter.project.name ASC, p.chapter.name ASC",
+            "SELECT prop FROM Proposal prop LEFT JOIN Chapter ch ON prop.chapter.id=ch.id WHERE prop.status=:proposalStatus AND ch.status =:chapterStatus AND ch.project.developer.id=:developerId AND ch.project.status IN :projectStatuses ORDER BY ch.project.name ASC, ch.name ASC",
             Proposal.class);
-        return query.setParameter("developerId", developerId)
-                   .setParameter("proposalStatus", status)
+        return query.setParameter("proposalStatus", status)
+                   .setParameter("chapterStatus", ChapterStatus.FREE)
+                   .setParameter("developerId", developerId)
+                   .setParameter("projectStatuses", new ProjectStatus[]{ProjectStatus.PREPARATION, ProjectStatus.IN_PROCESS})
                    .setMaxResults(count)
                    .setFirstResult((page - 1) * count)
                    .getResultList();
@@ -75,7 +79,7 @@ public class ProposalDaoImpl extends DaoImpl<Proposal, Long> implements Proposal
     public Long getCountOfProposalsByContractorId(Long contractorId, ProposalStatus status) throws NoResultException {
 
         TypedQuery<Long> query = getEm().createQuery(
-            "SELECT COUNT(p) FROM Proposal p WHERE p.chapter.contractor.id=:contractorId AND p.status=:proposalStatus" +
+            "SELECT COUNT(p) FROM Proposal p WHERE p.contractor.id=:contractorId AND p.status=:proposalStatus" +
                 " ORDER BY p.chapter.project.developer.name ASC, p.chapter.project.name ASC, chapter.name ASC",
             Long.class);
         return query.setParameter("contractorId", contractorId)
@@ -98,10 +102,12 @@ public class ProposalDaoImpl extends DaoImpl<Proposal, Long> implements Proposal
     public Long getCountOfProposalsByDeveloperId(Long developerId, ProposalStatus status) throws NoResultException {
 
         TypedQuery<Long> query = getEm().createQuery(
-            "SELECT COUNT(p) FROM Proposal p WHERE p.chapter.project.developer.id=:developerId AND p.status=:proposalStatus",
+            "SELECT COUNT(prop) FROM Proposal prop LEFT JOIN Chapter ch ON prop.chapter.id=ch.id WHERE prop.status=:proposalStatus AND ch.status =:chapterStatus AND ch.project.developer.id=:developerId AND ch.project.status IN :projectStatuses  ",
             Long.class);
-        return query.setParameter("developerId", developerId)
-                   .setParameter("proposalStatus", status)
+        return query.setParameter("proposalStatus", status)
+                   .setParameter("chapterStatus", ChapterStatus.FREE)
+                   .setParameter("developerId", developerId)
+                   .setParameter("projectStatuses", new ProjectStatus[]{ProjectStatus.PREPARATION, ProjectStatus.IN_PROCESS})
                    .getSingleResult();
     }
 }

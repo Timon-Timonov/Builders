@@ -36,17 +36,13 @@ public class GetMyProposalsServlet extends HttpServlet {
         int page = Util.getNumberValueFromParameter(req, CHAPTER_PAGE_PARAM, FIRST_PAGE_NUMBER);
         int count = Util.getNumberValueFromParameter(req, CHAPTER_COUNT_ON_PAGE_PARAM, DEFAULT_COUNT_ON_PAGE_5);
 
-
-
-        List<ChapterDto> chapterDtoList ;
         Page<ChapterDto> chapterDtoPage = new Page<>(new ArrayList<>(), FIRST_PAGE_NUMBER);
         try {
             chapterDtoPage = controller.getFreeChapters(contractorId, chapterName, status, page, count);
         } catch (IOException e) {
-            req.setAttribute(MESSAGE_PARAM, BAD_CONNECTION);
-            getServletContext().getRequestDispatcher(EXCEPTION_PAGES_EXCEPTION_IN_WORK_PAGE_3_JSP).forward(req, resp);
+            Util.forwardToException3(req, resp, this, BAD_CONNECTION);
         }
-        chapterDtoList = chapterDtoPage.getList();
+        List<ChapterDto> chapterDtoList = chapterDtoPage.getList();
         page = chapterDtoPage.getPageNumber();
 
         HttpSession session = req.getSession();
@@ -68,10 +64,10 @@ public class GetMyProposalsServlet extends HttpServlet {
         try {
             controller.createProposal(chapterId, contractorId);
         } catch (NotCreateDataInDbException e) {
-            req.setAttribute(MESSAGE_PARAM, PROPOSAL_NOT_CREATE);
-            getServletContext().getRequestDispatcher(EXCEPTION_PAGES_EXCEPTION_IN_WORK_PAGE_3_JSP).forward(req, resp);
+            Util.forwardToException3(req, resp, this, PROPOSAL_NOT_CREATE);
+        } catch (IOException e) {
+            Util.forwardToException3(req, resp, this, BAD_CONNECTION);
         }
-
         doGet(req, resp);
     }
 }

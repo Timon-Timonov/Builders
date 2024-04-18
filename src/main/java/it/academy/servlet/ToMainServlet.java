@@ -1,6 +1,7 @@
 package it.academy.servlet;
 
 import it.academy.pojo.enums.Roles;
+import it.academy.util.SessionCleaner;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -34,48 +35,8 @@ public class ToMainServlet extends HttpServlet {
             default:
                 url = SLASH_STRING + LOGOUT_SERVLET;
         }
-        clearSession(session);
+        SessionCleaner.clearSession(session);
+
         getServletContext().getRequestDispatcher(url).forward(req, resp);
-    }
-
-    protected static void clearSession(HttpSession session) {
-
-
-        session.removeAttribute(TODO_PARAM);
-
-        session.removeAttribute(PROJECT_ID_PARAM);
-        session.removeAttribute(PROJECT_PAGE_PARAM);
-        session.removeAttribute(PROJECT_COUNT_ON_PAGE_PARAM);
-        session.removeAttribute(PROJECT_STATUS_PARAM);
-
-        session.removeAttribute(PROJECT_NAME_PARAM);
-        session.removeAttribute(PROJECT_ADDRESS_PARAM);
-        session.removeAttribute(PROJECT_DEVELOPER_PARAM);
-        session.removeAttribute(PROJECT_CONTRACTOR_PARAM);
-
-        session.removeAttribute(DEVELOPER_ID_PARAM);
-        session.removeAttribute(DEVELOPER_PAGE_PARAM);
-        session.removeAttribute(DEVELOPER_COUNT_ON_PAGE_PARAM);
-
-        session.removeAttribute(DEVELOPER_NAME_PARAM);
-        session.removeAttribute(DEVELOPER_ADDRESS_PARAM);
-        session.removeAttribute(DEVELOPER_DEBT_PARAM);
-        session.removeAttribute(SHOW_PROJECT_LIST_BY_DEVELOPER_PARAM);
-
-        session.removeAttribute(CHAPTER_ID_PARAM);
-        session.removeAttribute(CHAPTER_PAGE_PARAM);
-        session.removeAttribute(CHAPTER_COUNT_ON_PAGE_PARAM);
-        session.removeAttribute(CHAPTER_STATUS_PARAM);
-        session.removeAttribute(CHAPTER_NAME_PARAM);
-        session.removeAttribute(CHAPTER_PRICE_PARAM);
-
-        session.removeAttribute(CALCULATION_ID_PARAM);
-        session.removeAttribute(CALCULATION_PAGE_PARAM);
-        session.removeAttribute(CALCULATION_COUNT_ON_PAGE_PARAM);
-
-        session.removeAttribute(PROPOSAL_ID_PARAM);
-        session.removeAttribute(PROPOSAL_PAGE_PARAM);
-        session.removeAttribute(PROPOSAL_COUNT_ON_PAGE_PARAM);
-        session.removeAttribute(PROPOSAL_STATUS_PARAM);
     }
 }

@@ -1,5 +1,7 @@
 package it.academy.servlet;
 
+import it.academy.util.SessionCleaner;
+
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -18,19 +20,13 @@ public class LogOutServlet extends HttpServlet {
 
         HttpSession session = req.getSession();
 
-        ToMainServlet.clearSession(session);
+        SessionCleaner.clearSession(session);
 
         session.removeAttribute(EMAIL_PARAM);
         session.removeAttribute(PASSWORD_PARAM);
         session.removeAttribute(ROLE_PARAM);
         session.removeAttribute(ID_PARAM);
 
-        session.removeAttribute(TODO_PARAM);
-        session.removeAttribute(DEVELOPER_COUNT_ON_PAGE_PARAM);
-        session.removeAttribute(DEVELOPER_PAGE_PARAM);
-        session.removeAttribute(PROJECT_STATUS_PARAM);
-        session.removeAttribute(PROJECT_PAGE_PARAM);
-        session.removeAttribute(PROJECT_COUNT_ON_PAGE_PARAM);
         getServletContext().getRequestDispatcher(INDEX_JSP).forward(req, resp);
     }
 

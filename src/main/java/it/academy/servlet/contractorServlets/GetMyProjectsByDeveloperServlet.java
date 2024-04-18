@@ -40,8 +40,7 @@ public class GetMyProjectsByDeveloperServlet extends HttpServlet {
         try {
             projectDtoPage = controller.getMyProjectsByDeveloper(developerId, id, status, page, count);
         } catch (IOException e) {
-            req.setAttribute(MESSAGE_PARAM, BAD_CONNECTION);
-            getServletContext().getRequestDispatcher(EXCEPTION_PAGES_EXCEPTION_IN_WORK_PAGE_3_JSP).forward(req, resp);
+            Util.forwardToException3(req, resp, this, BAD_CONNECTION);
         }
 
         page = projectDtoPage.getPageNumber();

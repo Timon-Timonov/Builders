@@ -4,6 +4,7 @@
 <%@ page import="java.util.List" %>
 <%@ page import="java.util.Optional" %>
 <%@ page import="static it.academy.util.Constants.*" %>
+<%@ page import="it.academy.servlet.WhatToDo" %>
 <%@ page contentType="text/html;charset=UTF-8" %>
 <html>
 <head>
@@ -81,6 +82,7 @@
         <%
             for (int i = 0; i < chapterDtoList.size(); i++) {
                 ChapterDto chapterDto = chapterDtoList.get(i);
+                String chapterId=chapterDto.getId().toString();
                 String projectName = chapterDto.getProjectName();
                 String projectAddress = Optional.ofNullable(
                         chapterDto.getProjectAddress()).orElse(new AddressDto()).toString();
@@ -103,8 +105,8 @@
             </td>
             <td> |</td>
             <td>
-                <form action="<%=GET_MY_CHAPTERS_SERVLET%>" method="post">
-                    <input type="hidden" value="<%=chapterDto.getId().toString()%>" name="<%=CHAPTER_ID_PARAM%>">
+                <form action="<%=GET_MY_PROPOSAL_SERVLET%>" method="post">
+                    <input type="hidden" value="<%=chapterId%>" name="<%=CHAPTER_ID_PARAM%>">
                     <button class="btn btn-light" type="submit">Submit a proposal</button>
                 </form>
             </td>
@@ -117,8 +119,9 @@
 <br>
 <div class="container text-center">
 
-    <form action="<%=GET_MY_PROPOSAL_SERVLET%>" method="get">
-        <button class="btn btn-secondary" type="submit">Return to list of free chapters</button>
+    <form action="<%=MAIN_CONTRACTOR_SERVLET%>" method="get">
+        <input type="hidden" value="<%=WhatToDo.TRY_TO_CHOOSE_NEW_PROJECT%>" name="<%=TODO_PARAM%>">
+        <button class="btn btn-secondary" type="submit">Return to list of chapter names</button>
     </form>
 
     <%@include file="/include_files/go_to_main_button_file.jsp" %>

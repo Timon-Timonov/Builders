@@ -6,6 +6,7 @@ import it.academy.dto.ContractorDto;
 import it.academy.exceptions.EmailOccupaidException;
 import it.academy.exceptions.NotCreateDataInDbException;
 import it.academy.pojo.enums.Roles;
+import it.academy.util.Util;
 import lombok.extern.log4j.Log4j2;
 
 import javax.servlet.ServletException;
@@ -42,8 +43,7 @@ public class CreateContractorServlet extends HttpServlet {
             getServletContext().getRequestDispatcher(EXCEPTION_PAGES_EXCEPTION_CREATION_PAGE_2_JSP).forward(req, resp);
         } catch (EmailOccupaidException e) {
             log.debug(EMAIL + email + IS_OCCUPIED, e);
-            req.setAttribute(MESSAGE_PARAM, EMAIL + email + IS_OCCUPIED);
-            getServletContext().getRequestDispatcher(EXCEPTION_PAGES_EXCEPTION_CREATION_PAGE_2_JSP).forward(req, resp);
+            Util.forwardToException2(req, resp, this, EMAIL + email + IS_OCCUPIED);
         }
 
         if (contractorDto.getId() != null) {
@@ -53,8 +53,7 @@ public class CreateContractorServlet extends HttpServlet {
             session.setAttribute(ROLE_PARAM, Roles.CONTRACTOR);
             getServletContext().getRequestDispatcher(CONTRACTOR_PAGES_MAIN_JSP).forward(req, resp);
         } else {
-            req.setAttribute(MESSAGE_PARAM, ACCOUNT_NOT_CREATE);
-            getServletContext().getRequestDispatcher(EXCEPTION_PAGES_EXCEPTION_CREATION_PAGE_2_JSP).forward(req, resp);
+            Util.forwardToException2(req, resp, this, ACCOUNT_NOT_CREATE);
         }
     }
 }

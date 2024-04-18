@@ -35,5 +35,6 @@ public class MoneyTransfer {
     private PaymentType type;
 
     @ManyToOne
+    @JoinColumn(name = "calculation_id")
     private Calculation calculation;
 }

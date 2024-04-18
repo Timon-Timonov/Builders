@@ -3,6 +3,7 @@ package it.academy.servlet.contractorServlets;
 import it.academy.controller.ContractorController;
 import it.academy.controller.impl.ContractorControllerImpl;
 import it.academy.exceptions.NotCreateDataInDbException;
+import it.academy.util.Util;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -16,7 +17,6 @@ import static it.academy.util.Constants.*;
 @WebServlet(name = "CreateCalculationServlet", urlPatterns = {SLASH_STRING + CREATE_CALCULATION_SERVLET})
 public class CreateCalculationServlet extends HttpServlet {
 
-
     private final ContractorController controller = new ContractorControllerImpl();
 
     @Override
@@ -28,17 +28,16 @@ public class CreateCalculationServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
-        Long chapterId = Long.parseLong(req.getParameter(CHAPTER_ID_PARAM));
-        Integer workPrice = Integer.parseInt(req.getParameter(WORK_PRICE_PLAN_PARAM));
-        Integer month = Integer.parseInt(req.getParameter(MM_PARAM));
-        Integer year = Integer.parseInt(req.getParameter(YYYY_PARAM));
+        Long chapterId = Util.getNumberValueFromParameter(req, CHAPTER_ID_PARAM, ZERO_LONG_VALUE);
+        Integer workPrice = Util.getNumberValueFromParameter(req, WORK_PRICE_PLAN_PARAM, ZERO_INT_VALUE);
+        Integer month = Util.getNumberValueFromParameter(req, MM_PARAM, ZERO_INT_VALUE);
+        Integer year = Util.getNumberValueFromParameter(req, YYYY_PARAM, ZERO_INT_VALUE);
 
         try {
             controller.createCalculation(chapterId, year, month, workPrice);
         } catch (NotCreateDataInDbException e) {
-            req.setAttribute(MESSAGE_PARAM, CALCULATION_NOT_CREATED);
-            getServletContext().getRequestDispatcher(EXCEPTION_PAGES_EXCEPTION_IN_WORK_PAGE_3_JSP).forward(req, resp);
+            Util.forwardToException3(req, resp, this, CALCULATION_NOT_CREATED);
         }
-        getServletContext().getRequestDispatcher("/" + GET_MY_CALCULATION_SERVLET).forward(req, resp);
+        getServletContext().getRequestDispatcher(SLASH_STRING + GET_MY_CALCULATION_SERVLET).forward(req, resp);
     }
 }

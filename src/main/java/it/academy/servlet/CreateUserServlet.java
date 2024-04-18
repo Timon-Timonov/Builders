@@ -1,6 +1,7 @@
 package it.academy.servlet;
 
 import it.academy.pojo.enums.Roles;
+import it.academy.util.Util;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -30,8 +31,7 @@ public class CreateUserServlet extends HttpServlet {
         } else if (Roles.DEVELOPER.toString().equals(role)) {
             req.getSession().setAttribute(ROLE_PARAM, Roles.DEVELOPER);
         } else {
-            req.setAttribute(MESSAGE_PARAM, ROLE_IS_INVALID);
-            getServletContext().getRequestDispatcher(EXCEPTION_PAGES_EXCEPTION_PAGE_1_JSP).forward(req, resp);
+            Util.forwardToException1(req, resp, this, ROLE_IS_INVALID);
         }
         getServletContext().getRequestDispatcher(CREATE_USER_PAGE_JSP).forward(req, resp);
     }

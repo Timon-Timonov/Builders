@@ -33,6 +33,7 @@ public class Calculation {
 
 
     @ManyToOne
+    @JoinColumn(name = "chapter_id")
     private Chapter chapter;
 
     @Builder.Default
