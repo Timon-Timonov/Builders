@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import static it.academy.util.constants.Constants.FIRST_PAGE_NUMBER;
 import static it.academy.util.constants.Messages.*;
 
 @Log4j2
@@ -50,69 +51,88 @@ public class AdminServiceImpl implements AdminService {
         }
         return user;*/
 
-        return (User) userDao.executeInOneTransaction(() -> {
-            User user = null;
-            try {
-                user = userDao.getUser(email);
-            } catch (NoResultException e) {
-                log.error(THERE_IS_NO_SUCH_DATA_IN_DB_WITH_EMAIL + email);
-            }
-            return user;
-        });
+        User userFromDb;
+        try {
+            userFromDb = userDao.executeInOneEntityTransaction(() -> {
+                User user = null;
+                try {
+                    user = userDao.getUser(email);
+                } catch (NoResultException e) {
+                    log.error(THERE_IS_NO_SUCH_DATA_IN_DB_WITH_EMAIL + email, e);
+                }
+                return user;
+            });
+        } catch (RollbackException e) {
+            log.error(BAD_CONNECTION, e);
+            throw new IOException(BAD_CONNECTION);
+        }
+        return userFromDb;
     }
 
     @Override
     public User createAdmin(String email, String password) throws Exception {
 
-
-        return (User) userDao.executeInOneTransaction(() -> {
-            User user = null;
-            try {
-                user = userDao.getUser(email);
-            } catch (NoResultException e) {
-                log.trace(EMAIL + email + NOT_OCCUPIED, e);
-            }
-            if (user != null) {
-                log.trace(EMAIL + email + OCCUPIED);
-                throw new EmailOccupaidException(EMAIL + IS_OCCUPIED);
-            } else {
-                User newUser = User.builder()
-                                   .email(email)
-                                   .password(password)
-                                   .role(Roles.ADMIN)
-                                   .status(UserStatus.ACTIVE)
-                                   .build();
-                userDao.create(newUser);
-                return newUser;
-            }
-        });
+        User userCreated;
+        try {
+            userCreated = userDao.executeInOneEntityTransaction(() -> {
+                User user = null;
+                try {
+                    user = userDao.getUser(email);
+                } catch (NoResultException e) {
+                    log.trace(EMAIL + email + NOT_OCCUPIED, e);
+                }
+                if (user != null) {
+                    log.trace(EMAIL + email + OCCUPIED);
+                    throw new EmailOccupaidException(EMAIL + IS_OCCUPIED);
+                } else {
+                    User newUser = User.builder()
+                                       .email(email)
+                                       .password(password)
+                                       .role(Roles.ADMIN)
+                                       .status(UserStatus.ACTIVE)
+                                       .build();
+                    userDao.create(newUser);
+                    return newUser;
+                }
+            });
+        } catch (RollbackException e) {
+            log.error(BAD_CONNECTION, e);
+            throw new IOException(BAD_CONNECTION);
+        }
+        return userCreated;
     }
 
     @Override
-    public void changeUserStatus(Long userId, UserStatus newStatus) throws Exception {
+    public void changeUserStatus(long userId, UserStatus newStatus) throws Exception {
 
-        boolean isUpdated = (boolean) userDao.executeInOneTransaction(() -> {
-            User user = null;
-            try {
-                user = userDao.get(userId);
-            } catch (EntityNotFoundException e) {
-                log.error(THERE_IS_NO_SUCH_DATA_IN_DB_WITH_USER_ID + userId);
-            }
-            if (user != null) {
-                user.setStatus(newStatus);
-                userDao.update(user);
-                log.trace(USER_STATUS_CHANED_USER_ID + userId + newStatus.toString());
-                return true;
-            }
-            return false;
-        });
+        boolean isUpdated;
+        try {
+            isUpdated = userDao.executeInOneBoolTransaction(() -> {
+                User user = null;
+                try {
+                    user = userDao.get(userId);
+                } catch (EntityNotFoundException e) {
+                    log.error(THERE_IS_NO_SUCH_DATA_IN_DB_WITH_USER_ID + userId);
+                }
+                if (user != null) {
+                    user.setStatus(newStatus);
+                    userDao.update(user);
+                    log.trace(USER_STATUS_CHANED_USER_ID + userId + newStatus.toString());
+                    return true;
+                }
+                return false;
+            });
+        } catch (RollbackException e) {
+            log.error(BAD_CONNECTION, e);
+            throw new IOException(BAD_CONNECTION);
+        }
         if (!isUpdated) {
             throw new NotUpdateDataInDbException();
         }
     }
 
     @Override
-    public Page<Project> getProjectsByDeveloper(Long developerId, ProjectStatus status, int page, int count) throws Exception {
+    public Page<Project> getProjectsByDeveloper(long developerId, ProjectStatus status, int page, int count) throws Exception {
 
       /*  int correctPage = FIRST_PAGE_NUMBER;
         List<Project> list = new ArrayList<>();
@@ -127,17 +147,30 @@ public class AdminServiceImpl implements AdminService {
         }
         return new Page<>(list, correctPage);*/
 
-        return (Page<Project>) contractorDao.executeInOneTransaction(() -> {
-            long totalCount = projectDao.getCountOfProjectsByDeveloperId(developerId, status);
-            int correctPage = Util.getCorrectPageNumber(page, count, totalCount);
-            List<Project> list = new ArrayList<>(projectDao.getProjectsByDeveloperId(developerId, status, correctPage, count));
-            return new Page<>(list, correctPage);
-        });
+        Page<Project> projectPage;
+
+        try {
+            projectPage = projectDao.executeInOnePageTransaction(() -> {
+                int correctPage = FIRST_PAGE_NUMBER;
+                List<Project> list = new ArrayList<>();
+                try {
+                    long totalCount = projectDao.getCountOfProjectsByDeveloperId(developerId, status);
+                    correctPage = Util.getCorrectPageNumber(page, count, totalCount);
+                    list.addAll(projectDao.getProjectsByDeveloperId(developerId, status, correctPage, count));
+                } catch (NoResultException e) {
+                    log.error(THERE_IS_NO_SUCH_DATA_IN_DB, e);
+                }
+                return new Page<>(list, correctPage);
+            });
+        } catch (RollbackException e) {
+            log.error(BAD_CONNECTION, e);
+            throw new IOException(BAD_CONNECTION);
+        }
+        return projectPage;
     }
 
     @Override
-    public List<Chapter> getChaptersByProjectId(Long projectId)
-        throws Exception {
+    public List<Chapter> getChaptersByProjectId(long projectId) throws Exception {
 
      /*   List<Chapter> list = new ArrayList<>();
         try {
@@ -150,12 +183,21 @@ public class AdminServiceImpl implements AdminService {
         return list;*/
 
 
-        return (List<Chapter>) chapterDao.executeInOneTransaction(
-            () -> new ArrayList<>(chapterDao.getChaptersByProjectId(projectId)));
+        List<Chapter> chapterList = new ArrayList<>();
+        try {
+            chapterList.addAll(chapterDao.executeInOneListTransaction(
+                () -> new ArrayList<>(chapterDao.getChaptersByProjectId(projectId))));
+        } catch (RollbackException e) {
+            log.error(BAD_CONNECTION, e);
+            throw new IOException(BAD_CONNECTION);
+        } catch (NoResultException e) {
+            log.error(THERE_IS_NO_SUCH_DATA_IN_DB, e);
+        }
+        return chapterList;
     }
 
     @Override
-    public Page<Chapter> getChaptersByContractorId(Long contractorId, int page, int count) throws Exception {
+    public Page<Chapter> getChaptersByContractorId(long contractorId, int page, int count) throws Exception {
 
       /*  int correctPage = FIRST_PAGE_NUMBER;
         List<Chapter> list = new ArrayList<>();
@@ -169,17 +211,30 @@ public class AdminServiceImpl implements AdminService {
             contractorDao.closeManager();
         }
         return new Page<>(list, correctPage);*/
+        Page<Chapter> chapterPage;
 
-        return (Page<Chapter>) contractorDao.executeInOneTransaction(() -> {
-            long totalCount = chapterDao.getCountOfChaptersByContractorId(contractorId);
-            int correctPage = Util.getCorrectPageNumber(page, count, totalCount);
-            List<Chapter> list = new ArrayList<>(chapterDao.getChaptersByContractorId(contractorId, page, count));
-            return new Page<>(list, correctPage);
-        });
+        try {
+            chapterPage = chapterDao.executeInOnePageTransaction(() -> {
+                int correctPage = FIRST_PAGE_NUMBER;
+                List<Chapter> list = new ArrayList<>();
+                try {
+                    long totalCount = chapterDao.getCountOfChaptersByContractorId(contractorId);
+                    correctPage = Util.getCorrectPageNumber(page, count, totalCount);
+                    list.addAll(chapterDao.getChaptersByContractorId(contractorId, page, count));
+                } catch (NoResultException e) {
+                    log.error(THERE_IS_NO_SUCH_DATA_IN_DB, e);
+                }
+                return new Page<>(list, correctPage);
+            });
+        } catch (RollbackException e) {
+            log.error(BAD_CONNECTION, e);
+            throw new IOException(BAD_CONNECTION);
+        }
+        return chapterPage;
     }
 
     @Override
-    public Page<Calculation> getCalculationsByChapterId(Long chapterId, int page, int count)
+    public Page<Calculation> getCalculationsByChapterId(long chapterId, int page, int count)
         throws Exception {
 
    /*     int correctPage = FIRST_PAGE_NUMBER;
@@ -195,19 +250,41 @@ public class AdminServiceImpl implements AdminService {
         }
         return new Page<>(list, correctPage);*/
 
-        return (Page<Calculation>) contractorDao.executeInOneTransaction(() -> {
-            long totalCount = calculationDao.getCountOfCalculationsByChapterId(chapterId);
-            int correctPage = Util.getCorrectPageNumber(page, count, totalCount);
-            List<Calculation> list = new ArrayList<>(calculationDao.getCalculationsByChapterId(chapterId, correctPage, count));
-            return new Page<>(list, correctPage);
-        });
+        Page<Calculation> calculationPage;
+        try {
+            calculationPage = calculationDao.executeInOnePageTransaction(() -> {
+                int correctPage = FIRST_PAGE_NUMBER;
+                List<Calculation> list = new ArrayList<>();
+                try {
+                    long totalCount = calculationDao.getCountOfCalculationsByChapterId(chapterId);
+                    correctPage = Util.getCorrectPageNumber(page, count, totalCount);
+                    list.addAll(calculationDao.getCalculationsByChapterId(chapterId, correctPage, count));
+                } catch (NoResultException e) {
+                    log.error(THERE_IS_NO_SUCH_DATA_IN_DB, e);
+                }
+                return new Page<>(list, correctPage);
+            });
+        } catch (RollbackException e) {
+            log.error(BAD_CONNECTION, e);
+            throw new IOException(BAD_CONNECTION);
+        }
+        return calculationPage;
     }
 
     @Override
-    public List<MoneyTransfer> getMoneyTransfers(Long calculationId) throws Exception {
+    public List<MoneyTransfer> getMoneyTransfers(long calculationId) throws Exception {
 
-        return (List<MoneyTransfer>) moneyTransferDao.executeInOneTransaction(
-            () -> moneyTransferDao.getMoneyTransfersByCalculationId(calculationId));
+        List<MoneyTransfer> list = new ArrayList<>();
+        try {
+            list.addAll(moneyTransferDao.executeInOneListTransaction(
+                () -> moneyTransferDao.getMoneyTransfersByCalculationId(calculationId)));
+        } catch (RollbackException e) {
+            log.error(BAD_CONNECTION, e);
+            throw new IOException(BAD_CONNECTION);
+        } catch (NoResultException e) {
+            log.error(THERE_IS_NO_SUCH_DATA_IN_DB, e);
+        }
+        return list;
     }
 
     @Override
@@ -226,12 +303,25 @@ public class AdminServiceImpl implements AdminService {
         }
         return new Page<>(list, correctPage);*/
 
-        return (Page<Proposal>) contractorDao.executeInOneTransaction(() -> {
-            long totalCount = proposalDao.getCountOfProposalsByChapterId(chapterId, status);
-            int correctPage = Util.getCorrectPageNumber(page, count, totalCount);
-            List<Proposal> list = new ArrayList<>(proposalDao.getProposalsByChapterId(chapterId, status, correctPage, count));
-            return new Page<>(list, correctPage);
-        });
+        Page<Proposal> proposalPage;
+        try {
+            proposalPage = proposalDao.executeInOnePageTransaction(() -> {
+                int correctPage = FIRST_PAGE_NUMBER;
+                List<Proposal> list = new ArrayList<>();
+                try {
+                    long totalCount = proposalDao.getCountOfProposalsByChapterId(chapterId, status);
+                    correctPage = Util.getCorrectPageNumber(page, count, totalCount);
+                    list.addAll(proposalDao.getProposalsByChapterId(chapterId, status, correctPage, count));
+                } catch (NoResultException e) {
+                    log.error(THERE_IS_NO_SUCH_DATA_IN_DB_WITH_USER_STATUS + status, e);
+                }
+                return new Page<>(list, correctPage);
+            });
+        } catch (RollbackException e) {
+            log.error(BAD_CONNECTION, e);
+            throw new IOException(BAD_CONNECTION);
+        }
+        return proposalPage;
     }
 
     @Override
@@ -250,30 +340,65 @@ public class AdminServiceImpl implements AdminService {
         }
         return new Page<>(list, correctPage);*/
 
-        return (Page<Proposal>) contractorDao.executeInOneTransaction(() -> {
-            long totalCount = proposalDao.getCountOfProposalsByContractorId(contractorId, status);
-            int correctPage = Util.getCorrectPageNumber(page, count, totalCount);
-            List<Proposal> list = new ArrayList<>(proposalDao.getProposalsByContractorId(contractorId, status, correctPage, count));
-            return new Page<>(list, correctPage);
-        });
+        Page<Proposal> proposalPage;
+        try {
+            proposalPage = proposalDao.executeInOnePageTransaction(() -> {
+                int correctPage = FIRST_PAGE_NUMBER;
+                List<Proposal> list = new ArrayList<>();
+                try {
+                    long totalCount = proposalDao.getCountOfProposalsByContractorId(contractorId, status);
+                    correctPage = Util.getCorrectPageNumber(page, count, totalCount);
+                    list.addAll(proposalDao.getProposalsByContractorId(contractorId, status, correctPage, count));
+                } catch (NoResultException e) {
+                    log.error(THERE_IS_NO_SUCH_DATA_IN_DB_WITH_USER_STATUS + status, e);
+                }
+                return new Page<>(list, correctPage);
+            });
+        } catch (RollbackException e) {
+            log.error(BAD_CONNECTION, e);
+            throw new IOException(BAD_CONNECTION);
+        }
+        return proposalPage;
     }
 
     @Override
     public List<User> getAllAdministrators() throws Exception {
 
-        return (List<User>) userDao.executeInOneTransaction(userDao::getAdministrators);
+        List<User> list = new ArrayList<>();
+        try {
+            list.addAll(userDao.executeInOneListTransaction(userDao::getAdministrators));
+        } catch (RollbackException e) {
+            log.error(BAD_CONNECTION, e);
+            throw new IOException(BAD_CONNECTION);
+        } catch (NoResultException e) {
+            log.error(THERE_IS_NO_SUCH_DATA_IN_DB, e);
+        }
+        return list;
     }
 
     @Override
     public Page<Contractor> getAllContractors(UserStatus status, int page, int count)
         throws Exception {
 
-        return (Page<Contractor>) contractorDao.executeInOneTransaction(() -> {
-            long totalCount = contractorDao.getCountOfContractors(status);
-            int correctPage = Util.getCorrectPageNumber(page, count, totalCount);
-            List<Contractor> list = new ArrayList<>(contractorDao.getContractors(status, correctPage, count));
-            return new Page<>(list, correctPage);
-        });
+        Page<Contractor> contractorPage;
+        try {
+            contractorPage = contractorDao.executeInOnePageTransaction(() -> {
+                int correctPage = FIRST_PAGE_NUMBER;
+                List<Contractor> list = new ArrayList<>();
+                try {
+                    long totalCount = contractorDao.getCountOfContractors(status);
+                    correctPage = Util.getCorrectPageNumber(page, count, totalCount);
+                    list.addAll(contractorDao.getContractors(status, correctPage, count));
+                } catch (NoResultException e) {
+                    log.error(THERE_IS_NO_SUCH_DATA_IN_DB_WITH_USER_STATUS + status, e);
+                }
+                return new Page<>(list, correctPage);
+            });
+        } catch (RollbackException e) {
+            log.error(BAD_CONNECTION, e);
+            throw new IOException(BAD_CONNECTION);
+        }
+        return contractorPage;
     }
 
     @Override
@@ -293,32 +418,45 @@ public class AdminServiceImpl implements AdminService {
         }
         return new Page<>(list, correctPage);*/
 
-        return (Page<Developer>) developerDao.executeInOneTransaction(() -> {
-            long totalCount = developerDao.getCountOfDevelopers(status);
-            int correctPage = Util.getCorrectPageNumber(page, count, totalCount);
-            List<Developer> list = new ArrayList<>(developerDao.getDevelopers(status, correctPage, count));
-            return new Page<>(list, correctPage);
-        });
+        Page<Developer> developerPage;
+        try {
+            developerPage = developerDao.executeInOnePageTransaction(() -> {
+                int correctPage = FIRST_PAGE_NUMBER;
+                List<Developer> list = new ArrayList<>();
+                try {
+                    long totalCount = developerDao.getCountOfDevelopers(status);
+                    correctPage = Util.getCorrectPageNumber(page, count, totalCount);
+                    list.addAll(developerDao.getDevelopers(status, correctPage, count));
+                } catch (NoResultException e) {
+                    log.error(THERE_IS_NO_SUCH_DATA_IN_DB_WITH_USER_STATUS + status, e);
+                }
+                return new Page<>(list, correctPage);
+            });
+        } catch (RollbackException e) {
+            log.error(BAD_CONNECTION, e);
+            throw new IOException(BAD_CONNECTION);
+        }
+        return developerPage;
     }
 
 
     @Override
-    public void deleteUser(Long userId) throws IOException, NotUpdateDataInDbException {
+    public void deleteUser(long userId) throws IOException, NotUpdateDataInDbException {
 
         try {
-            userDao.executeInOneTransaction(() -> {
+            userDao.executeInOneVoidTransaction(() -> {
                 try {
                     User user = userDao.get(userId);
                     Roles role = user.getRole();
                     switch (role) {
                         case CONTRACTOR:
-                            contractorDao.executeInOneTransaction(() -> {
+                            contractorDao.executeInOneVoidTransaction(() -> {
                                 contractorDao.delete(userId);
                                 userDao.delete(userId);
                             });
                             break;
                         case DEVELOPER:
-                            developerDao.executeInOneTransaction(() -> {
+                            developerDao.executeInOneVoidTransaction(() -> {
                                 developerDao.delete(userId);
                                 userDao.delete(userId);
                             });
@@ -339,15 +477,15 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
-    public void deleteCalculation(Long calculationId) throws IOException, NotUpdateDataInDbException {
+    public void deleteCalculation(long calculationId) throws IOException, NotUpdateDataInDbException {
 
         try {
-            calculationDao.executeInOneTransaction(() -> {
+            calculationDao.executeInOneVoidTransaction(() -> {
                 try {
                     calculationDao.delete(calculationId);
                     log.debug(CALCULATION_DELETE_ID + calculationId);
                 } catch (EntityNotFoundException e) {
-                    log.error(THERE_IS_NO_SUCH_DATA_IN_DB_WITH_ID1 + calculationId);
+                    log.error(THERE_IS_NO_SUCH_DATA_IN_DB_WITH_ID1 + calculationId, e);
                 }
             });
         } catch (RollbackException e) {
@@ -357,15 +495,15 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
-    public void deleteChapter(Long chapterId) throws IOException, NotUpdateDataInDbException {
+    public void deleteChapter(long chapterId) throws IOException, NotUpdateDataInDbException {
 
         try {
-            chapterDao.executeInOneTransaction(() -> {
+            chapterDao.executeInOneVoidTransaction(() -> {
                 try {
                     chapterDao.delete(chapterId);
                     log.debug(CHAPTER_DELETE_ID + chapterId);
                 } catch (EntityNotFoundException e) {
-                    log.error(THERE_IS_NO_SUCH_DATA_IN_DB_WITH_ID + chapterId);
+                    log.error(THERE_IS_NO_SUCH_DATA_IN_DB_WITH_ID + chapterId, e);
                 }
             });
         } catch (RollbackException e) {
@@ -375,15 +513,15 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
-    public void deleteMoneyTransfer(Long transferId) throws IOException, NotUpdateDataInDbException {
+    public void deleteMoneyTransfer(long transferId) throws IOException, NotUpdateDataInDbException {
 
         try {
-            moneyTransferDao.executeInOneTransaction(() -> {
+            moneyTransferDao.executeInOneVoidTransaction(() -> {
                 try {
                     moneyTransferDao.delete(transferId);
                     log.debug(MONEY_TRANSFER_DELETE_ID + transferId);
                 } catch (EntityNotFoundException e) {
-                    log.error(THERE_IS_NO_SUCH_DATA_IN_DB_WITH_ID + transferId);
+                    log.error(THERE_IS_NO_SUCH_DATA_IN_DB_WITH_ID + transferId, e);
                 }
             });
         } catch (RollbackException e) {
@@ -393,15 +531,15 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
-    public void deleteProject(Long projectId) throws IOException, NotUpdateDataInDbException {
+    public void deleteProject(long projectId) throws IOException, NotUpdateDataInDbException {
 
         try {
-            projectDao.executeInOneTransaction(() -> {
+            projectDao.executeInOneVoidTransaction(() -> {
                 try {
                     projectDao.delete(projectId);
                     log.debug(PROJECT_DELETE_ID + projectId);
                 } catch (EntityNotFoundException e) {
-                    log.error(THERE_IS_NO_SUCH_DATA_IN_DB_WITH_ID + projectId);
+                    log.error(THERE_IS_NO_SUCH_DATA_IN_DB_WITH_ID + projectId, e);
                 }
             });
         } catch (RollbackException e) {
@@ -411,16 +549,15 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
-    public void deleteProposal(Long proposalId) throws IOException, NotUpdateDataInDbException {
+    public void deleteProposal(long proposalId) throws IOException, NotUpdateDataInDbException {
 
         try {
-            proposalDao.executeInOneTransaction(() -> {
+            proposalDao.executeInOneVoidTransaction(() -> {
                 try {
                     proposalDao.delete(proposalId);
                     log.debug(PROPOSAL_DELETE_ID + proposalId);
-
                 } catch (EntityNotFoundException e) {
-                    log.error(THERE_IS_NO_SUCH_DATA_IN_DB_WITH_ID + proposalId);
+                    log.error(THERE_IS_NO_SUCH_DATA_IN_DB_WITH_ID + proposalId, e);
                 }
             });
         } catch (RollbackException e) {
@@ -433,6 +570,15 @@ public class AdminServiceImpl implements AdminService {
     @Override
     public List<Project> getAllProjects() throws Exception {
 
-        return (List<Project>) projectDao.executeInOneTransaction(projectDao::getAll);
+        List<Project> list = new ArrayList<>();
+        try {
+            list.addAll(projectDao.executeInOneListTransaction(projectDao::getAll));
+        } catch (RollbackException e) {
+            log.error(BAD_CONNECTION, e);
+            throw new IOException(BAD_CONNECTION);
+        } catch (NoResultException e) {
+            log.error(THERE_IS_NO_SUCH_DATA_IN_DB, e);
+        }
+        return list;
     }
 }

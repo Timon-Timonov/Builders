@@ -17,6 +17,7 @@ import java.io.IOException;
 
 import static it.academy.util.constants.Constants.ZERO_INT_VALUE;
 import static it.academy.util.constants.Constants.ZERO_LONG_VALUE;
+import static it.academy.util.constants.Messages.BLANK_STRING;
 import static it.academy.util.constants.Messages.NOT_SUCCESS_OPERATION;
 import static it.academy.util.constants.ParameterNames.*;
 import static it.academy.util.constants.ServletURLs.*;
@@ -42,6 +43,8 @@ public class PayMoneyDeveloperServlet extends HttpServlet {
             }
         } catch (NotCreateDataInDbException e) {
             ExceptionRedirector.forwardToException2(req, resp, this, NOT_SUCCESS_OPERATION);
+        }catch (Exception e) {
+            ExceptionRedirector.forwardToException3(req, resp, this,BLANK_STRING);
         }
         getServletContext().getRequestDispatcher(SLASH_STRING + GET_MY_CALCULATION_DEVELOPER_SERVLET).forward(req, resp);
     }

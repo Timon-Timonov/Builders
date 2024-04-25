@@ -1,13 +1,11 @@
 package it.academy.dao;
 
-import it.academy.exceptions.EmailOccupaidException;
-import it.academy.util.functionalInterfaces.TransactionObjectBody;
-import it.academy.util.functionalInterfaces.TransactionVoidBody;
+import it.academy.dto.Page;
+import it.academy.util.functionalInterfaces.*;
 import org.hibernate.exception.ConstraintViolationException;
 
 import javax.persistence.EntityNotFoundException;
 import javax.persistence.NoResultException;
-import javax.persistence.RollbackException;
 import java.io.IOException;
 import java.util.List;
 
@@ -23,9 +21,18 @@ public interface Dao<T, R> {
 
     void closeManager();
 
-    void executeInOneTransaction(TransactionVoidBody body)
+    void executeInOneVoidTransaction(TransactionVoidBody body)
         throws IOException, EntityNotFoundException, NoResultException, ConstraintViolationException;
 
-    Object executeInOneTransaction(TransactionObjectBody body)
+    T executeInOneEntityTransaction(TransactionEntityBody<T> body)
+        throws Exception;
+
+    Page<T> executeInOnePageTransaction(TransactionPageBody<T> body)
+        throws Exception;
+
+    List<T> executeInOneListTransaction(TransactionListBody<T> body)
+        throws Exception;
+
+    boolean executeInOneBoolTransaction(TransactionBoolBody body)
         throws Exception;
 }

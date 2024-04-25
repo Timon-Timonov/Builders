@@ -45,6 +45,8 @@ public class GetMyCalculationServlet extends HttpServlet {
             calculationDtoPage = controller.getCalculationsByChapter(chapterId, page, count);
         } catch (IOException e) {
             ExceptionRedirector.forwardToException3(req, resp, this, BAD_CONNECTION);
+        }catch (Exception e) {
+            ExceptionRedirector.forwardToException3(req, resp, this,BLANK_STRING);
         }
 
         List<CalculationDto> calculationDtoList = calculationDtoPage.getList();
@@ -76,6 +78,8 @@ public class GetMyCalculationServlet extends HttpServlet {
                 controller.updateWorkPriceFact(workPrice, calculationId);
             } catch (NotUpdateDataInDbException e) {
                 ExceptionRedirector.forwardToException3(req, resp, this, CALCULATION_NOT_UPDATED);
+            }catch (Exception e) {
+                ExceptionRedirector.forwardToException3(req, resp, this,BLANK_STRING);
             }
         } else {
             ExceptionRedirector.forwardToException3(req, resp, this, CALCULATION_NOT_UPDATED);

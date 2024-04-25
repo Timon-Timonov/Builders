@@ -25,15 +25,15 @@ public interface AdminService {
 
     Page<Developer> getAllDevelopers(UserStatus status, int page, int count) throws Exception;
 
-    Page<Project> getProjectsByDeveloper(Long developerId, ProjectStatus status, int page, int count) throws Exception;
+    Page<Project> getProjectsByDeveloper(long developerId, ProjectStatus status, int page, int count) throws Exception;
 
-    List<Chapter> getChaptersByProjectId(Long projectId) throws Exception;
+    List<Chapter> getChaptersByProjectId(long projectId) throws Exception;
 
-    Page<Chapter> getChaptersByContractorId(Long contractorId, int page, int count) throws Exception;
+    Page<Chapter> getChaptersByContractorId(long contractorId, int page, int count) throws Exception;
 
-    Page<Calculation> getCalculationsByChapterId(Long chapterId, int page, int count) throws Exception;
+    Page<Calculation> getCalculationsByChapterId(long chapterId, int page, int count) throws Exception;
 
-    List<MoneyTransfer> getMoneyTransfers(Long calculationId) throws Exception;
+    List<MoneyTransfer> getMoneyTransfers(long calculationId) throws Exception;
 
     Page<Proposal> getProposalsByChapterId(long chapterId, ProposalStatus status, int page, int count) throws Exception;
 
@@ -44,17 +44,17 @@ public interface AdminService {
     List<Project> getAllProjects() throws Exception;
 
 
-    void changeUserStatus(Long userId, UserStatus newStatus) throws Exception;
+    void changeUserStatus(long userId, UserStatus newStatus) throws Exception;
 
-    void deleteUser(Long userId) throws IOException, NotUpdateDataInDbException;
+    void deleteUser(long userId) throws IOException, NotUpdateDataInDbException;
 
-    void deleteCalculation(Long calculationId) throws IOException, NotUpdateDataInDbException;
+    void deleteCalculation(long calculationId) throws IOException, NotUpdateDataInDbException;
 
-    void deleteChapter(Long chapterId) throws IOException, NotUpdateDataInDbException;
+    void deleteChapter(long chapterId) throws IOException, NotUpdateDataInDbException;
 
-    void deleteMoneyTransfer(Long transferId) throws IOException, NotUpdateDataInDbException;
+    void deleteMoneyTransfer(long transferId) throws IOException, NotUpdateDataInDbException;
 
-    void deleteProject(Long projectId) throws IOException, NotUpdateDataInDbException;
+    void deleteProject(long projectId) throws IOException, NotUpdateDataInDbException;
 
-    void deleteProposal(Long proposalId) throws IOException, NotUpdateDataInDbException;
+    void deleteProposal(long proposalId) throws IOException, NotUpdateDataInDbException;
 }

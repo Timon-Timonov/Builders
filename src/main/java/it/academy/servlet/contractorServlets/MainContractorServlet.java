@@ -27,8 +27,7 @@ import java.util.List;
 
 import static it.academy.util.constants.Constants.*;
 import static it.academy.util.constants.JspURLs.*;
-import static it.academy.util.constants.Messages.BAD_CONNECTION;
-import static it.academy.util.constants.Messages.INVALID_VALUE;
+import static it.academy.util.constants.Messages.*;
 import static it.academy.util.constants.ParameterNames.*;
 import static it.academy.util.constants.ServletURLs.MAIN_CONTRACTOR_SERVLET;
 import static it.academy.util.constants.ServletURLs.SLASH_STRING;
@@ -92,6 +91,8 @@ public class MainContractorServlet extends HttpServlet {
             developerDtoPage = controller.getMyDevelopers(id, status, page, count);
         } catch (IOException e) {
             ExceptionRedirector.forwardToException3(req, resp, this, BAD_CONNECTION);
+        }catch (Exception e) {
+            ExceptionRedirector.forwardToException3(req, resp, this,BLANK_STRING);
         }
         page = developerDtoPage.getPageNumber();
         List<DeveloperDto> developerDtoList = developerDtoPage.getList();
@@ -119,6 +120,8 @@ public class MainContractorServlet extends HttpServlet {
             projectDtoPage = controller.getMyProjects(id, status, page, count);
         } catch (IOException e) {
             ExceptionRedirector.forwardToException3(req, resp, this, BAD_CONNECTION);
+        }catch (Exception e) {
+            ExceptionRedirector.forwardToException3(req, resp, this,BLANK_STRING);
         }
         page = projectDtoPage.getPageNumber();
         List<ProjectDto> projectDtoList = projectDtoPage.getList();
@@ -146,6 +149,8 @@ public class MainContractorServlet extends HttpServlet {
             proposalDtoPage = controller.getMyProposals(id, status, page, count);
         } catch (IOException e) {
             ExceptionRedirector.forwardToException3(req, resp, this, BAD_CONNECTION);
+        }catch (Exception e) {
+            ExceptionRedirector.forwardToException3(req, resp, this,BLANK_STRING);
         }
         page = proposalDtoPage.getPageNumber();
         List<ProposalDto> proposalDtoList = proposalDtoPage.getList();

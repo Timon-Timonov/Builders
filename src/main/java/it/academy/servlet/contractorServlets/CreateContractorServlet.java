@@ -48,6 +48,8 @@ public class CreateContractorServlet extends HttpServlet {
         } catch (EmailOccupaidException e) {
             log.debug(EMAIL + email + IS_OCCUPIED, e);
             ExceptionRedirector.forwardToException2(req, resp, this, EMAIL + email + IS_OCCUPIED);
+        }catch (Exception e) {
+            ExceptionRedirector.forwardToException3(req, resp, this,BLANK_STRING);
         }
 
         if (contractorDto.getId() != null) {

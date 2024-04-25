@@ -33,19 +33,19 @@ public class ContractorControllerImpl implements ContractorController {
     private final ContractorService contractorService = new ContractorServiceImpl();
 
     @Override
-    public ContractorDto createContractor(String email, String password, String name, String city, String street, String building) throws IOException, NotCreateDataInDbException, EmailOccupaidException {
+    public ContractorDto createContractor(String email, String password, String name, String city, String street, String building) throws Exception {
 
         return ContractorConverter.convertToDto(contractorService.createContractor(email, password, name, city, street, building), null);
     }
 
     @Override
-    public ContractorDto getContractor(Long userId) throws IOException, RoleException {
+    public ContractorDto getContractor(Long userId) throws Exception {
 
         return ContractorConverter.convertToDto(contractorService.getContractor(userId), null);
     }
 
     @Override
-    public Page<ProjectDto> getMyProjects(Long contractorId, ProjectStatus status, int page, int count) throws IOException {
+    public Page<ProjectDto> getMyProjects(Long contractorId, ProjectStatus status, int page, int count) throws Exception {
 
         Page<Project> projectPage = contractorService.getMyProjects(contractorId, status, page, count);
         int pageNumber = projectPage.getPageNumber();
@@ -57,7 +57,7 @@ public class ContractorControllerImpl implements ContractorController {
     }
 
     @Override
-    public Page<ProjectDto> getMyProjectsByDeveloper(Long developerId, Long contractorId, ProjectStatus status, int page, int count) throws IOException {
+    public Page<ProjectDto> getMyProjectsByDeveloper(Long developerId, Long contractorId, ProjectStatus status, int page, int count) throws Exception {
 
         Page<Project> projectPage = contractorService.getMyProjectsByDeveloper(developerId, contractorId, status, page, count);
         int pageNumber = projectPage.getPageNumber();
@@ -75,7 +75,7 @@ public class ContractorControllerImpl implements ContractorController {
     }
 
     @Override
-    public Page<ChapterDto> getFreeChapters(Long contractorId, String chapterName, ProjectStatus projectStatus, int page, int count) throws IOException {
+    public Page<ChapterDto> getFreeChapters(Long contractorId, String chapterName, ProjectStatus projectStatus, int page, int count) throws Exception {
 
         Page<Chapter> chapterPage = contractorService.getFreeChapters(contractorId, chapterName, projectStatus, page, count);
         int pageNumber = chapterPage.getPageNumber();
@@ -87,7 +87,7 @@ public class ContractorControllerImpl implements ContractorController {
     }
 
     @Override
-    public Page<DeveloperDto> getMyDevelopers(Long contractorId, ProjectStatus status, int page, int count) throws IOException {
+    public Page<DeveloperDto> getMyDevelopers(Long contractorId, ProjectStatus status, int page, int count) throws Exception {
 
         Page<Developer> developerPage = contractorService.getMyDevelopers(contractorId, status, page, count);
         int pageNumber = developerPage.getPageNumber();
@@ -107,7 +107,7 @@ public class ContractorControllerImpl implements ContractorController {
     }
 
     @Override
-    public Page<ProposalDto> getMyProposals(Long contractorId, ProposalStatus status, int page, int count) throws IOException {
+    public Page<ProposalDto> getMyProposals(Long contractorId, ProposalStatus status, int page, int count) throws Exception {
 
         Page<Proposal> proposalPage = contractorService.getMyProposals(contractorId, status, page, count);
         int pageNumber = proposalPage.getPageNumber();
@@ -119,7 +119,7 @@ public class ContractorControllerImpl implements ContractorController {
     }
 
     @Override
-    public List<ChapterDto> getMyChaptersByProjectId(Long ProjectId, Long ContractorId) throws IOException {
+    public List<ChapterDto> getMyChaptersByProjectId(Long ProjectId, Long ContractorId) throws Exception {
 
 
         return contractorService.getMyChaptersByProjectId(ProjectId, ContractorId).stream()
@@ -131,7 +131,7 @@ public class ContractorControllerImpl implements ContractorController {
     }
 
     @Override
-    public Page<CalculationDto> getCalculationsByChapter(Long chapterId, int page, int count) throws IOException {
+    public Page<CalculationDto> getCalculationsByChapter(Long chapterId, int page, int count) throws Exception {
 
         Page<Calculation> calculationPage = contractorService.getCalculationsByChapter(chapterId, page, count);
         List<CalculationDto> list = calculationPage.getList().stream()
@@ -144,26 +144,26 @@ public class ContractorControllerImpl implements ContractorController {
     }
 
     @Override
-    public void updateWorkPriceFact(Integer workPrice, Long calculationId) throws IOException, NotUpdateDataInDbException {
+    public void updateWorkPriceFact(Integer workPrice, Long calculationId) throws Exception {
 
         contractorService.updateWorkPriceFact(workPrice, calculationId);
     }
 
     @Override
-    public CalculationDto createCalculation(Long chapterId, Integer YYYY, Integer MM, Integer workPricePlan) throws IOException, NotCreateDataInDbException {
+    public CalculationDto createCalculation(Long chapterId, Integer YYYY, Integer MM, Integer workPricePlan) throws Exception {
 
         Calculation calculation = contractorService.createCalculation(chapterId, YYYY, MM, workPricePlan);
         return CalculationConverter.convertToDto(calculation, null, null, null);
     }
 
     @Override
-    public void setProposalStatus(Long proposalId, ProposalStatus newStatus) throws IOException, NotUpdateDataInDbException {
+    public void setProposalStatus(Long proposalId, ProposalStatus newStatus) throws Exception {
 
         contractorService.setProposalStatus(proposalId, newStatus);
     }
 
     @Override
-    public ProposalDto createProposal(Long chapterId, Long contractorId) throws IOException, NotCreateDataInDbException {
+    public ProposalDto createProposal(Long chapterId, Long contractorId) throws Exception {
 
         return ProposalConverter.convertToDto(contractorService.createProposal(chapterId, contractorId));
     }

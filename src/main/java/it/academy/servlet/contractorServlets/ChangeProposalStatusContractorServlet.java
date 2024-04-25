@@ -42,6 +42,8 @@ public class ChangeProposalStatusContractorServlet extends HttpServlet {
                 ExceptionRedirector.forwardToException3(req, resp, this, PROPOSAL_NOT_UPDATE);
             } catch (IOException e) {
                 ExceptionRedirector.forwardToException3(req, resp, this, BAD_CONNECTION);
+            } catch (Exception e) {
+                ExceptionRedirector.forwardToException3(req, resp, this,BLANK_STRING);
             }
         } else {
             ExceptionRedirector.forwardToException3(req, resp, this, PROPOSAL_NOT_UPDATE);

@@ -48,6 +48,8 @@ public class GetMyProposalsServlet extends HttpServlet {
             chapterDtoPage = controller.getFreeChapters(contractorId, chapterName, status, page, count);
         } catch (IOException e) {
             ExceptionRedirector.forwardToException3(req, resp, this, BAD_CONNECTION);
+        }catch (Exception e) {
+            ExceptionRedirector.forwardToException3(req, resp, this,BLANK_STRING);
         }
         List<ChapterDto> chapterDtoList = chapterDtoPage.getList();
         page = chapterDtoPage.getPageNumber();

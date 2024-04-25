@@ -46,6 +46,8 @@ public class GetMyChaptersServlet extends HttpServlet {
             chapterDtoList = controller.getMyChaptersByProjectId(projectId, contractorId);
         } catch (IOException e) {
             ExceptionRedirector.forwardToException3(req, resp, this, BAD_CONNECTION);
+        }catch (Exception e) {
+            ExceptionRedirector.forwardToException3(req, resp, this,BLANK_STRING);
         }
 
         req.setAttribute(CHAPTER_DTO_LIST_PARAM, chapterDtoList);

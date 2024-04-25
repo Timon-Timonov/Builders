@@ -51,6 +51,8 @@ public class GetMyCalculationDeveloperServlet extends HttpServlet {
             calculationDtoPage = controller.getCalculationsByChapterId(chapterId, page, count);
         } catch (IOException e) {
             ExceptionRedirector.forwardToException3(req, resp, this, BAD_CONNECTION);
+        }catch (Exception e) {
+            ExceptionRedirector.forwardToException3(req, resp, this,BLANK_STRING);
         }
         List<CalculationDto> calculationDtoList = calculationDtoPage.getList();
         page = calculationDtoPage.getPageNumber();

@@ -16,8 +16,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 import static it.academy.util.constants.Constants.ZERO_LONG_VALUE;
-import static it.academy.util.constants.Messages.BAD_CONNECTION;
-import static it.academy.util.constants.Messages.PROPOSAL_NOT_CREATE;
+import static it.academy.util.constants.Messages.*;
 import static it.academy.util.constants.ParameterNames.CHAPTER_ID_PARAM;
 import static it.academy.util.constants.ParameterNames.ID_PARAM;
 import static it.academy.util.constants.ServletURLs.*;
@@ -40,6 +39,8 @@ public class CreateProposalServlet extends HttpServlet {
             ExceptionRedirector.forwardToException3(req, resp, this, PROPOSAL_NOT_CREATE);
         } catch (IOException e) {
             ExceptionRedirector.forwardToException3(req, resp, this, BAD_CONNECTION);
+        }catch (Exception e) {
+            ExceptionRedirector.forwardToException3(req, resp, this,BLANK_STRING);
         }
 
         getServletContext().getRequestDispatcher(SLASH_STRING + GET_MY_PROPOSAL_CONTRACTOR_SERVLET).forward(req, resp);

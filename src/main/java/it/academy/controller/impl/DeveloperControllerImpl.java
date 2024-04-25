@@ -154,7 +154,7 @@ public class DeveloperControllerImpl implements DeveloperController {
 
     @Override
     public Page<ProposalDto> getProposalsByChapterId(
-        Long chapterId, ProposalStatus status, int page, int count) throws IOException {
+        Long chapterId, ProposalStatus status, int page, int count) throws Exception {
 
         Page<Proposal> proposalPage = developerService.getProposalsByChapterId(chapterId, status, page, count);
         int pageNumber = proposalPage.getPageNumber();
@@ -165,25 +165,25 @@ public class DeveloperControllerImpl implements DeveloperController {
     }
 
     @Override
-    public void startProject(Long projectId) throws IOException, NotUpdateDataInDbException {
+    public void startProject(Long projectId) throws Exception {
 
         developerService.startProject(projectId);
     }
 
     @Override
-    public void endProject(Long projectId) throws IOException, NotUpdateDataInDbException {
+    public void endProject(Long projectId) throws Exception {
 
         developerService.endProject(projectId);
     }
 
     @Override
-    public void cancelProject(Long projectId) throws IOException, NotUpdateDataInDbException {
+    public void cancelProject(Long projectId) throws Exception {
 
         developerService.cancelProject(projectId);
     }
 
     @Override
-    public Page<CalculationDto> getCalculationsByChapterId(Long chapterId, int page, int count) throws IOException {
+    public Page<CalculationDto> getCalculationsByChapterId(Long chapterId, int page, int count) throws Exception {
 
         Page<Calculation> calculationPage = developerService.getCalculationsByChapterId(chapterId, page, count);
         int pageNumber = calculationPage.getPageNumber();
@@ -197,13 +197,13 @@ public class DeveloperControllerImpl implements DeveloperController {
     }
 
     @Override
-    public void payAdvance(int sum, Long calculationId) throws IOException, NotCreateDataInDbException {
+    public void payAdvance(int sum, Long calculationId) throws Exception {
 
         developerService.payAdvance(sum, calculationId);
     }
 
     @Override
-    public void payForWork(int sum, Long calculationId) throws IOException, NotCreateDataInDbException {
+    public void payForWork(int sum, Long calculationId) throws Exception {
 
         developerService.payForWork(sum, calculationId);
     }

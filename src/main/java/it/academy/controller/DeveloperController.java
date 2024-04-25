@@ -45,19 +45,19 @@ public interface DeveloperController {
     void approveProposal(Long proposalId) throws IOException, NotUpdateDataInDbException;
 
     Page<ProposalDto> getProposalsByChapterId(Long chapterId, ProposalStatus status, int page, int count)
-        throws IOException;
+        throws Exception;
 
-    void startProject(Long projectId) throws IOException, NotUpdateDataInDbException;
+    void startProject(Long projectId) throws Exception;
 
-    void endProject(Long projectId) throws IOException, NotUpdateDataInDbException;
+    void endProject(Long projectId) throws Exception;
 
-    void cancelProject(Long projectId) throws IOException, NotUpdateDataInDbException;
+    void cancelProject(Long projectId) throws Exception;
 
-    Page<CalculationDto> getCalculationsByChapterId(Long chapterId, int page, int count) throws IOException;
+    Page<CalculationDto> getCalculationsByChapterId(Long chapterId, int page, int count) throws Exception;
 
-    void payAdvance(int sum, Long calculationId) throws IOException, NotCreateDataInDbException;
+    void payAdvance(int sum, Long calculationId) throws Exception;
 
-    void payForWork(int sum, Long calculationId) throws IOException, NotCreateDataInDbException;
+    void payForWork(int sum, Long calculationId) throws Exception;
 
     Integer getProjectDept(Project project);
 

@@ -9,7 +9,6 @@ import it.academy.pojo.Calculation;
 import it.academy.pojo.Chapter;
 import it.academy.pojo.Project;
 import it.academy.pojo.Proposal;
-import it.academy.pojo.enums.ChapterStatus;
 import it.academy.pojo.enums.ProjectStatus;
 import it.academy.pojo.enums.ProposalStatus;
 import it.academy.pojo.legalEntities.Contractor;
@@ -24,49 +23,49 @@ public interface DeveloperService {
         String email, String password, String name, String city, String street, String building)
         throws IOException, NotCreateDataInDbException, EmailOccupaidException;
 
-    Developer getDeveloper(Long userId) throws IOException, RoleException;
+    Developer getDeveloper(long userId) throws IOException, RoleException;
 
-    Page<Project> getMyProjects(Long developerId, ProjectStatus status, int page, int count) throws IOException;
+    Page<Project> getMyProjects(long developerId, ProjectStatus status, int page, int count) throws IOException;
 
-    Page<Contractor> getMyContractors(Long developerId, ProjectStatus status, int page, int count) throws IOException;
+    Page<Contractor> getMyContractors(long developerId, ProjectStatus status, int page, int count) throws IOException;
 
-    Page<Proposal> getAllMyProposals(Long developerId, ProposalStatus status, int page, int count) throws IOException;
+    Page<Proposal> getAllMyProposals(long developerId, ProposalStatus status, int page, int count) throws IOException;
 
-    Project createProject(Long developerId, String name, String city, String street, String building)
+    Project createProject(long developerId, String name, String city, String street, String building)
         throws IOException, NotCreateDataInDbException;
 
-    void createChapter(Long projectId, String name, Integer price) throws IOException, NotCreateDataInDbException;
+    void createChapter(long projectId, String name, int price) throws IOException, NotCreateDataInDbException;
 
-    void cancelChapter(Long chapterId) throws IOException, NotUpdateDataInDbException;
+    void cancelChapter(long chapterId) throws IOException, NotUpdateDataInDbException;
 
-    List<Chapter> getChaptersByProjectId(Long projectId) throws IOException;
+    List<Chapter> getChaptersByProjectId(long projectId) throws IOException;
 
-    Page<Chapter> getChaptersByContractorIdAndDeveloperId(Long developerId, Long contractorId, ProjectStatus status, int page, int count)
+    Page<Chapter> getChaptersByContractorIdAndDeveloperId(long developerId, long contractorId, ProjectStatus status, int page, int count)
         throws IOException;
 
-    void rejectProposal(Long proposalId) throws IOException, NotUpdateDataInDbException;
+    void rejectProposal(long proposalId) throws IOException, NotUpdateDataInDbException;
 
-    void considerateProposal(Long proposalId) throws IOException, NotUpdateDataInDbException;
+    void considerateProposal(long proposalId) throws IOException, NotUpdateDataInDbException;
 
-    void approveProposal(Long proposalId) throws IOException, NotUpdateDataInDbException;
+    void approveProposal(long proposalId) throws IOException, NotUpdateDataInDbException;
 
-    Page<Proposal> getProposalsByChapterId(Long chapterId, ProposalStatus status, int page, int count)
-        throws IOException;
+    Page<Proposal> getProposalsByChapterId(long chapterId, ProposalStatus status, int page, int count)
+        throws Exception;
 
-    void startProject(Long projectId) throws IOException, NotUpdateDataInDbException;
+    void startProject(long projectId) throws Exception;
 
-    void endProject(Long projectId) throws IOException, NotUpdateDataInDbException;
+    void endProject(long projectId) throws Exception;
 
-    void cancelProject(Long projectId) throws IOException, NotUpdateDataInDbException;
+    void cancelProject(long projectId) throws Exception;
 
-    Page<Calculation> getCalculationsByChapterId(Long chapterId, int page, int count) throws IOException;
+    Page<Calculation> getCalculationsByChapterId(long chapterId, int page, int count) throws IOException, Exception;
 
-    void payAdvance(int sum, Long calculationId) throws IOException, NotCreateDataInDbException;
+    void payAdvance(int sum, long calculationId) throws Exception;
 
-    void payForWork(int sum, Long calculationId) throws IOException, NotCreateDataInDbException;
+    void payForWork(int sum, long calculationId) throws Exception;
 
-    Integer getProjectDept(Project project);
+    int getProjectDept(Project project);
 
-    Integer getTotalDeptByContractor(Long contractorId, Long developerId) throws IOException;
+    int getTotalDeptByContractor(long contractorId, long developerId) throws IOException;
 
 }

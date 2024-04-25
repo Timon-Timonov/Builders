@@ -1,10 +1,10 @@
 package it.academy.dao.impl;
 
 import it.academy.dao.Dao;
+import it.academy.dto.Page;
 import it.academy.exceptions.EmailOccupaidException;
 import it.academy.util.HibernateUtil;
-import it.academy.util.functionalInterfaces.TransactionObjectBody;
-import it.academy.util.functionalInterfaces.TransactionVoidBody;
+import it.academy.util.functionalInterfaces.*;
 import lombok.extern.log4j.Log4j2;
 import org.hibernate.exception.ConstraintViolationException;
 
@@ -13,6 +13,7 @@ import javax.persistence.EntityNotFoundException;
 import javax.persistence.NoResultException;
 import javax.persistence.RollbackException;
 import java.io.IOException;
+import java.util.List;
 
 import static it.academy.util.constants.Messages.CREATED_SUCCESSFUL;
 
@@ -54,7 +55,7 @@ public class DaoImpl<T, R> implements Dao<T, R> {
     }
 
     @Override
-    public void executeInOneTransaction(TransactionVoidBody body)
+    public void executeInOneVoidTransaction(TransactionVoidBody body)
         throws RollbackException, IOException, EntityNotFoundException, NoResultException, ConstraintViolationException {
 
         try {
@@ -70,10 +71,10 @@ public class DaoImpl<T, R> implements Dao<T, R> {
     }
 
     @Override
-    public Object executeInOneTransaction(TransactionObjectBody body)
-        throws RollbackException, IOException, EntityNotFoundException, NoResultException, ConstraintViolationException , EmailOccupaidException {
+    public T executeInOneEntityTransaction(TransactionEntityBody<T> body)
+        throws Exception {
 
-        Object o;
+        T o;
         try {
             getEm().getTransaction().begin();
             o = body.execute();
@@ -87,6 +88,56 @@ public class DaoImpl<T, R> implements Dao<T, R> {
         return o;
     }
 
+    @Override
+    public Page<T> executeInOnePageTransaction(TransactionPageBody<T> body) throws Exception {
+
+        Page<T> o;
+        try {
+            getEm().getTransaction().begin();
+            o = body.execute();
+            getEm().getTransaction().commit();
+        } catch (Exception e) {
+            getEm().getTransaction().rollback();
+            throw e;
+        } finally {
+            closeManager();
+        }
+        return o;
+    }
+
+    @Override
+    public List<T> executeInOneListTransaction(TransactionListBody<T> body) throws Exception {
+
+        List<T> o;
+        try {
+            getEm().getTransaction().begin();
+            o = body.execute();
+            getEm().getTransaction().commit();
+        } catch (Exception e) {
+            getEm().getTransaction().rollback();
+            throw e;
+        } finally {
+            closeManager();
+        }
+        return o;
+    }
+
+    @Override
+    public boolean executeInOneBoolTransaction(TransactionBoolBody body) throws Exception {
+
+        boolean o;
+        try {
+            getEm().getTransaction().begin();
+            o = body.execute();
+            getEm().getTransaction().commit();
+        } catch (Exception e) {
+            getEm().getTransaction().rollback();
+            throw e;
+        } finally {
+            closeManager();
+        }
+        return o;
+    }
 
     protected EntityManager getEm() {
 

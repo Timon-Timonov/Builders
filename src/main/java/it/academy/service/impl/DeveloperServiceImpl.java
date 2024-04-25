@@ -17,6 +17,7 @@ import lombok.extern.log4j.Log4j2;
 
 import javax.persistence.EntityNotFoundException;
 import javax.persistence.NoResultException;
+import javax.persistence.RollbackException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -46,9 +47,9 @@ public class DeveloperServiceImpl implements DeveloperService {
 
         AtomicReference<Developer> developer = new AtomicReference<>();
         AtomicBoolean isEmailOccupied = new AtomicBoolean(false);
-        developerDao.executeInOneTransaction(() -> {
+        developerDao.executeInOneVoidTransaction(() -> {
             AtomicReference<User> userFromDB = new AtomicReference<>();
-            userDao.executeInOneTransaction(() -> {
+            userDao.executeInOneVoidTransaction(() -> {
                 User user = null;
                 try {
                     user = userDao.getUser(email);
@@ -91,10 +92,10 @@ public class DeveloperServiceImpl implements DeveloperService {
     }
 
     @Override
-    public Developer getDeveloper(Long userId) throws IOException, RoleException, EntityNotFoundException {
+    public Developer getDeveloper(long userId) throws IOException, RoleException, EntityNotFoundException {
 
         AtomicReference<Developer> developer = new AtomicReference<>();
-        contractorDao.executeInOneTransaction(() -> {
+        contractorDao.executeInOneVoidTransaction(() -> {
             User user;
             try {
                 user = userDao.get(userId);
@@ -119,7 +120,7 @@ public class DeveloperServiceImpl implements DeveloperService {
     }
 
     @Override
-    public Page<Project> getMyProjects(Long developerId, ProjectStatus status, int page, int count)
+    public Page<Project> getMyProjects(long developerId, ProjectStatus status, int page, int count)
         throws IOException {
 
         int correctPage = FIRST_PAGE_NUMBER;
@@ -137,7 +138,7 @@ public class DeveloperServiceImpl implements DeveloperService {
     }
 
     @Override
-    public Page<Contractor> getMyContractors(Long developerId, ProjectStatus status, int page, int count)
+    public Page<Contractor> getMyContractors(long developerId, ProjectStatus status, int page, int count)
         throws IOException {
 
         int correctPage = FIRST_PAGE_NUMBER;
@@ -155,14 +156,14 @@ public class DeveloperServiceImpl implements DeveloperService {
     }
 
     @Override
-    public Page<Proposal> getAllMyProposals(Long developerId, ProposalStatus status, int page, int count)
+    public Page<Proposal> getAllMyProposals(long developerId, ProposalStatus status, int page, int count)
         throws IOException {
 
         int correctPage = FIRST_PAGE_NUMBER;
         List<Proposal> list = new ArrayList<>();
         try {
             long totalCount = proposalDao.getCountOfProposalsByDeveloperId(developerId, status);
-           correctPage = Util.getCorrectPageNumber(page, count, totalCount);
+            correctPage = Util.getCorrectPageNumber(page, count, totalCount);
             list.addAll(proposalDao.getProposalsByDeveloperId(developerId, status, correctPage, count));
         } catch (NoResultException e) {
             log.error(THERE_IS_NO_SUCH_DATA_IN_DB_WITH_DEVELOPER_ID + developerId);
@@ -173,11 +174,11 @@ public class DeveloperServiceImpl implements DeveloperService {
     }
 
     @Override
-    public Project createProject(Long developerId, String name, String city, String street, String building)
+    public Project createProject(long developerId, String name, String city, String street, String building)
         throws IOException, NotCreateDataInDbException {
 
         AtomicReference<Project> project = new AtomicReference<>();
-        projectDao.executeInOneTransaction(() -> {
+        projectDao.executeInOneVoidTransaction(() -> {
             Developer developer = null;
             try {
                 developer = developerDao.get(developerId);
@@ -207,11 +208,11 @@ public class DeveloperServiceImpl implements DeveloperService {
     }
 
     @Override
-    public void createChapter(Long projectId, String name, Integer price)
+    public void createChapter(long projectId, String name, int price)
         throws IOException, NotCreateDataInDbException {
 
         AtomicReference<Chapter> chapter = new AtomicReference<>();
-        chapterDao.executeInOneTransaction(() -> {
+        chapterDao.executeInOneVoidTransaction(() -> {
             Project project = null;
             try {
                 project = projectDao.get(projectId);
@@ -237,7 +238,7 @@ public class DeveloperServiceImpl implements DeveloperService {
 
 
     @Override
-    public List<Chapter> getChaptersByProjectId(Long projectId)
+    public List<Chapter> getChaptersByProjectId(long projectId)
         throws IOException {
 
         List<Chapter> list = new ArrayList<>();
@@ -253,7 +254,7 @@ public class DeveloperServiceImpl implements DeveloperService {
 
     @Override
     public Page<Chapter> getChaptersByContractorIdAndDeveloperId(
-        Long developerId, Long contractorId, ProjectStatus status, int page, int count)
+        long developerId, long contractorId, ProjectStatus status, int page, int count)
         throws IOException {
 
         int correctPage = FIRST_PAGE_NUMBER;
@@ -271,10 +272,10 @@ public class DeveloperServiceImpl implements DeveloperService {
     }
 
     @Override
-    public void cancelChapter(Long chapterId) throws IOException, NotUpdateDataInDbException {
+    public void cancelChapter(long chapterId) throws IOException, NotUpdateDataInDbException {
 
         AtomicBoolean isUpdated = new AtomicBoolean(false);
-        chapterDao.executeInOneTransaction(() -> {
+        chapterDao.executeInOneVoidTransaction(() -> {
             Chapter chapter = null;
             try {
                 chapter = chapterDao.get(chapterId);
@@ -295,28 +296,28 @@ public class DeveloperServiceImpl implements DeveloperService {
     }
 
     @Override
-    public void rejectProposal(Long proposalId) throws IOException, NotUpdateDataInDbException {
+    public void rejectProposal(long proposalId) throws IOException, NotUpdateDataInDbException {
 
         changeStatusOfProposal(proposalId, ProposalStatus.REJECTED);
     }
 
     @Override
-    public void considerateProposal(Long proposalId) throws IOException, NotUpdateDataInDbException {
+    public void considerateProposal(long proposalId) throws IOException, NotUpdateDataInDbException {
 
         changeStatusOfProposal(proposalId, ProposalStatus.CONSIDERATION);
     }
 
     @Override
-    public void approveProposal(Long proposalId) throws IOException, NotUpdateDataInDbException {
+    public void approveProposal(long proposalId) throws IOException, NotUpdateDataInDbException {
 
         changeStatusOfProposal(proposalId, ProposalStatus.APPROVED);
     }
 
-    private void changeStatusOfProposal(Long proposalId, ProposalStatus newStatus)
+    private void changeStatusOfProposal(long proposalId, ProposalStatus newStatus)
         throws IOException, NotUpdateDataInDbException {
 
         AtomicBoolean isUpdated = new AtomicBoolean(false);
-        proposalDao.executeInOneTransaction(() -> {
+        proposalDao.executeInOneVoidTransaction(() -> {
             Proposal proposal = null;
             try {
                 proposal = proposalDao.get(proposalId);
@@ -384,12 +385,31 @@ public class DeveloperServiceImpl implements DeveloperService {
         }
     }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     @Override
     public Page<Proposal> getProposalsByChapterId(
-        Long chapterId, ProposalStatus status, int page, int count)
-        throws IOException {
+        long chapterId, ProposalStatus status, int page, int count)
+        throws Exception {
 
-        int correctPage = FIRST_PAGE_NUMBER;
+       /* int correctPage = FIRST_PAGE_NUMBER;
         List<Proposal> list = new ArrayList<>();
         try {
             long totalCount = proposalDao.getCountOfProposalsByChapterId(chapterId, status);
@@ -400,80 +420,108 @@ public class DeveloperServiceImpl implements DeveloperService {
         } finally {
             proposalDao.closeManager();
         }
-        return new Page<>(list, correctPage);
+        return new Page<>(list, correctPage);*/
+
+        Page<Proposal> proposalPagee;
+
+        try {
+            proposalPagee = proposalDao.executeInOnePageTransaction(() -> {
+                int correctPage = FIRST_PAGE_NUMBER;
+                List<Proposal> list = new ArrayList<>();
+                try {
+                    long totalCount = proposalDao.getCountOfProposalsByChapterId(chapterId, status);
+                    correctPage = Util.getCorrectPageNumber(page, count, totalCount);
+                    list.addAll(proposalDao.getProposalsByChapterId(chapterId, status, correctPage, count));
+                } catch (NoResultException e) {
+                    log.error(THERE_IS_NO_SUCH_DATA_IN_DB_CHAPTER_ID + chapterId);
+                }
+                return new Page<>(list, correctPage);
+            });
+        } catch (RollbackException e) {
+            log.error(BAD_CONNECTION, e);
+            throw new IOException(BAD_CONNECTION);
+        }
+        return proposalPagee;
     }
 
+
     @Override
-    public void startProject(Long projectId) throws IOException, NotUpdateDataInDbException {
+    public void startProject(long projectId) throws Exception {
 
         changeProjectStatus(projectId, ProjectStatus.IN_PROCESS);
     }
 
     @Override
-    public void endProject(Long projectId) throws IOException, NotUpdateDataInDbException {
+    public void endProject(long projectId) throws Exception {
 
         changeProjectStatus(projectId, ProjectStatus.COMPLETED);
     }
 
     @Override
-    public void cancelProject(Long projectId) throws IOException, NotUpdateDataInDbException {
+    public void cancelProject(long projectId) throws Exception {
 
         changeProjectStatus(projectId, ProjectStatus.CANCELED);
     }
 
-    private void changeProjectStatus(Long projectId, ProjectStatus newStatus)
-        throws IOException, NotUpdateDataInDbException {
 
-        AtomicBoolean isUpdated = new AtomicBoolean(false);
-        projectDao.executeInOneTransaction(() -> {
-            Project project = null;
-            try {
-                project = projectDao.get(projectId);
-            } catch (EntityNotFoundException e) {
-                log.error(THERE_IS_NO_SUCH_DATA_IN_DB_PROJECT_ID + projectId);
-            }
-            if (project != null) {
+    private void changeProjectStatus(long projectId, ProjectStatus newStatus)
+        throws Exception {
 
-                switch (project.getStatus()) {
-                    case PREPARATION:
-                        if (ProjectStatus.IN_PROCESS.equals(newStatus) ||
-                                ProjectStatus.CANCELED.equals(newStatus)) {
-                            project.setStatus(newStatus);
-                            projectDao.update(project);
-                            log.trace(PROJECT_STATUS_CHANGED + project.getId() + newStatus);
-                            isUpdated.set(true);
-                        }
-                        break;
-                    case IN_PROCESS:
-                        if (ProjectStatus.COMPLETED.equals(newStatus) ||
-                                ProjectStatus.CANCELED.equals(newStatus)) {
-                            project.setStatus(newStatus);
-                            projectDao.update(project);
-                            log.trace(PROJECT_STATUS_CHANGED + project.getId() + newStatus);
-                            isUpdated.set(true);
-                        }
-                        break;
+        boolean isUpdated;
+        try {
+            isUpdated = projectDao.executeInOneBoolTransaction(() -> {
+                Project project = null;
+                try {
+                    project = projectDao.get(projectId);
+                } catch (EntityNotFoundException e) {
+                    log.error(THERE_IS_NO_SUCH_DATA_IN_DB_PROJECT_ID + projectId);
                 }
-                if (ProjectStatus.CANCELED.equals(newStatus)) {
+                if (project != null) {
+                    switch (project.getStatus()) {
+                        case PREPARATION:
+                            if (ProjectStatus.IN_PROCESS.equals(newStatus) ||
+                                    ProjectStatus.CANCELED.equals(newStatus)) {
+                                project.setStatus(newStatus);
+                                projectDao.update(project);
+                                log.trace(PROJECT_STATUS_CHANGED + project.getId() + newStatus);
+                                return true;
+                            }
+                            break;
+                        case IN_PROCESS:
+                            if (ProjectStatus.COMPLETED.equals(newStatus) ||
+                                    ProjectStatus.CANCELED.equals(newStatus)) {
+                                project.setStatus(newStatus);
+                                projectDao.update(project);
+                                log.trace(PROJECT_STATUS_CHANGED + project.getId() + newStatus);
+                                return true;
+                            }
+                            break;
+                    }
+                    if (ProjectStatus.CANCELED.equals(newStatus)) {
 
-                    chapterDao.executeInOneTransaction(() -> chapterDao.getChaptersByProjectId(projectId)
-                                                                 .forEach(chapter -> {
-                                                                     chapter.setStatus(ChapterStatus.CANCELED);
-                                                                     chapterDao.update(chapter);
-                                                                 }));
+                        chapterDao.executeInOneVoidTransaction(() -> chapterDao.getChaptersByProjectId(projectId)
+                                                                         .forEach(chapter -> {
+                                                                             chapter.setStatus(ChapterStatus.CANCELED);
+                                                                             chapterDao.update(chapter);
+                                                                         }));
+                    }
                 }
-            }
-        });
-        if (!isUpdated.get()) {
+                return false;
+            });
+        } catch (RollbackException e) {
+            log.error(e);
+            throw new NotUpdateDataInDbException();
+        }
+        if (!isUpdated) {
             throw new NotUpdateDataInDbException();
         }
     }
 
     @Override
-    public Page<Calculation> getCalculationsByChapterId(Long chapterId, int page, int count)
-        throws IOException {
+    public Page<Calculation> getCalculationsByChapterId(long chapterId, int page, int count)
+        throws Exception {
 
-        int correctPage = FIRST_PAGE_NUMBER;
+       /* int correctPage = FIRST_PAGE_NUMBER;
         List<Calculation> list = new ArrayList<>();
         try {
             long totalCount = calculationDao.getCountOfCalculationsByChapterId(chapterId);
@@ -484,69 +532,94 @@ public class DeveloperServiceImpl implements DeveloperService {
         } finally {
             calculationDao.closeManager();
         }
-        return new Page<>(list, correctPage);
+        return new Page<>(list, correctPage);*/
+
+        Page<Calculation> calculationPage;
+
+        try {
+            calculationPage = calculationDao.executeInOnePageTransaction(() -> {
+                int correctPage = FIRST_PAGE_NUMBER;
+                List<Calculation> list = new ArrayList<>();
+                try {
+                    long totalCount = calculationDao.getCountOfCalculationsByChapterId(chapterId);
+                    correctPage = Util.getCorrectPageNumber(page, count, totalCount);
+                    list.addAll(calculationDao.getCalculationsByChapterId(chapterId, correctPage, count));
+                } catch (NoResultException e) {
+                    log.error(THERE_IS_NO_SUCH_DATA_IN_DB_CHAPTER_ID + chapterId);
+                }
+                return new Page<>(list, correctPage);
+            });
+        } catch (RollbackException e) {
+            log.error(BAD_CONNECTION, e);
+            throw new IOException(BAD_CONNECTION);
+        }
+        return calculationPage;
     }
 
     @Override
-    public void payAdvance(int sum, Long calculationId) throws IOException, NotCreateDataInDbException {
+    public void payAdvance(int sum, long calculationId) throws Exception {
 
         payMoney(sum, calculationId, PaymentType.ADVANCE_PAYMENT);
     }
 
     @Override
-    public void payForWork(int sum, Long calculationId) throws IOException, NotCreateDataInDbException {
+    public void payForWork(int sum, long calculationId) throws Exception {
 
         payMoney(sum, calculationId, PaymentType.PAYMENT_FOR_WORK);
     }
 
-    private void payMoney(int sum, Long calculationId, PaymentType paymentForWork)
-        throws IOException, NotCreateDataInDbException {
+    private void payMoney(int sum, long calculationId, PaymentType paymentForWork)
+        throws Exception {
 
-        AtomicBoolean isCreated = new AtomicBoolean(false);
-        AtomicReference<MoneyTransfer> transfer = new AtomicReference<>();
-        moneyTransferDao.executeInOneTransaction(() -> {
-            Calculation calculation = null;
-            try {
-                calculation = calculationDao.get(calculationId);
-            } catch (EntityNotFoundException e) {
-                log.error(CALCULATION_NOT_FOUND_WITH_ID + calculationId, e);
-            } finally {
-                calculationDao.closeManager();
-            }
-            if (calculation != null) {
-                MoneyTransfer newTransfer = MoneyTransfer.builder()
-                                                .calculation(calculation)
-                                                .sum(sum)
-                                                .type(paymentForWork)
-                                                .build();
-                moneyTransferDao.create(newTransfer);
-                transfer.set(newTransfer);
-                isCreated.set(true);
-            }
-        });
-        if (!isCreated.get()) {
+        boolean isCreated;
+        try {
+            isCreated = moneyTransferDao.executeInOneBoolTransaction(() -> {
+                Calculation calculation = null;
+                try {
+                    calculation = calculationDao.get(calculationId);
+                } catch (EntityNotFoundException e) {
+                    log.error(CALCULATION_NOT_FOUND_WITH_ID + calculationId, e);
+                } finally {
+                    calculationDao.closeManager();
+                }
+                if (calculation != null) {
+                    MoneyTransfer newTransfer = MoneyTransfer.builder()
+                                                    .calculation(calculation)
+                                                    .sum(sum)
+                                                    .type(paymentForWork)
+                                                    .build();
+                    moneyTransferDao.create(newTransfer);
+                    return true;
+                }
+                return false;
+            });
+        } catch (RollbackException e) {
+            log.error(BAD_CONNECTION, e);
+            throw new IOException(BAD_CONNECTION);
+        }
+        if (!isCreated) {
             throw new NotCreateDataInDbException();
         }
     }
 
     @Override
-    public Integer getProjectDept(Project project) {
+    public int getProjectDept(Project project) {
 
         return project.getChapters()
                    .stream()
                    .map(Util::getDebtByChapter)
-                   .reduce(0, Integer::sum);
+                   .reduce(ZERO_INT_VALUE, Integer::sum);
     }
 
     @Override
-    public Integer getTotalDeptByContractor(Long contractorId, Long developerId) throws IOException {
+    public int getTotalDeptByContractor(long contractorId, long developerId) throws IOException {
 
-        Integer chapterDebt = ZERO_INT_VALUE;
+        int chapterDebt = ZERO_INT_VALUE;
         try {
             chapterDebt = chapterDao.getAllChaptersByDeveloperIdContractorId(developerId, contractorId)
                               .stream()
                               .map(Util::getDebtByChapter)
-                              .reduce(0, Integer::sum);
+                              .reduce(ZERO_INT_VALUE, Integer::sum);
         } catch (NoResultException e) {
             log.error(THERE_IS_NO_SUCH_DATA_IN_DB_WITH_CONTRACTOR_ID + contractorId + AND_DELELOPER_ID + developerId, e);
         } finally {

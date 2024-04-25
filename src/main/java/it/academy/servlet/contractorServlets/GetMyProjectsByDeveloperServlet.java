@@ -49,6 +49,8 @@ public class GetMyProjectsByDeveloperServlet extends HttpServlet {
             projectDtoPage = controller.getMyProjectsByDeveloper(developerId, id, status, page, count);
         } catch (IOException e) {
             ExceptionRedirector.forwardToException3(req, resp, this, BAD_CONNECTION);
+        }catch (Exception e) {
+            ExceptionRedirector.forwardToException3(req, resp, this,BLANK_STRING);
         }
 
         page = projectDtoPage.getPageNumber();

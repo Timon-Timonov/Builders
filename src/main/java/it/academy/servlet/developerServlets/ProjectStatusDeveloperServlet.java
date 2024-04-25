@@ -64,6 +64,8 @@ public class ProjectStatusDeveloperServlet extends HttpServlet {
             ExceptionRedirector.forwardToException3(req, resp, this, PROJECT_STATUS_NOT_UPDATE);
         } catch (IOException e) {
             ExceptionRedirector.forwardToException3(req, resp, this, BAD_CONNECTION);
+        }catch (Exception e) {
+            ExceptionRedirector.forwardToException3(req, resp, this,BLANK_STRING);
         }
         getServletContext().getRequestDispatcher(SLASH_STRING + GET_CHAPTERS_OF_PROJECT_DEVELOPER_SERVLET).forward(req, resp);
     }
