@@ -1,10 +1,10 @@
-<p>Select the current status of projects to display on page: </p>
 <table>
     <%ProjectStatus preparation = ProjectStatus.PREPARATION;%>
     <%ProjectStatus inProcess = ProjectStatus.IN_PROCESS;%>
     <%ProjectStatus completed = ProjectStatus.COMPLETED;%>
     <%ProjectStatus canceled = ProjectStatus.CANCELED;%>
     <tr>
+        <td><p>Select the current status of projects to display on page: </p></td>
         <td>
             <form action="<%=actionName%>" method="get">
                 <input type="hidden" value="<%=preparation.toString()%>" name="<%=PROJECT_STATUS_PARAM%>">

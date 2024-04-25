@@ -1,7 +1,6 @@
 package it.academy.dao;
 
 import it.academy.pojo.Chapter;
-import it.academy.pojo.enums.ChapterStatus;
 import it.academy.pojo.enums.ProjectStatus;
 
 import javax.persistence.NoResultException;
@@ -28,5 +27,7 @@ public interface ChapterDao extends Dao<Chapter, Long> {
 
     List<Chapter> getAllChaptersByDeveloperIdContractorId(Long developerId, Long contractorId) throws NoResultException, IOException;
 
+    List<Chapter> getChaptersByContractorId(Long contractorId, int page, int count) throws NoResultException, IOException;
 
+    Long getCountOfChaptersByContractorId(Long contractorId) throws NoResultException, IOException;
 }

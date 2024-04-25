@@ -25,7 +25,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
-import static it.academy.util.Constants.*;
+import static it.academy.util.constants.Constants.FIRST_PAGE_NUMBER;
+import static it.academy.util.constants.Messages.*;
 
 @Log4j2
 public class ContractorServiceImpl implements ContractorService {
@@ -63,7 +64,7 @@ public class ContractorServiceImpl implements ContractorService {
                                        .email(email)
                                        .password(password)
                                        .role(Roles.CONTRACTOR)
-                                       .status(UserStatus.AKTIVE)
+                                       .status(UserStatus.ACTIVE)
                                        .build();
                     userDao.create(newUser);
                     userFromDB.set(newUser);
@@ -175,15 +176,15 @@ public class ContractorServiceImpl implements ContractorService {
     }
 
     @Override
-    public Page<Chapter> getFreeChapters(Long contractorId,String chapterName,ProjectStatus projectStatus, int page, int count) throws IOException {
+    public Page<Chapter> getFreeChapters(Long contractorId, String chapterName, ProjectStatus projectStatus, int page, int count) throws IOException {
 
         AtomicInteger correctPage = new AtomicInteger(FIRST_PAGE_NUMBER);
         List<Chapter> list = new ArrayList<>();
         try {
-            chapterDao.executeInOneTransaction(()->{
-                long totalCount = chapterDao.getCountOfFreeChaptersByName(contractorId,chapterName,projectStatus);
+            chapterDao.executeInOneTransaction(() -> {
+                long totalCount = chapterDao.getCountOfFreeChaptersByName(contractorId, chapterName, projectStatus);
                 correctPage.set(Util.getCorrectPageNumber(page, count, totalCount));
-                list.addAll(chapterDao.getFreeChapters(contractorId,chapterName,projectStatus, correctPage.get(), count));
+                list.addAll(chapterDao.getFreeChapters(contractorId, chapterName, projectStatus, correctPage.get(), count));
             });
 
         } catch (NoResultException e) {
@@ -217,7 +218,7 @@ public class ContractorServiceImpl implements ContractorService {
         AtomicInteger correctPage = new AtomicInteger(FIRST_PAGE_NUMBER);
         List<Proposal> list = new ArrayList<>();
         try {
-            proposalDao.executeInOneTransaction(()->{
+            proposalDao.executeInOneTransaction(() -> {
                 long totalCount = proposalDao.getCountOfProposalsByContractorId(contractorId, status);
                 correctPage.set(Util.getCorrectPageNumber(page, count, totalCount));
                 list.addAll(proposalDao.getProposalsByContractorId(contractorId, status, correctPage.get(), count));
@@ -318,6 +319,10 @@ public class ContractorServiceImpl implements ContractorService {
     @Override
     public void setProposalStatus(Long proposalId, ProposalStatus newStatus) throws IOException, NotUpdateDataInDbException {
 
+        if (proposalId == null || newStatus == null) {
+            log.debug(PROPOSAL_STATUS_NOT_UPDATE_ID + proposalId + NEW_STATUS + newStatus);
+            throw new NotUpdateDataInDbException();
+        }
         AtomicBoolean isUpdated = new AtomicBoolean(false);
         proposalDao.executeInOneTransaction(() -> {
             Proposal proposal = null;
@@ -326,11 +331,55 @@ public class ContractorServiceImpl implements ContractorService {
             } catch (EntityNotFoundException e) {
                 log.error(PROPOSAL_NOT_FOUND_ID + proposalId);
             }
+
+
             if (proposal != null) {
-                proposal.setStatus(newStatus);
-                proposalDao.update(proposal);
-                log.trace(PROPOSAL_STATUS_UPDATE_TO + newStatus.toString());
-                isUpdated.set(true);
+
+                ProposalStatus oldStatus = proposal.getStatus();
+
+                switch (oldStatus) {
+                    case CONSIDERATION:
+                        if (ProposalStatus.CANCELED.equals(newStatus)) {
+                            proposal.setStatus(newStatus);
+                            proposalDao.update(proposal);
+                            log.trace(PROPOSAL_STATUS_UPDATE_TO + newStatus.toString());
+                            isUpdated.set(true);
+                        }
+                        break;
+                    case APPROVED:
+                        if (ProposalStatus.CANCELED.equals(newStatus)) {
+                            proposal.setStatus(newStatus);
+                            proposalDao.update(proposal);
+                            log.trace(PROPOSAL_STATUS_UPDATE_TO + newStatus.toString());
+                            isUpdated.set(true);
+                        } else if (ProposalStatus.ACCEPTED_BY_CONTRACTOR.equals(newStatus)) {
+
+                            Chapter chapter = proposal.getChapter();
+                            Contractor contractor = proposal.getContractor();
+
+                            chapter.setContractor(contractor);
+                            chapter.setStatus(ChapterStatus.OCCUPIED);
+                            proposal.setStatus(newStatus);
+
+                            chapterDao.executeInOneTransaction(() -> {
+                                chapterDao.update(chapter);
+                            });
+                            proposalDao.update(proposal);
+                            log.trace(PROPOSAL_STATUS_UPDATE_TO + newStatus.toString());
+                            isUpdated.set(true);
+                        }
+                        break;
+                    case CANCELED:
+                        if (ProposalStatus.CONSIDERATION.equals(newStatus)) {
+                            proposal.setStatus(newStatus);
+                            proposalDao.update(proposal);
+                            log.trace(PROPOSAL_STATUS_UPDATE_TO + newStatus.toString());
+                            isUpdated.set(true);
+                        }
+                        break;
+                    default:
+                        log.debug(PROPOSAL_STATUS_NOT_UPDATE_ID + proposalId + OLD_STATUS + oldStatus);
+                }
             } else {
                 log.debug(PROPOSAL_STATUS_NOT_UPDATE_ID + proposalId);
             }
@@ -375,9 +424,14 @@ public class ContractorServiceImpl implements ContractorService {
                               AND_CONTRACTOR_ID + contractorId);
             }
             if (chapter != null && contractor != null) {
+
+                boolean isAnyProposalApproved = proposalDao.isAnyProposalOfChapterApproved(chapterId);
                 Proposal newProposal = Proposal.builder()
                                            .chapter(chapter)
                                            .contractor(contractor)
+                                           .status(isAnyProposalApproved ?
+                                                       ProposalStatus.REJECTED
+                                                       : ProposalStatus.CONSIDERATION)
                                            .build();
                 proposalDao.create(newProposal);
                 log.trace(CREATED_PROPOSAL_WITH_ID + newProposal.getId());

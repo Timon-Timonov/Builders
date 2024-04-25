@@ -1,7 +1,8 @@
 <%@ page import="it.academy.dto.ProposalDto" %>
 <%@ page import="it.academy.pojo.enums.ProposalStatus" %>
 <%@ page import="java.util.List" %>
-<%@ page import="static it.academy.util.Constants.*" %>
+<%@ page import="static it.academy.util.constants.ParameterNames.*" %>
+<%@ page import="static it.academy.util.constants.ServletURLs.*" %>
 <%@ page contentType="text/html;charset=UTF-8" %>
 <html>
 <head>
@@ -30,8 +31,8 @@
     String pageNumberParamName = PROPOSAL_PAGE_PARAM;
 
     String actionParameterToDoValue = null;
-    int countOnPage = (Integer) session.getAttribute(PROPOSAL_COUNT_ON_PAGE_PARAM);
-    int pageNumber = (Integer) session.getAttribute(PROPOSAL_PAGE_PARAM);
+    int countOnPage = (Integer) session.getAttribute(countName);
+    int pageNumber = (Integer) session.getAttribute(pageNumberParamName);
     ProposalStatus status = (ProposalStatus) session.getAttribute(PROPOSAL_STATUS_PARAM);
     List<ProposalDto> proposalDtoList = (List<ProposalDto>) request.getAttribute(PROPOSAL_DTO_LIST_PARAM);
 %>
@@ -66,34 +67,7 @@
             <td><%=contractorName%>
             </td>
             <td> |</td>
-            <td>
-                <%if (ProposalStatus.APPROVED.equals(status) || ProposalStatus.CONSIDERATION.equals(status)) {%>
-                <form action="<%=GET_MY_PROPOSALS_FROM_CHAPTER_DEVELOPER_SERVLET%>" method="post">
-                    <input type="hidden" value="<%=proposalDto.getId().toString()%>" name="<%=PROPOSAL_ID_PARAM%>">
-                    <input type="hidden" value="<%=ProposalStatus.REJECTED.toString()%>"
-                           name="<%=PROPOSAL_NEW_STATUS_PARAM%>">
-                    <button class="btn btn-light" type="submit">Reject</button>
-                </form>
-                <%
-                    }
-                    if (ProposalStatus.CONSIDERATION.equals(status)) {
-                %>
-                <form action="<%=GET_MY_PROPOSALS_FROM_CHAPTER_DEVELOPER_SERVLET%>" method="post">
-                    <input type="hidden" value="<%=proposalDto.getId().toString()%>" name="<%=PROPOSAL_ID_PARAM%>">
-                    <input type="hidden" value="<%=ProposalStatus.APPROVED.toString()%>"
-                           name="<%=PROPOSAL_NEW_STATUS_PARAM%>">
-                    <button class="btn btn-light" type="submit">Approve</button>
-                </form>
-                <%}%>
-                <% if (ProposalStatus.REJECTED.equals(status)) {%>
-                <form action="<%=GET_MY_PROPOSALS_FROM_CHAPTER_DEVELOPER_SERVLET%>" method="post">
-                    <input type="hidden" value="<%=proposalDto.getId().toString()%>" name="<%=PROPOSAL_ID_PARAM%>">
-                    <input type="hidden" value="<%=ProposalStatus.CONSIDERATION.toString()%>"
-                           name="<%=PROPOSAL_NEW_STATUS_PARAM%>">
-                    <button class="btn btn-light" type="submit">Return to consideration status</button>
-                </form>
-                <% } %>
-            </td>
+            <%@include file="/include_files/change_proposal_status_button_groupe.jsp" %>
         </tr>
         <tr></tr>
         <% } %>

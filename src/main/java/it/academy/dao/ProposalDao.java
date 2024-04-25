@@ -4,6 +4,7 @@ import it.academy.pojo.Proposal;
 import it.academy.pojo.enums.ProposalStatus;
 
 import javax.persistence.NoResultException;
+import java.io.IOException;
 import java.util.List;
 
 public interface ProposalDao extends Dao<Proposal, Long> {
@@ -28,4 +29,6 @@ public interface ProposalDao extends Dao<Proposal, Long> {
 
     Long getCountOfProposalsByDeveloperId(Long developerId, ProposalStatus status)
         throws NoResultException;
+
+    boolean isAnyProposalOfChapterApproved(Long chapterId) throws IOException;
 }

@@ -2,7 +2,11 @@
 <%@ page import="it.academy.pojo.enums.ProposalStatus" %>
 <%@ page import="it.academy.servlet.WhatToDo" %>
 <%@ page import="java.util.List" %>
-<%@ page import="static it.academy.util.Constants.*" %>
+<%@ page import="static it.academy.util.constants.ServletURLs.MAIN_CONTRACTOR_SERVLET" %>
+<%@ page import="static it.academy.util.constants.ParameterNames.PROPOSAL_COUNT_ON_PAGE_PARAM" %>
+<%@ page import="static it.academy.util.constants.ParameterNames.PROPOSAL_PAGE_PARAM" %>
+<%@ page import="static it.academy.util.constants.ParameterNames.*" %>
+<%@ page import="static it.academy.util.constants.ServletURLs.CHANGE_PROPOSAL_STATUS_CONTRACTOR_SERVLET" %>
 <%@ page contentType="text/html;charset=UTF-8" %>
 <html>
 <head>
@@ -94,24 +98,10 @@
             <td></td>
             <%
                 switch (status) {
-                    case CONSIDERATION:
+                    case APPROVED:
             %>
             <td>
-                <form action="<%=actionName%>" method="post">
-                    <input type="hidden" value="<%=actionParameterToDoValue%>" name="<%=TODO_PARAM%>">
-                    <input type="hidden" value="<%=ProposalStatus.CANCELED.toString()%>"
-                           name="<%=NEW_PROPOSAL_STATUS_PARAM%>">
-                    <input type="hidden" value="<%=proposalId%>" name="<%=PROPOSAL_ID_PARAM%>">
-                    <button class="btn btn-light" type="submit">Cancel proposal</button>
-                </form>
-
-            </td>
-            <%
-                    break;
-                case APPROVED:
-            %>
-            <td>
-                <form action="<%=actionName%>" method="post">
+                <form action="<%=CHANGE_PROPOSAL_STATUS_CONTRACTOR_SERVLET%>" method="get">
                     <input type="hidden" value="<%=actionParameterToDoValue%>" name="<%=TODO_PARAM%>">
                     <input type="hidden" value="<%=ProposalStatus.ACCEPTED_BY_CONTRACTOR.toString()%>"
                            name="<%=NEW_PROPOSAL_STATUS_PARAM%>">
@@ -119,8 +109,11 @@
                     <button class="btn btn-light" type="submit">Start work</button>
                 </form>
             </td>
+            <%
+                case CONSIDERATION:
+            %>
             <td>
-                <form action="<%=actionName%>" method="post">
+                <form action="<%=CHANGE_PROPOSAL_STATUS_CONTRACTOR_SERVLET%>" method="get">
                     <input type="hidden" value="<%=actionParameterToDoValue%>" name="<%=TODO_PARAM%>">
                     <input type="hidden" value="<%=ProposalStatus.CANCELED.toString()%>"
                            name="<%=NEW_PROPOSAL_STATUS_PARAM%>">
@@ -133,7 +126,7 @@
                 case CANCELED:
             %>
             <td>
-                <form action="<%=actionName%>" method="post">
+                <form action="<%=CHANGE_PROPOSAL_STATUS_CONTRACTOR_SERVLET%>" method="get">
                     <input type="hidden" value="<%=actionParameterToDoValue%>" name="<%=TODO_PARAM%>">
                     <input type="hidden" value="<%=ProposalStatus.CONSIDERATION.toString()%>"
                            name="<%=NEW_PROPOSAL_STATUS_PARAM%>">

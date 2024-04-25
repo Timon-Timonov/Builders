@@ -3,7 +3,10 @@ package it.academy;
 import it.academy.exceptions.EmailOccupaidException;
 import it.academy.exceptions.NotCreateDataInDbException;
 import it.academy.exceptions.NotUpdateDataInDbException;
-import it.academy.pojo.*;
+import it.academy.pojo.Calculation;
+import it.academy.pojo.Chapter;
+import it.academy.pojo.Project;
+import it.academy.pojo.Proposal;
 import it.academy.pojo.enums.ProjectStatus;
 import it.academy.pojo.enums.ProposalStatus;
 import it.academy.pojo.enums.UserStatus;
@@ -27,15 +30,14 @@ public class TestFullingBase {
 
     public static final int MAX_COUNT_OF_CALCULATIONS = 15;
     public static final int ONE_PART_OF_PRICE_FOR_ADVANCE = 10;
-    public static final int COUNT_OF_PROPOSALS_TO_APPROVE = 15;
+    public static final int COUNT_OF_PROPOSALS_TO_APPROVE = 45;
     public static final int COUNT_OF_PROPOSALS_TO_REJECT = 5;
     public static int MAX_PROPOSAL_COUNT_PER_CONTRACTOR = 15;
     public static final int DEVELOPER_COUNT = 10;
     public static final int CONTRACTOR_COUNT = 10;
     public static final Random RANDOM = new Random();
     public static final String[] CHAPTER_NAMES = {"GP", "KG", "NVK", "VK", "TS", "EL", "AR", "AOP", "TEL", "TL"};
-    public static final String NEY_YORK = "Ney York";
-
+    public static final String[] CITY_NAMES = {"New York", "Moscow", "Minsk", "Piter", "Vilnus", "Warshawa", "Berlin"};
     private final AdminService ADMIN_SERVICE = new AdminServiceImpl();
     private final DeveloperService DEVELOPER_SERVICE = new DeveloperServiceImpl();
     private final ContractorService CONTRACTOR_SERVICE = new ContractorServiceImpl();
@@ -46,23 +48,22 @@ public class TestFullingBase {
     private int chapterCount = 1;
 
 
-    public static void main(String[] args) throws NotCreateDataInDbException, IOException, EmailOccupaidException, NotUpdateDataInDbException {
+    public static void main(String[] args) throws Exception {
 
         TestFullingBase fuller = new TestFullingBase();
         fuller.MakeBaseFull();
     }
 
-    private void MakeBaseFull() throws IOException, EmailOccupaidException, NotCreateDataInDbException, NotUpdateDataInDbException {
+    private void MakeBaseFull() throws Exception {
 
         CreationOfUsers();
-        cancelAnyContractors();
-        cancelAnyDevelopers();
         startInteraction();
     }
 
-    private void startInteraction() throws IOException, NotUpdateDataInDbException {
+    private void startInteraction() throws Exception {
 
-        List<Project> allProjectList = ADMIN_SERVICE.getAllProjects(ProjectStatus.PREPARATION, 1, projectCount).getList();
+        List<Project> allProjectList = ADMIN_SERVICE.getAllProjects();
+
         changeProjectStatus(allProjectList);
         List<Proposal> proposalList = getAllConsiderationsProposals();
         rejectAnyProposals(proposalList);
@@ -72,38 +73,32 @@ public class TestFullingBase {
         payMoney(calculationList);
     }
 
-    private List<Proposal> getAllConsiderationsProposals() {
+    private List<Proposal> getAllConsiderationsProposals() throws Exception {
 
         List<Proposal> proposalList = new ArrayList<>();
-        List<Developer> allAktiveDevelopers = new ArrayList<>();
-        List<Chapter> aktivChapterList = new ArrayList<>();
+        List<Developer> allActiveDevelopers = new ArrayList<>();
+        List<Chapter> activeChapterList = new ArrayList<>();
         try {
-            allAktiveDevelopers.addAll(
-                ADMIN_SERVICE.getAllDevelopers(UserStatus.AKTIVE, 1, DEVELOPER_COUNT).getList());
+            allActiveDevelopers.addAll(
+                ADMIN_SERVICE.getAllDevelopers(UserStatus.ACTIVE, 1, DEVELOPER_COUNT).getList());
         } catch (IOException ignored) {
         }
-        allAktiveDevelopers.forEach(developer -> {
+        allActiveDevelopers.forEach(developer -> {
             try {
-                List<Project> prepProjectList = DEVELOPER_SERVICE.getMyProjects(developer.getId(), ProjectStatus.PREPARATION, 1, projectCount).getList();
-                List<Project> proccProjectList = DEVELOPER_SERVICE.getMyProjects(developer.getId(), ProjectStatus.IN_PROCESS, 1, projectCount).getList();
+                List<Project> allProjectList = new ArrayList<>();
+                allProjectList.addAll(DEVELOPER_SERVICE.getMyProjects(developer.getId(), ProjectStatus.PREPARATION, 1, projectCount).getList());
+                allProjectList.addAll(DEVELOPER_SERVICE.getMyProjects(developer.getId(), ProjectStatus.IN_PROCESS, 1, projectCount).getList());
 
-                prepProjectList.forEach(project -> {
+                allProjectList.forEach(project -> {
                     try {
-                        aktivChapterList.addAll(DEVELOPER_SERVICE.getChaptersByProjectId(project.getId()));
+                        activeChapterList.addAll(DEVELOPER_SERVICE.getChaptersByProjectId(project.getId()));
                     } catch (IOException ignored) {
                     }
                 });
-                proccProjectList.forEach(project -> {
-                    try {
-                        aktivChapterList.addAll(DEVELOPER_SERVICE.getChaptersByProjectId(project.getId()));
-                    } catch (IOException ignored) {
-                    }
-                });
-
             } catch (IOException ignored) {
             }
         });
-        aktivChapterList.forEach(chapter -> {
+        activeChapterList.forEach(chapter -> {
             try {
                 proposalList.addAll(DEVELOPER_SERVICE.getProposalsByChapterId(chapter.getId(), ProposalStatus.CONSIDERATION, 1, proposalCount).getList());
             } catch (IOException ignored) {
@@ -158,7 +153,7 @@ public class TestFullingBase {
         return approvedList.stream()
                    .peek(proposal -> {
                        try {
-                           CONTRACTOR_SERVICE.setProposalStatus(proposal.getId(),ProposalStatus.ACCEPTED_BY_CONTRACTOR);
+                           CONTRACTOR_SERVICE.setProposalStatus(proposal.getId(), ProposalStatus.ACCEPTED_BY_CONTRACTOR);
                        } catch (IOException | NotUpdateDataInDbException ignored) {
                        }
                    })
@@ -193,44 +188,6 @@ public class TestFullingBase {
         }
     }
 
-
-    private void cancelAnyDevelopers() throws IOException {
-
-        AtomicInteger develIndex = new AtomicInteger(1);
-        ADMIN_SERVICE.getAllDevelopers(UserStatus.AKTIVE, 1, DEVELOPER_COUNT).getList()
-            .forEach(developer -> {
-                if (develIndex.get() % 6 == 0) {
-                    try {
-                        User user = developer.getUser();
-                        ADMIN_SERVICE.cancelUser(developer.getUser().getId());
-                        user.setStatus(UserStatus.CANCELED);
-                    } catch (IOException ignored) {
-                    } catch (NotUpdateDataInDbException e) {
-                        e.printStackTrace();
-                    }
-                }
-                develIndex.getAndIncrement();
-            });
-    }
-
-    private void cancelAnyContractors() throws IOException {
-
-        AtomicInteger contrIndex = new AtomicInteger(1);
-        ADMIN_SERVICE.getAllContractors(UserStatus.AKTIVE, 1, CONTRACTOR_COUNT).getList()
-            .forEach(contractor -> {
-                if (contrIndex.get() % 8 == 0) {
-                    try {
-                        User user = contractor.getUser();
-                        ADMIN_SERVICE.cancelUser(user.getId());
-                        user.setStatus(UserStatus.CANCELED);
-                    } catch (IOException ignored) {
-                    } catch (NotUpdateDataInDbException e) {
-                        e.printStackTrace();
-                    }
-                }
-                contrIndex.getAndIncrement();
-            });
-    }
 
     private void changeProjectStatus(List<Project> allProjectList) {
 
@@ -268,18 +225,18 @@ public class TestFullingBase {
         });
     }
 
-    private void CreationOfUsers() throws IOException, EmailOccupaidException, NotCreateDataInDbException, NotUpdateDataInDbException {
+    private void CreationOfUsers() throws Exception {
 
         ADMIN_SERVICE.createAdmin(getUniqEmail(), getPassword());
         for (int i = 0; i < DEVELOPER_COUNT; i++) {
-            Developer dev = DEVELOPER_SERVICE.createDeveloper(getUniqEmail(), getPassword(), getUserName(), NEY_YORK, getStreet(), String.valueOf(userCount * 4 / 3));
+            Developer dev = DEVELOPER_SERVICE.createDeveloper(getUniqEmail(), getPassword(), getUserName(), CITY_NAMES[i % CITY_NAMES.length], getStreet(), String.valueOf(userCount * 4 / 3));
             int thisProjectCount = RANDOM.nextInt(5);
             for (int j = 0; j < thisProjectCount; j++) {
-                DEVELOPER_SERVICE.createProject(dev.getId(), getProjectName(), NEY_YORK, getStreet(), String.valueOf(projectCount * 4 / 3));
+                DEVELOPER_SERVICE.createProject(dev.getId(), getProjectName(), CITY_NAMES[RANDOM.nextInt(CITY_NAMES.length)], getStreet(), String.valueOf(projectCount * 4 / 3));
 
-                int thisChapterCount = RANDOM.nextInt(15);
+                int thisChapterCount = RANDOM.nextInt(11);
                 for (int k = 0; k < thisChapterCount; k++) {
-                    DEVELOPER_SERVICE.createChapter((long) projectCount, CHAPTER_NAMES[k % CHAPTER_NAMES.length], RANDOM.nextInt(50_000));
+                    DEVELOPER_SERVICE.createChapter((long) projectCount, CHAPTER_NAMES[k], RANDOM.nextInt(50_000));
                     if (thisChapterCount % 5 == 0) {
                         DEVELOPER_SERVICE.cancelChapter((long) chapterCount);
                     }
@@ -293,7 +250,7 @@ public class TestFullingBase {
         }
         for (int i = 0; i < CONTRACTOR_COUNT; i++) {
 
-            Contractor con = CONTRACTOR_SERVICE.createContractor(getUniqEmail(), getPassword(), getUserName(), NEY_YORK, getStreet(), String.valueOf(userCount * 4 / 3));
+            Contractor con = CONTRACTOR_SERVICE.createContractor(getUniqEmail(), getPassword(), getUserName(), CITY_NAMES[i % CITY_NAMES.length], getStreet(), String.valueOf(userCount * 4 / 3));
             int thisProposalCount = RANDOM.nextInt(MAX_PROPOSAL_COUNT_PER_CONTRACTOR);
             for (int j = 0; j < thisProposalCount; j++) {
                 Proposal proposal;
@@ -326,7 +283,7 @@ public class TestFullingBase {
 
     private String getStreet() {
 
-        return "WestAvenue" + userCount % 5;
+        return "WestAvenue" + userCount % 7;
     }
 
     private String getProjectName() {

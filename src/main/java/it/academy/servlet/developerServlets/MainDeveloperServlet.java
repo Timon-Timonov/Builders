@@ -6,13 +6,14 @@ import it.academy.dto.ContractorDto;
 import it.academy.dto.Page;
 import it.academy.dto.ProjectDto;
 import it.academy.dto.ProposalDto;
-import it.academy.exceptions.NotUpdateDataInDbException;
 import it.academy.pojo.enums.ProjectStatus;
 import it.academy.pojo.enums.ProposalStatus;
 import it.academy.servlet.WhatToDo;
-import it.academy.util.Constants;
+import it.academy.util.ExceptionRedirector;
+import it.academy.util.ParameterFinder;
 import it.academy.util.SessionCleaner;
 import it.academy.util.Util;
+import it.academy.util.constants.Constants;
 import lombok.extern.log4j.Log4j2;
 
 import javax.servlet.ServletException;
@@ -25,7 +26,13 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static it.academy.util.Constants.*;
+import static it.academy.util.constants.Constants.*;
+import static it.academy.util.constants.JspURLs.*;
+import static it.academy.util.constants.Messages.BAD_CONNECTION;
+import static it.academy.util.constants.Messages.INVALID_VALUE;
+import static it.academy.util.constants.ParameterNames.*;
+import static it.academy.util.constants.ServletURLs.MAIN_DEVELOPER_SERVLET;
+import static it.academy.util.constants.ServletURLs.SLASH_STRING;
 
 @Log4j2
 @WebServlet(name = "mainDeveloperServlet", urlPatterns = SLASH_STRING + MAIN_DEVELOPER_SERVLET)
@@ -56,32 +63,25 @@ public class MainDeveloperServlet extends HttpServlet {
                     showProposals(req, resp);
                     break;
                 default:
-                    Util.forwardToException3(req, resp, this, INVALID_VALUE);
+                    ExceptionRedirector.forwardToException3(req, resp, this, INVALID_VALUE);
             }
         } else {
-            Util.forwardToException3(req, resp, this, INVALID_VALUE);
+            ExceptionRedirector.forwardToException3(req, resp, this, INVALID_VALUE);
         }
-    }
-
-    private void clearContractorsAttributes(HttpServletRequest req) {
-        HttpSession session = req.getSession();
-        //session.removeAttribute();
     }
 
     private void showContractors(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
-        clearContractorsAttributes(req);
-
-        long id = Util.getNumberValueFromParameter(req, ID_PARAM, ZERO_LONG_VALUE);
-        ProjectStatus status = Util.getProjectStatusFromParameter(req, PROJECT_STATUS_PARAM, DEFAULT_PROJECT_STATUS);
-        int page = Util.getNumberValueFromParameter(req, CONTRACTOR_PAGE_PARAM, FIRST_PAGE_NUMBER);
-        int count = Util.getNumberValueFromParameter(req, CONTRACTOR_COUNT_ON_PAGE_PARAM, DEFAULT_COUNT_ON_PAGE_5);
+        long developerId = ParameterFinder.getNumberValueFromParameter(req, ID_PARAM, ZERO_LONG_VALUE);
+        ProjectStatus status = ParameterFinder.getProjectStatusFromParameter(req, PROJECT_STATUS_PARAM, DEFAULT_PROJECT_STATUS);
+        int page = ParameterFinder.getNumberValueFromParameter(req, CONTRACTOR_PAGE_PARAM, FIRST_PAGE_NUMBER);
+        int count = ParameterFinder.getNumberValueFromParameter(req, CONTRACTOR_COUNT_ON_PAGE_PARAM, DEFAULT_COUNT_ON_PAGE_5);
 
         Page<ContractorDto> contractorDtoPage = new Page<>(new ArrayList<>(), FIRST_PAGE_NUMBER);
         try {
-            contractorDtoPage = controller.getMyContractors(id, status, page, count);
+            contractorDtoPage = controller.getMyContractors(developerId, status, page, count);
         } catch (IOException e) {
-            Util.forwardToException3(req, resp, this, BAD_CONNECTION);
+            ExceptionRedirector.forwardToException3(req, resp, this, BAD_CONNECTION);
         }
 
         page = contractorDtoPage.getPageNumber();
@@ -98,16 +98,16 @@ public class MainDeveloperServlet extends HttpServlet {
 
     private void showProposals(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
-        long id = Util.getNumberValueFromParameter(req, ID_PARAM, ZERO_LONG_VALUE);
-        ProposalStatus proposalStatus = Util.getProposalStatusFromParameter(req, PROPOSAL_STATUS_PARAM, DEFAULT_PROPOSAL_STATUS);
-        int page = Util.getNumberValueFromParameter(req, PROPOSAL_PAGE_PARAM, FIRST_PAGE_NUMBER);
-        int count = Util.getNumberValueFromParameter(req, PROPOSAL_COUNT_ON_PAGE_PARAM, DEFAULT_COUNT_ON_PAGE_5);
+        long id = ParameterFinder.getNumberValueFromParameter(req, ID_PARAM, ZERO_LONG_VALUE);
+        ProposalStatus proposalStatus = ParameterFinder.getProposalStatusFromParameter(req, PROPOSAL_STATUS_PARAM, DEFAULT_PROPOSAL_STATUS);
+        int page = ParameterFinder.getNumberValueFromParameter(req, PROPOSAL_PAGE_PARAM, FIRST_PAGE_NUMBER);
+        int count = ParameterFinder.getNumberValueFromParameter(req, PROPOSAL_COUNT_ON_PAGE_PARAM, DEFAULT_COUNT_ON_PAGE_5);
 
         Page<ProposalDto> proposalDtoPage = new Page<>(new ArrayList<>(), FIRST_PAGE_NUMBER);
         try {
             proposalDtoPage = controller.getAllMyProposals(id, proposalStatus, page, count);
         } catch (IOException e) {
-            Util.forwardToException3(req, resp, this, BAD_CONNECTION);
+            ExceptionRedirector.forwardToException3(req, resp, this, BAD_CONNECTION);
         }
 
         page = proposalDtoPage.getPageNumber();
@@ -126,19 +126,17 @@ public class MainDeveloperServlet extends HttpServlet {
 
         SessionCleaner.clearProjectAttributes(req);
 
-        long id = Util.getNumberValueFromParameter(req, ID_PARAM, ZERO_LONG_VALUE);
-        ProjectStatus status = Util.getProjectStatusFromParameter(req, PROJECT_STATUS_PARAM, Constants.DEFAULT_PROJECT_STATUS);
-        int page = Util.getNumberValueFromParameter(req, PROJECT_PAGE_PARAM, Constants.FIRST_PAGE_NUMBER);
-        int count = Util.getNumberValueFromParameter(req, PROJECT_COUNT_ON_PAGE_PARAM, Constants.DEFAULT_COUNT_ON_PAGE_5);
+        long developerId = ParameterFinder.getNumberValueFromParameter(req, ID_PARAM, ZERO_LONG_VALUE);
+        ProjectStatus status = ParameterFinder.getProjectStatusFromParameter(req, PROJECT_STATUS_PARAM, Constants.DEFAULT_PROJECT_STATUS);
+        int page = ParameterFinder.getNumberValueFromParameter(req, PROJECT_PAGE_PARAM, Constants.FIRST_PAGE_NUMBER);
+        int count = ParameterFinder.getNumberValueFromParameter(req, PROJECT_COUNT_ON_PAGE_PARAM, Constants.DEFAULT_COUNT_ON_PAGE_5);
 
         Page<ProjectDto> projectDtoPage = new Page<>(new ArrayList<>(), FIRST_PAGE_NUMBER);
-
         try {
-            projectDtoPage = controller.getMyProjects(id, status, page, count);
+            projectDtoPage = controller.getMyProjects(developerId, status, page, count);
         } catch (IOException e) {
-            Util.forwardToException3(req, resp, this, BAD_CONNECTION);
+            ExceptionRedirector.forwardToException3(req, resp, this, BAD_CONNECTION);
         }
-
         page = projectDtoPage.getPageNumber();
         List<ProjectDto> projectDtoList = projectDtoPage.getList();
 
@@ -154,28 +152,7 @@ public class MainDeveloperServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
-        ProposalStatus status = Util.getProposalStatusFromParameter(req, PROPOSAL_STATUS_PARAM, DEFAULT_PROPOSAL_STATUS);
-        long proposalId = Util.getNumberValueFromParameter(req, PROPOSAL_ID_PARAM, ZERO_LONG_VALUE);
-        ProposalStatus newStatus = Util.getProposalStatusFromParameter(req, PROPOSAL_NEW_STATUS_PARAM, status);
-
-        try {
-            switch (newStatus) {
-                case REJECTED:
-                    controller.rejectProposal(proposalId);
-                    break;
-                case APPROVED:
-                    controller.approveProposal(proposalId);
-                    break;
-                case CONSIDERATION:
-                    controller.considerateProposal(proposalId);
-                    break;
-                default:
-                    Util.forwardToException3(req, resp, this, INVALID_VALUE);
-            }
-        } catch (NotUpdateDataInDbException e) {
-            Util.forwardToException3(req, resp, this, PROPOSAL_STATUS_NOT_UPDATE);
-        }
-        showProposals(req, resp);
+        doGet(req, resp);
     }
 }
 

@@ -33,7 +33,7 @@ public class User {
 
     @Column(nullable = false)
     @Builder.Default
-    private UserStatus status = UserStatus.AKTIVE;
+    private UserStatus status = UserStatus.ACTIVE;
 
     @OneToOne(mappedBy = "user", fetch = FetchType.LAZY)
     private LegalEntity legalEntity;

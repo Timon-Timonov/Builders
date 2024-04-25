@@ -1,6 +1,7 @@
+<%@ page import="static it.academy.util.constants.ParameterNames.*" %>
 <%@ page import="it.academy.servlet.WhatToDo" %>
 <%@ page import="java.util.List" %>
-<%@ page import="static it.academy.util.Constants.*" %>
+<%@ page import="static it.academy.util.constants.ServletURLs.*" %>
 <%@ page contentType="text/html;charset=UTF-8" %>
 <html>
 <head>
@@ -14,9 +15,7 @@
 <body>
 <%
     String actionName = MAIN_CONTRACTOR_SERVLET;
-
     String actionParameterToDoValue = WhatToDo.TRY_TO_CHOOSE_NEW_PROJECT.toString();
-
     List<String> chapterNamesList = (List<String>) request.getAttribute(CHAPTER_NAMES_LIST_PARAM);
 %>
 
@@ -44,7 +43,7 @@
             <td><%=chapterName%>
             </td>
             <td>
-                <form action="<%=GET_MY_PROPOSAL_SERVLET%>" method="get">
+                <form action="<%=GET_MY_PROPOSAL_CONTRACTOR_SERVLET%>" method="get">
                     <input type="hidden" value="<%=chapterName%>" name="<%=CHAPTER_NAME_PARAM%>">
                     <button class="btn btn-light" type="submit">Try to choose chapters</button>
                 </form>

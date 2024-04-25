@@ -11,9 +11,11 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
-import static it.academy.util.Constants.*;
+import static it.academy.util.constants.JspURLs.*;
+import static it.academy.util.constants.ParameterNames.ROLE_PARAM;
+import static it.academy.util.constants.ServletURLs.*;
 
-@WebServlet(name = "toMainServlet", urlPatterns = SLASH_STRING + TOMAIN_SERVLET)
+@WebServlet(name = "toMainServlet", urlPatterns = SLASH_STRING + TO_MAIN_SERVLET)
 public class ToMainServlet extends HttpServlet {
 
     @Override

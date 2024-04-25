@@ -10,7 +10,10 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
-import static it.academy.util.Constants.*;
+import static it.academy.util.constants.JspURLs.INDEX_JSP;
+import static it.academy.util.constants.ParameterNames.*;
+import static it.academy.util.constants.ServletURLs.LOGOUT_SERVLET;
+import static it.academy.util.constants.ServletURLs.SLASH_STRING;
 
 @WebServlet(name = "logOutServlet", urlPatterns = SLASH_STRING + LOGOUT_SERVLET)
 public class LogOutServlet extends HttpServlet {

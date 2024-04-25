@@ -1,7 +1,8 @@
 <%@ page import="it.academy.dto.CalculationDto" %>
 <%@ page import="it.academy.servlet.WhatToDo" %>
-<%@ page import="static it.academy.util.Constants.*" %>
 <%@ page import="java.util.List" %>
+<%@ page import="static it.academy.util.constants.ParameterNames.*" %>
+<%@ page import="static it.academy.util.constants.ServletURLs.*" %>
 <%@ page contentType="text/html;charset=UTF-8" %>
 <html>
 <head>
@@ -17,12 +18,14 @@
     String actionName = GET_MY_CALCULATION_DEVELOPER_SERVLET;
     String countName = CALCULATION_COUNT_ON_PAGE_PARAM;
     String pageNumberParamName = CALCULATION_PAGE_PARAM;
-    int countOnPage = (Integer) session.getAttribute(CALCULATION_COUNT_ON_PAGE_PARAM);
-    int pageNumber = (Integer) session.getAttribute(CALCULATION_PAGE_PARAM);
+    int countOnPage = (Integer) session.getAttribute(countName);
+    int pageNumber = (Integer) session.getAttribute(pageNumberParamName);
 
     String actionParameterToDoValue = null;
 
     List<CalculationDto> calculationDtoList = (List<CalculationDto>) request.getAttribute(CALCULATION_DTO_LIST_PARAM);
+
+    Long projectId = (Long) session.getAttribute(PROJECT_ID_PARAM);
 %>
 <div class="container text-center">
     <h2>The list of my calculations from chapter </h2>
@@ -95,7 +98,8 @@
             <td><%=calculationDto.getWorkPricePlan()%>
             </td>
             <td>
-                <form action="<%=GET_MY_CALCULATION_DEVELOPER_SERVLET%>" method="post">
+                <%if(calculationDto.getSumAdvance()==ZERO_INT_VALUE){%>
+                <form action="<%=PAY_MONEY_DEVELOPER_SERVLET%>" method="get">
                     <input type="hidden" value="<%=calculationDto.getId().toString()%>"
                            name="<%=CALCULATION_ID_PARAM%>">
                     Sum advance: <label>
@@ -103,16 +107,19 @@
                     <button class="btn btn-light" type="submit">Pay advance</button>
                 </label>
                 </form>
+                <%}%>
             </td>
             <td>
-                <form action="<%=GET_MY_CALCULATION_DEVELOPER_SERVLET%>" method="post">
+                <%if(calculationDto.getCalculationDebt()>=ZERO_INT_VALUE){%>
+                <form action="<%=PAY_MONEY_DEVELOPER_SERVLET%>" method="get">
                     <input type="hidden" value="<%=calculationDto.getId().toString()%>"
                            name="<%=CALCULATION_ID_PARAM%>">
                     Sum for work: <label>
-                    <input type="text"  name="<%=SUM_FOR_WORK_PARAM%>">
+                    <input type="text" name="<%=SUM_FOR_WORK_PARAM%>">
                     <button class="btn btn-light" type="submit">Pay for work</button>
                 </label>
                 </form>
+                <%}%>
             </td>
         </tr>
         <tr></tr>
@@ -121,14 +128,22 @@
 </div>
 <br>
 <div class="container text-center">
+
+    <%if (projectId != null) {%>
     <form action="<%=GET_CHAPTERS_OF_PROJECT_DEVELOPER_SERVLET%>" method="get">
-        <input type="hidden" value="<%=session.getAttribute(PROJECT_ID_PARAM)%>" name="<%=PROJECT_ID_PARAM%>">
+        <input type="hidden" value="<%=projectId%>" name="<%=PROJECT_ID_PARAM%>">
         <button class="btn btn-light" type="submit">To list with chapters of project</button>
     </form>
     <br>
+    <%} else if (session.getAttribute(CONTRACTOR_ID_PARAM) != null) {%>
+    <form action="<%=GET_CHAPTERS_OF_CONTRACTOR_DEVELOPER_SERVLET%>" method="get">
+        <button class="btn btn-light" type="submit">To list with chapters of contractor</button>
+    </form>
+    <br>
+    <%}%>
     <form action="<%=MAIN_DEVELOPER_SERVLET%>" method="get">
         <input type="hidden" value="<%=WhatToDo.SHOW_PROJECTS.toString()%>" name="<%=TODO_PARAM%>">
-        <button class="btn btn-light" type="submit">Return to list with projects</button>
+        <button class="btn btn-light" type="submit">To list with projects</button>
     </form>
     <br>
     <%@include file="/include_files/go_to_main_button_file.jsp" %>

@@ -35,7 +35,7 @@ public class ContractorDaoImpl extends DaoImpl<Contractor, Long> implements Cont
         throws IOException {
 
         TypedQuery<Contractor> query = getEm().createQuery(
-            "SELECT co FROM Contractor co, Chapter ch WHERE co=ch.contractor AND ch.project.developer.id=:developerId AND ch.project.status=:status ORDER BY co.name ASC ",
+            "SELECT DISTINCT (co) FROM Contractor co LEFT JOIN Chapter ch ON co.id=ch.contractor.id  WHERE  ch.project.developer.id=:developerId AND ch.project.status=:status ORDER BY co.name ASC ",
             Contractor.class);
 
         return query.setParameter("developerId", developerId)
@@ -59,7 +59,7 @@ public class ContractorDaoImpl extends DaoImpl<Contractor, Long> implements Cont
     public Long getCountOfContractorsByDeveloperId(Long developerId, ProjectStatus status) throws NoResultException, IOException {
 
         TypedQuery<Long> query = getEm().createQuery(
-            "SELECT COUNT(co) FROM Contractor co, Chapter ch WHERE co=ch.contractor AND ch.project.developer.id=:developerId AND ch.project.status=:status ",
+            "SELECT COUNT(DISTINCT co) FROM Contractor co LEFT JOIN Chapter ch ON co.id=ch.contractor.id  WHERE  ch.project.developer.id=:developerId AND ch.project.status=:status ",
             Long.class);
         return query.setParameter("developerId", developerId)
                    .setParameter("status", status)

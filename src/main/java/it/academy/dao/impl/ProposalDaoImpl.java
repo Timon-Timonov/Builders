@@ -8,6 +8,7 @@ import it.academy.pojo.enums.ProposalStatus;
 
 import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
+import java.io.IOException;
 import java.util.List;
 
 public class ProposalDaoImpl extends DaoImpl<Proposal, Long> implements ProposalDao {
@@ -63,12 +64,13 @@ public class ProposalDaoImpl extends DaoImpl<Proposal, Long> implements Proposal
         throws NoResultException {
 
         TypedQuery<Proposal> query = getEm().createQuery(
-            "SELECT prop FROM Proposal prop LEFT JOIN Chapter ch ON prop.chapter.id=ch.id WHERE prop.status=:proposalStatus AND ch.status =:chapterStatus AND ch.project.developer.id=:developerId AND ch.project.status IN :projectStatuses ORDER BY ch.project.name ASC, ch.name ASC",
+            "SELECT prop FROM Proposal prop LEFT JOIN Chapter ch ON prop.chapter.id=ch.id WHERE prop.status=:proposalStatus AND ch.status =:chapterStatus AND ch.project.developer.id=:developerId AND ch.project.status <> :projectStatus1 AND ch.project.status<>:projectStatus2 ORDER BY ch.project.name ASC, ch.name ASC",
             Proposal.class);
         return query.setParameter("proposalStatus", status)
                    .setParameter("chapterStatus", ChapterStatus.FREE)
                    .setParameter("developerId", developerId)
-                   .setParameter("projectStatuses", new ProjectStatus[]{ProjectStatus.PREPARATION, ProjectStatus.IN_PROCESS})
+                   .setParameter("projectStatus1", ProjectStatus.CANCELED)
+                   .setParameter("projectStatus2", ProjectStatus.COMPLETED)
                    .setMaxResults(count)
                    .setFirstResult((page - 1) * count)
                    .getResultList();
@@ -102,12 +104,25 @@ public class ProposalDaoImpl extends DaoImpl<Proposal, Long> implements Proposal
     public Long getCountOfProposalsByDeveloperId(Long developerId, ProposalStatus status) throws NoResultException {
 
         TypedQuery<Long> query = getEm().createQuery(
-            "SELECT COUNT(prop) FROM Proposal prop LEFT JOIN Chapter ch ON prop.chapter.id=ch.id WHERE prop.status=:proposalStatus AND ch.status =:chapterStatus AND ch.project.developer.id=:developerId AND ch.project.status IN :projectStatuses  ",
+            "SELECT COUNT(prop) FROM Proposal prop LEFT JOIN Chapter ch ON prop.chapter.id=ch.id WHERE prop.status=:proposalStatus AND ch.status =:chapterStatus AND ch.project.developer.id=:developerId AND ch.project.status <>:projectStatus1 AND ch.project.status <>:projectStatus2",
             Long.class);
         return query.setParameter("proposalStatus", status)
                    .setParameter("chapterStatus", ChapterStatus.FREE)
                    .setParameter("developerId", developerId)
-                   .setParameter("projectStatuses", new ProjectStatus[]{ProjectStatus.PREPARATION, ProjectStatus.IN_PROCESS})
+                   .setParameter("projectStatus1", ProjectStatus.CANCELED)
+                   .setParameter("projectStatus2", ProjectStatus.COMPLETED)
                    .getSingleResult();
+    }
+
+    @Override
+    public boolean isAnyProposalOfChapterApproved(Long chapterId) throws IOException {
+
+        TypedQuery<Long> query = getEm().createQuery(
+            "SELECT COUNT(p) FROM Proposal p WHERE p.chapter.id=:chapterId AND p.status=:proposalStatus",
+            Long.class);
+        Long countOfApprovedProposals = query.setParameter("chapterId", chapterId)
+                                            .setParameter("proposalStatus", ProposalStatus.APPROVED)
+                                            .getSingleResult();
+        return countOfApprovedProposals != 0;
     }
 }

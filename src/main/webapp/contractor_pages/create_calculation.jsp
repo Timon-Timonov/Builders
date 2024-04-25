@@ -1,4 +1,6 @@
-<%@ page import="static it.academy.util.Constants.*" %>
+<%@ page import="static it.academy.util.constants.ServletURLs.CREATE_CALCULATION_CONTRACTOR_SERVLET" %>
+<%@ page import="static it.academy.util.constants.ParameterNames.*" %>
+<%@ page import="static it.academy.util.constants.ServletURLs.GET_MY_CALCULATION_CONTRACTOR_SERVLET" %>
 <%@ page contentType="text/html;charset=UTF-8" %>
 <html>
 <head>
@@ -12,7 +14,7 @@
 <body>
 <div class="container text-center">
 
-    <form action="<%=CREATE_CALCULATION_SERVLET%>" method="post">
+    <form action="<%=CREATE_CALCULATION_CONTRACTOR_SERVLET%>" method="post">
 
         Input year(YYYY): <label>
         <input name="<%=YYYY_PARAM%>" type="text">
@@ -32,7 +34,7 @@
         <button class="btn btn-primary" type="submit">Create new calculation</button>
     </form>
     <br>
-    <form action="<%=GET_MY_CALCULATION_SERVLET%>" method="get">
+    <form action="<%=CREATE_CALCULATION_CONTRACTOR_SERVLET%>" method="post">
         <input type="hidden" value="<%=session.getAttribute(CHAPTER_ID_PARAM)%>" name="<%=CHAPTER_ID_PARAM%>">
         <button class="btn btn-secondary" type="submit">Cancel</button>
     </form>

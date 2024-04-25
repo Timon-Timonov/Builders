@@ -4,7 +4,8 @@
 <%@ page import="it.academy.servlet.WhatToDo" %>
 <%@ page import="java.util.List" %>
 <%@ page import="java.util.Optional" %>
-<%@ page import="static it.academy.util.Constants.*" %>
+<%@ page import="static it.academy.util.constants.ParameterNames.*" %>
+<%@ page import="static it.academy.util.constants.ServletURLs.*" %>
 <%@ page contentType="text/html;charset=UTF-8" %>
 <html>
 <head>
@@ -21,13 +22,12 @@
 </div>
 <%
     String actionName = MAIN_DEVELOPER_SERVLET;
-    String todoName = TODO_PARAM;
     String countName = PROJECT_COUNT_ON_PAGE_PARAM;
     String pageNumberParamName = PROJECT_PAGE_PARAM;
 
     String actionParameterToDoValue = WhatToDo.SHOW_PROJECTS.toString();
-    int countOnPage = (Integer) session.getAttribute(PROJECT_COUNT_ON_PAGE_PARAM);
-    int pageNumber = (Integer) session.getAttribute(PROJECT_PAGE_PARAM);
+    int countOnPage = (Integer) session.getAttribute(countName);
+    int pageNumber = (Integer) session.getAttribute(pageNumberParamName);
     ProjectStatus status = (ProjectStatus) session.getAttribute(PROJECT_STATUS_PARAM);
     List<ProjectDto> projectDtoList = (List<ProjectDto>) request.getAttribute(PROJECT_DTO_LIST_PARAM);
 %>
@@ -97,11 +97,12 @@
     </table>
 </div>
 <br>
-<form action="<%=CREATE_PROJECT_DEVELOPER_SERVLET%>" method="get">
-    <button class="btn btn-light" type="submit">Create new project</button>
-</form>
-<br>
+
 <div class="container text-center">
+    <form action="<%=CREATE_PROJECT_DEVELOPER_SERVLET%>" method="get">
+        <button class="btn btn-light" type="submit">Create new project</button>
+    </form>
+    <br>
     <%@include file="/include_files/go_to_main_button_file.jsp" %>
 </div>
 </body>

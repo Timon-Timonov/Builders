@@ -1,5 +1,6 @@
 package it.academy.dao;
 
+import it.academy.exceptions.EmailOccupaidException;
 import it.academy.util.functionalInterfaces.TransactionObjectBody;
 import it.academy.util.functionalInterfaces.TransactionVoidBody;
 import org.hibernate.exception.ConstraintViolationException;
@@ -12,8 +13,6 @@ import java.util.List;
 
 public interface Dao<T, R> {
 
-    List<T> getAll();
-
     T get(R id) throws EntityNotFoundException;
 
     void update(T t);
@@ -24,11 +23,9 @@ public interface Dao<T, R> {
 
     void closeManager();
 
-    long countOfEntitiesInBase();
-
     void executeInOneTransaction(TransactionVoidBody body)
         throws IOException, EntityNotFoundException, NoResultException, ConstraintViolationException;
 
     Object executeInOneTransaction(TransactionObjectBody body)
-        throws RollbackException, IOException, EntityNotFoundException, NoResultException, ConstraintViolationException;
+        throws Exception;
 }

@@ -3,6 +3,7 @@ package it.academy.dao.impl;
 import it.academy.dao.ProjectDao;
 import it.academy.pojo.Project;
 import it.academy.pojo.enums.ProjectStatus;
+import it.academy.pojo.enums.UserStatus;
 
 import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
@@ -33,7 +34,7 @@ public class ProjectDaoImpl extends DaoImpl<Project, Long> implements ProjectDao
         throws NoResultException {
 
         TypedQuery<Project> query = getEm().createQuery(
-            "SELECT p FROM Project p, Chapter ch WHERE p.status=:status AND ch MEMBER OF p.chapters AND ch.contractor.id=:contractorId ORDER BY p.developer.name ASC, p.name ASC",
+            "SELECT DISTINCT p FROM Project p JOIN Chapter ch ON p.id=ch.project.id WHERE p.status=:status AND ch.contractor.id=:contractorId ORDER BY  p.name ",
             Project.class);
         return query.setParameter("contractorId", contractorId)
                    .setParameter("status", status)
@@ -86,7 +87,7 @@ public class ProjectDaoImpl extends DaoImpl<Project, Long> implements ProjectDao
     public Long getCountOfProjectsByContractorId(Long contractorId, ProjectStatus status) throws NoResultException {
 
         TypedQuery<Long> query = getEm().createQuery(
-            "SELECT COUNT(p) FROM Project p, Chapter ch WHERE p.status=:status AND ch MEMBER OF p.chapters AND ch.contractor.id=:contractorId",
+            "SELECT COUNT(DISTINCT p) FROM Project p JOIN Chapter ch ON p.id=ch.project.id WHERE p.status=:status AND ch.contractor.id=:contractorId ",
             Long.class);
         return query.setParameter("contractorId", contractorId)
                    .setParameter("status", status)
@@ -114,5 +115,15 @@ public class ProjectDaoImpl extends DaoImpl<Project, Long> implements ProjectDao
         return query.setParameter("developerId", developerId)
                    .setParameter("status", status)
                    .getSingleResult();
+    }
+
+    @Override
+    public List<Project> getAll() {
+
+        TypedQuery<Project> query = getEm().createQuery(
+            "SELECT p FROM Project p WHERE  p.developer.user.status=:status ORDER BY p.name ASC",
+            Project.class);
+        return query.setParameter("status", UserStatus.ACTIVE)
+                   .getResultList();
     }
 }

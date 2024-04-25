@@ -1,10 +1,10 @@
-<p>Select the current status of proposals to display on page: </p>
 <table>
-    <%ProposalStatus consideration=ProposalStatus.CONSIDERATION;%>
-    <%ProposalStatus approved=ProposalStatus.APPROVED;%>
-    <%ProposalStatus rejected=ProposalStatus.REJECTED;%>
-    <%ProposalStatus canceled=ProposalStatus.CANCELED;%>
+    <%ProposalStatus consideration = ProposalStatus.CONSIDERATION;%>
+    <%ProposalStatus approved = ProposalStatus.APPROVED;%>
+    <%ProposalStatus rejected = ProposalStatus.REJECTED;%>
+    <%ProposalStatus canceled = ProposalStatus.CANCELED;%>
     <tr>
+        <td><p>Select the current status of proposals to display on page: </p></td>
         <td>
             <form action="<%=actionName%>" method="get">
                 <input type="hidden" value="<%=actionParameterToDoValue%>" name="<%=TODO_PARAM%>">

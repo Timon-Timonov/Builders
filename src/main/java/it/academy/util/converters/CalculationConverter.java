@@ -4,8 +4,8 @@ import it.academy.dto.CalculationDto;
 import it.academy.pojo.Calculation;
 import it.academy.pojo.Chapter;
 
-import static it.academy.util.Constants.MONTH;
-import static it.academy.util.Constants.YEAR;
+import static it.academy.util.constants.Constants.MONTH;
+import static it.academy.util.constants.Constants.YEAR;
 
 public class CalculationConverter {
 

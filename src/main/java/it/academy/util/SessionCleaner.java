@@ -3,7 +3,7 @@ package it.academy.util;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import static it.academy.util.Constants.*;
+import static it.academy.util.constants.ParameterNames.*;
 
 public class SessionCleaner {
 
@@ -32,7 +32,7 @@ public class SessionCleaner {
 
         session.removeAttribute(CALCULATION_ID_PARAM);
         session.removeAttribute(CALCULATION_PAGE_PARAM);
-        session.removeAttribute(Constants.CALCULATION_COUNT_ON_PAGE_PARAM);
+        session.removeAttribute(CALCULATION_COUNT_ON_PAGE_PARAM);
     }
 
     public static void clearDeveloperAttributes(HttpServletRequest req) {

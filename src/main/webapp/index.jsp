@@ -1,5 +1,5 @@
-<%@ page import="static it.academy.util.Constants.LOGIN_SERVLET" %>
-<%@ page import="static it.academy.util.Constants.CREATE_USER_SERVLET" %>
+<%@ page import="static it.academy.util.constants.ServletURLs.LOGIN_SERVLET" %>
+<%@ page import="static it.academy.util.constants.ServletURLs.CREATE_USER_SERVLET" %>
 <html>
 <head>
     <title>Welcome_page</title>
@@ -11,7 +11,7 @@
 
 <body>
 <div class="container text-center">
-    <h2>Hello! Please log in or create ne account</h2>
+    <h2>Hello! Please log in or create new account</h2>
     <form action="<%=LOGIN_SERVLET%>" method="get">
         <button class="btn btn-primary" type="submit">Login to account</button>
     </form>

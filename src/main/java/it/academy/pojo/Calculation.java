@@ -37,6 +37,6 @@ public class Calculation {
     private Chapter chapter;
 
     @Builder.Default
-    @OneToMany(mappedBy = "calculation", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "calculation", fetch = FetchType.EAGER,cascade = CascadeType.REMOVE)
     private Set<MoneyTransfer> transferSet = new HashSet<>();
 }

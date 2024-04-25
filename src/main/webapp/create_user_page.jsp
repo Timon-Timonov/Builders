@@ -1,5 +1,6 @@
 <%@ page import="it.academy.pojo.enums.Roles" %>
-<%@ page import="static it.academy.util.Constants.*" %>
+<%@ page import="static it.academy.util.constants.ServletURLs.*" %>
+<%@ page import="static it.academy.util.constants.ParameterNames.*" %>
 <%@ page contentType="text/html;charset=UTF-8" %>
 <html>
 <head>

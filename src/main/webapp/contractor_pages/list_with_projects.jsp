@@ -4,7 +4,12 @@
 <%@ page import="it.academy.servlet.WhatToDo" %>
 <%@ page import="java.util.List" %>
 <%@ page import="java.util.Optional" %>
-<%@ page import="static it.academy.util.Constants.*" %>
+<%@ page import="static it.academy.util.constants.ParameterNames.SHOW_PROJECT_LIST_BY_DEVELOPER_PARAM" %>
+<%@ page import="static it.academy.util.constants.ServletURLs.GET_MY_PROJECTS_BY_DEVELOPER_CONTRACTOR_SERVLET" %>
+<%@ page import="static it.academy.util.constants.ServletURLs.MAIN_CONTRACTOR_SERVLET" %>
+<%@ page import="static it.academy.util.constants.ParameterNames.PROJECT_COUNT_ON_PAGE_PARAM" %>
+<%@ page import="static it.academy.util.constants.ParameterNames.*" %>
+<%@ page import="static it.academy.util.constants.ServletURLs.*" %>
 <%@ page contentType="text/html;charset=UTF-8" %>
 <html>
 <head>
@@ -20,14 +25,14 @@
     boolean showListByDeveloper = Optional.ofNullable((Boolean) session.getAttribute(SHOW_PROJECT_LIST_BY_DEVELOPER_PARAM)).orElse(false);
 
     String actionName = showListByDeveloper ?
-            GET_MY_PROJECTS_BY_DEVELOPER_SERVLET
+            GET_MY_PROJECTS_BY_DEVELOPER_CONTRACTOR_SERVLET
             : MAIN_CONTRACTOR_SERVLET;
     String countName = PROJECT_COUNT_ON_PAGE_PARAM;
     String pageNumberParamName = PROJECT_PAGE_PARAM;
 
     String actionParameterToDoValue = WhatToDo.SHOW_PROJECTS.toString();
-    int countOnPage = (Integer) session.getAttribute(PROJECT_COUNT_ON_PAGE_PARAM);
-    int pageNumber = (Integer) session.getAttribute(PROJECT_PAGE_PARAM);
+    int countOnPage = (Integer) session.getAttribute(countName);
+    int pageNumber = (Integer) session.getAttribute(pageNumberParamName);
     ProjectStatus status = (ProjectStatus) session.getAttribute(PROJECT_STATUS_PARAM);
     List<ProjectDto> projectDtoList = (List<ProjectDto>) request.getAttribute(PROJECT_DTO_LIST_PARAM);
 %>
@@ -39,7 +44,9 @@
     </p>
     <p>Developer address: <%= session.getAttribute(DEVELOPER_ADDRESS_PARAM)%>
     </p>
-    <p>Debt by developer:  <%=session.getAttribute(DEVELOPER_DEBT_PARAM)%>
+    <p>Debt by developer:  <%=projectDtoList.stream()
+                                      .map(ProjectDto::getDebtByProject)
+                                      .reduce(0, Integer::sum)%>
     </p>
     <% }%>
 </div>
@@ -107,7 +114,7 @@
             <td><%=projectDto.getProjectPrice()%>
             </td>
             <td>
-                <form action="<%=GET_MY_CHAPTERS_SERVLET%>" method="get">
+                <form action="<%=GET_MY_CHAPTERS_CONTRACTOR_SERVLET%>" method="get">
                     <input type="hidden" value="<%=projectDto.getId().toString()%>" name="<%=PROJECT_ID_PARAM%>">
                     <input type="hidden" value="<%=projectName%>" name="<%=PROJECT_NAME_PARAM%>">
                     <input type="hidden" value="<%=projectAddress%>" name="<%=PROJECT_ADDRESS_PARAM%>">

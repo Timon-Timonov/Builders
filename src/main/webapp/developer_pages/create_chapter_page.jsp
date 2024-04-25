@@ -1,4 +1,7 @@
-<%@ page import="static it.academy.util.Constants.*" %>
+<%@ page import="static it.academy.util.constants.ParameterNames.PROJECT_NAME_PARAM" %>
+<%@ page import="static it.academy.util.constants.ParameterNames.PROJECT_ADDRESS_PARAM" %>
+<%@ page import="static it.academy.util.constants.ParameterNames.*" %>
+<%@ page import="static it.academy.util.constants.ServletURLs.CREATE_CHAPTER_DEVELOPER_SERVLET" %>
 <%@ page contentType="text/html;charset=UTF-8" %>
 <html>
 <head>
@@ -11,7 +14,7 @@
 
 <body>
 <div class="container text-center">
-    <h2>The create chapter form</h2>
+    <h2>Create chapter form</h2>
     <p>Project name: <%=session.getAttribute(PROJECT_NAME_PARAM)%>.</p>
     <p>Project address: <%=session.getAttribute(PROJECT_ADDRESS_PARAM)%>.</p>
     <p>Project status: <%=session.getAttribute(PROJECT_STATUS_PARAM)%>.</p>
@@ -32,7 +35,7 @@
         <br>
 
         <input type="hidden" value="<%=session.getAttribute(PROJECT_ID_PARAM)%>" name="<%=PROJECT_ID_PARAM%>">
-        <button class="btn btn-primary" type="submit">Create new project</button>
+        <button class="btn btn-primary" type="submit">Create new chapter</button>
     </form>
     <%@include file="/include_files/go_to_main_button_file.jsp" %>
 </div>

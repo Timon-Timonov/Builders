@@ -6,10 +6,11 @@ import it.academy.dto.DeveloperDto;
 import it.academy.dto.Page;
 import it.academy.dto.ProjectDto;
 import it.academy.dto.ProposalDto;
-import it.academy.exceptions.NotUpdateDataInDbException;
 import it.academy.pojo.enums.ProjectStatus;
 import it.academy.pojo.enums.ProposalStatus;
 import it.academy.servlet.WhatToDo;
+import it.academy.util.ExceptionRedirector;
+import it.academy.util.ParameterFinder;
 import it.academy.util.SessionCleaner;
 import it.academy.util.Util;
 import lombok.extern.log4j.Log4j2;
@@ -24,7 +25,13 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static it.academy.util.Constants.*;
+import static it.academy.util.constants.Constants.*;
+import static it.academy.util.constants.JspURLs.*;
+import static it.academy.util.constants.Messages.BAD_CONNECTION;
+import static it.academy.util.constants.Messages.INVALID_VALUE;
+import static it.academy.util.constants.ParameterNames.*;
+import static it.academy.util.constants.ServletURLs.MAIN_CONTRACTOR_SERVLET;
+import static it.academy.util.constants.ServletURLs.SLASH_STRING;
 
 @Log4j2
 @WebServlet(name = "mainContractorServlet", urlPatterns = SLASH_STRING + MAIN_CONTRACTOR_SERVLET)
@@ -58,31 +65,16 @@ public class MainContractorServlet extends HttpServlet {
                     chooseNewProject(req, resp);
                     break;
                 default:
-                    Util.forwardToException3(req, resp, this, INVALID_VALUE);
+                    ExceptionRedirector.forwardToException3(req, resp, this, INVALID_VALUE);
             }
         } else {
-            Util.forwardToException3(req, resp, this, INVALID_VALUE);
+            ExceptionRedirector.forwardToException3(req, resp, this, INVALID_VALUE);
         }
     }
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
-        long proposalId = Util.getNumberValueFromParameter(req, PROPOSAL_ID_PARAM, ZERO_LONG_VALUE);
-        ProposalStatus newStatus = Util.getProposalStatusFromParameter(req, NEW_PROPOSAL_STATUS_PARAM, null);
-
-        if (proposalId != ZERO_LONG_VALUE && newStatus != null) {
-            try {
-                controller.setProposalStatus(proposalId, newStatus);
-            } catch (NotUpdateDataInDbException e) {
-                log.error(PROPOSAL_STATUS_NOT_UPDATE_ID + proposalId, e);
-                Util.forwardToException3(req, resp, this, PROPOSAL_NOT_UPDATE);
-            } catch (IOException e) {
-                Util.forwardToException3(req, resp, this, BAD_CONNECTION);
-            }
-        } else {
-            Util.forwardToException3(req, resp, this, PROPOSAL_NOT_UPDATE);
-        }
         doGet(req, resp);
     }
 
@@ -90,16 +82,16 @@ public class MainContractorServlet extends HttpServlet {
 
         SessionCleaner.clearDeveloperAttributes(req);
 
-        long id = Util.getNumberValueFromParameter(req, ID_PARAM, ZERO_LONG_VALUE);
-        ProjectStatus status = Util.getProjectStatusFromParameter(req, PROJECT_STATUS_PARAM, DEFAULT_PROJECT_STATUS);
-        int page = Util.getNumberValueFromParameter(req, DEVELOPER_PAGE_PARAM, FIRST_PAGE_NUMBER);
-        int count = Util.getNumberValueFromParameter(req, DEVELOPER_COUNT_ON_PAGE_PARAM, DEFAULT_COUNT_ON_PAGE_5);
+        long id = ParameterFinder.getNumberValueFromParameter(req, ID_PARAM, ZERO_LONG_VALUE);
+        ProjectStatus status = ParameterFinder.getProjectStatusFromParameter(req, PROJECT_STATUS_PARAM, DEFAULT_PROJECT_STATUS);
+        int page = ParameterFinder.getNumberValueFromParameter(req, DEVELOPER_PAGE_PARAM, FIRST_PAGE_NUMBER);
+        int count = ParameterFinder.getNumberValueFromParameter(req, DEVELOPER_COUNT_ON_PAGE_PARAM, DEFAULT_COUNT_ON_PAGE_5);
 
         Page<DeveloperDto> developerDtoPage = new Page<>(new ArrayList<>(), FIRST_PAGE_NUMBER);
         try {
             developerDtoPage = controller.getMyDevelopers(id, status, page, count);
         } catch (IOException e) {
-            Util.forwardToException3(req, resp, this, BAD_CONNECTION);
+            ExceptionRedirector.forwardToException3(req, resp, this, BAD_CONNECTION);
         }
         page = developerDtoPage.getPageNumber();
         List<DeveloperDto> developerDtoList = developerDtoPage.getList();
@@ -117,16 +109,16 @@ public class MainContractorServlet extends HttpServlet {
 
         SessionCleaner.clearProjectAttributes(req);
 
-        long id = Util.getNumberValueFromParameter(req, ID_PARAM, ZERO_LONG_VALUE);
-        ProjectStatus status = Util.getProjectStatusFromParameter(req, PROJECT_STATUS_PARAM, DEFAULT_PROJECT_STATUS);
-        int page = Util.getNumberValueFromParameter(req, PROJECT_PAGE_PARAM, FIRST_PAGE_NUMBER);
-        int count = Util.getNumberValueFromParameter(req, PROJECT_COUNT_ON_PAGE_PARAM, DEFAULT_COUNT_ON_PAGE_5);
+        long id = ParameterFinder.getNumberValueFromParameter(req, ID_PARAM, ZERO_LONG_VALUE);
+        ProjectStatus status = ParameterFinder.getProjectStatusFromParameter(req, PROJECT_STATUS_PARAM, DEFAULT_PROJECT_STATUS);
+        int page = ParameterFinder.getNumberValueFromParameter(req, PROJECT_PAGE_PARAM, FIRST_PAGE_NUMBER);
+        int count = ParameterFinder.getNumberValueFromParameter(req, PROJECT_COUNT_ON_PAGE_PARAM, DEFAULT_COUNT_ON_PAGE_5);
 
         Page<ProjectDto> projectDtoPage = new Page<>(new ArrayList<>(), FIRST_PAGE_NUMBER);
         try {
             projectDtoPage = controller.getMyProjects(id, status, page, count);
         } catch (IOException e) {
-            Util.forwardToException3(req, resp, this, BAD_CONNECTION);
+            ExceptionRedirector.forwardToException3(req, resp, this, BAD_CONNECTION);
         }
         page = projectDtoPage.getPageNumber();
         List<ProjectDto> projectDtoList = projectDtoPage.getList();
@@ -144,16 +136,16 @@ public class MainContractorServlet extends HttpServlet {
 
         SessionCleaner.clearProposalAttributes(req);
 
-        long id = Util.getNumberValueFromParameter(req, ID_PARAM, ZERO_LONG_VALUE);
-        ProposalStatus status = Util.getProposalStatusFromParameter(req, PROPOSAL_STATUS_PARAM, DEFAULT_PROPOSAL_STATUS);
-        int page = Util.getNumberValueFromParameter(req, PROPOSAL_PAGE_PARAM, FIRST_PAGE_NUMBER);
-        int count = Util.getNumberValueFromParameter(req, PROPOSAL_COUNT_ON_PAGE_PARAM, DEFAULT_COUNT_ON_PAGE_5);
+        long id = ParameterFinder.getNumberValueFromParameter(req, ID_PARAM, ZERO_LONG_VALUE);
+        ProposalStatus status = ParameterFinder.getProposalStatusFromParameter(req, PROPOSAL_STATUS_PARAM, DEFAULT_PROPOSAL_STATUS);
+        int page = ParameterFinder.getNumberValueFromParameter(req, PROPOSAL_PAGE_PARAM, FIRST_PAGE_NUMBER);
+        int count = ParameterFinder.getNumberValueFromParameter(req, PROPOSAL_COUNT_ON_PAGE_PARAM, DEFAULT_COUNT_ON_PAGE_5);
 
         Page<ProposalDto> proposalDtoPage = new Page<>(new ArrayList<>(), FIRST_PAGE_NUMBER);
         try {
             proposalDtoPage = controller.getMyProposals(id, status, page, count);
         } catch (IOException e) {
-            Util.forwardToException3(req, resp, this, BAD_CONNECTION);
+            ExceptionRedirector.forwardToException3(req, resp, this, BAD_CONNECTION);
         }
         page = proposalDtoPage.getPageNumber();
         List<ProposalDto> proposalDtoList = proposalDtoPage.getList();
@@ -175,7 +167,7 @@ public class MainContractorServlet extends HttpServlet {
         try {
             chapterNamesList = controller.getAllChapterNames();
         } catch (IOException e) {
-            Util.forwardToException3(req, resp, this, BAD_CONNECTION);
+            ExceptionRedirector.forwardToException3(req, resp, this, BAD_CONNECTION);
         }
         req.setAttribute(CHAPTER_NAMES_LIST_PARAM, chapterNamesList);
 

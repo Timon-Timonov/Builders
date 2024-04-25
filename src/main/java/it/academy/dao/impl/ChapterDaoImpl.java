@@ -22,7 +22,7 @@ public class ChapterDaoImpl extends DaoImpl<Chapter, Long> implements ChapterDao
     public Long getCountOfFreeChaptersByName(Long contractorId, String chapterName, ProjectStatus projectStatus) throws NoResultException, IOException {
 
         TypedQuery<Long> query = getEm().createQuery(
-            "SELECT COUNT (ch.id) FROM Chapter ch LEFT JOIN Proposal  prop ON ch.id=prop.chapter.id WHERE ch.name=:chapterName AND ch.status=:chapterStatus AND ch.project.status=:projectStatus AND ch.id NOT IN (SELECT prop.chapter.id FROM prop WHERE prop.contractor.id=:contractorId)",
+            "SELECT COUNT (DISTINCT ch) FROM Chapter ch LEFT JOIN Proposal  prop ON ch.id=prop.chapter.id WHERE ch.name=:chapterName AND ch.status=:chapterStatus AND ch.project.status=:projectStatus AND ch.id NOT IN (SELECT prop.chapter.id FROM Proposal prop WHERE prop.contractor.id=:contractorId)",
             Long.class);
         return query.setParameter("chapterName", chapterName)
                    .setParameter("chapterStatus", ChapterStatus.FREE)
@@ -36,7 +36,7 @@ public class ChapterDaoImpl extends DaoImpl<Chapter, Long> implements ChapterDao
         throws IOException {
 
         TypedQuery<Chapter> query = getEm().createQuery(
-            "SELECT ch FROM Chapter ch LEFT JOIN Proposal  prop ON ch.id=prop.chapter.id WHERE ch.name=:chapterName AND ch.status=:chapterStatus AND ch.project.status=:projectStatus AND ch.id NOT IN (SELECT prop.chapter.id FROM prop WHERE prop.contractor.id=:contractorId) ORDER BY ch.project.name ASC",
+            "SELECT DISTINCT ch FROM Chapter ch LEFT JOIN Proposal  prop ON ch.id=prop.chapter.id WHERE ch.name=:chapterName AND ch.status=:chapterStatus AND ch.project.status=:projectStatus AND ch.id NOT IN (SELECT prop.chapter.id FROM Proposal prop WHERE prop.contractor.id=:contractorId) ",
             Chapter.class);
         return query.setParameter("chapterName", chapterName)
                    .setParameter("chapterStatus", ChapterStatus.FREE)
@@ -129,5 +129,27 @@ public class ChapterDaoImpl extends DaoImpl<Chapter, Long> implements ChapterDao
         return query.setParameter("developerId", developerId)
                    .setParameter("contractorId", contractorId)
                    .getResultList();
+    }
+
+    @Override
+    public List<Chapter> getChaptersByContractorId(Long contractorId, int page, int count) throws NoResultException, IOException {
+
+        TypedQuery<Chapter> query = getEm().createQuery(
+            "SELECT ch FROM Chapter ch WHERE ch.contractor.id=:contractorId ",
+            Chapter.class);
+        return query.setParameter("contractorId", contractorId)
+                   .setMaxResults(count)
+                   .setFirstResult((page - 1) * count)
+                   .getResultList();
+    }
+
+    @Override
+    public Long getCountOfChaptersByContractorId(Long contractorId) throws NoResultException, IOException {
+
+        TypedQuery<Long> query = getEm().createQuery(
+            "SELECT COUNT (ch) FROM Chapter ch WHERE ch.contractor.id=:contractorId ",
+            Long.class);
+        return query.setParameter("contractorId", contractorId)
+                   .getSingleResult();
     }
 }

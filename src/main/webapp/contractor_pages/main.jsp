@@ -1,7 +1,9 @@
 <%@ page import="it.academy.servlet.WhatToDo" %>
-<%@ page import="static it.academy.util.Constants.MAIN_CONTRACTOR_SERVLET" %>
-<%@ page import="static it.academy.util.Constants.ROLE_PARAM" %>
-<%@ page import="static it.academy.util.Constants.*" %>
+<%@ page import="static it.academy.util.constants.ServletURLs.MAIN_CONTRACTOR_SERVLET" %>
+<%@ page import="static it.academy.util.constants.ParameterNames.TODO_PARAM" %>
+<%@ page import="static it.academy.util.constants.ParameterNames.ROLE_PARAM" %>
+<%@ page import="static it.academy.util.constants.Messages.ACCOUNT" %>
+<%@ page import="static it.academy.util.constants.Messages.EXIT_FROM" %>
 <%@ page contentType="text/html;charset=UTF-8" %>
 <html>
 <head>

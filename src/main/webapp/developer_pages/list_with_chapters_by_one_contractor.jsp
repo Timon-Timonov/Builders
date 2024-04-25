@@ -1,8 +1,9 @@
 <%@ page import="it.academy.dto.ChapterDto" %>
 <%@ page import="it.academy.pojo.enums.ProjectStatus" %>
 <%@ page import="it.academy.servlet.WhatToDo" %>
-<%@ page import="static it.academy.util.Constants.*" %>
 <%@ page import="java.util.List" %>
+<%@ page import="static it.academy.util.constants.ParameterNames.*" %>
+<%@ page import="static it.academy.util.constants.ServletURLs.*" %>
 <%@ page contentType="text/html;charset=UTF-8" %>
 <html>
 <head>
@@ -17,7 +18,6 @@
 
 <%
     String actionName = GET_CHAPTERS_OF_CONTRACTOR_DEVELOPER_SERVLET;
-    String todoName = TODO_PARAM;
     String countName = CHAPTER_COUNT_ON_PAGE_PARAM;
     String pageNumberParamName = CHAPTER_PAGE_PARAM;
 
@@ -88,6 +88,8 @@
                     <input type="hidden" value="<%=chapterName%>" name="<%=CHAPTER_NAME_PARAM%>">
                     <input type="hidden" value="<%=chapterPrice%>" name="<%=CHAPTER_PRICE_PARAM%>">
                     <input type="hidden" value="<%=contractorName%>" name="<%=CHAPTER_CONTRACTOR_NAME_PARAM%>">
+                    <input type="hidden" value="<%=chapterDto.getProjectAddress()%>" name="<%=PROJECT_ADDRESS_PARAM%>">
+                    <input type="hidden" value="<%=chapterDto.getProjectName()%>" name="<%=PROJECT_NAME_PARAM%>">
                     <button class="btn btn-light" type="submit">Details</button>
                 </form>
             </td>

@@ -1,7 +1,10 @@
+<%@ page import="static it.academy.util.constants.ServletURLs.CREATE_CALCULATION_CONTRACTOR_SERVLET" %>
+<%@ page import="static it.academy.util.constants.ParameterNames.*" %>
+<%@ page import="static it.academy.util.constants.ServletURLs.GET_MY_CALCULATION_CONTRACTOR_SERVLET" %>
 <%@ page import="it.academy.dto.CalculationDto" %>
 <%@ page import="it.academy.servlet.WhatToDo" %>
-<%@ page import="static it.academy.util.Constants.*" %>
 <%@ page import="java.util.List" %>
+<%@ page import="static it.academy.util.constants.ServletURLs.*" %>
 <%@ page contentType="text/html;charset=UTF-8" %>
 <html>
 <head>
@@ -15,11 +18,11 @@
 <body>
 
 <%
-    String actionName = GET_MY_CALCULATION_SERVLET;
+    String actionName = GET_MY_CALCULATION_CONTRACTOR_SERVLET;
     String countName = CALCULATION_COUNT_ON_PAGE_PARAM;
     String pageNumberParamName = CALCULATION_PAGE_PARAM;
-    int countOnPage = (Integer) session.getAttribute(CALCULATION_COUNT_ON_PAGE_PARAM);
-    int pageNumber = (Integer) session.getAttribute(CALCULATION_PAGE_PARAM);
+    int countOnPage = (Integer) session.getAttribute(countName);
+    int pageNumber = (Integer) session.getAttribute(pageNumberParamName);
 
     String actionParameterToDoValue = null;
 
@@ -94,7 +97,7 @@
             <td><%=calculationDto.getWorkPricePlan()%>
             </td>
             <td>
-                <form action="<%=GET_MY_CALCULATION_SERVLET%>" method="post">
+                <form action="<%=GET_MY_CALCULATION_CONTRACTOR_SERVLET%>" method="post">
                     <input type="hidden" value="<%=calculationDto.getId().toString()%>"
                            name="<%=CALCULATION_ID_PARAM%>">
                     New Value of work price fact: <label>
@@ -110,12 +113,12 @@
 </div>
 <br>
 <div class="container text-center">
-    <form action="<%=CREATE_CALCULATION_SERVLET%>" method="get">
+    <form action="<%=CREATE_CALCULATION_CONTRACTOR_SERVLET%>" method="get">
         <input type="hidden" value="<%=session.getAttribute(CHAPTER_ID_PARAM)%>" name="<%=CHAPTER_ID_PARAM%>">
         <button class="btn btn-light" type="submit">Create new calculation</button>
     </form>
     <br>
-    <form action="<%=GET_MY_CHAPTERS_SERVLET%>" method="get">
+    <form action="<%=GET_MY_CHAPTERS_CONTRACTOR_SERVLET%>" method="get">
         <input type="hidden" value="<%=session.getAttribute(PROJECT_ID_PARAM)%>" name="<%=PROJECT_ID_PARAM%>">
         <button class="btn btn-light" type="submit">Return to list with chapters of project</button>
     </form>

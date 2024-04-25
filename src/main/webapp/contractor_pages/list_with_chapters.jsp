@@ -1,8 +1,11 @@
 <%@ page import="it.academy.dto.ChapterDto" %>
 <%@ page import="it.academy.servlet.WhatToDo" %>
 <%@ page import="java.util.List" %>
-<%@ page import="static it.academy.util.Constants.*" %>
 <%@ page import="java.util.Optional" %>
+<%@ page import="static it.academy.util.constants.ParameterNames.*" %>
+<%@ page import="static it.academy.util.constants.ServletURLs.GET_MY_CALCULATION_CONTRACTOR_SERVLET" %>
+<%@ page import="static it.academy.util.constants.ServletURLs.GET_MY_PROJECTS_BY_DEVELOPER_CONTRACTOR_SERVLET" %>
+<%@ page import="static it.academy.util.constants.ServletURLs.*" %>
 <%@ page contentType="text/html;charset=UTF-8" %>
 <html>
 <head>
@@ -15,13 +18,6 @@
 
 <body>
 <%
-    String actionName = GET_MY_CHAPTERS_SERVLET;
-    String countName = CHAPTER_COUNT_ON_PAGE_PARAM;
-    String pageNumberParamName = CHAPTER_PAGE_PARAM;
-    String chapterStatus = CHAPTER_STATUS_PARAM;
-
-    String actionParameterToDoValue = null;
-
     List<ChapterDto> chapterDtoList = (List<ChapterDto>) request.getAttribute(CHAPTER_DTO_LIST_PARAM);
 %>
 
@@ -63,14 +59,14 @@
             <td> |</td>
             <td><%=chapterPrice%>
             </td>
-            <td > |</td>
+            <td> |</td>
             <td><%=chapterDto.getChapterDebt()%>
             </td>
             <td> |</td>
             <td><%=chapterDto.getChapterStatus().toString()%>
             </td>
             <td>
-                <form action="<%=GET_MY_CALCULATION_SERVLET%>" method="get">
+                <form action="<%=GET_MY_CALCULATION_CONTRACTOR_SERVLET%>" method="get">
                     <input type="hidden" value="<%=chapterDto.getId().toString()%>" name="<%=CHAPTER_ID_PARAM%>">
                     <input type="hidden" value="<%=chapterName%>" name="<%=CHAPTER_NAME_PARAM%>">
                     <input type="hidden" value="<%=chapterPrice%>" name="<%=CHAPTER_PRICE_PARAM%>">
@@ -87,7 +83,7 @@
 <div class="container text-center">
     <% boolean showListByDeveloper = Optional.ofNullable((Boolean) session.getAttribute(SHOW_PROJECT_LIST_BY_DEVELOPER_PARAM)).orElse(false);
         if (showListByDeveloper) {%>
-    <form action="<%=GET_MY_PROJECTS_BY_DEVELOPER_SERVLET%>" method="get">
+    <form action="<%=GET_MY_PROJECTS_BY_DEVELOPER_CONTRACTOR_SERVLET%>" method="get">
         <button class="btn btn-secondary" type="submit">Return to list with projects of this developer</button>
     </form>
     <br>

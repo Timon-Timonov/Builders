@@ -1,11 +1,14 @@
 <%@ page import="it.academy.dto.AddressDto" %>
-<%@ page import="it.academy.dto.ProjectDto" %>
+<%@ page import="it.academy.dto.DeveloperDto" %>
 <%@ page import="it.academy.pojo.enums.ProjectStatus" %>
 <%@ page import="it.academy.servlet.WhatToDo" %>
 <%@ page import="java.util.List" %>
 <%@ page import="java.util.Optional" %>
-<%@ page import="static it.academy.util.Constants.*" %>
-<%@ page import="it.academy.dto.DeveloperDto" %>
+<%@ page import="static it.academy.util.constants.ServletURLs.MAIN_CONTRACTOR_SERVLET" %>
+<%@ page import="static it.academy.util.constants.ParameterNames.DEVELOPER_COUNT_ON_PAGE_PARAM" %>
+<%@ page import="static it.academy.util.constants.ParameterNames.DEVELOPER_PAGE_PARAM" %>
+<%@ page import="static it.academy.util.constants.ParameterNames.*" %>
+<%@ page import="static it.academy.util.constants.ServletURLs.GET_MY_PROJECTS_BY_DEVELOPER_CONTRACTOR_SERVLET" %>
 <%@ page contentType="text/html;charset=UTF-8" %>
 <html>
 <head>
@@ -26,8 +29,8 @@
     String pageNumberParamName = DEVELOPER_PAGE_PARAM;
 
     String actionParameterToDoValue = WhatToDo.SHOW_DEVELOPERS.toString();
-    int countOnPage = (Integer) session.getAttribute(DEVELOPER_COUNT_ON_PAGE_PARAM);
-    int pageNumber = (Integer) session.getAttribute(DEVELOPER_PAGE_PARAM);
+    int countOnPage = (Integer) session.getAttribute(countName);
+    int pageNumber = (Integer) session.getAttribute(pageNumberParamName);
     ProjectStatus status = (ProjectStatus) session.getAttribute(PROJECT_STATUS_PARAM);
     List<DeveloperDto> developerDtoList = (List<DeveloperDto>) request.getAttribute(DEVELOPER_DTO_LIST_PARAM);
 %>
@@ -53,14 +56,14 @@
             <th>Debt by developer</th>
             <th> |</th>
             <th></th>
-                  </tr>
+        </tr>
 
         <%for (int i = 0; i < developerDtoList.size(); i++) {%>
         <%
             DeveloperDto developerDto = developerDtoList.get(i);
             String developerName = developerDto.getDeveloperName();
             String developerAddress = Optional.ofNullable(developerDto.getDeveloperAddress()).orElse(new AddressDto()).toString();
-            String developerDebt=developerDto.getDeveloperDebt().toString();
+            String developerDebt = developerDto.getDeveloperDebt().toString();
         %>
         <tr>
             <td><%=(i + 1)%>
@@ -76,7 +79,7 @@
             </td>
             <td> |</td>
             <td>
-                <form action="<%=GET_MY_PROJECTS_BY_DEVELOPER_SERVLET%>" method="get">
+                <form action="<%=GET_MY_PROJECTS_BY_DEVELOPER_CONTRACTOR_SERVLET%>" method="get">
                     <input type="hidden" value="<%=developerDto.getId().toString()%>" name="<%=DEVELOPER_ID_PARAM%>">
                     <input type="hidden" value="<%=developerName%>" name="<%=DEVELOPER_NAME_PARAM%>">
                     <input type="hidden" value="<%=developerAddress%>" name="<%=DEVELOPER_ADDRESS_PARAM%>">

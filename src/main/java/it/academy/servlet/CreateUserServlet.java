@@ -1,7 +1,7 @@
 package it.academy.servlet;
 
 import it.academy.pojo.enums.Roles;
-import it.academy.util.Util;
+import it.academy.util.ExceptionRedirector;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -10,7 +10,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-import static it.academy.util.Constants.*;
+import static it.academy.util.constants.JspURLs.CREATE_USER_PAGE_JSP;
+import static it.academy.util.constants.JspURLs.SELECT_NEW_USER_ROLE_PAGE_JSP;
+import static it.academy.util.constants.Messages.ROLE_IS_INVALID;
+import static it.academy.util.constants.ParameterNames.ROLE_PARAM;
+import static it.academy.util.constants.ServletURLs.CREATE_USER_SERVLET;
+import static it.academy.util.constants.ServletURLs.SLASH_STRING;
 
 @WebServlet(name = "createUserServlet", urlPatterns = SLASH_STRING + CREATE_USER_SERVLET)
 public class CreateUserServlet extends HttpServlet {
@@ -31,7 +36,7 @@ public class CreateUserServlet extends HttpServlet {
         } else if (Roles.DEVELOPER.toString().equals(role)) {
             req.getSession().setAttribute(ROLE_PARAM, Roles.DEVELOPER);
         } else {
-            Util.forwardToException1(req, resp, this, ROLE_IS_INVALID);
+            ExceptionRedirector.forwardToException1(req, resp, this, ROLE_IS_INVALID);
         }
         getServletContext().getRequestDispatcher(CREATE_USER_PAGE_JSP).forward(req, resp);
     }

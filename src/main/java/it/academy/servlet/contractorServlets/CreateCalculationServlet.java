@@ -3,6 +3,8 @@ package it.academy.servlet.contractorServlets;
 import it.academy.controller.ContractorController;
 import it.academy.controller.impl.ContractorControllerImpl;
 import it.academy.exceptions.NotCreateDataInDbException;
+import it.academy.util.ExceptionRedirector;
+import it.academy.util.ParameterFinder;
 import it.academy.util.Util;
 
 import javax.servlet.ServletException;
@@ -12,10 +14,16 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-import static it.academy.util.Constants.*;
+import static it.academy.util.constants.Constants.ZERO_INT_VALUE;
+import static it.academy.util.constants.Constants.ZERO_LONG_VALUE;
+import static it.academy.util.constants.JspURLs.CONTRACTOR_PAGES_CREATE_CALCULATION_JSP;
+import static it.academy.util.constants.Messages.CALCULATION_NOT_CREATED;
+import static it.academy.util.constants.ParameterNames.*;
+import static it.academy.util.constants.ServletURLs.*;
 
-@WebServlet(name = "CreateCalculationServlet", urlPatterns = {SLASH_STRING + CREATE_CALCULATION_SERVLET})
+@WebServlet(name = "CreateCalculationServlet", urlPatterns = {SLASH_STRING + CREATE_CALCULATION_CONTRACTOR_SERVLET})
 public class CreateCalculationServlet extends HttpServlet {
+
 
     private final ContractorController controller = new ContractorControllerImpl();
 
@@ -28,16 +36,17 @@ public class CreateCalculationServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
-        Long chapterId = Util.getNumberValueFromParameter(req, CHAPTER_ID_PARAM, ZERO_LONG_VALUE);
-        Integer workPrice = Util.getNumberValueFromParameter(req, WORK_PRICE_PLAN_PARAM, ZERO_INT_VALUE);
-        Integer month = Util.getNumberValueFromParameter(req, MM_PARAM, ZERO_INT_VALUE);
-        Integer year = Util.getNumberValueFromParameter(req, YYYY_PARAM, ZERO_INT_VALUE);
+        Long chapterId = ParameterFinder.getNumberValueFromParameter(req, CHAPTER_ID_PARAM, ZERO_LONG_VALUE);
+        Integer workPrice = ParameterFinder.getNumberValueFromParameter(req, WORK_PRICE_PLAN_PARAM, ZERO_INT_VALUE);
+        Integer month = ParameterFinder.getNumberValueFromParameter(req, MM_PARAM, ZERO_INT_VALUE);
+        Integer year = ParameterFinder.getNumberValueFromParameter(req, YYYY_PARAM, ZERO_INT_VALUE);
 
         try {
             controller.createCalculation(chapterId, year, month, workPrice);
         } catch (NotCreateDataInDbException e) {
-            Util.forwardToException3(req, resp, this, CALCULATION_NOT_CREATED);
+            ExceptionRedirector.forwardToException3(req, resp, this, CALCULATION_NOT_CREATED);
         }
-        getServletContext().getRequestDispatcher(SLASH_STRING + GET_MY_CALCULATION_SERVLET).forward(req, resp);
+        req.setAttribute(EXECUTE_IN_GET_PARAM, true);
+        getServletContext().getRequestDispatcher(SLASH_STRING + GET_MY_CALCULATION_CONTRACTOR_SERVLET).forward(req, resp);
     }
 }

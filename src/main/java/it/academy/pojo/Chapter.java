@@ -43,7 +43,7 @@ public class Chapter {
     private Contractor contractor;
 
     @Builder.Default
-    @OneToMany(mappedBy = "chapter")
+    @OneToMany(mappedBy = "chapter",cascade = CascadeType.REMOVE)
     private Set<Proposal> proposalSet = new HashSet<>();
 
     @Builder.Default

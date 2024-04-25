@@ -5,6 +5,8 @@ import it.academy.controller.impl.ContractorControllerImpl;
 import it.academy.dto.Page;
 import it.academy.dto.ProjectDto;
 import it.academy.pojo.enums.ProjectStatus;
+import it.academy.util.ExceptionRedirector;
+import it.academy.util.ParameterFinder;
 import it.academy.util.Util;
 
 import javax.servlet.ServletException;
@@ -17,9 +19,15 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static it.academy.util.Constants.*;
+import static it.academy.util.constants.Constants.*;
+import static it.academy.util.constants.JspURLs.CONTRACTOR_PAGES_LIST_WITH_PROJECTS_JSP;
+import static it.academy.util.constants.Messages.BAD_CONNECTION;
+import static it.academy.util.constants.Messages.BLANK_STRING;
+import static it.academy.util.constants.ParameterNames.*;
+import static it.academy.util.constants.ServletURLs.GET_MY_PROJECTS_BY_DEVELOPER_CONTRACTOR_SERVLET;
+import static it.academy.util.constants.ServletURLs.SLASH_STRING;
 
-@WebServlet(name = "getMyProjectsByDeveloperServlet", urlPatterns = SLASH_STRING + GET_MY_PROJECTS_BY_DEVELOPER_SERVLET)
+@WebServlet(name = "getMyProjectsByDeveloperServlet", urlPatterns = SLASH_STRING + GET_MY_PROJECTS_BY_DEVELOPER_CONTRACTOR_SERVLET)
 public class GetMyProjectsByDeveloperServlet extends HttpServlet {
 
     ContractorController controller = new ContractorControllerImpl();
@@ -27,20 +35,20 @@ public class GetMyProjectsByDeveloperServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
-        long id = Util.getNumberValueFromParameter(req, ID_PARAM, ZERO_LONG_VALUE);
-        long developerId = Util.getNumberValueFromParameter(req, DEVELOPER_ID_PARAM, ZERO_LONG_VALUE);
-        ProjectStatus status = Util.getProjectStatusFromParameter(req, PROJECT_STATUS_PARAM, DEFAULT_PROJECT_STATUS);
-        int page = Util.getNumberValueFromParameter(req, PROJECT_PAGE_PARAM, FIRST_PAGE_NUMBER);
-        int count = Util.getNumberValueFromParameter(req, PROJECT_COUNT_ON_PAGE_PARAM, DEFAULT_COUNT_ON_PAGE_5);
-        String developerName = Util.getStringValueFromParameter(req, DEVELOPER_NAME_PARAM, BLANK_STRING);
-        String developerAddress = Util.getStringValueFromParameter(req, DEVELOPER_ADDRESS_PARAM, BLANK_STRING);
-        int developerDebt = Util.getNumberValueFromParameter(req, DEVELOPER_DEBT_PARAM, ZERO_INT_VALUE);
+        long id = ParameterFinder.getNumberValueFromParameter(req, ID_PARAM, ZERO_LONG_VALUE);
+        long developerId = ParameterFinder.getNumberValueFromParameter(req, DEVELOPER_ID_PARAM, ZERO_LONG_VALUE);
+        ProjectStatus status = ParameterFinder.getProjectStatusFromParameter(req, PROJECT_STATUS_PARAM, DEFAULT_PROJECT_STATUS);
+        int page = ParameterFinder.getNumberValueFromParameter(req, PROJECT_PAGE_PARAM, FIRST_PAGE_NUMBER);
+        int count =ParameterFinder.getNumberValueFromParameter(req, PROJECT_COUNT_ON_PAGE_PARAM, DEFAULT_COUNT_ON_PAGE_5);
+        String developerName = ParameterFinder.getStringValueFromParameter(req, DEVELOPER_NAME_PARAM, BLANK_STRING);
+        String developerAddress = ParameterFinder.getStringValueFromParameter(req, DEVELOPER_ADDRESS_PARAM, BLANK_STRING);
+        int developerDebt = ParameterFinder.getNumberValueFromParameter(req, DEVELOPER_DEBT_PARAM, ZERO_INT_VALUE);
 
         Page<ProjectDto> projectDtoPage = new Page<>(new ArrayList<>(), FIRST_PAGE_NUMBER);
         try {
             projectDtoPage = controller.getMyProjectsByDeveloper(developerId, id, status, page, count);
         } catch (IOException e) {
-            Util.forwardToException3(req, resp, this, BAD_CONNECTION);
+            ExceptionRedirector.forwardToException3(req, resp, this, BAD_CONNECTION);
         }
 
         page = projectDtoPage.getPageNumber();

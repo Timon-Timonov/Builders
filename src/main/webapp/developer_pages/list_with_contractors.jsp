@@ -1,8 +1,10 @@
 <%@ page import="it.academy.dto.ContractorDto" %>
 <%@ page import="it.academy.pojo.enums.ProjectStatus" %>
 <%@ page import="it.academy.servlet.WhatToDo" %>
-<%@ page import="static it.academy.util.Constants.*" %>
 <%@ page import="java.util.List" %>
+<%@ page import="static it.academy.util.constants.ServletURLs.MAIN_DEVELOPER_SERVLET" %>
+<%@ page import="static it.academy.util.constants.ParameterNames.*" %>
+<%@ page import="static it.academy.util.constants.ServletURLs.GET_CHAPTERS_OF_CONTRACTOR_DEVELOPER_SERVLET" %>
 <%@ page contentType="text/html;charset=UTF-8" %>
 <html>
 <head>
@@ -21,7 +23,6 @@
 <br>
 <%
     String actionName = MAIN_DEVELOPER_SERVLET;
-    String todoName = TODO_PARAM;
     String countName = CONTRACTOR_COUNT_ON_PAGE_PARAM;
     String pageNumberParamName = CONTRACTOR_PAGE_PARAM;
 
@@ -70,7 +71,7 @@
             </td>
             <td> |</td>
             <td>
-                <form action="<%=GET_CHAPTERS_OF_PROJECT_DEVELOPER_SERVLET%>" method="post">
+                <form action="<%=GET_CHAPTERS_OF_CONTRACTOR_DEVELOPER_SERVLET%>" method="get">
                     <input type="hidden" value="<%=contractorDto.getId().toString()%>" name="<%=CONTRACTOR_ID_PARAM%>">
                     <button class="btn btn-light" type="submit">Details</button>
                 </form>

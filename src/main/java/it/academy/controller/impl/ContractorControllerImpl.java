@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
-import static it.academy.util.Constants.*;
+import static it.academy.util.constants.Messages.*;
 
 @Log4j2
 public class ContractorControllerImpl implements ContractorController {
@@ -75,9 +75,9 @@ public class ContractorControllerImpl implements ContractorController {
     }
 
     @Override
-    public Page<ChapterDto> getFreeChapters(Long contractorId,String chapterName,ProjectStatus projectStatus, int page, int count) throws IOException {
+    public Page<ChapterDto> getFreeChapters(Long contractorId, String chapterName, ProjectStatus projectStatus, int page, int count) throws IOException {
 
-        Page<Chapter> chapterPage = contractorService.getFreeChapters(contractorId,chapterName,projectStatus, page, count);
+        Page<Chapter> chapterPage = contractorService.getFreeChapters(contractorId, chapterName, projectStatus, page, count);
         int pageNumber = chapterPage.getPageNumber();
         List<ChapterDto> list = chapterPage.getList()
                                     .stream()
@@ -159,7 +159,7 @@ public class ContractorControllerImpl implements ContractorController {
     @Override
     public void setProposalStatus(Long proposalId, ProposalStatus newStatus) throws IOException, NotUpdateDataInDbException {
 
-        contractorService.setProposalStatus(proposalId,newStatus);
+        contractorService.setProposalStatus(proposalId, newStatus);
     }
 
     @Override

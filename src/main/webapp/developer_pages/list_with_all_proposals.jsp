@@ -1,8 +1,10 @@
 <%@ page import="it.academy.dto.ProposalDto" %>
 <%@ page import="it.academy.pojo.enums.ProposalStatus" %>
 <%@ page import="it.academy.servlet.WhatToDo" %>
-<%@ page import="static it.academy.util.Constants.*" %>
 <%@ page import="java.util.List" %>
+<%@ page import="static it.academy.util.constants.ServletURLs.MAIN_DEVELOPER_SERVLET" %>
+<%@ page import="static it.academy.util.constants.ParameterNames.*" %>
+<%@ page import="static it.academy.util.constants.ServletURLs.*" %>
 <%@ page contentType="text/html;charset=UTF-8" %>
 <html>
 <head>
@@ -21,13 +23,12 @@
 <br>
 <%
     String actionName = MAIN_DEVELOPER_SERVLET;
-    String todoName = TODO_PARAM;
     String countName = PROPOSAL_COUNT_ON_PAGE_PARAM;
     String pageNumberParamName = PROPOSAL_PAGE_PARAM;
 
     String actionParameterToDoValue = WhatToDo.SHOW_PROPOSALS.toString();
-    int countOnPage = (Integer) session.getAttribute(PROPOSAL_COUNT_ON_PAGE_PARAM);
-    int pageNumber = (Integer) session.getAttribute(PROPOSAL_PAGE_PARAM);
+    int countOnPage = (Integer) session.getAttribute(countName);
+    int pageNumber = (Integer) session.getAttribute(pageNumberParamName);
     ProposalStatus status = (ProposalStatus) session.getAttribute(PROPOSAL_STATUS_PARAM);
     List<ProposalDto> proposalDtoList = (List<ProposalDto>) request.getAttribute(PROPOSAL_DTO_LIST_PARAM);
 %>
@@ -81,36 +82,45 @@
             <td><%=contractorName%>
             </td>
             <td> |</td>
-            <td>
-                <%if (ProposalStatus.APPROVED.equals(status) || ProposalStatus.CONSIDERATION.equals(status)) {%>
 
-                <form action="<%=actionName%>" method="post">
+            <%--<%if (ProposalStatus.APPROVED.equals(status) || ProposalStatus.CONSIDERATION.equals(status)) {%>
+            <td>
+                <form action="<%=CHANGE_PROPOSAL_STATUS_DEVELOPER_SERVLET%>" method="get">
+                    <input type="hidden" value="<%=actionParameterToDoValue%>" name="<%=TODO_PARAM%>">
                     <input type="hidden" value="<%=proposalDto.getId().toString()%>" name="<%=PROPOSAL_ID_PARAM%>">
                     <input type="hidden" value="<%=ProposalStatus.REJECTED.toString()%>"
-                           name="<%=PROPOSAL_NEW_STATUS_PARAM%>">
+                           name="<%=NEW_PROPOSAL_STATUS_PARAM%>">
                     <button class="btn btn-light" type="submit">Reject</button>
                 </form>
-                <%
-                    }
-                    if (ProposalStatus.CONSIDERATION.equals(status)) {
-                %>
-                <form action="<%=actionName%>" method="post">
+            </td>
+            <%
+                }
+                if (ProposalStatus.CONSIDERATION.equals(status)) {
+            %>
+            <td>
+                <form action="<%=CHANGE_PROPOSAL_STATUS_DEVELOPER_SERVLET%>" method="get">
+                    <input type="hidden" value="<%=actionParameterToDoValue%>" name="<%=TODO_PARAM%>">
                     <input type="hidden" value="<%=proposalDto.getId().toString()%>" name="<%=PROPOSAL_ID_PARAM%>">
                     <input type="hidden" value="<%=ProposalStatus.APPROVED.toString()%>"
-                           name="<%=PROPOSAL_NEW_STATUS_PARAM%>">
+                           name="<%=NEW_PROPOSAL_STATUS_PARAM%>">
                     <button class="btn btn-light" type="submit">Approve</button>
                 </form>
-                <%}%>
-                <% if (ProposalStatus.REJECTED.equals(status)) {%>
-
-                <form action="<%=actionName%>" method="post">
+            <td>
+                    <%}%>
+                    <% if (ProposalStatus.REJECTED.equals(status)) {%>
+            <td>
+            <form action="<%=CHANGE_PROPOSAL_STATUS_DEVELOPER_SERVLET%>" method="get">
+                <input type="hidden" value="<%=actionParameterToDoValue%>" name="<%=TODO_PARAM%>">
                     <input type="hidden" value="<%=proposalDto.getId().toString()%>" name="<%=PROPOSAL_ID_PARAM%>">
                     <input type="hidden" value="<%=ProposalStatus.CONSIDERATION.toString()%>"
-                           name="<%=PROPOSAL_NEW_STATUS_PARAM%>">
+                           name="<%=NEW_PROPOSAL_STATUS_PARAM%>">
                     <button class="btn btn-light" type="submit">Return to consideration status</button>
                 </form>
-                <% } %>
-            </td>
+            <td>
+                    <% } %>--%>
+
+            <%@include file="/include_files/change_proposal_status_button_groupe.jsp"%>
+
         </tr>
         <tr></tr>
         <% } %>

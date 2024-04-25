@@ -4,7 +4,8 @@ import it.academy.controller.DeveloperController;
 import it.academy.controller.impl.DeveloperControllerImpl;
 import it.academy.dto.CalculationDto;
 import it.academy.dto.Page;
-import it.academy.exceptions.NotCreateDataInDbException;
+import it.academy.util.ExceptionRedirector;
+import it.academy.util.ParameterFinder;
 import it.academy.util.Util;
 import lombok.extern.log4j.Log4j2;
 
@@ -18,7 +19,14 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static it.academy.util.Constants.*;
+import static it.academy.util.constants.Constants.*;
+import static it.academy.util.constants.JspURLs.DEVELOPER_PAGES_LIST_WITH_CALCULATIONS_JSP;
+import static it.academy.util.constants.JspURLs.EXCEPTION_PAGES_EXCEPTION_IN_WORK_PAGE_3_JSP;
+import static it.academy.util.constants.Messages.BAD_CONNECTION;
+import static it.academy.util.constants.Messages.BLANK_STRING;
+import static it.academy.util.constants.ParameterNames.*;
+import static it.academy.util.constants.ServletURLs.GET_MY_CALCULATION_DEVELOPER_SERVLET;
+import static it.academy.util.constants.ServletURLs.SLASH_STRING;
 
 @Log4j2
 @WebServlet(name = "getMyCalculationDeveloperServlet", urlPatterns = SLASH_STRING + GET_MY_CALCULATION_DEVELOPER_SERVLET)
@@ -29,19 +37,20 @@ public class GetMyCalculationDeveloperServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
-        long chapterId = Util.getNumberValueFromParameter(req, CHAPTER_ID_PARAM, ZERO_LONG_VALUE);
-        String chapterContractorName = Util.getStringValueFromParameter(req, CHAPTER_CONTRACTOR_NAME_PARAM, BLANK_STRING);
-        String chapterName = Util.getStringValueFromParameter(req, CHAPTER_NAME_PARAM, BLANK_STRING);
-        int chapterPrice = Util.getNumberValueFromParameter(req, CHAPTER_PRICE_PARAM, ZERO_INT_VALUE);
-        int page = Util.getNumberValueFromParameter(req, CALCULATION_PAGE_PARAM, FIRST_PAGE_NUMBER);
-        int count = Util.getNumberValueFromParameter(req, CALCULATION_COUNT_ON_PAGE_PARAM, DEFAULT_COUNT_ON_PAGE_5);
+        long chapterId = ParameterFinder.getNumberValueFromParameter(req, CHAPTER_ID_PARAM, ZERO_LONG_VALUE);
+        String chapterContractorName = ParameterFinder.getStringValueFromParameter(req, CHAPTER_CONTRACTOR_NAME_PARAM, BLANK_STRING);
+        String chapterName = ParameterFinder.getStringValueFromParameter(req, CHAPTER_NAME_PARAM, BLANK_STRING);
+        int chapterPrice = ParameterFinder.getNumberValueFromParameter(req, CHAPTER_PRICE_PARAM, ZERO_INT_VALUE);
+        int page = ParameterFinder.getNumberValueFromParameter(req, CALCULATION_PAGE_PARAM, FIRST_PAGE_NUMBER);
+        int count = ParameterFinder.getNumberValueFromParameter(req, CALCULATION_COUNT_ON_PAGE_PARAM, DEFAULT_COUNT_ON_PAGE_5);
+        String projectName = ParameterFinder.getStringValueFromParameter(req, PROJECT_NAME_PARAM, BLANK_STRING);
+        String projectAddress = ParameterFinder.getStringValueFromParameter(req, PROJECT_ADDRESS_PARAM, BLANK_STRING);
 
         Page<CalculationDto> calculationDtoPage = new Page<>(new ArrayList<>(), FIRST_PAGE_NUMBER);
         try {
             calculationDtoPage = controller.getCalculationsByChapterId(chapterId, page, count);
         } catch (IOException e) {
-            req.setAttribute(MESSAGE_PARAM, BAD_CONNECTION);
-            getServletContext().getRequestDispatcher(EXCEPTION_PAGES_EXCEPTION_IN_WORK_PAGE_3_JSP).forward(req, resp);
+            ExceptionRedirector.forwardToException3(req, resp, this, BAD_CONNECTION);
         }
         List<CalculationDto> calculationDtoList = calculationDtoPage.getList();
         page = calculationDtoPage.getPageNumber();
@@ -55,25 +64,15 @@ public class GetMyCalculationDeveloperServlet extends HttpServlet {
         session.setAttribute(CALCULATION_PAGE_PARAM, page);
         session.setAttribute(CALCULATION_COUNT_ON_PAGE_PARAM, count);
 
+        session.setAttribute(PROJECT_NAME_PARAM, projectName);
+        session.setAttribute(PROJECT_ADDRESS_PARAM, projectAddress);
+
         getServletContext().getRequestDispatcher(DEVELOPER_PAGES_LIST_WITH_CALCULATIONS_JSP).forward(req, resp);
     }
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
-        long calculationId = Util.getNumberValueFromParameter(req, CALCULATION_ID_PARAM, ZERO_LONG_VALUE);
-        int sumAdvance = Util.getNumberValueFromParameter(req, SUM_ADVANCE_PARAM, ZERO_INT_VALUE);
-        int sumForWork = Util.getNumberValueFromParameter(req, SUM_FOR_WORK_PARAM, ZERO_INT_VALUE);
-
-        try {
-            if (sumAdvance != ZERO_INT_VALUE) {
-                controller.payAdvance(sumAdvance, calculationId);
-            } else if (sumForWork != ZERO_INT_VALUE) {
-                controller.payForWork(sumForWork, calculationId);
-            }
-        } catch (NotCreateDataInDbException e) {
-            Util.forwardToException2(req, resp, this, NOT_SUCCESS_OPERATION);
-        }
         doGet(req, resp);
     }
 }

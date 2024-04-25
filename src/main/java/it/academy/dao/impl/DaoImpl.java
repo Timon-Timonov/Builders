@@ -1,6 +1,7 @@
 package it.academy.dao.impl;
 
 import it.academy.dao.Dao;
+import it.academy.exceptions.EmailOccupaidException;
 import it.academy.util.HibernateUtil;
 import it.academy.util.functionalInterfaces.TransactionObjectBody;
 import it.academy.util.functionalInterfaces.TransactionVoidBody;
@@ -12,9 +13,8 @@ import javax.persistence.EntityNotFoundException;
 import javax.persistence.NoResultException;
 import javax.persistence.RollbackException;
 import java.io.IOException;
-import java.util.List;
 
-import static it.academy.util.Constants.*;
+import static it.academy.util.constants.Messages.CREATED_SUCCESSFUL;
 
 @Log4j2
 public class DaoImpl<T, R> implements Dao<T, R> {
@@ -25,12 +25,6 @@ public class DaoImpl<T, R> implements Dao<T, R> {
     protected DaoImpl(Class<T> clazz) {
 
         this.clazz = clazz;
-    }
-
-    @Override
-    public List<T> getAll() {
-
-        return getEm().createQuery(getAllQuery(), clazz).getResultList();
     }
 
     @Override
@@ -60,13 +54,6 @@ public class DaoImpl<T, R> implements Dao<T, R> {
     }
 
     @Override
-    public long countOfEntitiesInBase() {
-
-        String countQuery = String.format(SELECT_COUNT_FROM_TABLE, clazz.getSimpleName());
-        return getEm().createQuery(countQuery, Long.class).getSingleResult();
-    }
-
-    @Override
     public void executeInOneTransaction(TransactionVoidBody body)
         throws RollbackException, IOException, EntityNotFoundException, NoResultException, ConstraintViolationException {
 
@@ -84,7 +71,7 @@ public class DaoImpl<T, R> implements Dao<T, R> {
 
     @Override
     public Object executeInOneTransaction(TransactionObjectBody body)
-        throws RollbackException, IOException, EntityNotFoundException, NoResultException, ConstraintViolationException {
+        throws RollbackException, IOException, EntityNotFoundException, NoResultException, ConstraintViolationException , EmailOccupaidException {
 
         Object o;
         try {
@@ -116,10 +103,5 @@ public class DaoImpl<T, R> implements Dao<T, R> {
             return;
         }
         em.close();
-    }
-
-    protected String getAllQuery() {
-
-        return String.format(SELECT_ALL_FROM_TABLE, clazz.getSimpleName());
     }
 }

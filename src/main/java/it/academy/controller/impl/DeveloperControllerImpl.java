@@ -23,7 +23,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static it.academy.util.Constants.*;
+import static it.academy.util.constants.Messages.*;
 
 @Log4j2
 public class DeveloperControllerImpl implements DeveloperController {
@@ -126,7 +126,7 @@ public class DeveloperControllerImpl implements DeveloperController {
     public Page<ChapterDto> getChaptersByContractorIdAndDeveloperId(
         Long developerId, Long contractorId, ProjectStatus status, int page, int count) throws IOException {
 
-        Page<Chapter> chapterPage = developerService.getChaptersByContractorIdAndDeveloperId(developerId,contractorId, status, page, count);
+        Page<Chapter> chapterPage = developerService.getChaptersByContractorIdAndDeveloperId(developerId, contractorId, status, page, count);
         int pageNumber = chapterPage.getPageNumber();
         List<ChapterDto> list = chapterPage.getList().stream()
                                     .map(this::getChapterDtoForDeveloper)

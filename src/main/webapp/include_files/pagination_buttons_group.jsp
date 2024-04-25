@@ -1,5 +1,8 @@
-<p>Select the number of page to display: </p><table>
+<table>
     <tr>
+        <td>
+            <p>Select the number of page to display: </p>
+        </td>
         <td>
             <form action="<%=actionName%>" method="get">
                 <input type="hidden" value="<%=FIRST_PAGE_NUMBER%>" name="<%=pageNumberParamName%>">

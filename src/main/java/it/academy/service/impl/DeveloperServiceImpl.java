@@ -23,7 +23,9 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
-import static it.academy.util.Constants.*;
+import static it.academy.util.constants.Constants.FIRST_PAGE_NUMBER;
+import static it.academy.util.constants.Constants.ZERO_INT_VALUE;
+import static it.academy.util.constants.Messages.*;
 
 @Log4j2
 public class DeveloperServiceImpl implements DeveloperService {
@@ -160,7 +162,7 @@ public class DeveloperServiceImpl implements DeveloperService {
         List<Proposal> list = new ArrayList<>();
         try {
             long totalCount = proposalDao.getCountOfProposalsByDeveloperId(developerId, status);
-            correctPage = Util.getCorrectPageNumber(page, count, totalCount);
+           correctPage = Util.getCorrectPageNumber(page, count, totalCount);
             list.addAll(proposalDao.getProposalsByDeveloperId(developerId, status, correctPage, count));
         } catch (NoResultException e) {
             log.error(THERE_IS_NO_SUCH_DATA_IN_DB_WITH_DEVELOPER_ID + developerId);
@@ -257,9 +259,9 @@ public class DeveloperServiceImpl implements DeveloperService {
         int correctPage = FIRST_PAGE_NUMBER;
         List<Chapter> list = new ArrayList<>();
         try {
-            long totalCount = chapterDao.getCountOfChaptersByContractorIdAndDeveloperId(developerId,contractorId, status);
+            long totalCount = chapterDao.getCountOfChaptersByContractorIdAndDeveloperId(developerId, contractorId, status);
             correctPage = Util.getCorrectPageNumber(page, count, totalCount);
-            list.addAll(chapterDao.getChaptersByContractorIdAndDeveloperId(developerId,contractorId, status, correctPage, count));
+            list.addAll(chapterDao.getChaptersByContractorIdAndDeveloperId(developerId, contractorId, status, correctPage, count));
         } catch (NoResultException e) {
             log.error(THERE_IS_NO_SUCH_DATA_IN_DB_WITH_CONTRACTOR_ID + contractorId);
         } finally {
@@ -362,7 +364,9 @@ public class DeveloperServiceImpl implements DeveloperService {
                     case REJECTED:
                         if (ProposalStatus.CONSIDERATION.equals(newStatus)) {
                             Chapter chapter = proposal.getChapter();
-                            if (ChapterStatus.FREE.equals(chapter.getStatus()) && chapter.getContractor() == null) {
+                            if (ChapterStatus.FREE.equals(chapter.getStatus())
+                                    && chapter.getContractor() == null
+                                    && !proposalDao.isAnyProposalOfChapterApproved(chapter.getId())) {
                                 proposal.setStatus(newStatus);
                                 proposalDao.update(proposal);
                                 log.trace(PROPOSAL_STATUS_CHANGED + proposal.getId() + newStatus);
