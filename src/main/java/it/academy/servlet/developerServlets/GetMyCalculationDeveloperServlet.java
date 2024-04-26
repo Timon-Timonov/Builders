@@ -6,7 +6,6 @@ import it.academy.dto.CalculationDto;
 import it.academy.dto.Page;
 import it.academy.util.ExceptionRedirector;
 import it.academy.util.ParameterFinder;
-import it.academy.util.Util;
 import lombok.extern.log4j.Log4j2;
 
 import javax.servlet.ServletException;
@@ -21,7 +20,6 @@ import java.util.List;
 
 import static it.academy.util.constants.Constants.*;
 import static it.academy.util.constants.JspURLs.DEVELOPER_PAGES_LIST_WITH_CALCULATIONS_JSP;
-import static it.academy.util.constants.JspURLs.EXCEPTION_PAGES_EXCEPTION_IN_WORK_PAGE_3_JSP;
 import static it.academy.util.constants.Messages.BAD_CONNECTION;
 import static it.academy.util.constants.Messages.BLANK_STRING;
 import static it.academy.util.constants.ParameterNames.*;
@@ -51,8 +49,8 @@ public class GetMyCalculationDeveloperServlet extends HttpServlet {
             calculationDtoPage = controller.getCalculationsByChapterId(chapterId, page, count);
         } catch (IOException e) {
             ExceptionRedirector.forwardToException3(req, resp, this, BAD_CONNECTION);
-        }catch (Exception e) {
-            ExceptionRedirector.forwardToException3(req, resp, this,BLANK_STRING);
+        } catch (Exception e) {
+            ExceptionRedirector.forwardToException3(req, resp, this, BLANK_STRING);
         }
         List<CalculationDto> calculationDtoList = calculationDtoPage.getList();
         page = calculationDtoPage.getPageNumber();

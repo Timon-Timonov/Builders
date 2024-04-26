@@ -1,10 +1,6 @@
 package it.academy.service;
 
 import it.academy.dto.Page;
-import it.academy.exceptions.EmailOccupaidException;
-import it.academy.exceptions.NotCreateDataInDbException;
-import it.academy.exceptions.NotUpdateDataInDbException;
-import it.academy.exceptions.RoleException;
 import it.academy.pojo.Calculation;
 import it.academy.pojo.Chapter;
 import it.academy.pojo.Project;
@@ -21,44 +17,36 @@ public interface DeveloperService {
 
     Developer createDeveloper(
         String email, String password, String name, String city, String street, String building)
-        throws IOException, NotCreateDataInDbException, EmailOccupaidException;
+        throws Exception;
 
-    Developer getDeveloper(long userId) throws IOException, RoleException;
+    Developer getDeveloper(long userId) throws Exception;
 
-    Page<Project> getMyProjects(long developerId, ProjectStatus status, int page, int count) throws IOException;
+    Page<Project> getMyProjects(long developerId, ProjectStatus status, int page, int count) throws Exception;
 
-    Page<Contractor> getMyContractors(long developerId, ProjectStatus status, int page, int count) throws IOException;
+    Page<Contractor> getMyContractors(long developerId, ProjectStatus status, int page, int count) throws Exception;
 
-    Page<Proposal> getAllMyProposals(long developerId, ProposalStatus status, int page, int count) throws IOException;
+    Page<Proposal> getAllMyProposals(long developerId, ProposalStatus status, int page, int count) throws Exception;
 
     Project createProject(long developerId, String name, String city, String street, String building)
-        throws IOException, NotCreateDataInDbException;
+        throws Exception;
 
-    void createChapter(long projectId, String name, int price) throws IOException, NotCreateDataInDbException;
+    void createChapter(long projectId, String name, int price) throws Exception;
 
-    void cancelChapter(long chapterId) throws IOException, NotUpdateDataInDbException;
+    void cancelChapter(long chapterId) throws Exception;
 
-    List<Chapter> getChaptersByProjectId(long projectId) throws IOException;
+    List<Chapter> getChaptersByProjectId(long projectId) throws Exception;
 
     Page<Chapter> getChaptersByContractorIdAndDeveloperId(long developerId, long contractorId, ProjectStatus status, int page, int count)
-        throws IOException;
+        throws Exception;
 
-    void rejectProposal(long proposalId) throws IOException, NotUpdateDataInDbException;
-
-    void considerateProposal(long proposalId) throws IOException, NotUpdateDataInDbException;
-
-    void approveProposal(long proposalId) throws IOException, NotUpdateDataInDbException;
+    void changeStatusOfProposal(long proposalId, ProposalStatus newStatus) throws Exception;
 
     Page<Proposal> getProposalsByChapterId(long chapterId, ProposalStatus status, int page, int count)
         throws Exception;
 
-    void startProject(long projectId) throws Exception;
+    void changeProjectStatus(long projectId, ProjectStatus newStatus) throws Exception;
 
-    void endProject(long projectId) throws Exception;
-
-    void cancelProject(long projectId) throws Exception;
-
-    Page<Calculation> getCalculationsByChapterId(long chapterId, int page, int count) throws IOException, Exception;
+    Page<Calculation> getCalculationsByChapterId(long chapterId, int page, int count) throws Exception;
 
     void payAdvance(int sum, long calculationId) throws Exception;
 
@@ -67,5 +55,4 @@ public interface DeveloperService {
     int getProjectDept(Project project);
 
     int getTotalDeptByContractor(long contractorId, long developerId) throws IOException;
-
 }

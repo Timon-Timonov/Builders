@@ -7,7 +7,6 @@ import it.academy.dto.Page;
 import it.academy.pojo.enums.ProjectStatus;
 import it.academy.util.ExceptionRedirector;
 import it.academy.util.ParameterFinder;
-import it.academy.util.Util;
 import lombok.extern.log4j.Log4j2;
 
 import javax.servlet.ServletException;
@@ -37,7 +36,7 @@ public class GetMyProposalsServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
-        Long contractorId = ParameterFinder.getNumberValueFromParameter(req, ID_PARAM, ZERO_LONG_VALUE);
+        long contractorId = ParameterFinder.getNumberValueFromParameter(req, ID_PARAM, ZERO_LONG_VALUE);
         String chapterName = ParameterFinder.getStringValueFromParameter(req, CHAPTER_NAME_PARAM, BLANK_STRING);
         ProjectStatus status = ParameterFinder.getProjectStatusFromParameter(req, PROJECT_STATUS_PARAM, DEFAULT_PROJECT_STATUS);
         int page = ParameterFinder.getNumberValueFromParameter(req, CHAPTER_PAGE_PARAM, FIRST_PAGE_NUMBER);
@@ -48,8 +47,8 @@ public class GetMyProposalsServlet extends HttpServlet {
             chapterDtoPage = controller.getFreeChapters(contractorId, chapterName, status, page, count);
         } catch (IOException e) {
             ExceptionRedirector.forwardToException3(req, resp, this, BAD_CONNECTION);
-        }catch (Exception e) {
-            ExceptionRedirector.forwardToException3(req, resp, this,BLANK_STRING);
+        } catch (Exception e) {
+            ExceptionRedirector.forwardToException3(req, resp, this, BLANK_STRING);
         }
         List<ChapterDto> chapterDtoList = chapterDtoPage.getList();
         page = chapterDtoPage.getPageNumber();

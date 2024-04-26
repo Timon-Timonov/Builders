@@ -7,9 +7,12 @@ import it.academy.pojo.enums.ProjectStatus;
 import it.academy.pojo.enums.ProposalStatus;
 
 import javax.persistence.NoResultException;
+import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import java.io.IOException;
 import java.util.List;
+
+import static it.academy.util.constants.Constants.ZERO_INT_VALUE;
 
 public class ProposalDaoImpl extends DaoImpl<Proposal, Long> implements ProposalDao {
 
@@ -123,6 +126,17 @@ public class ProposalDaoImpl extends DaoImpl<Proposal, Long> implements Proposal
         Long countOfApprovedProposals = query.setParameter("chapterId", chapterId)
                                             .setParameter("proposalStatus", ProposalStatus.APPROVED)
                                             .getSingleResult();
-        return countOfApprovedProposals != 0;
+        return countOfApprovedProposals != ZERO_INT_VALUE;
+    }
+
+    @Override
+    public void rejectAllConsiderateProposalsOfChapter(long chapterId) throws IOException {
+
+        Query query = getEm().createQuery(
+            "UPDATE Proposal p SET p.status=:newStatus WHERE p.chapter.id=:chapterId AND p.status=:oldStatus ");
+        query.setParameter("newStatus", ProposalStatus.REJECTED)
+            .setParameter("oldStatus", ProposalStatus.CONSIDERATION)
+            .setParameter("chapterId", chapterId)
+            .executeUpdate();
     }
 }

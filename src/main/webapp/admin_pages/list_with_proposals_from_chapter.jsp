@@ -1,12 +1,9 @@
 <%@ page import="it.academy.dto.ProposalDto" %>
 <%@ page import="it.academy.pojo.enums.ProposalStatus" %>
 <%@ page import="java.util.List" %>
-<%@ page import="static it.academy.util.constants.ServletURLs.MAIN_CONTRACTOR_SERVLET" %>
 <%@ page import="static it.academy.util.constants.ParameterNames.PROPOSAL_COUNT_ON_PAGE_PARAM" %>
 <%@ page import="static it.academy.util.constants.ParameterNames.PROPOSAL_PAGE_PARAM" %>
 <%@ page import="static it.academy.util.constants.ParameterNames.*" %>
-<%@ page import="static it.academy.util.constants.ServletURLs.CHANGE_PROPOSAL_STATUS_CONTRACTOR_SERVLET" %>
-<%@ page import="static it.academy.util.constants.Messages.BLANK_STRING" %>
 <%@ page import="static it.academy.util.constants.ServletURLs.*" %>
 <%@ page contentType="text/html;charset=UTF-8" %>
 <html>
@@ -95,14 +92,30 @@
 <br>
 <br>
 <div class="container text-center">
-    <%if(session.getAttribute(PROJECT_ID_PARAM)!=null){%>
+    <%if (session.getAttribute(PROJECT_ID_PARAM) != null) {%>
     <form action="<%=GET_CHAPTERS_FROM_PROJECT_ADMINISTRATOR_SERVLET%>" method="get">
-        <button class="btn btn-light" type="submit">To list with chapters</button>
+        <button class="btn btn-light" type="submit">To list with chapters of project</button>
     </form>
     <% } %>
-    <%if(session.getAttribute(DEVELOPER_ID_PARAM)!=null){%>
+
+    <%if (session.getAttribute(CONTRACTOR_ID_PARAM) != null) {%>
+    <form action="<%=GET_CHAPTERS_FROM_CONTRACTOR_ADMINISTRATOR_SERVLET%>" method="get">
+        <button class="btn btn-light" type="submit">To list with chapters of contractor</button>
+    </form>
+    <br>
+    <% } %>
+
+    <%if (session.getAttribute(DEVELOPER_ID_PARAM) != null) {%>
     <form action="<%=GET_PROJECTS_ADMINISTRATOR_SERVLET%>" method="get">
-        <button class="btn btn-light" type="submit">To list with projects</button>
+        <button class="btn btn-light" type="submit">To list with project</button>
+    </form>
+    <br>
+    <% } %>
+
+
+    <%if (session.getAttribute(DEVELOPER_ID_PARAM) != null) {%>
+    <form action="<%=GET_PROJECTS_ADMINISTRATOR_SERVLET%>" method="get">
+        <button class="btn btn-light" type="submit">To list with projects of developer</button>
     </form>
     <% } %>
     <%@include file="/include_files/go_to_main_button_file.jsp" %>

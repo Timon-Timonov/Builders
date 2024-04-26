@@ -1,8 +1,6 @@
 package it.academy.service;
 
 import it.academy.dto.Page;
-import it.academy.exceptions.EmailOccupaidException;
-import it.academy.exceptions.NotCreateDataInDbException;
 import it.academy.exceptions.NotUpdateDataInDbException;
 import it.academy.pojo.*;
 import it.academy.pojo.enums.ProjectStatus;
@@ -11,7 +9,6 @@ import it.academy.pojo.enums.UserStatus;
 import it.academy.pojo.legalEntities.Contractor;
 import it.academy.pojo.legalEntities.Developer;
 
-import javax.persistence.NoResultException;
 import java.io.IOException;
 import java.util.List;
 

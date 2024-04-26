@@ -1,7 +1,6 @@
 package it.academy.servlet.adminServlets;
 
 import it.academy.controller.impl.AdminControllerImpl;
-import it.academy.exceptions.NotUpdateDataInDbException;
 import it.academy.pojo.enums.UserStatus;
 import it.academy.util.ExceptionRedirector;
 import it.academy.util.ParameterFinder;
@@ -31,7 +30,7 @@ public class ChangeUserStatusAdministratorServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
-        Long userId = ParameterFinder.getNumberValueFromParameter(req, USER_ID_PARAM, ZERO_LONG_VALUE);
+        long userId = ParameterFinder.getNumberValueFromParameter(req, USER_ID_PARAM, ZERO_LONG_VALUE);
         UserStatus newStatus = ParameterFinder.getUserStatusFromParameter(req, NEW_USER_STATUS_PARAM, DEFAULT_USER_STATUS);
         try {
             controller.changeUserStatus(userId, newStatus);

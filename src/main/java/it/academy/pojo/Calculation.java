@@ -31,12 +31,11 @@ public class Calculation {
     @Column(name = "work_price_fact")
     private Integer workPriceFact;
 
-
     @ManyToOne
     @JoinColumn(name = "chapter_id")
     private Chapter chapter;
 
     @Builder.Default
-    @OneToMany(mappedBy = "calculation", fetch = FetchType.EAGER,cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "calculation", fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
     private Set<MoneyTransfer> transferSet = new HashSet<>();
 }

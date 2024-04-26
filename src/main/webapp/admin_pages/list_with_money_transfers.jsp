@@ -1,6 +1,4 @@
-<%@ page import="static it.academy.util.constants.ServletURLs.CREATE_CALCULATION_CONTRACTOR_SERVLET" %>
 <%@ page import="static it.academy.util.constants.ParameterNames.*" %>
-<%@ page import="static it.academy.util.constants.ServletURLs.GET_MY_CALCULATION_CONTRACTOR_SERVLET" %>
 <%@ page import="it.academy.dto.MoneyTransferDto" %>
 <%@ page import="it.academy.servlet.WhatToDo" %>
 <%@ page import="java.util.List" %>

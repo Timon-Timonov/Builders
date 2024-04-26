@@ -2,7 +2,6 @@ package it.academy.dao.impl;
 
 import it.academy.dao.Dao;
 import it.academy.dto.Page;
-import it.academy.exceptions.EmailOccupaidException;
 import it.academy.util.HibernateUtil;
 import it.academy.util.functionalInterfaces.*;
 import lombok.extern.log4j.Log4j2;

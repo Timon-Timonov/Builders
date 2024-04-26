@@ -5,7 +5,6 @@ import it.academy.controller.impl.ContractorControllerImpl;
 import it.academy.dto.ChapterDto;
 import it.academy.util.ExceptionRedirector;
 import it.academy.util.ParameterFinder;
-import it.academy.util.Util;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -33,7 +32,7 @@ public class GetMyChaptersServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
-        Long projectId = ParameterFinder.getNumberValueFromParameter(req, PROJECT_ID_PARAM, ZERO_LONG_VALUE);
+        long projectId = ParameterFinder.getNumberValueFromParameter(req, PROJECT_ID_PARAM, ZERO_LONG_VALUE);
         String projectName = ParameterFinder.getStringValueFromParameter(req, PROJECT_NAME_PARAM, BLANK_STRING);
         String projectAddress = ParameterFinder.getStringValueFromParameter(req, PROJECT_ADDRESS_PARAM, BLANK_STRING);
         String projectDeveloper = ParameterFinder.getStringValueFromParameter(req, PROJECT_DEVELOPER_PARAM, BLANK_STRING);
@@ -46,8 +45,8 @@ public class GetMyChaptersServlet extends HttpServlet {
             chapterDtoList = controller.getMyChaptersByProjectId(projectId, contractorId);
         } catch (IOException e) {
             ExceptionRedirector.forwardToException3(req, resp, this, BAD_CONNECTION);
-        }catch (Exception e) {
-            ExceptionRedirector.forwardToException3(req, resp, this,BLANK_STRING);
+        } catch (Exception e) {
+            ExceptionRedirector.forwardToException3(req, resp, this, BLANK_STRING);
         }
 
         req.setAttribute(CHAPTER_DTO_LIST_PARAM, chapterDtoList);

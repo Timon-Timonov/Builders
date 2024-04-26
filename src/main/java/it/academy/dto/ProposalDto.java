@@ -15,9 +15,9 @@ public class ProposalDto {
 
     private Long id;
 
-    private Long contractorId;
+    private long contractorId;
 
-    private Long chapterId;
+    private long chapterId;
 
     @Builder.Default
     private ProposalStatus status = ProposalStatus.CONSIDERATION;

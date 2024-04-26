@@ -5,7 +5,6 @@ import it.academy.controller.impl.DeveloperControllerImpl;
 import it.academy.exceptions.NotCreateDataInDbException;
 import it.academy.util.ExceptionRedirector;
 import it.academy.util.ParameterFinder;
-import it.academy.util.Util;
 import lombok.extern.log4j.Log4j2;
 
 import javax.servlet.ServletException;
@@ -43,8 +42,8 @@ public class PayMoneyDeveloperServlet extends HttpServlet {
             }
         } catch (NotCreateDataInDbException e) {
             ExceptionRedirector.forwardToException2(req, resp, this, NOT_SUCCESS_OPERATION);
-        }catch (Exception e) {
-            ExceptionRedirector.forwardToException3(req, resp, this,BLANK_STRING);
+        } catch (Exception e) {
+            ExceptionRedirector.forwardToException3(req, resp, this, BLANK_STRING);
         }
         getServletContext().getRequestDispatcher(SLASH_STRING + GET_MY_CALCULATION_DEVELOPER_SERVLET).forward(req, resp);
     }

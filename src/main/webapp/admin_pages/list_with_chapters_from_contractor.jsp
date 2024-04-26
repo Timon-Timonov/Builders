@@ -2,8 +2,6 @@
 <%@ page import="it.academy.servlet.WhatToDo" %>
 <%@ page import="java.util.List" %>
 <%@ page import="static it.academy.util.constants.ParameterNames.*" %>
-<%@ page import="static it.academy.util.constants.ServletURLs.GET_MY_CALCULATION_CONTRACTOR_SERVLET" %>
-<%@ page import="static it.academy.util.constants.ServletURLs.GET_MY_PROJECTS_BY_DEVELOPER_CONTRACTOR_SERVLET" %>
 <%@ page import="static it.academy.util.constants.ServletURLs.*" %>
 <%@ page contentType="text/html;charset=UTF-8" %>
 <html>
@@ -93,7 +91,7 @@
 <div class="container text-center">
     <form action="<%=MAIN_ADMINISTRATOR_SERVLET%>" method="get">
         <input type="hidden" value="<%= WhatToDo.SHOW_CONTRACTORS.toString()%>" name="<%=TODO_PARAM%>">
-        <button class="btn btn-secondary" type="submit">Return to list with contractors</button>
+        <button class="btn btn-secondary" type="submit">To list with contractors</button>
     </form>
     <br>
     <%@include file="/include_files/go_to_main_button_file.jsp" %>

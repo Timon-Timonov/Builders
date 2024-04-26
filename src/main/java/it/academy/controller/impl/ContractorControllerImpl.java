@@ -2,10 +2,6 @@ package it.academy.controller.impl;
 
 import it.academy.controller.ContractorController;
 import it.academy.dto.*;
-import it.academy.exceptions.EmailOccupaidException;
-import it.academy.exceptions.NotCreateDataInDbException;
-import it.academy.exceptions.NotUpdateDataInDbException;
-import it.academy.exceptions.RoleException;
 import it.academy.pojo.Calculation;
 import it.academy.pojo.Chapter;
 import it.academy.pojo.Project;
@@ -39,13 +35,7 @@ public class ContractorControllerImpl implements ContractorController {
     }
 
     @Override
-    public ContractorDto getContractor(Long userId) throws Exception {
-
-        return ContractorConverter.convertToDto(contractorService.getContractor(userId), null);
-    }
-
-    @Override
-    public Page<ProjectDto> getMyProjects(Long contractorId, ProjectStatus status, int page, int count) throws Exception {
+    public Page<ProjectDto> getMyProjects(long contractorId, ProjectStatus status, int page, int count) throws Exception {
 
         Page<Project> projectPage = contractorService.getMyProjects(contractorId, status, page, count);
         int pageNumber = projectPage.getPageNumber();
@@ -57,7 +47,7 @@ public class ContractorControllerImpl implements ContractorController {
     }
 
     @Override
-    public Page<ProjectDto> getMyProjectsByDeveloper(Long developerId, Long contractorId, ProjectStatus status, int page, int count) throws Exception {
+    public Page<ProjectDto> getMyProjectsByDeveloper(long developerId, long contractorId, ProjectStatus status, int page, int count) throws Exception {
 
         Page<Project> projectPage = contractorService.getMyProjectsByDeveloper(developerId, contractorId, status, page, count);
         int pageNumber = projectPage.getPageNumber();
@@ -75,7 +65,7 @@ public class ContractorControllerImpl implements ContractorController {
     }
 
     @Override
-    public Page<ChapterDto> getFreeChapters(Long contractorId, String chapterName, ProjectStatus projectStatus, int page, int count) throws Exception {
+    public Page<ChapterDto> getFreeChapters(long contractorId, String chapterName, ProjectStatus projectStatus, int page, int count) throws Exception {
 
         Page<Chapter> chapterPage = contractorService.getFreeChapters(contractorId, chapterName, projectStatus, page, count);
         int pageNumber = chapterPage.getPageNumber();
@@ -87,7 +77,7 @@ public class ContractorControllerImpl implements ContractorController {
     }
 
     @Override
-    public Page<DeveloperDto> getMyDevelopers(Long contractorId, ProjectStatus status, int page, int count) throws Exception {
+    public Page<DeveloperDto> getMyDevelopers(long contractorId, ProjectStatus status, int page, int count) throws Exception {
 
         Page<Developer> developerPage = contractorService.getMyDevelopers(contractorId, status, page, count);
         int pageNumber = developerPage.getPageNumber();
@@ -107,7 +97,7 @@ public class ContractorControllerImpl implements ContractorController {
     }
 
     @Override
-    public Page<ProposalDto> getMyProposals(Long contractorId, ProposalStatus status, int page, int count) throws Exception {
+    public Page<ProposalDto> getMyProposals(long contractorId, ProposalStatus status, int page, int count) throws Exception {
 
         Page<Proposal> proposalPage = contractorService.getMyProposals(contractorId, status, page, count);
         int pageNumber = proposalPage.getPageNumber();
@@ -119,7 +109,7 @@ public class ContractorControllerImpl implements ContractorController {
     }
 
     @Override
-    public List<ChapterDto> getMyChaptersByProjectId(Long ProjectId, Long ContractorId) throws Exception {
+    public List<ChapterDto> getMyChaptersByProjectId(long ProjectId, long ContractorId) throws Exception {
 
 
         return contractorService.getMyChaptersByProjectId(ProjectId, ContractorId).stream()
@@ -131,7 +121,7 @@ public class ContractorControllerImpl implements ContractorController {
     }
 
     @Override
-    public Page<CalculationDto> getCalculationsByChapter(Long chapterId, int page, int count) throws Exception {
+    public Page<CalculationDto> getCalculationsByChapter(long chapterId, int page, int count) throws Exception {
 
         Page<Calculation> calculationPage = contractorService.getCalculationsByChapter(chapterId, page, count);
         List<CalculationDto> list = calculationPage.getList().stream()
@@ -144,31 +134,31 @@ public class ContractorControllerImpl implements ContractorController {
     }
 
     @Override
-    public void updateWorkPriceFact(Integer workPrice, Long calculationId) throws Exception {
+    public void updateWorkPriceFact(int workPrice, long calculationId) throws Exception {
 
         contractorService.updateWorkPriceFact(workPrice, calculationId);
     }
 
     @Override
-    public CalculationDto createCalculation(Long chapterId, Integer YYYY, Integer MM, Integer workPricePlan) throws Exception {
+    public void createCalculation(long chapterId, int YYYY, int MM, int workPricePlan) throws Exception {
 
         Calculation calculation = contractorService.createCalculation(chapterId, YYYY, MM, workPricePlan);
-        return CalculationConverter.convertToDto(calculation, null, null, null);
+        CalculationConverter.convertToDto(calculation, null, null, null);
     }
 
     @Override
-    public void setProposalStatus(Long proposalId, ProposalStatus newStatus) throws Exception {
+    public void setProposalStatus(long proposalId, ProposalStatus newStatus) throws Exception {
 
         contractorService.setProposalStatus(proposalId, newStatus);
     }
 
     @Override
-    public ProposalDto createProposal(Long chapterId, Long contractorId) throws Exception {
+    public void createProposal(long chapterId, long contractorId) throws Exception {
 
-        return ProposalConverter.convertToDto(contractorService.createProposal(chapterId, contractorId));
+        ProposalConverter.convertToDto(contractorService.createProposal(chapterId, contractorId));
     }
 
-    private ProjectDto getProjectDtoForContractor(Long contractorId, Project project) {
+    private ProjectDto getProjectDtoForContractor(long contractorId, Project project) {
 
         AtomicReference<Integer> projectDebt = new AtomicReference<>(0);
         Integer projectPrice = project.getChapters().stream()

@@ -1,7 +1,6 @@
 package it.academy.pojo;
 
 import it.academy.pojo.enums.ChapterStatus;
-import it.academy.pojo.enums.ProposalStatus;
 import it.academy.pojo.legalEntities.Contractor;
 import lombok.*;
 
@@ -43,7 +42,7 @@ public class Chapter {
     private Contractor contractor;
 
     @Builder.Default
-    @OneToMany(mappedBy = "chapter",cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "chapter", cascade = CascadeType.REMOVE)
     private Set<Proposal> proposalSet = new HashSet<>();
 
     @Builder.Default

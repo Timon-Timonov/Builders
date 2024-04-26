@@ -101,6 +101,8 @@ public final class Messages {
     public static final String USER_NOT_DELETE = "User not delete.";
     public static final String PROJECT_NOT_DELETE = "Project not delete.";
     public static final String USER_NOT_CREATE = "User not create.";
+    public static final String PROPOSAL_STATUSES_OF_ALL_CHAPTER_CHANGED_CHAPTER_ID = "Proposal statuses of all chapter changed. Chapter id= ";
+    public static final String DEVELOPER_CREATED_ID = "Developer created: id=";
 
     private Messages() {
     }

@@ -47,6 +47,7 @@ public class MainAdministratorServlet extends HttpServlet {
             log.debug(TODO_PARAM + toDoString, e);
         }
 
+
         if (toDoNow != null) {
             switch (toDoNow) {
                 case SHOW_ADMINISTRATORS:
@@ -90,8 +91,6 @@ public class MainAdministratorServlet extends HttpServlet {
 
     private void showContractors(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
-        SessionCleaner.clearDeveloperAttributes(req);
-
         UserStatus status = ParameterFinder.getUserStatusFromParameter(req, USER_STATUS_PARAM, DEFAULT_USER_STATUS);
         int page = ParameterFinder.getNumberValueFromParameter(req, CONTRACTOR_PAGE_PARAM, FIRST_PAGE_NUMBER);
         int count = ParameterFinder.getNumberValueFromParameter(req, CONTRACTOR_COUNT_ON_PAGE_PARAM, DEFAULT_COUNT_ON_PAGE_5);
@@ -101,7 +100,7 @@ public class MainAdministratorServlet extends HttpServlet {
             contractorDtoPage = controller.getAllContractors(status, page, count);
         } catch (IOException e) {
             ExceptionRedirector.forwardToException3(req, resp, this, BAD_CONNECTION);
-        }catch (Exception e) {
+        } catch (Exception e) {
             ExceptionRedirector.forwardToException3(req, resp, this, e.getMessage());
         }
         page = contractorDtoPage.getPageNumber();
@@ -118,6 +117,7 @@ public class MainAdministratorServlet extends HttpServlet {
 
     private void showDevelopers(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
+        SessionCleaner.clearDeveloperAttributes(req);
         UserStatus status = ParameterFinder.getUserStatusFromParameter(req, USER_STATUS_PARAM, DEFAULT_USER_STATUS);
         int page = ParameterFinder.getNumberValueFromParameter(req, DEVELOPER_PAGE_PARAM, FIRST_PAGE_NUMBER);
         int count = ParameterFinder.getNumberValueFromParameter(req, DEVELOPER_COUNT_ON_PAGE_PARAM, DEFAULT_COUNT_ON_PAGE_5);
@@ -127,7 +127,7 @@ public class MainAdministratorServlet extends HttpServlet {
             developerDtoPage = controller.getAllDevelopers(status, page, count);
         } catch (IOException e) {
             ExceptionRedirector.forwardToException3(req, resp, this, BAD_CONNECTION);
-        }catch (Exception e) {
+        } catch (Exception e) {
             ExceptionRedirector.forwardToException3(req, resp, this, e.getMessage());
         }
         page = developerDtoPage.getPageNumber();

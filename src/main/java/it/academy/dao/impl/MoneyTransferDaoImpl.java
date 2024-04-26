@@ -16,7 +16,7 @@ public class MoneyTransferDaoImpl extends DaoImpl<MoneyTransfer, Long> implement
     }
 
     @Override
-    public List<MoneyTransfer> getMoneyTransfersByCalculationId(Long calculationId)throws NoResultException, IOException {
+    public List<MoneyTransfer> getMoneyTransfersByCalculationId(Long calculationId) throws NoResultException, IOException {
 
         TypedQuery<MoneyTransfer> query = getEm().createQuery("SELECT  mt from MoneyTransfer mt WHERE mt.calculation.id=:calculationId ",
             MoneyTransfer.class);

@@ -4,10 +4,8 @@ import it.academy.controller.DeveloperController;
 import it.academy.controller.impl.DeveloperControllerImpl;
 import it.academy.exceptions.NotUpdateDataInDbException;
 import it.academy.pojo.enums.ProjectStatus;
-
 import it.academy.util.ExceptionRedirector;
 import it.academy.util.ParameterFinder;
-import it.academy.util.Util;
 import lombok.extern.log4j.Log4j2;
 
 import javax.servlet.ServletException;
@@ -32,7 +30,7 @@ public class ProjectStatusDeveloperServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
-        Long projectId = ParameterFinder.getNumberValueFromParameter(req, PROJECT_ID_PARAM, ZERO_LONG_VALUE);
+        long projectId = ParameterFinder.getNumberValueFromParameter(req, PROJECT_ID_PARAM, ZERO_LONG_VALUE);
         ProjectStatus newStatus = ParameterFinder.getProjectStatusFromParameter(req, NEW_PROJECT_STATUS_PARAM, null);
         ProjectStatus oldStatus = ParameterFinder.getProjectStatusFromParameter(req, PROJECT_STATUS_PARAM, null);
         HttpSession session = req.getSession();
@@ -40,20 +38,20 @@ public class ProjectStatusDeveloperServlet extends HttpServlet {
             switch (newStatus) {
                 case IN_PROCESS:
                     if (ProjectStatus.PREPARATION.equals(oldStatus)) {
-                        controller.startProject(projectId);
+                        controller.changeProjectStatus(projectId, newStatus);
                         session.setAttribute(PROJECT_STATUS_PARAM, newStatus);
                     }
                     break;
                 case COMPLETED:
                     if (ProjectStatus.IN_PROCESS.equals(oldStatus)) {
-                        controller.endProject(projectId);
+                        controller.changeProjectStatus(projectId, newStatus);
                         session.setAttribute(PROJECT_STATUS_PARAM, newStatus);
                     }
                     break;
                 case CANCELED:
                     if (ProjectStatus.PREPARATION.equals(oldStatus) ||
                             ProjectStatus.IN_PROCESS.equals(oldStatus)) {
-                        controller.cancelProject(projectId);
+                        controller.changeProjectStatus(projectId, newStatus);
                         session.setAttribute(PROJECT_STATUS_PARAM, newStatus);
                     }
                     break;
@@ -64,8 +62,8 @@ public class ProjectStatusDeveloperServlet extends HttpServlet {
             ExceptionRedirector.forwardToException3(req, resp, this, PROJECT_STATUS_NOT_UPDATE);
         } catch (IOException e) {
             ExceptionRedirector.forwardToException3(req, resp, this, BAD_CONNECTION);
-        }catch (Exception e) {
-            ExceptionRedirector.forwardToException3(req, resp, this,BLANK_STRING);
+        } catch (Exception e) {
+            ExceptionRedirector.forwardToException3(req, resp, this, BLANK_STRING);
         }
         getServletContext().getRequestDispatcher(SLASH_STRING + GET_CHAPTERS_OF_PROJECT_DEVELOPER_SERVLET).forward(req, resp);
     }

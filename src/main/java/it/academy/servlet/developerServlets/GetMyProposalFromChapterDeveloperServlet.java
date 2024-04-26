@@ -7,7 +7,6 @@ import it.academy.dto.ProposalDto;
 import it.academy.pojo.enums.ProposalStatus;
 import it.academy.util.ExceptionRedirector;
 import it.academy.util.ParameterFinder;
-import it.academy.util.Util;
 import lombok.extern.log4j.Log4j2;
 
 import javax.servlet.ServletException;
@@ -51,8 +50,8 @@ public class GetMyProposalFromChapterDeveloperServlet extends HttpServlet {
             proposalDtoPage = controller.getProposalsByChapterId(chapterId, status, page, count);
         } catch (IOException e) {
             ExceptionRedirector.forwardToException3(req, resp, this, BAD_CONNECTION);
-        }catch (Exception e) {
-            ExceptionRedirector.forwardToException3(req, resp, this,BLANK_STRING);
+        } catch (Exception e) {
+            ExceptionRedirector.forwardToException3(req, resp, this, BLANK_STRING);
         }
         page = proposalDtoPage.getPageNumber();
         List<ProposalDto> proposalDtoList = proposalDtoPage.getList();

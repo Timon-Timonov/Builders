@@ -31,4 +31,6 @@ public interface ProposalDao extends Dao<Proposal, Long> {
         throws NoResultException;
 
     boolean isAnyProposalOfChapterApproved(Long chapterId) throws IOException;
+
+    void rejectAllConsiderateProposalsOfChapter(long chapterId) throws IOException;
 }

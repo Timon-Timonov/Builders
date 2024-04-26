@@ -34,14 +34,14 @@ public class CreateAdministratorServlet extends HttpServlet {
             controller.createAdmin(email, password);
         } catch (EmailOccupaidException e) {
             log.debug(EMAIL + email + IS_OCCUPIED, e);
-            ExceptionRedirector.forwardToException2(req, resp, this, EMAIL + email + IS_OCCUPIED);
+            ExceptionRedirector.forwardToException3(req, resp, this, EMAIL + email + IS_OCCUPIED);
         } catch (NotCreateDataInDbException e) {
             log.error(USER_NOT_CREATE);
-            ExceptionRedirector.forwardToException2(req, resp, this, ACCOUNT_NOT_CREATE);
+            ExceptionRedirector.forwardToException3(req, resp, this, ACCOUNT_NOT_CREATE);
         } catch (Exception e) {
             log.error(e);
-            ExceptionRedirector.forwardToException2(req, resp, this, e.getMessage());
+            ExceptionRedirector.forwardToException3(req, resp, this, e.getMessage());
         }
-        getServletContext().getRequestDispatcher(SLASH_STRING+MAIN_ADMINISTRATOR_SERVLET).forward(req, resp);
+        getServletContext().getRequestDispatcher(SLASH_STRING + MAIN_ADMINISTRATOR_SERVLET).forward(req, resp);
     }
 }

@@ -6,7 +6,6 @@ import it.academy.exceptions.NotUpdateDataInDbException;
 import it.academy.pojo.enums.ProposalStatus;
 import it.academy.util.ExceptionRedirector;
 import it.academy.util.ParameterFinder;
-import it.academy.util.Util;
 import lombok.extern.log4j.Log4j2;
 
 import javax.servlet.ServletException;
@@ -43,7 +42,7 @@ public class ChangeProposalStatusContractorServlet extends HttpServlet {
             } catch (IOException e) {
                 ExceptionRedirector.forwardToException3(req, resp, this, BAD_CONNECTION);
             } catch (Exception e) {
-                ExceptionRedirector.forwardToException3(req, resp, this,BLANK_STRING);
+                ExceptionRedirector.forwardToException3(req, resp, this, BLANK_STRING);
             }
         } else {
             ExceptionRedirector.forwardToException3(req, resp, this, PROPOSAL_NOT_UPDATE);

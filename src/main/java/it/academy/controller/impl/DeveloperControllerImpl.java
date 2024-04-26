@@ -2,10 +2,6 @@ package it.academy.controller.impl;
 
 import it.academy.controller.DeveloperController;
 import it.academy.dto.*;
-import it.academy.exceptions.EmailOccupaidException;
-import it.academy.exceptions.NotCreateDataInDbException;
-import it.academy.exceptions.NotUpdateDataInDbException;
-import it.academy.exceptions.RoleException;
 import it.academy.pojo.Calculation;
 import it.academy.pojo.Chapter;
 import it.academy.pojo.Project;
@@ -33,21 +29,15 @@ public class DeveloperControllerImpl implements DeveloperController {
     @Override
     public DeveloperDto createDeveloper(
         String email, String password, String name, String city, String street, String building)
-        throws IOException, NotCreateDataInDbException, EmailOccupaidException {
+        throws Exception {
 
         return DeveloperConverter.convertToDto(
             developerService.createDeveloper(email, password, name, city, street, building), null);
     }
 
     @Override
-    public DeveloperDto getDeveloper(Long userId) throws IOException, RoleException {
-
-        return DeveloperConverter.convertToDto(developerService.getDeveloper(userId), null);
-    }
-
-    @Override
     public Page<ProjectDto> getMyProjects(
-        Long developerId, ProjectStatus status, int page, int count) throws IOException {
+        long developerId, ProjectStatus status, int page, int count) throws Exception {
 
         Page<Project> projectPage = developerService.getMyProjects(developerId, status, page, count);
         int pageNumber = projectPage.getPageNumber();
@@ -65,7 +55,7 @@ public class DeveloperControllerImpl implements DeveloperController {
 
     @Override
     public Page<ContractorDto> getMyContractors(
-        Long developerId, ProjectStatus status, int page, int count) throws IOException {
+        long developerId, ProjectStatus status, int page, int count) throws Exception {
 
         Page<Contractor> contractorPage = developerService.getMyContractors(developerId, status, page, count);
         int pageNumber = contractorPage.getPageNumber();
@@ -84,7 +74,7 @@ public class DeveloperControllerImpl implements DeveloperController {
     }
 
     @Override
-    public Page<ProposalDto> getAllMyProposals(Long developerId, ProposalStatus status, int page, int count) throws IOException {
+    public Page<ProposalDto> getAllMyProposals(long developerId, ProposalStatus status, int page, int count) throws Exception {
 
         Page<Proposal> proposalPage = developerService.getAllMyProposals(developerId, status, page, count);
         int pageNumber = proposalPage.getPageNumber();
@@ -96,26 +86,26 @@ public class DeveloperControllerImpl implements DeveloperController {
 
     @Override
     public ProjectDto createProject(
-        Long developerId, String name, String city, String street, String building)
-        throws IOException, NotCreateDataInDbException {
+        long developerId, String name, String city, String street, String building)
+        throws Exception {
 
         return ProjectConverter.convertToDto(developerService.createProject(developerId, name, city, street, building), null, null);
     }
 
     @Override
-    public void createChapter(Long projectId, String name, Integer price) throws IOException, NotCreateDataInDbException {
+    public void createChapter(long projectId, String name, Integer price) throws Exception {
 
         developerService.createChapter(projectId, name, price);
     }
 
     @Override
-    public void cancelChapter(Long chapterId) throws IOException, NotUpdateDataInDbException {
+    public void cancelChapter(long chapterId) throws Exception {
 
         developerService.cancelChapter(chapterId);
     }
 
     @Override
-    public List<ChapterDto> getChaptersByProjectId(Long projectId) throws IOException {
+    public List<ChapterDto> getChaptersByProjectId(long projectId) throws Exception {
 
         return developerService.getChaptersByProjectId(projectId).stream()
                    .map(this::getChapterDtoForDeveloper)
@@ -124,7 +114,7 @@ public class DeveloperControllerImpl implements DeveloperController {
 
     @Override
     public Page<ChapterDto> getChaptersByContractorIdAndDeveloperId(
-        Long developerId, Long contractorId, ProjectStatus status, int page, int count) throws IOException {
+        long developerId, long contractorId, ProjectStatus status, int page, int count) throws Exception {
 
         Page<Chapter> chapterPage = developerService.getChaptersByContractorIdAndDeveloperId(developerId, contractorId, status, page, count);
         int pageNumber = chapterPage.getPageNumber();
@@ -135,26 +125,14 @@ public class DeveloperControllerImpl implements DeveloperController {
     }
 
     @Override
-    public void rejectProposal(Long proposalId) throws IOException, NotUpdateDataInDbException {
+    public void changeStatusOfProposal(long proposalId, ProposalStatus newStaatus) throws Exception {
 
-        developerService.rejectProposal(proposalId);
-    }
-
-    @Override
-    public void considerateProposal(Long proposalId) throws IOException, NotUpdateDataInDbException {
-
-        developerService.considerateProposal(proposalId);
-    }
-
-    @Override
-    public void approveProposal(Long proposalId) throws IOException, NotUpdateDataInDbException {
-
-        developerService.approveProposal(proposalId);
+        developerService.changeStatusOfProposal(proposalId, newStaatus);
     }
 
     @Override
     public Page<ProposalDto> getProposalsByChapterId(
-        Long chapterId, ProposalStatus status, int page, int count) throws Exception {
+        long chapterId, ProposalStatus status, int page, int count) throws Exception {
 
         Page<Proposal> proposalPage = developerService.getProposalsByChapterId(chapterId, status, page, count);
         int pageNumber = proposalPage.getPageNumber();
@@ -165,25 +143,13 @@ public class DeveloperControllerImpl implements DeveloperController {
     }
 
     @Override
-    public void startProject(Long projectId) throws Exception {
+    public void changeProjectStatus(long projectId, ProjectStatus newStatus) throws Exception {
 
-        developerService.startProject(projectId);
+        developerService.changeProjectStatus(projectId, newStatus);
     }
 
     @Override
-    public void endProject(Long projectId) throws Exception {
-
-        developerService.endProject(projectId);
-    }
-
-    @Override
-    public void cancelProject(Long projectId) throws Exception {
-
-        developerService.cancelProject(projectId);
-    }
-
-    @Override
-    public Page<CalculationDto> getCalculationsByChapterId(Long chapterId, int page, int count) throws Exception {
+    public Page<CalculationDto> getCalculationsByChapterId(long chapterId, int page, int count) throws Exception {
 
         Page<Calculation> calculationPage = developerService.getCalculationsByChapterId(chapterId, page, count);
         int pageNumber = calculationPage.getPageNumber();
@@ -197,32 +163,32 @@ public class DeveloperControllerImpl implements DeveloperController {
     }
 
     @Override
-    public void payAdvance(int sum, Long calculationId) throws Exception {
+    public void payAdvance(int sum, long calculationId) throws Exception {
 
         developerService.payAdvance(sum, calculationId);
     }
 
     @Override
-    public void payForWork(int sum, Long calculationId) throws Exception {
+    public void payForWork(int sum, long calculationId) throws Exception {
 
         developerService.payForWork(sum, calculationId);
     }
 
     @Override
-    public Integer getProjectDept(Project project) {
+    public int getProjectDept(Project project) {
 
         return developerService.getProjectDept(project);
     }
 
     @Override
-    public Integer getTotalDeptByContractor(Long contractorId, Long developerId) throws IOException {
+    public int getTotalDeptByContractor(long contractorId, long developerId) throws IOException {
 
         return developerService.getTotalDeptByContractor(contractorId, developerId);
     }
 
     private ChapterDto getChapterDtoForDeveloper(Chapter chapter) {
 
-        Integer chapterDebt = Util.getDebtByChapter(chapter);
+        int chapterDebt = Util.getDebtByChapter(chapter);
         return ChapterConverter.convertToDto(chapter, chapterDebt);
     }
 }

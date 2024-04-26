@@ -12,7 +12,7 @@ public interface DeveloperDao extends Dao<Developer, Long> {
 
     List<Developer> getDevelopers(UserStatus status, int page, int count) throws NoResultException, IOException;
 
-   Long getCountOfDevelopers(UserStatus status) throws NoResultException, IOException;
+    Long getCountOfDevelopers(UserStatus status) throws NoResultException, IOException;
 
     List<Developer> getDevelopersByContractorId(Long contractorId, ProjectStatus status, int page, int count)
         throws NoResultException, IOException;

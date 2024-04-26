@@ -10,5 +10,4 @@ public interface UserDao extends Dao<User, Long> {
     User getUser(String email) throws NoResultException;
 
     List<User> getAdministrators();
-
 }

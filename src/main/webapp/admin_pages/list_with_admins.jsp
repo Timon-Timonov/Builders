@@ -1,9 +1,7 @@
 <%@ page import="it.academy.dto.UserDto" %>
 <%@ page import="it.academy.pojo.enums.UserStatus" %>
 <%@ page import="it.academy.servlet.WhatToDo" %>
-<%@ page import="static it.academy.util.constants.ServletURLs.MAIN_DEVELOPER_SERVLET" %>
 <%@ page import="static it.academy.util.constants.ParameterNames.*" %>
-<%@ page import="static it.academy.util.constants.ServletURLs.GET_CHAPTERS_OF_CONTRACTOR_DEVELOPER_SERVLET" %>
 <%@ page import="static it.academy.util.constants.ServletURLs.*" %>
 <%@ page import="java.util.List" %>
 <%@ page contentType="text/html;charset=UTF-8" %>
@@ -101,6 +99,7 @@
         <input name="<%=PASSWORD_PARAM%>" type="text">
     </label>
         <input type="hidden" value="<%=actionParameterToDoValue%>" name="<%=TODO_PARAM%>">
+        <br>
         <button class="btn btn-light" type="submit">Create new administrator</button>
     </form>
 

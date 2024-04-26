@@ -64,8 +64,6 @@ public class GetProjectsAdministratorServlet extends HttpServlet {
         session.setAttribute(DEVELOPER_ADDRESS_PARAM, developerAddress);
 
         getServletContext().getRequestDispatcher(ADMIN_PAGES_LIST_WITH_PROJECTS_JSP).forward(req, resp);
-
-
     }
 
     @Override

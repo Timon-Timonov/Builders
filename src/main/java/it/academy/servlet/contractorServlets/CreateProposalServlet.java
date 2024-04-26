@@ -5,7 +5,6 @@ import it.academy.controller.impl.ContractorControllerImpl;
 import it.academy.exceptions.NotCreateDataInDbException;
 import it.academy.util.ExceptionRedirector;
 import it.academy.util.ParameterFinder;
-import it.academy.util.Util;
 import lombok.extern.log4j.Log4j2;
 
 import javax.servlet.ServletException;
@@ -30,8 +29,8 @@ public class CreateProposalServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
-        Long contractorId = ParameterFinder.getNumberValueFromParameter(req, ID_PARAM, ZERO_LONG_VALUE);
-        Long chapterId = ParameterFinder.getNumberValueFromParameter(req, CHAPTER_ID_PARAM, ZERO_LONG_VALUE);
+        long contractorId = ParameterFinder.getNumberValueFromParameter(req, ID_PARAM, ZERO_LONG_VALUE);
+        long chapterId = ParameterFinder.getNumberValueFromParameter(req, CHAPTER_ID_PARAM, ZERO_LONG_VALUE);
 
         try {
             controller.createProposal(chapterId, contractorId);
@@ -39,8 +38,8 @@ public class CreateProposalServlet extends HttpServlet {
             ExceptionRedirector.forwardToException3(req, resp, this, PROPOSAL_NOT_CREATE);
         } catch (IOException e) {
             ExceptionRedirector.forwardToException3(req, resp, this, BAD_CONNECTION);
-        }catch (Exception e) {
-            ExceptionRedirector.forwardToException3(req, resp, this,BLANK_STRING);
+        } catch (Exception e) {
+            ExceptionRedirector.forwardToException3(req, resp, this, BLANK_STRING);
         }
 
         getServletContext().getRequestDispatcher(SLASH_STRING + GET_MY_PROPOSAL_CONTRACTOR_SERVLET).forward(req, resp);

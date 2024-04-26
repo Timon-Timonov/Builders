@@ -20,7 +20,6 @@ public interface ProjectDao extends Dao<Project, Long> {
     List<Project> getProjectsByDeveloperId(Long developerId, ProjectStatus status, int page, int count)
         throws NoResultException;
 
-
     Long getCountOfProjects(ProjectStatus status) throws NoResultException;
 
     Long getCountOfProjectsByContractorId(Long contractorId, ProjectStatus status)

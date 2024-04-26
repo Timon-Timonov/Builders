@@ -41,16 +41,6 @@ public class AdminServiceImpl implements AdminService {
     @Override
     public User getUser(String email) throws Exception {
 
-     /*   User user =null;
-        try {
-            user = userDao.getUser(email);
-        } catch (NoResultException e) {
-            log.error(THERE_IS_NO_SUCH_DATA_IN_DB_WITH_EMAIL + email);
-        } finally {
-            userDao.closeManager();
-        }
-        return user;*/
-
         User userFromDb;
         try {
             userFromDb = userDao.executeInOneEntityTransaction(() -> {
@@ -134,19 +124,6 @@ public class AdminServiceImpl implements AdminService {
     @Override
     public Page<Project> getProjectsByDeveloper(long developerId, ProjectStatus status, int page, int count) throws Exception {
 
-      /*  int correctPage = FIRST_PAGE_NUMBER;
-        List<Project> list = new ArrayList<>();
-        try {
-            long totalCount = projectDao.getCountOfProjectsByDeveloperId(developerId, status);
-            correctPage = Util.getCorrectPageNumber(page, count, totalCount);
-            list.addAll(new ArrayList<>(projectDao.getProjectsByDeveloperId(developerId, status, correctPage, count)));
-        } catch (NoResultException e) {
-            log.error(THERE_IS_NO_SUCH_DATA_IN_DB_WITH_PROJECT_STATUS + status);
-        } finally {
-            projectDao.closeManager();
-        }
-        return new Page<>(list, correctPage);*/
-
         Page<Project> projectPage;
 
         try {
@@ -172,17 +149,6 @@ public class AdminServiceImpl implements AdminService {
     @Override
     public List<Chapter> getChaptersByProjectId(long projectId) throws Exception {
 
-     /*   List<Chapter> list = new ArrayList<>();
-        try {
-            list.addAll(chapterDao.getChaptersByProjectId(projectId));
-        } catch (NoResultException e) {
-            log.error(THERE_IS_NO_SUCH_DATA_IN_DB_WITH_PROJECT_ID + projectId);
-        } finally {
-            chapterDao.closeManager();
-        }
-        return list;*/
-
-
         List<Chapter> chapterList = new ArrayList<>();
         try {
             chapterList.addAll(chapterDao.executeInOneListTransaction(
@@ -199,18 +165,6 @@ public class AdminServiceImpl implements AdminService {
     @Override
     public Page<Chapter> getChaptersByContractorId(long contractorId, int page, int count) throws Exception {
 
-      /*  int correctPage = FIRST_PAGE_NUMBER;
-        List<Chapter> list = new ArrayList<>();
-        try {
-            long totalCount = chapterDao.getCountOfChaptersByContractorId(contractorId);
-            correctPage = Util.getCorrectPageNumber(page, count, totalCount);
-            list.addAll(chapterDao.getChaptersByContractorId(contractorId, page, count));
-        } catch (Exception e) {
-            log.error(THERE_IS_NO_SUCH_DATA_IN_DB + contractorId, e);
-        } finally {
-            contractorDao.closeManager();
-        }
-        return new Page<>(list, correctPage);*/
         Page<Chapter> chapterPage;
 
         try {
@@ -236,19 +190,6 @@ public class AdminServiceImpl implements AdminService {
     @Override
     public Page<Calculation> getCalculationsByChapterId(long chapterId, int page, int count)
         throws Exception {
-
-   /*     int correctPage = FIRST_PAGE_NUMBER;
-        List<Calculation> list = new ArrayList<>();
-        try {
-            long totalCount = calculationDao.getCountOfCalculationsByChapterId(chapterId);
-            correctPage = Util.getCorrectPageNumber(page, count, totalCount);
-            list.addAll(calculationDao.getCalculationsByChapterId(chapterId, correctPage, count));
-        } catch (NoResultException e) {
-            log.error(THERE_IS_NO_SUCH_DATA_IN_DB_CHAPTER_ID + chapterId);
-        } finally {
-            calculationDao.closeManager();
-        }
-        return new Page<>(list, correctPage);*/
 
         Page<Calculation> calculationPage;
         try {
@@ -290,19 +231,6 @@ public class AdminServiceImpl implements AdminService {
     @Override
     public Page<Proposal> getProposalsByChapterId(long chapterId, ProposalStatus status, int page, int count) throws Exception {
 
-      /*  int correctPage = FIRST_PAGE_NUMBER;
-        List<Proposal> list = new ArrayList<>();
-        try {
-            long totalCount = proposalDao.getCountOfProposalsByChapterId(chapterId, status);
-            correctPage = Util.getCorrectPageNumber(page, count, totalCount);
-            list.addAll(proposalDao.getProposalsByChapterId(chapterId, status, correctPage, count));
-        } catch (NoResultException e) {
-            log.error(THERE_IS_NO_SUCH_DATA_IN_DB_CHAPTER_ID + chapterId);
-        } finally {
-            proposalDao.closeManager();
-        }
-        return new Page<>(list, correctPage);*/
-
         Page<Proposal> proposalPage;
         try {
             proposalPage = proposalDao.executeInOnePageTransaction(() -> {
@@ -326,19 +254,6 @@ public class AdminServiceImpl implements AdminService {
 
     @Override
     public Page<Proposal> getProposalsByContractorId(long contractorId, ProposalStatus status, int page, int count) throws Exception {
-
-       /* int correctPage = FIRST_PAGE_NUMBER;
-        List<Proposal> list = new ArrayList<>();
-        try {
-            long totalCount = proposalDao.getCountOfProposalsByContractorId(contractorId, status);
-            correctPage = Util.getCorrectPageNumber(page, count, totalCount);
-            list.addAll(proposalDao.getProposalsByContractorId(contractorId, status, correctPage, count));
-        } catch (NoResultException e) {
-            log.error(THERE_IS_NO_SUCH_DATA_IN_DB_CHAPTER_ID + contractorId);
-        } finally {
-            proposalDao.closeManager();
-        }
-        return new Page<>(list, correctPage);*/
 
         Page<Proposal> proposalPage;
         try {
@@ -404,19 +319,6 @@ public class AdminServiceImpl implements AdminService {
     @Override
     public Page<Developer> getAllDevelopers(UserStatus status, int page, int count)
         throws Exception {
-
-    /*    int correctPage = FIRST_PAGE_NUMBER;
-        List<Developer> list = new ArrayList<>();
-        try {
-            long totalCount = developerDao.getCountOfDevelopers(status);
-            correctPage = Util.getCorrectPageNumber(page, count, totalCount);
-            list = new ArrayList<>(developerDao.getDevelopers(status, correctPage, count));
-        } catch (Exception e) {
-            log.error(THERE_IS_NO_SUCH_DATA_IN_DB_WITH_USER_STATUS + status);
-        } finally {
-            developerDao.closeManager();
-        }
-        return new Page<>(list, correctPage);*/
 
         Page<Developer> developerPage;
         try {
@@ -565,7 +467,6 @@ public class AdminServiceImpl implements AdminService {
             throw new NotUpdateDataInDbException(FAILED_BY_CONSTRAINT);
         }
     }
-
 
     @Override
     public List<Project> getAllProjects() throws Exception {

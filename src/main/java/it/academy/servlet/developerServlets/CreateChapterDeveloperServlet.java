@@ -5,7 +5,6 @@ import it.academy.controller.impl.DeveloperControllerImpl;
 import it.academy.exceptions.NotCreateDataInDbException;
 import it.academy.util.ExceptionRedirector;
 import it.academy.util.ParameterFinder;
-import it.academy.util.Util;
 import lombok.extern.log4j.Log4j2;
 
 import javax.servlet.ServletException;
@@ -39,7 +38,7 @@ public class CreateChapterDeveloperServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
-        long projectId =ParameterFinder.getNumberValueFromParameter(req, PROJECT_ID_PARAM, ZERO_LONG_VALUE);
+        long projectId = ParameterFinder.getNumberValueFromParameter(req, PROJECT_ID_PARAM, ZERO_LONG_VALUE);
         String chapterName = ParameterFinder.getStringValueFromParameter(req, CHAPTER_NAME_PARAM, BLANK_STRING).toUpperCase();
         int chapterPrice = ParameterFinder.getNumberValueFromParameter(req, CHAPTER_PRICE_PARAM, ZERO_INT_VALUE);
 
@@ -47,6 +46,8 @@ public class CreateChapterDeveloperServlet extends HttpServlet {
             controller.createChapter(projectId, chapterName, chapterPrice);
         } catch (NotCreateDataInDbException e) {
             ExceptionRedirector.forwardToException3(req, resp, this, CHAPTER_NOT_CREATE);
+        } catch (Exception e) {
+            ExceptionRedirector.forwardToException3(req, resp, this, BLANK_STRING);
         }
         getServletContext().getRequestDispatcher(SLASH_STRING + GET_CHAPTERS_OF_PROJECT_DEVELOPER_SERVLET).forward(req, resp);
     }

@@ -8,5 +8,5 @@ import java.util.List;
 
 public interface MoneyTransferDao extends Dao<MoneyTransfer, Long> {
 
-    List<MoneyTransfer> getMoneyTransfersByCalculationId(Long calculationId)throws NoResultException, IOException;
+    List<MoneyTransfer> getMoneyTransfersByCalculationId(Long calculationId) throws NoResultException, IOException;
 }

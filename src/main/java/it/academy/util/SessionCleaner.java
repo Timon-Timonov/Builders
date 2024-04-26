@@ -42,7 +42,6 @@ public class SessionCleaner {
         session.removeAttribute(DEVELOPER_NAME_PARAM);
         session.removeAttribute(DEVELOPER_ADDRESS_PARAM);
         session.removeAttribute(DEVELOPER_DEBT_PARAM);
-        session.removeAttribute(SHOW_PROJECT_LIST_BY_DEVELOPER_PARAM);
     }
 
     public static void clearProposalAttributes(HttpServletRequest req) {

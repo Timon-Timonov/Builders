@@ -45,53 +45,6 @@ public class ContractorServiceImpl implements ContractorService {
         String email, String password, String name, String city, String street, String building)
         throws Exception {
 
-      /*  AtomicReference<Contractor> contractor = new AtomicReference<>();
-        AtomicBoolean isEmailOccupaid = new AtomicBoolean(false);
-        contractorDao.executeInOneVoidTransaction(() -> {
-            AtomicReference<User> userFromDB = new AtomicReference<>();
-            userDao.executeInOneVoidTransaction(() -> {
-                User user = null;
-                try {
-                    user = userDao.getUser(email);
-                } catch (NoResultException e) {
-                    log.trace(EMAIL + email + NOT_OCCUPIED, e);
-                }
-                if (user != null) {
-                    log.trace(EMAIL + email + OCCUPIED);
-                    isEmailOccupaid.set(true);
-                } else {
-                    User newUser = User.builder()
-                                       .email(email)
-                                       .password(password)
-                                       .role(Roles.CONTRACTOR)
-                                       .status(UserStatus.ACTIVE)
-                                       .build();
-                    userDao.create(newUser);
-                    userFromDB.set(newUser);
-                }
-            });
-            if (userFromDB.get() != null) {
-                Contractor newContractor = Contractor.builder()
-                                               .name(name)
-                                               .address(Address.builder()
-                                                            .city(city)
-                                                            .street(street)
-                                                            .building(building)
-                                                            .build())
-                                               .user(userFromDB.get())
-                                               .build();
-                contractorDao.create(newContractor);
-                log.trace(CONTRACTOR_CREATED_ID + newContractor.getId());
-                contractor.set(newContractor);
-            }
-        });
-        if (isEmailOccupaid.get()) {
-            throw new EmailOccupaidException(EMAIL + email + OCCUPIED);
-        } else if (contractor.get() == null) {
-            throw new NotCreateDataInDbException();
-        }
-        return contractor.get();*/
-
         Contractor createdContractor;
         try {
             createdContractor = contractorDao.executeInOneEntityTransaction(() -> {
@@ -149,30 +102,6 @@ public class ContractorServiceImpl implements ContractorService {
     @Override
     public Contractor getContractor(long userId) throws Exception {
 
-    /*    AtomicReference<Contractor> contractor = new AtomicReference<>();
-        AtomicBoolean roleChecked = new AtomicBoolean(false);
-        contractorDao.executeInOneVoidTransaction(() -> {
-            User user;
-            try {
-                user = userDao.get(userId);
-            } catch (EntityNotFoundException e) {
-                log.error(CONTRACTOR_NOT_FOUND_WITH_ID + userId);
-                throw e;
-            }
-            if (user != null) {
-                if (Roles.CONTRACTOR.equals(user.getRole())) {
-                    contractor.set((Contractor) user.getLegalEntity());
-                    roleChecked.set(true);
-                } else {
-                    log.error(USER_NOT_CONTRACTOR_ID + userId);
-                }
-            }
-        });
-        if (!roleChecked.get()) {
-            throw new RoleException(USER_NOT_CONTRACTOR);
-        }
-        return contractor.get();*/
-
         Contractor contractorFromDb;
         try {
             contractorFromDb = contractorDao.executeInOneEntityTransaction(() -> {
@@ -205,19 +134,6 @@ public class ContractorServiceImpl implements ContractorService {
     public Page<Project> getMyProjects(long contractorId, ProjectStatus status, int page, int count)
         throws Exception {
 
-       /* int correctPage = FIRST_PAGE_NUMBER;
-        List<Project> list = new ArrayList<>();
-        try {
-            long totalCount = projectDao.getCountOfProjectsByContractorId(contractorId, status);
-            correctPage = Util.getCorrectPageNumber(page, count, totalCount);
-            list.addAll(projectDao.getProjectsByContractorId(contractorId, status, correctPage, count));
-        } catch (NoResultException e) {
-            log.error(THERE_IS_NO_SUCH_DATA_IN_DB_WITH_CONTRACTOR_ID + contractorId);
-        } finally {
-            projectDao.closeManager();
-        }
-        return new Page<>(list, correctPage);*/
-
         Page<Project> projectPage;
         try {
             projectPage = projectDao.executeInOnePageTransaction(() -> {
@@ -244,21 +160,6 @@ public class ContractorServiceImpl implements ContractorService {
         long developerId, long contractorId, ProjectStatus status, int page, int count)
         throws Exception {
 
-     /*   int correctPage = FIRST_PAGE_NUMBER;
-        List<Project> list = new ArrayList<>();
-        try {
-            long totalCount = projectDao.getCountOfProjectsByDeveloperIdContractorId(
-                developerId, contractorId, status);
-            correctPage = Util.getCorrectPageNumber(page, count, totalCount);
-            list.addAll(projectDao.getProjectsByDeveloperIdContractorId(
-                developerId, contractorId, status, correctPage, count));
-        } catch (NoResultException e) {
-            log.error(THERE_IS_NO_SUCH_DATA_IN_DB_WITH_CONTRACTOR_ID + contractorId +
-                          AND_DELELOPER_ID + developerId);
-        } finally {
-            projectDao.closeManager();
-        }
-        return new Page<>(list, correctPage);*/
         Page<Project> projectPage;
         try {
             projectPage = projectDao.executeInOnePageTransaction(() -> {
@@ -298,20 +199,6 @@ public class ContractorServiceImpl implements ContractorService {
     @Override
     public Page<Chapter> getFreeChapters(long contractorId, String chapterName, ProjectStatus projectStatus, int page, int count) throws Exception {
 
-       /* AtomicInteger correctPage = new AtomicInteger(FIRST_PAGE_NUMBER);
-        List<Chapter> list = new ArrayList<>();
-        try {
-            chapterDao.executeInOneVoidTransaction(() -> {
-                long totalCount = chapterDao.getCountOfFreeChaptersByName(contractorId, chapterName, projectStatus);
-                correctPage.set(Util.getCorrectPageNumber(page, count, totalCount));
-                list.addAll(chapterDao.getFreeChapters(contractorId, chapterName, projectStatus, correctPage.get(), count));
-            });
-
-        } catch (NoResultException e) {
-            log.error(THERE_IS_NO_SUCH_DATA_IN_DB_WITH_CHPTER_NAME + chapterName);
-        }
-        return new Page<>(list, correctPage.get());*/
-
         Page<Chapter> chapterPage;
         try {
             chapterPage = chapterDao.executeInOnePageTransaction(() -> {
@@ -336,19 +223,6 @@ public class ContractorServiceImpl implements ContractorService {
     @Override
     public Page<Developer> getMyDevelopers(long contractorId, ProjectStatus status, int page, int count)
         throws Exception {
-
-    /*    int correctPage = FIRST_PAGE_NUMBER;
-        List<Developer> list = new ArrayList<>();
-        try {
-            long totalCount = developerDao.getCountOfDevelopers(contractorId, status);
-            correctPage = Util.getCorrectPageNumber(page, count, totalCount);
-            list.addAll(developerDao.getDevelopersByContractorId(contractorId, status, correctPage, count));
-        } catch (NoResultException e) {
-            log.error(THERE_IS_NO_SUCH_DATA_IN_DB_WITH_CONTRACTOR_ID + contractorId);
-        } finally {
-            developerDao.closeManager();
-        }
-        return new Page<>(list, correctPage);*/
 
         Page<Developer> developerPage;
         try {
@@ -375,20 +249,6 @@ public class ContractorServiceImpl implements ContractorService {
     public Page<Proposal> getMyProposals(long contractorId, ProposalStatus status, int page, int count)
         throws Exception {
 
-    /*    AtomicInteger correctPage = new AtomicInteger(FIRST_PAGE_NUMBER);
-        List<Proposal> list = new ArrayList<>();
-        try {
-            proposalDao.executeInOneVoidTransaction(() -> {
-                long totalCount = proposalDao.getCountOfProposalsByContractorId(contractorId, status);
-                correctPage.set(Util.getCorrectPageNumber(page, count, totalCount));
-                list.addAll(proposalDao.getProposalsByContractorId(contractorId, status, correctPage.get(), count));
-            });
-
-        } catch (NoResultException e) {
-            log.error(THERE_IS_NO_SUCH_DATA_IN_DB_WITH_CONTRACTOR_ID + contractorId);
-        }
-        return new Page<>(list, correctPage.get());*/
-
         Page<Proposal> proposalPage;
         try {
             proposalPage = proposalDao.executeInOnePageTransaction(() -> {
@@ -414,17 +274,6 @@ public class ContractorServiceImpl implements ContractorService {
     public List<Chapter> getMyChaptersByProjectId(long projectId, long contractorId)
         throws Exception {
 
-    /*    List<Chapter> list = new ArrayList<>();
-        try {
-            list.addAll(chapterDao.getChaptersByProjectIdContractorId(projectId, contractorId));
-        } catch (NoResultException e) {
-            log.error(THERE_IS_NO_SUCH_DATA_IN_DB_WITH_CONTRACTOR_ID + contractorId +
-                          AND_PROJECT_ID + projectId);
-        } finally {
-            chapterDao.closeManager();
-        }
-        return list;*/
-
         List<Chapter> chapterList;
         try {
             chapterList = chapterDao.executeInOneListTransaction(() -> {
@@ -446,20 +295,6 @@ public class ContractorServiceImpl implements ContractorService {
     @Override
     public Page<Calculation> getCalculationsByChapter(long chapterId, int page, int count)
         throws Exception {
-
-       /* int correctPage = FIRST_PAGE_NUMBER;
-        List<Calculation> list = new ArrayList<>();
-        try {
-            long totalCount = calculationDao.getCountOfCalculationsByChapterId(chapterId);
-            correctPage = (Util.getCorrectPageNumber(page, count, totalCount));
-            list.addAll(calculationDao.getCalculationsByChapterId(chapterId, correctPage, count));
-        } catch (NoResultException e) {
-            log.error(THERE_IS_NO_SUCH_DATA_IN_DB_WITH_CHAPTER_ID + chapterId);
-        } finally {
-            calculationDao.closeManager();
-        }
-        return new Page<>(list, correctPage);*/
-
 
         Page<Calculation> calculationPage;
         try {

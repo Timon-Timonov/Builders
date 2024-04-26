@@ -6,7 +6,6 @@ import it.academy.dto.ProjectDto;
 import it.academy.exceptions.NotCreateDataInDbException;
 import it.academy.util.ExceptionRedirector;
 import it.academy.util.ParameterFinder;
-import it.academy.util.Util;
 import lombok.extern.log4j.Log4j2;
 
 import javax.servlet.ServletException;
@@ -55,6 +54,8 @@ public class CreateProjectDeveloperServlet extends HttpServlet {
 
         } catch (NotCreateDataInDbException e) {
             ExceptionRedirector.forwardToException3(req, resp, this, PROJECT_NOT_CREATE);
+        } catch (Exception e) {
+            ExceptionRedirector.forwardToException3(req, resp, this, BLANK_STRING);
         }
         if (projectDto == null) {
             ExceptionRedirector.forwardToException3(req, resp, this, PROJECT_NOT_CREATE);

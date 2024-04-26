@@ -12,7 +12,6 @@ import it.academy.servlet.WhatToDo;
 import it.academy.util.ExceptionRedirector;
 import it.academy.util.ParameterFinder;
 import it.academy.util.SessionCleaner;
-import it.academy.util.Util;
 import lombok.extern.log4j.Log4j2;
 
 import javax.servlet.ServletException;
@@ -91,8 +90,8 @@ public class MainContractorServlet extends HttpServlet {
             developerDtoPage = controller.getMyDevelopers(id, status, page, count);
         } catch (IOException e) {
             ExceptionRedirector.forwardToException3(req, resp, this, BAD_CONNECTION);
-        }catch (Exception e) {
-            ExceptionRedirector.forwardToException3(req, resp, this,BLANK_STRING);
+        } catch (Exception e) {
+            ExceptionRedirector.forwardToException3(req, resp, this, BLANK_STRING);
         }
         page = developerDtoPage.getPageNumber();
         List<DeveloperDto> developerDtoList = developerDtoPage.getList();
@@ -120,8 +119,8 @@ public class MainContractorServlet extends HttpServlet {
             projectDtoPage = controller.getMyProjects(id, status, page, count);
         } catch (IOException e) {
             ExceptionRedirector.forwardToException3(req, resp, this, BAD_CONNECTION);
-        }catch (Exception e) {
-            ExceptionRedirector.forwardToException3(req, resp, this,BLANK_STRING);
+        } catch (Exception e) {
+            ExceptionRedirector.forwardToException3(req, resp, this, BLANK_STRING);
         }
         page = projectDtoPage.getPageNumber();
         List<ProjectDto> projectDtoList = projectDtoPage.getList();
@@ -149,8 +148,8 @@ public class MainContractorServlet extends HttpServlet {
             proposalDtoPage = controller.getMyProposals(id, status, page, count);
         } catch (IOException e) {
             ExceptionRedirector.forwardToException3(req, resp, this, BAD_CONNECTION);
-        }catch (Exception e) {
-            ExceptionRedirector.forwardToException3(req, resp, this,BLANK_STRING);
+        } catch (Exception e) {
+            ExceptionRedirector.forwardToException3(req, resp, this, BLANK_STRING);
         }
         page = proposalDtoPage.getPageNumber();
         List<ProposalDto> proposalDtoList = proposalDtoPage.getList();

@@ -7,7 +7,6 @@ import it.academy.exceptions.EmailOccupaidException;
 import it.academy.exceptions.NotCreateDataInDbException;
 import it.academy.pojo.enums.Roles;
 import it.academy.util.ExceptionRedirector;
-import it.academy.util.Util;
 import lombok.extern.log4j.Log4j2;
 
 import javax.servlet.ServletException;
@@ -50,6 +49,8 @@ public class CreateDeveloperServlet extends HttpServlet {
         } catch (EmailOccupaidException e) {
             log.debug(EMAIL + email + IS_OCCUPIED, e);
             ExceptionRedirector.forwardToException2(req, resp, this, EMAIL + email + IS_OCCUPIED);
+        } catch (Exception e) {
+            ExceptionRedirector.forwardToException3(req, resp, this, BLANK_STRING);
         }
 
         if (developerDto.getId() != null) {

@@ -46,7 +46,7 @@ public class GetProposalsFromContractorAdministratorServlet extends HttpServlet 
             proposalDtoPage = controller.getProposalsByContractorId(contractorId, status, page, count);
         } catch (IOException e) {
             ExceptionRedirector.forwardToException3(req, resp, this, BAD_CONNECTION);
-        }catch (Exception e) {
+        } catch (Exception e) {
             ExceptionRedirector.forwardToException3(req, resp, this, e.getMessage());
         }
         page = proposalDtoPage.getPageNumber();

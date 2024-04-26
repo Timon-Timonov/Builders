@@ -2,6 +2,8 @@ package it.academy.dto;
 
 import lombok.*;
 
+import static it.academy.util.constants.Constants.ZERO_INT_VALUE;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -15,5 +17,6 @@ public class DeveloperDto {
 
     private AddressDto developerAddress;
 
-    private Integer developerDebt;
+    @Builder.Default
+    private Integer developerDebt = ZERO_INT_VALUE;
 }

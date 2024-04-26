@@ -2,8 +2,6 @@ package it.academy.controller.impl;
 
 import it.academy.controller.AdminController;
 import it.academy.dto.*;
-import it.academy.exceptions.EmailOccupaidException;
-import it.academy.exceptions.NotCreateDataInDbException;
 import it.academy.exceptions.NotUpdateDataInDbException;
 import it.academy.pojo.Calculation;
 import it.academy.pojo.Chapter;
@@ -19,7 +17,6 @@ import it.academy.service.impl.AdminServiceImpl;
 import it.academy.util.Util;
 import it.academy.util.converters.*;
 
-import javax.persistence.NoResultException;
 import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -29,9 +26,9 @@ public class AdminControllerImpl implements AdminController {
     private final AdminService adminService = new AdminServiceImpl();
 
     @Override
-    public UserDto createAdmin(String email, String password) throws Exception {
+    public void createAdmin(String email, String password) throws Exception {
 
-        return UserConverter.convertToDto(adminService.createAdmin(email, password));
+        UserConverter.convertToDto(adminService.createAdmin(email, password));
     }
 
     @Override
@@ -75,7 +72,7 @@ public class AdminControllerImpl implements AdminController {
     }
 
     @Override
-    public Page<ProjectDto> getProjectsByDeveloper(Long developerId, ProjectStatus status, int page, int count) throws Exception {
+    public Page<ProjectDto> getProjectsByDeveloper(long developerId, ProjectStatus status, int page, int count) throws Exception {
 
         Page<Project> projectPage = adminService.getProjectsByDeveloper(developerId, status, page, count);
         int pageNumber = projectPage.getPageNumber();
@@ -87,7 +84,7 @@ public class AdminControllerImpl implements AdminController {
     }
 
     @Override
-    public List<ChapterDto> getChaptersByProjectId(Long projectId) throws Exception {
+    public List<ChapterDto> getChaptersByProjectId(long projectId) throws Exception {
 
         return adminService.getChaptersByProjectId(projectId).stream()
                    .map(chapter -> ChapterConverter.convertToDto(chapter, null))
@@ -95,7 +92,7 @@ public class AdminControllerImpl implements AdminController {
     }
 
     @Override
-    public Page<ChapterDto> getChaptersByContractorId(Long contractorId, int page, int count) throws Exception {
+    public Page<ChapterDto> getChaptersByContractorId(long contractorId, int page, int count) throws Exception {
 
         Page<Chapter> chapterPage = adminService.getChaptersByContractorId(contractorId, page, count);
         int pageNumber = chapterPage.getPageNumber();
@@ -107,7 +104,7 @@ public class AdminControllerImpl implements AdminController {
     }
 
     @Override
-    public List<MoneyTransferDto> getMoneyTransfers(Long calculationId) throws Exception {
+    public List<MoneyTransferDto> getMoneyTransfers(long calculationId) throws Exception {
 
         return adminService.getMoneyTransfers(calculationId).stream()
                    .map(MoneyTransferConverter::convertToDto)
@@ -115,7 +112,7 @@ public class AdminControllerImpl implements AdminController {
     }
 
     @Override
-    public Page<CalculationDto> getCalculationsByChapterId(Long chapterId, int page, int count) throws Exception {
+    public Page<CalculationDto> getCalculationsByChapterId(long chapterId, int page, int count) throws Exception {
 
         Page<Calculation> calculationPage = adminService.getCalculationsByChapterId(chapterId, page, count);
         int pageNumber = calculationPage.getPageNumber();
@@ -151,43 +148,43 @@ public class AdminControllerImpl implements AdminController {
     }
 
     @Override
-    public void changeUserStatus(Long userId, UserStatus newStatus) throws Exception {
+    public void changeUserStatus(long userId, UserStatus newStatus) throws Exception {
 
         adminService.changeUserStatus(userId, newStatus);
     }
 
     @Override
-    public void deleteUser(Long userId) throws IOException, NotUpdateDataInDbException {
+    public void deleteUser(long userId) throws IOException, NotUpdateDataInDbException {
 
         adminService.deleteUser(userId);
     }
 
     @Override
-    public void deleteCalculation(Long calculationId) throws IOException, NotUpdateDataInDbException {
+    public void deleteCalculation(long calculationId) throws IOException, NotUpdateDataInDbException {
 
         adminService.deleteCalculation(calculationId);
     }
 
     @Override
-    public void deleteChapter(Long chapterId) throws IOException, NotUpdateDataInDbException {
+    public void deleteChapter(long chapterId) throws IOException, NotUpdateDataInDbException {
 
         adminService.deleteChapter(chapterId);
     }
 
     @Override
-    public void deleteMoneyTransfer(Long transferId) throws IOException, NotUpdateDataInDbException {
+    public void deleteMoneyTransfer(long transferId) throws IOException, NotUpdateDataInDbException {
 
         adminService.deleteMoneyTransfer(transferId);
     }
 
     @Override
-    public void deleteProject(Long projectId) throws IOException, NotUpdateDataInDbException {
+    public void deleteProject(long projectId) throws IOException, NotUpdateDataInDbException {
 
         adminService.deleteProject(projectId);
     }
 
     @Override
-    public void deleteProposal(Long proposalId) throws IOException, NotUpdateDataInDbException {
+    public void deleteProposal(long proposalId) throws IOException, NotUpdateDataInDbException {
 
         adminService.deleteProposal(proposalId);
     }

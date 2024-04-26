@@ -28,7 +28,7 @@ public class CancelChapterStatusDeveloperServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
-        Long chapterId = ParameterFinder.getNumberValueFromParameter(req, CHAPTER_ID_PARAM, ZERO_LONG_VALUE);
+        long chapterId = ParameterFinder.getNumberValueFromParameter(req, CHAPTER_ID_PARAM, ZERO_LONG_VALUE);
 
         try {
             controller.cancelChapter(chapterId);
@@ -39,6 +39,8 @@ public class CancelChapterStatusDeveloperServlet extends HttpServlet {
         } catch (NotUpdateDataInDbException e) {
             log.error(CHANGING_OF_CHAPTER_STATUS_FAILED + chapterId, e);
             ExceptionRedirector.forwardToException3(req, resp, this, CHANGING_OF_CHAPTER_STATUS_FAILED);
+        } catch (Exception e) {
+            ExceptionRedirector.forwardToException3(req, resp, this, BLANK_STRING);
         }
 
         getServletContext().getRequestDispatcher(SLASH_STRING + GET_CHAPTERS_OF_PROJECT_DEVELOPER_SERVLET).forward(req, resp);

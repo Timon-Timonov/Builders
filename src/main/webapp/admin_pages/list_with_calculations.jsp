@@ -1,6 +1,4 @@
-<%@ page import="static it.academy.util.constants.ServletURLs.CREATE_CALCULATION_CONTRACTOR_SERVLET" %>
 <%@ page import="static it.academy.util.constants.ParameterNames.*" %>
-<%@ page import="static it.academy.util.constants.ServletURLs.GET_MY_CALCULATION_CONTRACTOR_SERVLET" %>
 <%@ page import="it.academy.dto.CalculationDto" %>
 <%@ page import="it.academy.servlet.WhatToDo" %>
 <%@ page import="java.util.List" %>
@@ -120,15 +118,21 @@
 
     <%if (session.getAttribute(PROJECT_ID_PARAM) != null) {%>
     <form action="<%=GET_CHAPTERS_FROM_PROJECT_ADMINISTRATOR_SERVLET%>" method="get">
-        <input type="hidden" value="<%=session.getAttribute(PROJECT_ID_PARAM)%>" name="<%=PROJECT_ID_PARAM%>">
-        <button class="btn btn-light" type="submit">Return to list with chapters of project</button>
+        <button class="btn btn-light" type="submit">To list with chapters of project</button>
+    </form>
+    <br>
+    <% } %>
+
+    <%if (session.getAttribute(DEVELOPER_ID_PARAM) != null) {%>
+    <form action="<%=GET_PROJECTS_ADMINISTRATOR_SERVLET%>" method="get">
+        <button class="btn btn-light" type="submit">To list with project</button>
     </form>
     <br>
     <% } %>
 
     <form action="<%=MAIN_ADMINISTRATOR_SERVLET%>" method="get">
-        <input type="hidden" value="<%=WhatToDo.SHOW_PROJECTS.toString()%>" name="<%=TODO_PARAM%>">
-        <button class="btn btn-light" type="submit">Return to list with projects</button>
+        <input type="hidden" value="<%=WhatToDo.SHOW_DEVELOPERS.toString()%>" name="<%=TODO_PARAM%>">
+        <button class="btn btn-light" type="submit">To list with developers</button>
     </form>
     <br>
     <%@include file="/include_files/go_to_main_button_file.jsp" %>

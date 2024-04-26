@@ -1,9 +1,7 @@
 <%@ page import="it.academy.dto.AddressDto" %>
 <%@ page import="it.academy.dto.ContractorDto" %>
 <%@ page import="it.academy.pojo.enums.UserStatus" %>
-<%@ page import="static it.academy.util.constants.ServletURLs.MAIN_DEVELOPER_SERVLET" %>
 <%@ page import="static it.academy.util.constants.ParameterNames.*" %>
-<%@ page import="static it.academy.util.constants.ServletURLs.GET_CHAPTERS_OF_CONTRACTOR_DEVELOPER_SERVLET" %>
 <%@ page import="static it.academy.util.constants.ServletURLs.*" %>
 <%@ page import="it.academy.servlet.WhatToDo" %>
 <%@ page import="java.util.List" %>

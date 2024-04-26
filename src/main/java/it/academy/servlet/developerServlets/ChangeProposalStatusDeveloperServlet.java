@@ -7,7 +7,6 @@ import it.academy.pojo.enums.ProposalStatus;
 import it.academy.servlet.WhatToDo;
 import it.academy.util.ExceptionRedirector;
 import it.academy.util.ParameterFinder;
-import it.academy.util.Util;
 import lombok.extern.log4j.Log4j2;
 
 import javax.servlet.ServletException;
@@ -19,8 +18,7 @@ import java.io.IOException;
 
 import static it.academy.util.constants.Constants.DEFAULT_PROPOSAL_STATUS;
 import static it.academy.util.constants.Constants.ZERO_LONG_VALUE;
-import static it.academy.util.constants.Messages.INVALID_VALUE;
-import static it.academy.util.constants.Messages.PROPOSAL_STATUS_NOT_UPDATE;
+import static it.academy.util.constants.Messages.*;
 import static it.academy.util.constants.ParameterNames.*;
 import static it.academy.util.constants.ServletURLs.*;
 
@@ -40,13 +38,9 @@ public class ChangeProposalStatusDeveloperServlet extends HttpServlet {
         try {
             switch (newStatus) {
                 case REJECTED:
-                    controller.rejectProposal(proposalId);
-                    break;
                 case APPROVED:
-                    controller.approveProposal(proposalId);
-                    break;
                 case CONSIDERATION:
-                    controller.considerateProposal(proposalId);
+                    controller.changeStatusOfProposal(proposalId, newStatus);
                     break;
                 default:
                     ExceptionRedirector.forwardToException3(req, resp, this, INVALID_VALUE);
@@ -58,6 +52,8 @@ public class ChangeProposalStatusDeveloperServlet extends HttpServlet {
             }
         } catch (NotUpdateDataInDbException e) {
             ExceptionRedirector.forwardToException3(req, resp, this, PROPOSAL_STATUS_NOT_UPDATE);
+        } catch (Exception e) {
+            ExceptionRedirector.forwardToException3(req, resp, this, BLANK_STRING);
         }
     }
 

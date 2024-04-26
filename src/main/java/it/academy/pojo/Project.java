@@ -36,7 +36,7 @@ public class Project {
 
     @Builder.Default
     @Embedded
-    private Address address=new Address();
+    private Address address = new Address();
 
     @Builder.Default
     @OneToMany(mappedBy = "project", fetch = FetchType.EAGER)

@@ -3,11 +3,9 @@
 <%@ page import="it.academy.pojo.enums.UserStatus" %>
 <%@ page import="it.academy.servlet.WhatToDo" %>
 <%@ page import="java.util.List" %>
-<%@ page import="static it.academy.util.constants.ServletURLs.MAIN_CONTRACTOR_SERVLET" %>
 <%@ page import="static it.academy.util.constants.ParameterNames.DEVELOPER_COUNT_ON_PAGE_PARAM" %>
 <%@ page import="static it.academy.util.constants.ParameterNames.DEVELOPER_PAGE_PARAM" %>
 <%@ page import="static it.academy.util.constants.ParameterNames.*" %>
-<%@ page import="static it.academy.util.constants.ServletURLs.GET_MY_PROJECTS_BY_DEVELOPER_CONTRACTOR_SERVLET" %>
 <%@ page import="static it.academy.util.constants.ServletURLs.*" %>
 <%@ page import="java.util.Optional" %>
 <%@ page contentType="text/html;charset=UTF-8" %>
@@ -54,7 +52,7 @@
             <th> |</th>
             <th>Address of developer</th>
             <th> |</th>
-            <th> </th>
+            <th></th>
             <th></th>
         </tr>
 

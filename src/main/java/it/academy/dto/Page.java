@@ -11,5 +11,5 @@ public class Page<DTO> {
 
     private final List<DTO> list;
 
-    private final int pageNumber;
+    private final Integer pageNumber;
 }

@@ -7,7 +7,6 @@ import it.academy.dto.Page;
 import it.academy.exceptions.NotUpdateDataInDbException;
 import it.academy.util.ExceptionRedirector;
 import it.academy.util.ParameterFinder;
-import it.academy.util.Util;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -45,8 +44,8 @@ public class GetMyCalculationServlet extends HttpServlet {
             calculationDtoPage = controller.getCalculationsByChapter(chapterId, page, count);
         } catch (IOException e) {
             ExceptionRedirector.forwardToException3(req, resp, this, BAD_CONNECTION);
-        }catch (Exception e) {
-            ExceptionRedirector.forwardToException3(req, resp, this,BLANK_STRING);
+        } catch (Exception e) {
+            ExceptionRedirector.forwardToException3(req, resp, this, BLANK_STRING);
         }
 
         List<CalculationDto> calculationDtoList = calculationDtoPage.getList();
@@ -78,8 +77,8 @@ public class GetMyCalculationServlet extends HttpServlet {
                 controller.updateWorkPriceFact(workPrice, calculationId);
             } catch (NotUpdateDataInDbException e) {
                 ExceptionRedirector.forwardToException3(req, resp, this, CALCULATION_NOT_UPDATED);
-            }catch (Exception e) {
-                ExceptionRedirector.forwardToException3(req, resp, this,BLANK_STRING);
+            } catch (Exception e) {
+                ExceptionRedirector.forwardToException3(req, resp, this, BLANK_STRING);
             }
         } else {
             ExceptionRedirector.forwardToException3(req, resp, this, CALCULATION_NOT_UPDATED);
