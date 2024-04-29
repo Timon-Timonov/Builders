@@ -2,7 +2,6 @@ package it.academy.service.impl;
 
 import it.academy.dao.*;
 import it.academy.dao.impl.*;
-import it.academy.service.dto.Page;
 import it.academy.exceptions.EmailOccupaidException;
 import it.academy.exceptions.NotCreateDataInDbException;
 import it.academy.exceptions.NotUpdateDataInDbException;
@@ -12,6 +11,7 @@ import it.academy.pojo.enums.*;
 import it.academy.pojo.legalEntities.Contractor;
 import it.academy.pojo.legalEntities.Developer;
 import it.academy.service.ContractorService;
+import it.academy.service.dto.Page;
 import it.academy.util.Util;
 import lombok.extern.log4j.Log4j2;
 import org.hibernate.exception.ConstraintViolationException;
@@ -343,7 +343,7 @@ public class ContractorServiceImpl implements ContractorService {
     }
 
     @Override
-    public Calculation createCalculation(long chapterId, int YYYY, int MM, int workPricePlan)
+    public void createCalculation(long chapterId, int YYYY, int MM, int workPricePlan)
         throws Exception {
 
         Calculation calculation;
@@ -378,7 +378,6 @@ public class ContractorServiceImpl implements ContractorService {
         if (calculation == null) {
             throw new NotCreateDataInDbException();
         }
-        return calculation;
     }
 
     @Override
@@ -455,8 +454,7 @@ public class ContractorServiceImpl implements ContractorService {
     }
 
     @Override
-    public Proposal createProposal(long chapterId, long contractorId)
-        throws Exception {
+    public void createProposal(long chapterId, long contractorId) throws Exception {
 
         Proposal proposal;
         try {
@@ -513,7 +511,6 @@ public class ContractorServiceImpl implements ContractorService {
         if (proposal == null) {
             throw new NotCreateDataInDbException();
         }
-        return proposal;
     }
 
     @Override

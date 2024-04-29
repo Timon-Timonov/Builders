@@ -1,17 +1,20 @@
 package it.academy.servlet.contractorServlets;
 
 import it.academy.controller.ContractorController;
+import it.academy.controller.dto.DtoWithPageForUi;
+import it.academy.controller.dto.PageRequestDto;
 import it.academy.controller.impl.ContractorControllerImpl;
+import it.academy.dto.ChapterDto;
 import it.academy.dto.DeveloperDto;
-import it.academy.service.dto.Page;
 import it.academy.dto.ProjectDto;
 import it.academy.dto.ProposalDto;
 import it.academy.pojo.enums.ProjectStatus;
 import it.academy.pojo.enums.ProposalStatus;
+import it.academy.servlet.utils.ParameterFinder;
+import it.academy.servlet.utils.SessionAttributeSetter;
+import it.academy.servlet.utils.SessionCleaner;
 import it.academy.servlet.utils.WhatToDo;
 import it.academy.util.ExceptionRedirector;
-import it.academy.servlet.utils.ParameterFinder;
-import it.academy.servlet.utils.SessionCleaner;
 import lombok.extern.log4j.Log4j2;
 
 import javax.servlet.ServletException;
@@ -19,14 +22,10 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 import static it.academy.util.constants.Constants.*;
-import static it.academy.util.constants.JspURLs.*;
-import static it.academy.util.constants.Messages.*;
+import static it.academy.util.constants.Messages.INVALID_VALUE;
 import static it.academy.util.constants.ParameterNames.*;
 import static it.academy.util.constants.ServletURLs.MAIN_CONTRACTOR_SERVLET;
 import static it.academy.util.constants.ServletURLs.SLASH_STRING;
@@ -70,111 +69,102 @@ public class MainContractorServlet extends HttpServlet {
         }
     }
 
-    @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-
-        doGet(req, resp);
-    }
-
     private void showDevelopers(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
         SessionCleaner.clearDeveloperAttributes(req);
 
-        long id = ParameterFinder.getNumberValueFromParameter(req, ID_PARAM, ZERO_LONG_VALUE);
+        long contractorId = ParameterFinder.getNumberValueFromParameter(req, ID_PARAM, ZERO_LONG_VALUE);
         ProjectStatus status = ParameterFinder.getProjectStatusFromParameter(req, PROJECT_STATUS_PARAM, DEFAULT_PROJECT_STATUS);
         int page = ParameterFinder.getNumberValueFromParameter(req, DEVELOPER_PAGE_PARAM, FIRST_PAGE_NUMBER);
         int count = ParameterFinder.getNumberValueFromParameter(req, DEVELOPER_COUNT_ON_PAGE_PARAM, DEFAULT_COUNT_ON_PAGE_5);
 
-        Page<DeveloperDto> developerDtoPage = new Page<>(new ArrayList<>(), FIRST_PAGE_NUMBER);
-        try {
-            developerDtoPage = controller.getMyDevelopers(id, status, page, count);
-        } catch (IOException e) {
-            ExceptionRedirector.forwardToException3(req, resp, this, BAD_CONNECTION);
-        } catch (Exception e) {
-            ExceptionRedirector.forwardToException3(req, resp, this, BLANK_STRING);
+        PageRequestDto requestDto = PageRequestDto.builder()
+                                        .id(contractorId)
+                                        .status(status)
+                                        .page(page)
+                                        .count(count)
+                                        .build();
+
+        DtoWithPageForUi<DeveloperDto> dto = controller.getMyDevelopers(requestDto);
+
+        if (dto.getExceptionMessage() != null) {
+            ExceptionRedirector.forwardToException3(req, resp, this, dto.getExceptionMessage());
+        } else {
+            SessionAttributeSetter.setPageData(req, PROJECT_STATUS_PARAM,
+                DEVELOPER_PAGE_PARAM, DEVELOPER_COUNT_ON_PAGE_PARAM,
+                null, null, dto);
+            getServletContext().getRequestDispatcher(dto.getUrl()).forward(req, resp);
         }
-        page = developerDtoPage.getPageNumber();
-        List<DeveloperDto> developerDtoList = developerDtoPage.getList();
-
-        HttpSession session = req.getSession();
-        req.setAttribute(DTO_LIST_PARAM, developerDtoList);
-        session.setAttribute(PROJECT_STATUS_PARAM, status);
-        session.setAttribute(DEVELOPER_PAGE_PARAM, page);
-        session.setAttribute(DEVELOPER_COUNT_ON_PAGE_PARAM, count);
-
-        getServletContext().getRequestDispatcher(CONTRACTOR_PAGES_LIST_WITH_DEVELOPERS_JSP).forward(req, resp);
     }
 
     private void showProjects(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
         SessionCleaner.clearProjectAttributes(req);
 
-        long id = ParameterFinder.getNumberValueFromParameter(req, ID_PARAM, ZERO_LONG_VALUE);
+        long contractorId = ParameterFinder.getNumberValueFromParameter(req, ID_PARAM, ZERO_LONG_VALUE);
         ProjectStatus status = ParameterFinder.getProjectStatusFromParameter(req, PROJECT_STATUS_PARAM, DEFAULT_PROJECT_STATUS);
         int page = ParameterFinder.getNumberValueFromParameter(req, PROJECT_PAGE_PARAM, FIRST_PAGE_NUMBER);
         int count = ParameterFinder.getNumberValueFromParameter(req, PROJECT_COUNT_ON_PAGE_PARAM, DEFAULT_COUNT_ON_PAGE_5);
 
-        Page<ProjectDto> projectDtoPage = new Page<>(new ArrayList<>(), FIRST_PAGE_NUMBER);
-        try {
-            projectDtoPage = controller.getMyProjects(id, status, page, count);
-        } catch (IOException e) {
-            ExceptionRedirector.forwardToException3(req, resp, this, BAD_CONNECTION);
-        } catch (Exception e) {
-            ExceptionRedirector.forwardToException3(req, resp, this, BLANK_STRING);
+        PageRequestDto requestDto = PageRequestDto.builder()
+                                        .id(contractorId)
+                                        .status(status)
+                                        .page(page)
+                                        .count(count)
+                                        .build();
+
+        DtoWithPageForUi<ProjectDto> dto = controller.getMyProjects(requestDto);
+
+        if (dto.getExceptionMessage() != null) {
+            ExceptionRedirector.forwardToException3(req, resp, this, dto.getExceptionMessage());
+        } else {
+            SessionAttributeSetter.setPageData(req, PROJECT_STATUS_PARAM,
+                PROJECT_PAGE_PARAM, PROJECT_COUNT_ON_PAGE_PARAM,
+                null, null, dto);
+            getServletContext().getRequestDispatcher(dto.getUrl()).forward(req, resp);
         }
-        page = projectDtoPage.getPageNumber();
-        List<ProjectDto> projectDtoList = projectDtoPage.getList();
-
-        HttpSession session = req.getSession();
-        req.setAttribute(DTO_LIST_PARAM, projectDtoList);
-        session.setAttribute(PROJECT_STATUS_PARAM, status);
-        session.setAttribute(PROJECT_PAGE_PARAM, page);
-        session.setAttribute(PROJECT_COUNT_ON_PAGE_PARAM, count);
-
-        getServletContext().getRequestDispatcher(CONTRACTOR_PAGES_LIST_WITH_PROJECTS_JSP).forward(req, resp);
     }
 
     private void showProposals(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
         SessionCleaner.clearProposalAttributes(req);
 
-        long id = ParameterFinder.getNumberValueFromParameter(req, ID_PARAM, ZERO_LONG_VALUE);
+        long contractorId = ParameterFinder.getNumberValueFromParameter(req, ID_PARAM, ZERO_LONG_VALUE);
         ProposalStatus status = ParameterFinder.getProposalStatusFromParameter(req, PROPOSAL_STATUS_PARAM, DEFAULT_PROPOSAL_STATUS);
         int page = ParameterFinder.getNumberValueFromParameter(req, PROPOSAL_PAGE_PARAM, FIRST_PAGE_NUMBER);
         int count = ParameterFinder.getNumberValueFromParameter(req, PROPOSAL_COUNT_ON_PAGE_PARAM, DEFAULT_COUNT_ON_PAGE_5);
 
-        Page<ProposalDto> proposalDtoPage = new Page<>(new ArrayList<>(), FIRST_PAGE_NUMBER);
-        try {
-            proposalDtoPage = controller.getMyProposals(id, status, page, count);
-        } catch (IOException e) {
-            ExceptionRedirector.forwardToException3(req, resp, this, BAD_CONNECTION);
-        } catch (Exception e) {
-            ExceptionRedirector.forwardToException3(req, resp, this, BLANK_STRING);
+        PageRequestDto requestDto = PageRequestDto.builder()
+                                        .id(contractorId)
+                                        .status(status)
+                                        .page(page)
+                                        .count(count)
+                                        .build();
+        DtoWithPageForUi<ProposalDto> dto = controller.getMyProposals(requestDto);
+
+        if (dto.getExceptionMessage() != null) {
+            ExceptionRedirector.forwardToException3(req, resp, this, dto.getExceptionMessage());
+        } else {
+            SessionAttributeSetter.setPageData(req, PROPOSAL_STATUS_PARAM,
+                PROPOSAL_PAGE_PARAM, PROPOSAL_COUNT_ON_PAGE_PARAM,
+                null, null, dto);
+            getServletContext().getRequestDispatcher(dto.getUrl()).forward(req, resp);
         }
-        page = proposalDtoPage.getPageNumber();
-        List<ProposalDto> proposalDtoList = proposalDtoPage.getList();
-
-        HttpSession session = req.getSession();
-        req.setAttribute(DTO_LIST_PARAM, proposalDtoList);
-        session.setAttribute(PROPOSAL_STATUS_PARAM, status);
-        session.setAttribute(PROPOSAL_PAGE_PARAM, page);
-        session.setAttribute(PROPOSAL_COUNT_ON_PAGE_PARAM, count);
-
-        getServletContext().getRequestDispatcher(CONTRACTOR_PAGES_LIST_WITH_PROPOSALS_JSP).forward(req, resp);
     }
 
     private void chooseNewProject(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
         SessionCleaner.clearChapterAttributes(req);
 
-        List<String> chapterNamesList = new ArrayList<>();
-        try {
-            chapterNamesList = controller.getAllChapterNames();
-        } catch (IOException e) {
-            ExceptionRedirector.forwardToException3(req, resp, this, BAD_CONNECTION);
-        }
-        req.setAttribute(DTO_LIST_PARAM, chapterNamesList);
+        DtoWithPageForUi<ChapterDto> dto = controller.getAllChapterNames();
 
-        getServletContext().getRequestDispatcher(LIST_WITH_CHAPTER_NAMES_JSP).forward(req, resp);
+        if (dto.getExceptionMessage() != null) {
+            ExceptionRedirector.forwardToException3(req, resp, this, dto.getExceptionMessage());
+        } else {
+            SessionAttributeSetter.setPageData(req, null,
+                null, null,
+                null, null, dto);
+            getServletContext().getRequestDispatcher(dto.getUrl()).forward(req, resp);
+        }
     }
 }

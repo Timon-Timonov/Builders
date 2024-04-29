@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import static it.academy.util.constants.Messages.INVALID_VALUE;
+
 @Log4j2
 public class ParameterFinder {
 
@@ -78,8 +79,8 @@ public class ParameterFinder {
                           : defaultValue);
     }
 
-    public static int getNumberValueFromParameter(HttpServletRequest req, String parameterName, Integer
-                                                                                                    defaultValue)
+    public static int getNumberValueFromParameter(
+        HttpServletRequest req, String parameterName, Integer defaultValue)
         throws NumberFormatException {
 
         String valueFromReq = req.getParameter(parameterName);

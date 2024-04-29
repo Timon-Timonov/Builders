@@ -49,7 +49,7 @@ public class Util {
                              .map(MoneyTransfer::getSum)
                              .reduce(ZERO_INT_VALUE, Integer::sum);
 
-        int workPriceFact = calculation.getWorkPriceFact() == null ? 0 : calculation.getWorkPriceFact();
+        int workPriceFact = calculation.getWorkPriceFact() == null ? ZERO_INT_VALUE : calculation.getWorkPriceFact();
         int calculationDebt = workPriceFact - sumAdvance - sumForWork;
         return new Integer[]{calculationDebt, sumAdvance, sumForWork};
     }

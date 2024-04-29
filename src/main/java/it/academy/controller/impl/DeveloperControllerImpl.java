@@ -20,6 +20,7 @@ import it.academy.pojo.legalEntities.Developer;
 import it.academy.service.DeveloperService;
 import it.academy.service.dto.Page;
 import it.academy.service.impl.DeveloperServiceImpl;
+import it.academy.servlet.utils.WhatToDo;
 import it.academy.util.Util;
 import it.academy.util.converters.*;
 import lombok.extern.log4j.Log4j2;
@@ -88,9 +89,10 @@ public class DeveloperControllerImpl implements DeveloperController {
         List<ProjectDto> list = new ArrayList<>();
         Integer page = dto.getPage();
         Integer count = dto.getCount();
-        ProjectStatus status = (ProjectStatus) dto.getStatus();
+        ProjectStatus status = null;
 
         try {
+            status = (ProjectStatus) dto.getStatus();
             Page<Project> projectPage = service.getMyProjects(dto.getId(), status, page, count);
             page = projectPage.getPageNumber();
             list.addAll(projectPage.getList().stream()
@@ -102,6 +104,9 @@ public class DeveloperControllerImpl implements DeveloperController {
                                 return ProjectConverter.convertToDto(project, projectPrice, projectDebt);
                             })
                             .collect(Collectors.toList()));
+        } catch (ClassCastException e) {
+            exceptionMessage = INVALID_VALUE;
+            log.error(INVALID_VALUE + dto.getStatus().toString(), e);
         } catch (IOException e) {
             exceptionMessage = BAD_CONNECTION;
             log.error(BAD_CONNECTION, e);
@@ -133,8 +138,9 @@ public class DeveloperControllerImpl implements DeveloperController {
         List<ContractorDto> list = new ArrayList<>();
         Integer page = dto.getPage();
         Integer count = dto.getCount();
-        ProjectStatus status = (ProjectStatus) dto.getStatus();
+        ProjectStatus status = null;
         try {
+            status = (ProjectStatus) dto.getStatus();
             Page<Contractor> contractorPage = service.getMyContractors(dto.getId(), status, page, count);
             page = contractorPage.getPageNumber();
             list.addAll(contractorPage.getList().stream()
@@ -148,6 +154,9 @@ public class DeveloperControllerImpl implements DeveloperController {
                                 return ContractorConverter.convertToDto(contractor, contractorDebt);
                             })
                             .collect(Collectors.toList()));
+        } catch (ClassCastException e) {
+            exceptionMessage = INVALID_VALUE;
+            log.error(INVALID_VALUE + dto.getStatus().toString(), e);
         } catch (IOException e) {
             exceptionMessage = BAD_CONNECTION;
             log.error(BAD_CONNECTION, e);
@@ -180,13 +189,17 @@ public class DeveloperControllerImpl implements DeveloperController {
         List<ProposalDto> list = new ArrayList<>();
         Integer page = dto.getPage();
         Integer count = dto.getCount();
-        ProposalStatus status = (ProposalStatus) dto.getStatus();
+        ProposalStatus status = null;
         try {
+            status = (ProposalStatus) dto.getStatus();
             Page<Proposal> proposalPage = service.getAllMyProposals(dto.getId(), status, page, count);
             page = proposalPage.getPageNumber();
             list.addAll(proposalPage.getList().stream()
                             .map(ProposalConverter::convertToDto)
                             .collect(Collectors.toList()));
+        } catch (ClassCastException e) {
+            exceptionMessage = INVALID_VALUE;
+            log.error(INVALID_VALUE + dto.getStatus().toString(), e);
         } catch (IOException e) {
             exceptionMessage = BAD_CONNECTION;
             log.error(BAD_CONNECTION, e);
@@ -358,15 +371,19 @@ public class DeveloperControllerImpl implements DeveloperController {
         List<ChapterDto> list = new ArrayList<>();
         Integer page = dto.getPage();
         Integer count = dto.getCount();
-        ProjectStatus status = (ProjectStatus) dto.getStatus();
+        ProjectStatus status = null;
 
         try {
+            status = (ProjectStatus) dto.getStatus();
             Page<Chapter> chapterPage = service.getChaptersByContractorIdAndDeveloperId(
                 dto.getSecondId(), dto.getId(), status, page, count);
             page = chapterPage.getPageNumber();
             list.addAll(chapterPage.getList().stream()
                             .map(ChapterConverter::getChapterDtoForDeveloper)
                             .collect(Collectors.toList()));
+        } catch (ClassCastException e) {
+            exceptionMessage = INVALID_VALUE;
+            log.error(INVALID_VALUE + dto.getStatus().toString(), e);
         } catch (IOException e) {
             exceptionMessage = BAD_CONNECTION;
             log.error(BAD_CONNECTION, e);
@@ -398,6 +415,9 @@ public class DeveloperControllerImpl implements DeveloperController {
     public DtoWithPageForUi<ProposalDto> changeStatusOfProposal(PageRequestDto dto) {
 
         String exceptionMessage = null;
+        String url = WhatToDo.SHOW_PROPOSALS.toString().equals(dto.getName()) ?
+                         SLASH_STRING + MAIN_DEVELOPER_SERVLET
+                         :SLASH_STRING + GET_MY_PROPOSALS_FROM_CHAPTER_DEVELOPER_SERVLET;
 
         try {
             service.changeStatusOfProposal(dto.getId(), (ProposalStatus) dto.getStatus());
@@ -415,6 +435,8 @@ public class DeveloperControllerImpl implements DeveloperController {
             exceptionMessage = SOMETHING_WENT_WRONG;
             log.error(SOMETHING_WENT_WRONG, e);
         }
+
+
         DtoWithPageForUi<ProposalDto> dtoWithPageForUi;
         if (exceptionMessage != null) {
             dtoWithPageForUi = DtoWithPageForUi.<ProposalDto>builder()
@@ -422,7 +444,7 @@ public class DeveloperControllerImpl implements DeveloperController {
                                    .build();
         } else {
             dtoWithPageForUi = DtoWithPageForUi.<ProposalDto>builder()
-                                   .url(SLASH_STRING + GET_MY_PROPOSALS_FROM_CHAPTER_DEVELOPER_SERVLET)
+                                   .url(url)
                                    .status(dto.getStatus())
                                    .build();
         }
@@ -436,14 +458,18 @@ public class DeveloperControllerImpl implements DeveloperController {
         List<ProposalDto> list = new ArrayList<>();
         Integer page = dto.getPage();
         Integer count = dto.getCount();
-        ProposalStatus status = (ProposalStatus) dto.getStatus();
+        ProposalStatus status = null;
 
         try {
+            status = (ProposalStatus) dto.getStatus();
             Page<Proposal> proposalPage = service.getProposalsByChapterId(dto.getId(), status, page, count);
             page = proposalPage.getPageNumber();
             list.addAll(proposalPage.getList().stream()
                             .map(ProposalConverter::convertToDto)
                             .collect(Collectors.toList()));
+        } catch (ClassCastException e) {
+            exceptionMessage = INVALID_VALUE;
+            log.error(INVALID_VALUE + dto.getStatus().toString(), e);
         } catch (IOException e) {
             exceptionMessage = BAD_CONNECTION;
             log.error(BAD_CONNECTION, e);
@@ -513,7 +539,6 @@ public class DeveloperControllerImpl implements DeveloperController {
         List<CalculationDto> list = new ArrayList<>();
         Integer page = dto.getPage();
         Integer count = dto.getCount();
-
 
         try {
             Page<Calculation> calculationPage = service.getCalculationsByChapterId(

@@ -63,7 +63,7 @@
             DeveloperDto developerDto = developerDtoList.get(i);
             String developerName = developerDto.getDeveloperName();
             String developerAddress = Optional.ofNullable(developerDto.getDeveloperAddress()).orElse(new AddressDto()).toString();
-            String developerDebt = developerDto.getDeveloperDebt().toString();
+            int developerDebt = developerDto.getDeveloperDebt();
         %>
         <tr>
             <td><%=(i + 1)%>

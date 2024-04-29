@@ -15,7 +15,6 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
 import static it.academy.util.constants.Constants.DEFAULT_PROPOSAL_STATUS;
@@ -36,10 +35,12 @@ public class ChangeProposalStatusDeveloperServlet extends HttpServlet {
         long proposalId = ParameterFinder.getNumberValueFromParameter(req, PROPOSAL_ID_PARAM, ZERO_LONG_VALUE);
         ProposalStatus status = ParameterFinder.getProposalStatusFromParameter(req, PROPOSAL_STATUS_PARAM, DEFAULT_PROPOSAL_STATUS);
         ProposalStatus newStatus = ParameterFinder.getProposalStatusFromParameter(req, NEW_PROPOSAL_STATUS_PARAM, status);
+        String whatToDo = req.getParameter(TODO_PARAM);
 
         PageRequestDto requestDto = PageRequestDto.builder()
                                         .id(proposalId)
                                         .status(newStatus)
+                                        .name(whatToDo)
                                         .build();
 
         DtoWithPageForUi<ProposalDto> dto = controller.changeStatusOfProposal(requestDto);
@@ -47,8 +48,6 @@ public class ChangeProposalStatusDeveloperServlet extends HttpServlet {
         if (dto.getExceptionMessage() != null) {
             ExceptionRedirector.forwardToException3(req, resp, this, dto.getExceptionMessage());
         } else {
-            HttpSession session = req.getSession();
-            session.setAttribute(PROPOSAL_STATUS_PARAM, newStatus);
             getServletContext().getRequestDispatcher(dto.getUrl()).forward(req, resp);
         }
     }

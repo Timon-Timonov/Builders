@@ -1,7 +1,8 @@
 <%@ page import="static it.academy.util.constants.ParameterNames.*" %>
+<%@ page import="it.academy.dto.ChapterDto" %>
 <%@ page import="it.academy.servlet.utils.WhatToDo" %>
-<%@ page import="java.util.List" %>
 <%@ page import="static it.academy.util.constants.ServletURLs.*" %>
+<%@ page import="java.util.List" %>
 <%@ page contentType="text/html;charset=UTF-8" %>
 <html>
 <head>
@@ -16,7 +17,7 @@
 <%
     String actionName = MAIN_CONTRACTOR_SERVLET;
     String actionParameterToDoValue = WhatToDo.TRY_TO_CHOOSE_NEW_PROJECT.toString();
-    List<String> chapterNamesList = (List<String>) request.getAttribute(DTO_LIST_PARAM);
+    List<ChapterDto> chapterNamesList = (List<ChapterDto>) request.getAttribute(DTO_LIST_PARAM);
 %>
 
 <div class="container text-center">
@@ -34,7 +35,7 @@
         </tr>
         <%for (int i = 0; i < chapterNamesList.size(); i++) {%>
         <%
-            String chapterName = chapterNamesList.get(i);
+            String chapterName = chapterNamesList.get(i).getChapterName();
         %>
         <tr>
             <td><%=(i + 1)%>
@@ -43,7 +44,7 @@
             <td><%=chapterName%>
             </td>
             <td>
-                <form action="<%=GET_MY_PROPOSAL_CONTRACTOR_SERVLET%>" method="get">
+                <form action="<%=GET_FREE_CHAPTERS_CONTRACTOR_SERVLET%>" method="get">
                     <input type="hidden" value="<%=chapterName%>" name="<%=CHAPTER_NAME_PARAM%>">
                     <button class="btn btn-light" type="submit">Try to choose chapters</button>
                 </form>

@@ -39,9 +39,9 @@ public interface ContractorService {
 
     List<String> getAllChapterNames() throws IOException;
 
-    Calculation createCalculation(long chapterId, int YYYY, int MM, int workPricePlan) throws Exception;
+    void createCalculation(long chapterId, int YYYY, int MM, int workPricePlan) throws Exception;
 
-    Proposal createProposal(long chapterId, long contractorId) throws Exception;
+    void createProposal(long chapterId, long contractorId) throws Exception;
 
     int getTotalDeptByDeveloper(long contractorId, long developerId) throws IOException;
 

@@ -46,7 +46,7 @@
     </p>
     <p>Debt by developer:  <%=projectDtoList.stream()
                                       .map(ProjectDto::getDebtByProject)
-                                      .reduce(0, Integer::sum)%>
+                                      .reduce(ZERO_INT_VALUE, Integer::sum)%>
     </p>
     <% }%>
 </div>

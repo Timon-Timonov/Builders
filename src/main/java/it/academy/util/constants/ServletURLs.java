@@ -38,12 +38,13 @@ public final class ServletURLs {
 
     public static final String MAIN_CONTRACTOR_SERVLET = "main_contractor_servlet";
     public static final String GET_MY_CHAPTERS_CONTRACTOR_SERVLET = "get_my_chapters_contractor_servlet";
-    public static final String GET_MY_PROPOSAL_CONTRACTOR_SERVLET = "get_my_proposals_contractor_servlet";
+    public static final String GET_FREE_CHAPTERS_CONTRACTOR_SERVLET = "get_free_chapters_contractor_servlet";
     public static final String CHANGE_PROPOSAL_STATUS_CONTRACTOR_SERVLET = "change_proposal_status_contractor_servlet";
     public static final String GET_MY_CALCULATION_CONTRACTOR_SERVLET = "get_my_calculation_contractor_servlet";
     public static final String CREATE_CALCULATION_CONTRACTOR_SERVLET = "create_calculation_contractor_servlet";
     public static final String GET_MY_PROJECTS_BY_DEVELOPER_CONTRACTOR_SERVLET = "get_my_projects_by_developer_contractor_servlet";
     public static final String CREATE_PROPOSAL_CONTRACTOR_SERVLET = "create_proposal_contractor_servlet";
+    public static final String CHANGE_WORK_PRICE_FACT_CONTRACTOR_SERVLET = "change_work_price_fact_contractor_servlet";
 
     public static final String MAIN_DEVELOPER_SERVLET = "main_developer_servlet";
     public static final String CREATE_CHAPTER_DEVELOPER_SERVLET = "create_chapter_developer_servlet";

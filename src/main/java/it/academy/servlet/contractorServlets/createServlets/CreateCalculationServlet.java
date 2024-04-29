@@ -1,10 +1,12 @@
 package it.academy.servlet.contractorServlets.createServlets;
 
 import it.academy.controller.ContractorController;
+import it.academy.controller.dto.CreateRequestDto;
+import it.academy.controller.dto.DtoWithPageForUi;
 import it.academy.controller.impl.ContractorControllerImpl;
-import it.academy.exceptions.NotCreateDataInDbException;
-import it.academy.util.ExceptionRedirector;
+import it.academy.dto.CalculationDto;
 import it.academy.servlet.utils.ParameterFinder;
+import it.academy.util.ExceptionRedirector;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -16,14 +18,12 @@ import java.io.IOException;
 import static it.academy.util.constants.Constants.ZERO_INT_VALUE;
 import static it.academy.util.constants.Constants.ZERO_LONG_VALUE;
 import static it.academy.util.constants.JspURLs.CONTRACTOR_PAGES_CREATE_CALCULATION_JSP;
-import static it.academy.util.constants.Messages.BLANK_STRING;
-import static it.academy.util.constants.Messages.CALCULATION_NOT_CREATED;
 import static it.academy.util.constants.ParameterNames.*;
-import static it.academy.util.constants.ServletURLs.*;
+import static it.academy.util.constants.ServletURLs.CREATE_CALCULATION_CONTRACTOR_SERVLET;
+import static it.academy.util.constants.ServletURLs.SLASH_STRING;
 
 @WebServlet(name = "CreateCalculationServlet", urlPatterns = {SLASH_STRING + CREATE_CALCULATION_CONTRACTOR_SERVLET})
 public class CreateCalculationServlet extends HttpServlet {
-
 
     private final ContractorController controller = new ContractorControllerImpl();
 
@@ -37,18 +37,23 @@ public class CreateCalculationServlet extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
         long chapterId = ParameterFinder.getNumberValueFromParameter(req, CHAPTER_ID_PARAM, ZERO_LONG_VALUE);
-        int workPrice = ParameterFinder.getNumberValueFromParameter(req, WORK_PRICE_PLAN_PARAM, ZERO_INT_VALUE);
-        int month = ParameterFinder.getNumberValueFromParameter(req, MM_PARAM, ZERO_INT_VALUE);
         int year = ParameterFinder.getNumberValueFromParameter(req, YYYY_PARAM, ZERO_INT_VALUE);
+        int month = ParameterFinder.getNumberValueFromParameter(req, MM_PARAM, ZERO_INT_VALUE);
+        int workPrice = ParameterFinder.getNumberValueFromParameter(req, WORK_PRICE_PLAN_PARAM, ZERO_INT_VALUE);
 
-        try {
-            controller.createCalculation(chapterId, year, month, workPrice);
-        } catch (NotCreateDataInDbException e) {
-            ExceptionRedirector.forwardToException3(req, resp, this, CALCULATION_NOT_CREATED);
-        } catch (Exception e) {
-            ExceptionRedirector.forwardToException3(req, resp, this, BLANK_STRING);
+        CreateRequestDto requestDto = CreateRequestDto.builder()
+                                          .id(chapterId)
+                                          .int1(year)
+                                          .int2(month)
+                                          .int3(workPrice)
+                                          .build();
+
+        DtoWithPageForUi<CalculationDto> dto = controller.createCalculation(requestDto);
+
+        if (dto.getExceptionMessage() != null) {
+            ExceptionRedirector.forwardToException3(req, resp, this, dto.getExceptionMessage());
+        } else {
+            getServletContext().getRequestDispatcher(dto.getUrl()).forward(req, resp);
         }
-        req.setAttribute(EXECUTE_IN_GET_PARAM, true);
-        getServletContext().getRequestDispatcher(SLASH_STRING + GET_MY_CALCULATION_CONTRACTOR_SERVLET).forward(req, resp);
     }
 }

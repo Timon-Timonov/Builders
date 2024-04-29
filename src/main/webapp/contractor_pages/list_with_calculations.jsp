@@ -97,7 +97,7 @@
             <td><%=calculationDto.getWorkPricePlan()%>
             </td>
             <td>
-                <form action="<%=GET_MY_CALCULATION_CONTRACTOR_SERVLET%>" method="post">
+                <form action="<%=CHANGE_WORK_PRICE_FACT_CONTRACTOR_SERVLET%>" method="get">
                     <input type="hidden" value="<%=calculationDto.getId().toString()%>"
                            name="<%=CALCULATION_ID_PARAM%>">
                     New Value of work price fact: <label>

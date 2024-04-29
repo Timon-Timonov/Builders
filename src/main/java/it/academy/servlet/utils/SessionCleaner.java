@@ -20,6 +20,7 @@ public class SessionCleaner {
 
         session.removeAttribute(PROJECT_DEVELOPER_PARAM);
         session.removeAttribute(PROJECT_CONTRACTOR_PARAM);
+        session.removeAttribute(SHOW_PROJECT_LIST_BY_DEVELOPER_PARAM);
 
         session.removeAttribute(CHAPTER_ID_PARAM);
         session.removeAttribute(CHAPTER_PAGE_PARAM);

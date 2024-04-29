@@ -4,7 +4,7 @@
 <%@ page import="it.academy.servlet.utils.WhatToDo" %>
 <%@ page import="java.util.List" %>
 <%@ page import="java.util.Optional" %>
-<%@ page import="static it.academy.util.constants.ServletURLs.GET_MY_PROPOSAL_CONTRACTOR_SERVLET" %>
+<%@ page import="static it.academy.util.constants.ServletURLs.GET_FREE_CHAPTERS_CONTRACTOR_SERVLET" %>
 <%@ page import="static it.academy.util.constants.ParameterNames.CHAPTER_COUNT_ON_PAGE_PARAM" %>
 <%@ page import="static it.academy.util.constants.ParameterNames.CHAPTER_PAGE_PARAM" %>
 <%@ page import="static it.academy.util.constants.ParameterNames.*" %>
@@ -22,7 +22,7 @@
 
 <body>
 <%
-    String actionName = GET_MY_PROPOSAL_CONTRACTOR_SERVLET;
+    String actionName = GET_FREE_CHAPTERS_CONTRACTOR_SERVLET;
     String countName = CHAPTER_COUNT_ON_PAGE_PARAM;
     String pageNumberParamName = CHAPTER_PAGE_PARAM;
 
@@ -46,7 +46,7 @@
     <table>
         <tr>
             <td>
-                <form action="<%=GET_MY_PROPOSAL_CONTRACTOR_SERVLET%>" method="get">
+                <form action="<%=GET_FREE_CHAPTERS_CONTRACTOR_SERVLET%>" method="get">
                     <input type="hidden" value="<%=ProjectStatus.PREPARATION.toString()%>"
                            name="<%=PROJECT_STATUS_PARAM%>">
                     <button class="<%=ProjectStatus.PREPARATION.equals(status)?"btn btn-success":"btn btn-light"%>"
@@ -55,7 +55,7 @@
                 </form>
             </td>
             <td>
-                <form action="<%=GET_MY_PROPOSAL_CONTRACTOR_SERVLET%>" method="get">
+                <form action="<%=GET_FREE_CHAPTERS_CONTRACTOR_SERVLET%>" method="get">
                     <input type="hidden" value="<%=ProjectStatus.IN_PROCESS.toString()%>"
                            name="<%=PROJECT_STATUS_PARAM%>">
                     <button class="<%=ProjectStatus.IN_PROCESS.equals(status)?"btn btn-success":"btn btn-light"%>"
