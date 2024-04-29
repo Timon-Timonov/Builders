@@ -1,12 +1,12 @@
-package it.academy.servlet.contractorServlets;
+package it.academy.servlet.contractorServlets.getServlets;
 
 import it.academy.controller.ContractorController;
 import it.academy.controller.impl.ContractorControllerImpl;
 import it.academy.dto.ChapterDto;
-import it.academy.dto.Page;
+import it.academy.service.dto.Page;
 import it.academy.pojo.enums.ProjectStatus;
 import it.academy.util.ExceptionRedirector;
-import it.academy.util.ParameterFinder;
+import it.academy.servlet.utils.ParameterFinder;
 import lombok.extern.log4j.Log4j2;
 
 import javax.servlet.ServletException;
@@ -58,7 +58,7 @@ public class GetMyProposalsServlet extends HttpServlet {
         session.setAttribute(PROJECT_STATUS_PARAM, status);
         session.setAttribute(CHAPTER_COUNT_ON_PAGE_PARAM, count);
         session.setAttribute(CHAPTER_PAGE_PARAM, page);
-        req.setAttribute(CHAPTER_DTO_LIST_PARAM, chapterDtoList);
+        req.setAttribute(DTO_LIST_PARAM, chapterDtoList);
 
         getServletContext().getRequestDispatcher(CONTRACTOR_PAGES_LIST_WITH_FREE_CHAPTERS_JSP).forward(req, resp);
     }

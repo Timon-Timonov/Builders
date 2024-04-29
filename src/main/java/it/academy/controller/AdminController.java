@@ -1,5 +1,7 @@
 package it.academy.controller;
 
+import it.academy.controller.dto.LoginDto;
+import it.academy.service.dto.Page;
 import it.academy.dto.*;
 import it.academy.exceptions.NotUpdateDataInDbException;
 import it.academy.pojo.enums.ProjectStatus;
@@ -10,6 +12,8 @@ import java.io.IOException;
 import java.util.List;
 
 public interface AdminController {
+
+    LoginDto logIn(UserDto userDto);
 
     void createAdmin(String email, String password) throws Exception;
 

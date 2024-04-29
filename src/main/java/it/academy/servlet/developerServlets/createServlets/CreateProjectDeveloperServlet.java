@@ -1,11 +1,13 @@
-package it.academy.servlet.developerServlets;
+package it.academy.servlet.developerServlets.createServlets;
 
 import it.academy.controller.DeveloperController;
+import it.academy.controller.dto.CreateRequestDto;
+import it.academy.controller.dto.DtoWithPageForUi;
 import it.academy.controller.impl.DeveloperControllerImpl;
 import it.academy.dto.ProjectDto;
-import it.academy.exceptions.NotCreateDataInDbException;
+import it.academy.servlet.utils.ParameterFinder;
+import it.academy.servlet.utils.SessionAttributeSetter;
 import it.academy.util.ExceptionRedirector;
-import it.academy.util.ParameterFinder;
 import lombok.extern.log4j.Log4j2;
 
 import javax.servlet.ServletException;
@@ -17,10 +19,8 @@ import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
 import static it.academy.util.constants.Constants.ZERO_LONG_VALUE;
-import static it.academy.util.constants.JspURLs.DEVELOPER_PAGES_CREATE_CHAPTER_PAGE_JSP;
 import static it.academy.util.constants.JspURLs.DEVELOPER_PAGES_CREATE_PROJECT_PAGE_JSP;
 import static it.academy.util.constants.Messages.BLANK_STRING;
-import static it.academy.util.constants.Messages.PROJECT_NOT_CREATE;
 import static it.academy.util.constants.ParameterNames.*;
 import static it.academy.util.constants.ServletURLs.CREATE_PROJECT_DEVELOPER_SERVLET;
 import static it.academy.util.constants.ServletURLs.SLASH_STRING;
@@ -41,32 +41,36 @@ public class CreateProjectDeveloperServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
-        long id = ParameterFinder.getNumberValueFromParameter(req, ID_PARAM, ZERO_LONG_VALUE);
+        long developerId = ParameterFinder.getNumberValueFromParameter(req, ID_PARAM, ZERO_LONG_VALUE);
 
         String projectName = ParameterFinder.getStringValueFromParameter(req, PROJECT_NAME_PARAM, BLANK_STRING);
         String city = ParameterFinder.getStringValueFromParameter(req, CITY_PARAM, BLANK_STRING);
         String street = ParameterFinder.getStringValueFromParameter(req, STREET_PARAM, BLANK_STRING);
         String building = ParameterFinder.getStringValueFromParameter(req, BUILDING_PARAM, BLANK_STRING);
 
-        ProjectDto projectDto = null;
-        try {
-            projectDto = controller.createProject(id, projectName, city, street, building);
+        CreateRequestDto requestDto = CreateRequestDto.builder()
+                                          .id(developerId)
+                                          .name(projectName)
+                                          .city(city)
+                                          .street(street)
+                                          .building(building)
+                                          .build();
 
-        } catch (NotCreateDataInDbException e) {
-            ExceptionRedirector.forwardToException3(req, resp, this, PROJECT_NOT_CREATE);
-        } catch (Exception e) {
-            ExceptionRedirector.forwardToException3(req, resp, this, BLANK_STRING);
-        }
-        if (projectDto == null) {
-            ExceptionRedirector.forwardToException3(req, resp, this, PROJECT_NOT_CREATE);
+        DtoWithPageForUi<ProjectDto> dto = controller.createProject(requestDto);
+
+        if (dto.getExceptionMessage() != null) {
+            ExceptionRedirector.forwardToException3(req, resp, this, dto.getExceptionMessage());
         } else {
-            HttpSession session = req.getSession();
-            session.setAttribute(PROJECT_ID_PARAM, projectDto.getId());
-            session.setAttribute(PROJECT_NAME_PARAM, projectDto.getProjectName());
-            session.setAttribute(PROJECT_ADDRESS_PARAM, projectDto.getProjectAddress());
-            session.setAttribute(PROJECT_STATUS_PARAM, projectDto.getStatus());
 
-            getServletContext().getRequestDispatcher(DEVELOPER_PAGES_CREATE_CHAPTER_PAGE_JSP).forward(req, resp);
+            SessionAttributeSetter.setPageData(req, PROJECT_STATUS_PARAM,
+                null, null,
+                PROJECT_ID_PARAM, PROJECT_NAME_PARAM, dto);
+            HttpSession session = req.getSession();
+            session.setAttribute(PROJECT_ADDRESS_PARAM, dto.getList().stream()
+                                                            .findFirst().orElse(new ProjectDto())
+                                                            .getProjectAddress().toString());
+
+            getServletContext().getRequestDispatcher(dto.getUrl()).forward(req, resp);
         }
     }
 }

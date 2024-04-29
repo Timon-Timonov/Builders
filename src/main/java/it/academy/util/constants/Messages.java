@@ -39,6 +39,7 @@ public final class Messages {
     public static final String PROPOSAL_DELETE_ID = "Proposal delete id=";
     public static final String DELETE_FAIL_PROPOSAL_ID = "delete fail proposal id=";
     public static final String CREATED_SUCCESSFUL = "Created successful";
+    public static final String PROJECT = "Project ";
     public static final String CONTRACTOR_CREATED_ID = "Contractor created: id=";
     public static final String CONTRACTOR_NOT_FOUND_WITH_ID = "Contractor not found with id=";
     public static final String USER_NOT_CONTRACTOR_ID = "User not Contractor. id=";
@@ -103,6 +104,7 @@ public final class Messages {
     public static final String USER_NOT_CREATE = "User not create.";
     public static final String PROPOSAL_STATUSES_OF_ALL_CHAPTER_CHANGED_CHAPTER_ID = "Proposal statuses of all chapter changed. Chapter id= ";
     public static final String DEVELOPER_CREATED_ID = "Developer created: id=";
+    public static final String SOMETHING_WENT_WRONG = "Something went wrong.";
 
     private Messages() {
     }

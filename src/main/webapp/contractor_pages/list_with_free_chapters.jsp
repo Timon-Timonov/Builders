@@ -1,7 +1,7 @@
 <%@ page import="it.academy.dto.AddressDto" %>
 <%@ page import="it.academy.dto.ChapterDto" %>
 <%@ page import="it.academy.pojo.enums.ProjectStatus" %>
-<%@ page import="it.academy.servlet.WhatToDo" %>
+<%@ page import="it.academy.servlet.utils.WhatToDo" %>
 <%@ page import="java.util.List" %>
 <%@ page import="java.util.Optional" %>
 <%@ page import="static it.academy.util.constants.ServletURLs.GET_MY_PROPOSAL_CONTRACTOR_SERVLET" %>
@@ -30,7 +30,7 @@
     int countOnPage = (Integer) session.getAttribute(countName);
     int pageNumber = (Integer) session.getAttribute(pageNumberParamName);
     ProjectStatus status = (ProjectStatus) session.getAttribute(PROJECT_STATUS_PARAM);
-    List<ChapterDto> chapterDtoList = (List<ChapterDto>) request.getAttribute(CHAPTER_DTO_LIST_PARAM);
+    List<ChapterDto> chapterDtoList = (List<ChapterDto>) request.getAttribute(DTO_LIST_PARAM);
 %>
 <div class="container text-center">
     <h2>The list of free <%=session.getAttribute(CHAPTER_NAME_PARAM).toString()%> chapters</h2>

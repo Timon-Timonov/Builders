@@ -1,6 +1,6 @@
 package it.academy.service;
 
-import it.academy.dto.Page;
+import it.academy.service.dto.Page;
 import it.academy.pojo.Calculation;
 import it.academy.pojo.Chapter;
 import it.academy.pojo.Project;
@@ -51,8 +51,6 @@ public interface DeveloperService {
     void payAdvance(int sum, long calculationId) throws Exception;
 
     void payForWork(int sum, long calculationId) throws Exception;
-
-    int getProjectDept(Project project);
 
     int getTotalDeptByContractor(long contractorId, long developerId) throws IOException;
 }

@@ -3,9 +3,9 @@ package it.academy.servlet.adminServlets.getServlets;
 import it.academy.controller.AdminController;
 import it.academy.controller.impl.AdminControllerImpl;
 import it.academy.dto.ChapterDto;
-import it.academy.dto.Page;
+import it.academy.service.dto.Page;
 import it.academy.util.ExceptionRedirector;
-import it.academy.util.ParameterFinder;
+import it.academy.servlet.utils.ParameterFinder;
 import lombok.extern.log4j.Log4j2;
 
 import javax.servlet.ServletException;
@@ -50,7 +50,7 @@ public class GetChaptersFromContractorAdministratorServlet extends HttpServlet {
         List<ChapterDto> chapterDtoList = chapterDtoPage.getList();
         page = chapterDtoPage.getPageNumber();
 
-        req.setAttribute(CHAPTER_DTO_LIST_PARAM, chapterDtoList);
+        req.setAttribute(DTO_LIST_PARAM, chapterDtoList);
         session.setAttribute(CONTRACTOR_ID_PARAM, contractorId);
         session.setAttribute(CHAPTER_PAGE_PARAM, page);
         session.setAttribute(CHAPTER_COUNT_ON_PAGE_PARAM, count);

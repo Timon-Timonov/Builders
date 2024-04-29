@@ -1,11 +1,11 @@
-package it.academy.servlet.contractorServlets;
+package it.academy.servlet.contractorServlets.changeServlets;
 
 import it.academy.controller.ContractorController;
 import it.academy.controller.impl.ContractorControllerImpl;
 import it.academy.exceptions.NotUpdateDataInDbException;
 import it.academy.pojo.enums.ProposalStatus;
 import it.academy.util.ExceptionRedirector;
-import it.academy.util.ParameterFinder;
+import it.academy.servlet.utils.ParameterFinder;
 import lombok.extern.log4j.Log4j2;
 
 import javax.servlet.ServletException;

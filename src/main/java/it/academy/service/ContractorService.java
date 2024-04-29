@@ -1,6 +1,6 @@
 package it.academy.service;
 
-import it.academy.dto.Page;
+import it.academy.service.dto.Page;
 import it.academy.pojo.Calculation;
 import it.academy.pojo.Chapter;
 import it.academy.pojo.Project;

@@ -1,7 +1,7 @@
 <%@ page import="it.academy.dto.AddressDto" %>
 <%@ page import="it.academy.dto.ProjectDto" %>
 <%@ page import="it.academy.pojo.enums.ProjectStatus" %>
-<%@ page import="it.academy.servlet.WhatToDo" %>
+<%@ page import="it.academy.servlet.utils.WhatToDo" %>
 <%@ page import="java.util.List" %>
 <%@ page import="static it.academy.util.constants.ParameterNames.SHOW_PROJECT_LIST_BY_DEVELOPER_PARAM" %>
 <%@ page import="static it.academy.util.constants.ParameterNames.PROJECT_COUNT_ON_PAGE_PARAM" %>
@@ -32,7 +32,7 @@
     String developerName = (String) session.getAttribute(DEVELOPER_NAME_PARAM);
     String developerAddress = (String) session.getAttribute(DEVELOPER_ADDRESS_PARAM);
     ProjectStatus status = (ProjectStatus) session.getAttribute(PROJECT_STATUS_PARAM);
-    List<ProjectDto> projectDtoList = (List<ProjectDto>) request.getAttribute(PROJECT_DTO_LIST_PARAM);
+    List<ProjectDto> projectDtoList = (List<ProjectDto>) request.getAttribute(DTO_LIST_PARAM);
 %>
 <div class="container text-center">
     <h2>The list of all projects of developer <%=developerName%>

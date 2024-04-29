@@ -28,4 +28,12 @@ public class UserConverter {
                    .password(from.getPassword())
                    .build();
     }
+
+    public static UserDto createDto(String email, String password) {
+
+        return UserDto.builder()
+                   .email(email)
+                   .password(password)
+                   .build();
+    }
 }

@@ -3,7 +3,7 @@ package it.academy.servlet.adminServlets.getServlets;
 import it.academy.controller.impl.AdminControllerImpl;
 import it.academy.dto.ChapterDto;
 import it.academy.util.ExceptionRedirector;
-import it.academy.util.ParameterFinder;
+import it.academy.servlet.utils.ParameterFinder;
 import lombok.extern.log4j.Log4j2;
 
 import javax.servlet.ServletException;
@@ -33,7 +33,7 @@ public class GetChaptersFromProjectAdministratorServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
-        Long projectId = ParameterFinder.getNumberValueFromParameter(req, PROJECT_ID_PARAM, ZERO_LONG_VALUE);
+        long projectId = ParameterFinder.getNumberValueFromParameter(req, PROJECT_ID_PARAM, ZERO_LONG_VALUE);
         String projectName = ParameterFinder.getStringValueFromParameter(req, PROJECT_NAME_PARAM, BLANK_STRING);
         String projectAddress = ParameterFinder.getStringValueFromParameter(req, PROJECT_ADDRESS_PARAM, BLANK_STRING);
 
@@ -47,7 +47,7 @@ public class GetChaptersFromProjectAdministratorServlet extends HttpServlet {
         }
         HttpSession session = req.getSession();
 
-        req.setAttribute(CHAPTER_DTO_LIST_PARAM, chapterDtoList);
+        req.setAttribute(DTO_LIST_PARAM, chapterDtoList);
         session.setAttribute(PROJECT_ID_PARAM, projectId);
         session.setAttribute(PROJECT_NAME_PARAM, projectName);
         session.setAttribute(PROJECT_ADDRESS_PARAM, projectAddress);

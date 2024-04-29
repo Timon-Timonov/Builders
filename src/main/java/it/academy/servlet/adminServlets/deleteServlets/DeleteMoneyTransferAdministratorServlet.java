@@ -2,7 +2,7 @@ package it.academy.servlet.adminServlets.deleteServlets;
 
 import it.academy.controller.impl.AdminControllerImpl;
 import it.academy.util.ExceptionRedirector;
-import it.academy.util.ParameterFinder;
+import it.academy.servlet.utils.ParameterFinder;
 import lombok.extern.log4j.Log4j2;
 
 import javax.servlet.ServletException;
@@ -26,7 +26,7 @@ public class DeleteMoneyTransferAdministratorServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
-        Long moneyTransferId = ParameterFinder.getNumberValueFromParameter(req, MONEY_TRANSFER_ID_PARAM, ZERO_LONG_VALUE);
+        long moneyTransferId = ParameterFinder.getNumberValueFromParameter(req, MONEY_TRANSFER_ID_PARAM, ZERO_LONG_VALUE);
         try {
             controller.deleteMoneyTransfer(moneyTransferId);
         } catch (IOException e) {

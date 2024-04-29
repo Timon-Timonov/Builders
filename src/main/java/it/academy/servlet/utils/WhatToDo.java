@@ -1,4 +1,4 @@
-package it.academy.servlet;
+package it.academy.servlet.utils;
 
 public enum WhatToDo {
 

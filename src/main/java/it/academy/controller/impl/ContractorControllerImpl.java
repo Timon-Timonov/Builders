@@ -1,6 +1,7 @@
 package it.academy.controller.impl;
 
 import it.academy.controller.ContractorController;
+import it.academy.service.dto.Page;
 import it.academy.dto.*;
 import it.academy.pojo.Calculation;
 import it.academy.pojo.Chapter;
@@ -71,7 +72,7 @@ public class ContractorControllerImpl implements ContractorController {
         int pageNumber = chapterPage.getPageNumber();
         List<ChapterDto> list = chapterPage.getList()
                                     .stream()
-                                    .map(chapter -> ChapterConverter.convertToDto(chapter, null))
+                                    .map(chapter -> ChapterConverter.getChapterDtoForContractor(chapter, null))
                                     .collect(Collectors.toList());
         return new Page<>(list, pageNumber);
     }
@@ -115,7 +116,7 @@ public class ContractorControllerImpl implements ContractorController {
         return contractorService.getMyChaptersByProjectId(ProjectId, ContractorId).stream()
                    .map(chapter -> {
                        Integer chapterDebt = Util.getDebtByChapter(chapter);
-                       return ChapterConverter.convertToDto(chapter, chapterDebt);
+                       return ChapterConverter.getChapterDtoForContractor(chapter, chapterDebt);
                    })
                    .collect(Collectors.toList());
     }
@@ -126,7 +127,7 @@ public class ContractorControllerImpl implements ContractorController {
         Page<Calculation> calculationPage = contractorService.getCalculationsByChapter(chapterId, page, count);
         List<CalculationDto> list = calculationPage.getList().stream()
                                         .map(calculation -> {
-                                            Integer[] sums = Util.getDebtFromCalculation(calculation);
+                                            Integer[] sums = Util.getCalculationSums(calculation);
                                             return CalculationConverter.convertToDto(calculation, sums[0], sums[1], sums[2]);
                                         })
                                         .collect(Collectors.toList());

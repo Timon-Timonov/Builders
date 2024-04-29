@@ -3,13 +3,13 @@ package it.academy.servlet.adminServlets;
 import it.academy.controller.impl.AdminControllerImpl;
 import it.academy.dto.ContractorDto;
 import it.academy.dto.DeveloperDto;
-import it.academy.dto.Page;
+import it.academy.service.dto.Page;
 import it.academy.dto.UserDto;
 import it.academy.pojo.enums.UserStatus;
-import it.academy.servlet.WhatToDo;
+import it.academy.servlet.utils.WhatToDo;
 import it.academy.util.ExceptionRedirector;
-import it.academy.util.ParameterFinder;
-import it.academy.util.SessionCleaner;
+import it.academy.servlet.utils.ParameterFinder;
+import it.academy.servlet.utils.SessionCleaner;
 import lombok.extern.log4j.Log4j2;
 
 import javax.servlet.ServletException;
@@ -84,7 +84,7 @@ public class MainAdministratorServlet extends HttpServlet {
         } catch (Exception e) {
             ExceptionRedirector.forwardToException3(req, resp, this, e.getMessage());
         }
-        req.setAttribute(USER_DTO_LIST_PARAM, userDtoList);
+        req.setAttribute(DTO_LIST_PARAM, userDtoList);
 
         getServletContext().getRequestDispatcher(ADMIN_PAGES_LIST_WITH_ADMINS_JSP).forward(req, resp);
     }
@@ -107,7 +107,7 @@ public class MainAdministratorServlet extends HttpServlet {
         List<ContractorDto> contractorDtoList = contractorDtoPage.getList();
 
         HttpSession session = req.getSession();
-        req.setAttribute(CONTRACTOR_DTO_LIST_PARAM, contractorDtoList);
+        req.setAttribute(DTO_LIST_PARAM, contractorDtoList);
         session.setAttribute(USER_STATUS_PARAM, status);
         session.setAttribute(CONTRACTOR_PAGE_PARAM, page);
         session.setAttribute(CONTRACTOR_COUNT_ON_PAGE_PARAM, count);
@@ -134,7 +134,7 @@ public class MainAdministratorServlet extends HttpServlet {
         List<DeveloperDto> contractorDtoList = developerDtoPage.getList();
 
         HttpSession session = req.getSession();
-        req.setAttribute(DEVELOPER_DTO_LIST_PARAM, contractorDtoList);
+        req.setAttribute(DTO_LIST_PARAM, contractorDtoList);
         session.setAttribute(USER_STATUS_PARAM, status);
         session.setAttribute(DEVELOPER_PAGE_PARAM, page);
         session.setAttribute(DEVELOPER_COUNT_ON_PAGE_PARAM, count);

@@ -1,4 +1,4 @@
-package it.academy.dto;
+package it.academy.service.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

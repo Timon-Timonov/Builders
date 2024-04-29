@@ -1,4 +1,4 @@
-<%@ page import="it.academy.servlet.WhatToDo" %>
+<%@ page import="it.academy.servlet.utils.WhatToDo" %>
 <%@ page import="static it.academy.util.constants.ParameterNames.TODO_PARAM" %>
 <%@ page import="static it.academy.util.constants.Messages.EXIT_FROM" %>
 <%@ page import="static it.academy.util.constants.ParameterNames.ROLE_PARAM" %>

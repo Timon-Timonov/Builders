@@ -7,13 +7,14 @@ import it.academy.pojo.Chapter;
 import it.academy.pojo.Project;
 import it.academy.pojo.legalEntities.Contractor;
 import it.academy.pojo.legalEntities.Developer;
+import it.academy.util.Util;
 
 public class ChapterConverter {
 
     private ChapterConverter() {
     }
 
-    public static ChapterDto convertToDto(Chapter from, Integer chapterDebt) {
+    public static ChapterDto getChapterDtoForContractor(Chapter from, Integer chapterDebt) {
 
         Contractor contractor = from.getContractor();
         if (contractor == null) {
@@ -47,5 +48,11 @@ public class ChapterConverter {
                    .projectName(project.getName())
                    .chapterDebt(chapterDebt)
                    .build();
+    }
+
+    public static ChapterDto getChapterDtoForDeveloper(Chapter from) {
+
+        int chapterDebt = Util.getDebtByChapter(from);
+        return ChapterConverter.getChapterDtoForContractor(from, chapterDebt);
     }
 }

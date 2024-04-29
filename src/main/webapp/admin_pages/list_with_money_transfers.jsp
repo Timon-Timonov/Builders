@@ -1,6 +1,6 @@
 <%@ page import="static it.academy.util.constants.ParameterNames.*" %>
 <%@ page import="it.academy.dto.MoneyTransferDto" %>
-<%@ page import="it.academy.servlet.WhatToDo" %>
+<%@ page import="it.academy.servlet.utils.WhatToDo" %>
 <%@ page import="java.util.List" %>
 <%@ page import="static it.academy.util.constants.ServletURLs.*" %>
 <%@ page contentType="text/html;charset=UTF-8" %>
@@ -19,7 +19,7 @@
     String actionName = GET_MONEY_TRANSFER_ADMINISTRATOR_SERVLET;
 
 
-    List<MoneyTransferDto> moneyTransferDtoList = (List<MoneyTransferDto>) request.getAttribute(MONEY_TRANSFER_DTO_LIST_PARAM);
+    List<MoneyTransferDto> moneyTransferDtoList = (List<MoneyTransferDto>) request.getAttribute(DTO_LIST_PARAM);
 %>
 <div class="container text-center">
     <h2>The list of money transfers from calculation </h2>

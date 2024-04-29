@@ -1,6 +1,6 @@
 <%@ page import="it.academy.dto.ProposalDto" %>
 <%@ page import="it.academy.pojo.enums.ProposalStatus" %>
-<%@ page import="it.academy.servlet.WhatToDo" %>
+<%@ page import="it.academy.servlet.utils.WhatToDo" %>
 <%@ page import="static it.academy.util.constants.ParameterNames.PROPOSAL_COUNT_ON_PAGE_PARAM" %>
 <%@ page import="static it.academy.util.constants.ParameterNames.PROPOSAL_PAGE_PARAM" %>
 <%@ page import="static it.academy.util.constants.ParameterNames.*" %>
@@ -27,7 +27,7 @@
     int countOnPage = (Integer) session.getAttribute(countName);
     int pageNumber = (Integer) session.getAttribute(pageNumberParamName);
     ProposalStatus status = (ProposalStatus) session.getAttribute(PROPOSAL_STATUS_PARAM);
-    List<ProposalDto> proposalDtoList = (List<ProposalDto>) request.getAttribute(PROPOSAL_DTO_LIST_PARAM);
+    List<ProposalDto> proposalDtoList = (List<ProposalDto>) request.getAttribute(DTO_LIST_PARAM);
 %>
 <div class="container text-center">
     <h2>The list of proposals of contractor</h2>

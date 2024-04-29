@@ -1,11 +1,11 @@
 package it.academy.servlet.adminServlets.getServlets;
 
 import it.academy.controller.impl.AdminControllerImpl;
-import it.academy.dto.Page;
+import it.academy.service.dto.Page;
 import it.academy.dto.ProjectDto;
 import it.academy.pojo.enums.ProjectStatus;
 import it.academy.util.ExceptionRedirector;
-import it.academy.util.ParameterFinder;
+import it.academy.servlet.utils.ParameterFinder;
 import lombok.extern.log4j.Log4j2;
 
 import javax.servlet.ServletException;
@@ -53,7 +53,7 @@ public class GetProjectsAdministratorServlet extends HttpServlet {
         page = projectDtoPage.getPageNumber();
         List<ProjectDto> projectDtoList = projectDtoPage.getList();
 
-        req.setAttribute(PROJECT_DTO_LIST_PARAM, projectDtoList);
+        req.setAttribute(DTO_LIST_PARAM, projectDtoList);
         HttpSession session = req.getSession();
         session.setAttribute(PROJECT_STATUS_PARAM, status);
         session.setAttribute(PROJECT_PAGE_PARAM, page);

@@ -1,51 +1,39 @@
 package it.academy.controller;
 
+import it.academy.controller.dto.CreateRequestDto;
+import it.academy.controller.dto.DtoWithPageForUi;
+import it.academy.controller.dto.LoginDto;
+import it.academy.controller.dto.PageRequestDto;
 import it.academy.dto.*;
-import it.academy.pojo.Project;
-import it.academy.pojo.enums.ProjectStatus;
 import it.academy.pojo.enums.ProposalStatus;
-
-import java.io.IOException;
-import java.util.List;
 
 public interface DeveloperController {
 
-    DeveloperDto createDeveloper(
-        String email, String password, String name, String city, String street, String building)
-        throws Exception;
+    LoginDto createDeveloper(CreateRequestDto dto);
 
-    Page<ProjectDto> getMyProjects(long developerId, ProjectStatus status, int page, int count) throws Exception;
+    DtoWithPageForUi<ProjectDto> getMyProjects(PageRequestDto dto);
 
-    Page<ContractorDto> getMyContractors(long developerId, ProjectStatus status, int page, int count) throws Exception;
+    DtoWithPageForUi<ContractorDto> getMyContractors(PageRequestDto dto);
 
-    Page<ProposalDto> getAllMyProposals(long developerId, ProposalStatus status, int page, int count) throws Exception;
+    DtoWithPageForUi<ProposalDto> getAllMyProposals(PageRequestDto dto);
 
-    ProjectDto createProject(long developerId, String name, String city, String street, String building)
-        throws Exception;
+    DtoWithPageForUi<ProjectDto> createProject(CreateRequestDto dto);
 
-    void createChapter(long projectId, String name, Integer price) throws Exception;
+    DtoWithPageForUi<ChapterDto> createChapter(CreateRequestDto dto);
 
-    void cancelChapter(long chapterId) throws Exception;
+    DtoWithPageForUi<ChapterDto> cancelChapter(PageRequestDto dto);
 
-    List<ChapterDto> getChaptersByProjectId(long projectId) throws Exception;
+    DtoWithPageForUi<ChapterDto> getChaptersByProject(PageRequestDto dto);
 
-    Page<ChapterDto> getChaptersByContractorIdAndDeveloperId(long developerId, long contractorId, ProjectStatus status, int page, int count)
-        throws Exception;
+    DtoWithPageForUi<ChapterDto> getChaptersByContractorIdAndDeveloperId(PageRequestDto dto);
 
-    void changeStatusOfProposal(long proposalId, ProposalStatus newStaatus) throws Exception;
+    DtoWithPageForUi<ProposalDto> changeStatusOfProposal(PageRequestDto dto);
 
-    Page<ProposalDto> getProposalsByChapterId(long chapterId, ProposalStatus status, int page, int count)
-        throws Exception;
+    DtoWithPageForUi<ProposalDto> getProposalsByChapter(PageRequestDto dto);
 
-    void changeProjectStatus(long projectId, ProjectStatus newStatus) throws Exception;
+    DtoWithPageForUi<ProjectDto> changeProjectStatus(PageRequestDto dto);
 
-    Page<CalculationDto> getCalculationsByChapterId(long chapterId, int page, int count) throws Exception;
+    DtoWithPageForUi<CalculationDto> getCalculationsByChapterId(PageRequestDto dto);
 
-    void payAdvance(int sum, long calculationId) throws Exception;
-
-    void payForWork(int sum, long calculationId) throws Exception;
-
-    int getProjectDept(Project project);
-
-    int getTotalDeptByContractor(long contractorId, long developerId) throws IOException;
+    DtoWithPageForUi<MoneyTransferDto> payMoney(CreateRequestDto dto);
 }

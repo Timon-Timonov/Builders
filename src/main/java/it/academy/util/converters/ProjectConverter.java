@@ -4,6 +4,7 @@ import it.academy.dto.AddressDto;
 import it.academy.dto.ProjectDto;
 import it.academy.pojo.Address;
 import it.academy.pojo.Project;
+import it.academy.pojo.enums.ProjectStatus;
 import it.academy.pojo.legalEntities.Developer;
 
 public class ProjectConverter {
@@ -36,24 +37,8 @@ public class ProjectConverter {
                    .build();
     }
 
-    public static Project convertToEntity(ProjectDto from) {
+    public static Project convertToEntity(long developerId, ProjectStatus status, int page, int count) {
 
-        AddressDto addressFrom = from.getProjectAddress();
-        if (addressFrom == null) {
-            addressFrom = new AddressDto();
-        }
-
-        return Project.builder()
-                   .address(Address.builder()
-                                .city(addressFrom.getCity())
-                                .street(addressFrom.getStreet())
-                                .building(addressFrom.getBuilding())
-                                .build())
-                   .name(from.getProjectName())
-                   .developer(Developer.builder()
-                                  .id(from.getDeveloperId())
-                                  .name(from.getDeveloperName())
-                                  .build())
-                   .build();
+       return null;
     }
 }

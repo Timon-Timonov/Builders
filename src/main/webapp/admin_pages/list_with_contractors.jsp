@@ -3,7 +3,7 @@
 <%@ page import="it.academy.pojo.enums.UserStatus" %>
 <%@ page import="static it.academy.util.constants.ParameterNames.*" %>
 <%@ page import="static it.academy.util.constants.ServletURLs.*" %>
-<%@ page import="it.academy.servlet.WhatToDo" %>
+<%@ page import="it.academy.servlet.utils.WhatToDo" %>
 <%@ page import="java.util.List" %>
 <%@ page contentType="text/html;charset=UTF-8" %>
 <html>
@@ -30,7 +30,7 @@
     int countOnPage = (Integer) session.getAttribute(countName);
     int pageNumber = (Integer) session.getAttribute(pageNumberParamName);
     UserStatus status = (UserStatus) session.getAttribute(USER_STATUS_PARAM);
-    List<ContractorDto> contractorDtoList = (List<ContractorDto>) request.getAttribute(CONTRACTOR_DTO_LIST_PARAM);
+    List<ContractorDto> contractorDtoList = (List<ContractorDto>) request.getAttribute(DTO_LIST_PARAM);
 %>
 <div class="container text-center">
     <%@include file="/include_files/count_on_page_buttons_group.jsp" %>

@@ -1,10 +1,10 @@
-package it.academy.servlet.contractorServlets;
+package it.academy.servlet.contractorServlets.getServlets;
 
 import it.academy.controller.ContractorController;
 import it.academy.controller.impl.ContractorControllerImpl;
 import it.academy.dto.ChapterDto;
 import it.academy.util.ExceptionRedirector;
-import it.academy.util.ParameterFinder;
+import it.academy.servlet.utils.ParameterFinder;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -49,7 +49,7 @@ public class GetMyChaptersServlet extends HttpServlet {
             ExceptionRedirector.forwardToException3(req, resp, this, BLANK_STRING);
         }
 
-        req.setAttribute(CHAPTER_DTO_LIST_PARAM, chapterDtoList);
+        req.setAttribute(DTO_LIST_PARAM, chapterDtoList);
         session.setAttribute(PROJECT_ID_PARAM, projectId);
         session.setAttribute(PROJECT_NAME_PARAM, projectName);
         session.setAttribute(PROJECT_ADDRESS_PARAM, projectAddress);

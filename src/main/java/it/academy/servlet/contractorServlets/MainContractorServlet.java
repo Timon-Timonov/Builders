@@ -3,15 +3,15 @@ package it.academy.servlet.contractorServlets;
 import it.academy.controller.ContractorController;
 import it.academy.controller.impl.ContractorControllerImpl;
 import it.academy.dto.DeveloperDto;
-import it.academy.dto.Page;
+import it.academy.service.dto.Page;
 import it.academy.dto.ProjectDto;
 import it.academy.dto.ProposalDto;
 import it.academy.pojo.enums.ProjectStatus;
 import it.academy.pojo.enums.ProposalStatus;
-import it.academy.servlet.WhatToDo;
+import it.academy.servlet.utils.WhatToDo;
 import it.academy.util.ExceptionRedirector;
-import it.academy.util.ParameterFinder;
-import it.academy.util.SessionCleaner;
+import it.academy.servlet.utils.ParameterFinder;
+import it.academy.servlet.utils.SessionCleaner;
 import lombok.extern.log4j.Log4j2;
 
 import javax.servlet.ServletException;
@@ -97,7 +97,7 @@ public class MainContractorServlet extends HttpServlet {
         List<DeveloperDto> developerDtoList = developerDtoPage.getList();
 
         HttpSession session = req.getSession();
-        req.setAttribute(DEVELOPER_DTO_LIST_PARAM, developerDtoList);
+        req.setAttribute(DTO_LIST_PARAM, developerDtoList);
         session.setAttribute(PROJECT_STATUS_PARAM, status);
         session.setAttribute(DEVELOPER_PAGE_PARAM, page);
         session.setAttribute(DEVELOPER_COUNT_ON_PAGE_PARAM, count);
@@ -126,7 +126,7 @@ public class MainContractorServlet extends HttpServlet {
         List<ProjectDto> projectDtoList = projectDtoPage.getList();
 
         HttpSession session = req.getSession();
-        req.setAttribute(PROJECT_DTO_LIST_PARAM, projectDtoList);
+        req.setAttribute(DTO_LIST_PARAM, projectDtoList);
         session.setAttribute(PROJECT_STATUS_PARAM, status);
         session.setAttribute(PROJECT_PAGE_PARAM, page);
         session.setAttribute(PROJECT_COUNT_ON_PAGE_PARAM, count);
@@ -155,7 +155,7 @@ public class MainContractorServlet extends HttpServlet {
         List<ProposalDto> proposalDtoList = proposalDtoPage.getList();
 
         HttpSession session = req.getSession();
-        req.setAttribute(PROPOSAL_DTO_LIST_PARAM, proposalDtoList);
+        req.setAttribute(DTO_LIST_PARAM, proposalDtoList);
         session.setAttribute(PROPOSAL_STATUS_PARAM, status);
         session.setAttribute(PROPOSAL_PAGE_PARAM, page);
         session.setAttribute(PROPOSAL_COUNT_ON_PAGE_PARAM, count);
@@ -173,7 +173,7 @@ public class MainContractorServlet extends HttpServlet {
         } catch (IOException e) {
             ExceptionRedirector.forwardToException3(req, resp, this, BAD_CONNECTION);
         }
-        req.setAttribute(CHAPTER_NAMES_LIST_PARAM, chapterNamesList);
+        req.setAttribute(DTO_LIST_PARAM, chapterNamesList);
 
         getServletContext().getRequestDispatcher(LIST_WITH_CHAPTER_NAMES_JSP).forward(req, resp);
     }

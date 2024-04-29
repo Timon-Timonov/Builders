@@ -1,14 +1,14 @@
 package it.academy.controller.impl;
 
 import it.academy.controller.AdminController;
+import it.academy.controller.dto.LoginDto;
+import it.academy.service.dto.Page;
 import it.academy.dto.*;
 import it.academy.exceptions.NotUpdateDataInDbException;
-import it.academy.pojo.Calculation;
-import it.academy.pojo.Chapter;
-import it.academy.pojo.Project;
-import it.academy.pojo.Proposal;
+import it.academy.pojo.*;
 import it.academy.pojo.enums.ProjectStatus;
 import it.academy.pojo.enums.ProposalStatus;
+import it.academy.pojo.enums.Roles;
 import it.academy.pojo.enums.UserStatus;
 import it.academy.pojo.legalEntities.Contractor;
 import it.academy.pojo.legalEntities.Developer;
@@ -21,26 +21,91 @@ import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static it.academy.util.constants.JspURLs.*;
+import static it.academy.util.constants.Messages.*;
+
 public class AdminControllerImpl implements AdminController {
 
-    private final AdminService adminService = new AdminServiceImpl();
+    private final AdminService service = new AdminServiceImpl();
+
+    @Override
+    public LoginDto logIn(UserDto userDtoFromUi) {
+
+        String exceptionMessage = null;
+        UserDto userFromDb = null;
+        String url = null;
+
+        String email = userDtoFromUi.getEmail();
+        if (email != null && !email.isBlank()) {
+            User user = null;
+            try {
+                user = service.getUser(email);
+            } catch (Exception e) {
+                exceptionMessage = SOMETHING_WENT_WRONG;
+            }
+
+            if (user != null) {
+                String password = userDtoFromUi.getPassword();
+                if (password != null && !password.isEmpty()) {
+                    if (password.equals(user.getPassword())) {
+                        if (UserStatus.ACTIVE.equals(user.getStatus())) {
+                            Roles role = user.getRole();
+                            userFromDb = UserConverter.convertToDto(user);
+                            switch (role) {
+                                case CONTRACTOR:
+                                    url = CONTRACTOR_PAGES_MAIN_JSP;
+                                    break;
+                                case DEVELOPER:
+                                    url = DEVELOPER_PAGES_MAIN_JSP;
+                                    break;
+                                case ADMIN:
+                                    url = ADMIN_PAGES_MAIN_JSP;
+                                    break;
+                                default:
+                                    exceptionMessage = ROLE_IS_INVALID;
+                            }
+                        } else {
+                            exceptionMessage = USER_HAS_NOT_ACTIVE_STATUS_IT_IS_IMPOSSIBLE_TO_USE_THIS_ACCOUNT;
+                        }
+                    } else {
+                        exceptionMessage = PASSWORD_IS_INVALID;
+                    }
+                } else {
+                    exceptionMessage = PASSWORD_IS_EMPTY;
+                }
+            } else {
+                exceptionMessage = EMAIL_IS_INVALID;
+            }
+        } else {
+            exceptionMessage = EMAIL_IS_EMPTY;
+        }
+
+        LoginDto loginDto = LoginDto.builder().build();
+        if (exceptionMessage != null) {
+            loginDto.setExceptionMessage(exceptionMessage);
+        } else {
+            loginDto.setUrl(url);
+            loginDto.setUserFromDb(userFromDb);
+        }
+        return loginDto;
+    }
 
     @Override
     public void createAdmin(String email, String password) throws Exception {
 
-        UserConverter.convertToDto(adminService.createAdmin(email, password));
+        UserConverter.convertToDto(service.createAdmin(email, password));
     }
 
     @Override
     public UserDto getUser(String email) throws Exception {
 
-        return UserConverter.convertToDto(adminService.getUser(email));
+        return UserConverter.convertToDto(service.getUser(email));
     }
 
     @Override
     public Page<ContractorDto> getAllContractors(UserStatus status, int page, int count) throws Exception {
 
-        Page<Contractor> contractorPage = adminService.getAllContractors(status, page, count);
+        Page<Contractor> contractorPage = service.getAllContractors(status, page, count);
         int pageNumber = contractorPage.getPageNumber();
         List<ContractorDto> list = contractorPage.getList()
                                        .stream()
@@ -53,7 +118,7 @@ public class AdminControllerImpl implements AdminController {
     @Override
     public List<UserDto> getAllAdministrators() throws Exception {
 
-        return adminService.getAllAdministrators()
+        return service.getAllAdministrators()
                    .stream()
                    .map(UserConverter::convertToDto)
                    .collect(Collectors.toList());
@@ -62,7 +127,7 @@ public class AdminControllerImpl implements AdminController {
     @Override
     public Page<DeveloperDto> getAllDevelopers(UserStatus status, int page, int count) throws Exception {
 
-        Page<Developer> developerPage = adminService.getAllDevelopers(status, page, count);
+        Page<Developer> developerPage = service.getAllDevelopers(status, page, count);
         int pageNumber = developerPage.getPageNumber();
         List<DeveloperDto> list = developerPage.getList()
                                       .stream()
@@ -74,7 +139,7 @@ public class AdminControllerImpl implements AdminController {
     @Override
     public Page<ProjectDto> getProjectsByDeveloper(long developerId, ProjectStatus status, int page, int count) throws Exception {
 
-        Page<Project> projectPage = adminService.getProjectsByDeveloper(developerId, status, page, count);
+        Page<Project> projectPage = service.getProjectsByDeveloper(developerId, status, page, count);
         int pageNumber = projectPage.getPageNumber();
         List<ProjectDto> list = projectPage.getList()
                                     .stream()
@@ -86,19 +151,19 @@ public class AdminControllerImpl implements AdminController {
     @Override
     public List<ChapterDto> getChaptersByProjectId(long projectId) throws Exception {
 
-        return adminService.getChaptersByProjectId(projectId).stream()
-                   .map(chapter -> ChapterConverter.convertToDto(chapter, null))
+        return service.getChaptersByProjectId(projectId).stream()
+                   .map(chapter -> ChapterConverter.getChapterDtoForContractor(chapter, null))
                    .collect(Collectors.toList());
     }
 
     @Override
     public Page<ChapterDto> getChaptersByContractorId(long contractorId, int page, int count) throws Exception {
 
-        Page<Chapter> chapterPage = adminService.getChaptersByContractorId(contractorId, page, count);
+        Page<Chapter> chapterPage = service.getChaptersByContractorId(contractorId, page, count);
         int pageNumber = chapterPage.getPageNumber();
         List<ChapterDto> list = chapterPage.getList()
                                     .stream()
-                                    .map(chapter -> ChapterConverter.convertToDto(chapter, null))
+                                    .map(chapter -> ChapterConverter.getChapterDtoForContractor(chapter, null))
                                     .collect(Collectors.toList());
         return new Page<>(list, pageNumber);
     }
@@ -106,7 +171,7 @@ public class AdminControllerImpl implements AdminController {
     @Override
     public List<MoneyTransferDto> getMoneyTransfers(long calculationId) throws Exception {
 
-        return adminService.getMoneyTransfers(calculationId).stream()
+        return service.getMoneyTransfers(calculationId).stream()
                    .map(MoneyTransferConverter::convertToDto)
                    .collect(Collectors.toList());
     }
@@ -114,11 +179,11 @@ public class AdminControllerImpl implements AdminController {
     @Override
     public Page<CalculationDto> getCalculationsByChapterId(long chapterId, int page, int count) throws Exception {
 
-        Page<Calculation> calculationPage = adminService.getCalculationsByChapterId(chapterId, page, count);
+        Page<Calculation> calculationPage = service.getCalculationsByChapterId(chapterId, page, count);
         int pageNumber = calculationPage.getPageNumber();
         List<CalculationDto> list = calculationPage.getList().stream()
                                         .map(calculation -> {
-                                            Integer[] sums = Util.getDebtFromCalculation(calculation);
+                                            Integer[] sums = Util.getCalculationSums(calculation);
                                             return CalculationConverter.convertToDto(calculation, sums[0], sums[1], sums[2]);
                                         })
                                         .collect(Collectors.toList());
@@ -128,7 +193,7 @@ public class AdminControllerImpl implements AdminController {
     @Override
     public Page<ProposalDto> getProposalsByChapterId(long chapterId, ProposalStatus status, int page, int count) throws Exception {
 
-        Page<Proposal> proposalPage = adminService.getProposalsByChapterId(chapterId, status, page, count);
+        Page<Proposal> proposalPage = service.getProposalsByChapterId(chapterId, status, page, count);
         int pageNumber = proposalPage.getPageNumber();
         List<ProposalDto> list = proposalPage.getList().stream()
                                      .map(ProposalConverter::convertToDto)
@@ -139,7 +204,7 @@ public class AdminControllerImpl implements AdminController {
     @Override
     public Page<ProposalDto> getProposalsByContractorId(long contractorId, ProposalStatus status, int page, int count) throws Exception {
 
-        Page<Proposal> proposalPage = adminService.getProposalsByContractorId(contractorId, status, page, count);
+        Page<Proposal> proposalPage = service.getProposalsByContractorId(contractorId, status, page, count);
         int pageNumber = proposalPage.getPageNumber();
         List<ProposalDto> list = proposalPage.getList().stream()
                                      .map(ProposalConverter::convertToDto)
@@ -150,42 +215,42 @@ public class AdminControllerImpl implements AdminController {
     @Override
     public void changeUserStatus(long userId, UserStatus newStatus) throws Exception {
 
-        adminService.changeUserStatus(userId, newStatus);
+        service.changeUserStatus(userId, newStatus);
     }
 
     @Override
     public void deleteUser(long userId) throws IOException, NotUpdateDataInDbException {
 
-        adminService.deleteUser(userId);
+        service.deleteUser(userId);
     }
 
     @Override
     public void deleteCalculation(long calculationId) throws IOException, NotUpdateDataInDbException {
 
-        adminService.deleteCalculation(calculationId);
+        service.deleteCalculation(calculationId);
     }
 
     @Override
     public void deleteChapter(long chapterId) throws IOException, NotUpdateDataInDbException {
 
-        adminService.deleteChapter(chapterId);
+        service.deleteChapter(chapterId);
     }
 
     @Override
     public void deleteMoneyTransfer(long transferId) throws IOException, NotUpdateDataInDbException {
 
-        adminService.deleteMoneyTransfer(transferId);
+        service.deleteMoneyTransfer(transferId);
     }
 
     @Override
     public void deleteProject(long projectId) throws IOException, NotUpdateDataInDbException {
 
-        adminService.deleteProject(projectId);
+        service.deleteProject(projectId);
     }
 
     @Override
     public void deleteProposal(long proposalId) throws IOException, NotUpdateDataInDbException {
 
-        adminService.deleteProposal(proposalId);
+        service.deleteProposal(proposalId);
     }
 }

@@ -3,7 +3,7 @@ package it.academy.servlet.adminServlets.getServlets;
 import it.academy.controller.impl.AdminControllerImpl;
 import it.academy.dto.MoneyTransferDto;
 import it.academy.util.ExceptionRedirector;
-import it.academy.util.ParameterFinder;
+import it.academy.servlet.utils.ParameterFinder;
 import lombok.extern.log4j.Log4j2;
 
 import javax.persistence.NoResultException;
@@ -22,7 +22,7 @@ import static it.academy.util.constants.JspURLs.ADMIN_PAGES_LIST_WITH_MONEY_TRAN
 import static it.academy.util.constants.Messages.BAD_CONNECTION;
 import static it.academy.util.constants.Messages.THERE_IS_NO_SUCH_DATA_IN_DB_WITH_ID;
 import static it.academy.util.constants.ParameterNames.CALCULATION_ID_PARAM;
-import static it.academy.util.constants.ParameterNames.MONEY_TRANSFER_DTO_LIST_PARAM;
+import static it.academy.util.constants.ParameterNames.DTO_LIST_PARAM;
 import static it.academy.util.constants.ServletURLs.GET_MONEY_TRANSFER_ADMINISTRATOR_SERVLET;
 import static it.academy.util.constants.ServletURLs.SLASH_STRING;
 
@@ -49,7 +49,7 @@ public class GetMoneyTransferAdministratorServlet extends HttpServlet {
         }
         HttpSession session = req.getSession();
 
-        req.setAttribute(MONEY_TRANSFER_DTO_LIST_PARAM, moneyTransferDtoList);
+        req.setAttribute(DTO_LIST_PARAM, moneyTransferDtoList);
         session.setAttribute(CALCULATION_ID_PARAM, calculationId);
         getServletContext().getRequestDispatcher(ADMIN_PAGES_LIST_WITH_MONEY_TRANSFERS_JSP).forward(req, resp);
     }

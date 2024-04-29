@@ -1,6 +1,6 @@
 <%@ page import="it.academy.dto.ProposalDto" %>
 <%@ page import="it.academy.pojo.enums.ProposalStatus" %>
-<%@ page import="it.academy.servlet.WhatToDo" %>
+<%@ page import="it.academy.servlet.utils.WhatToDo" %>
 <%@ page import="java.util.List" %>
 <%@ page import="static it.academy.util.constants.ServletURLs.MAIN_DEVELOPER_SERVLET" %>
 <%@ page import="static it.academy.util.constants.ParameterNames.*" %>
@@ -30,7 +30,7 @@
     int countOnPage = (Integer) session.getAttribute(countName);
     int pageNumber = (Integer) session.getAttribute(pageNumberParamName);
     ProposalStatus status = (ProposalStatus) session.getAttribute(PROPOSAL_STATUS_PARAM);
-    List<ProposalDto> proposalDtoList = (List<ProposalDto>) request.getAttribute(PROPOSAL_DTO_LIST_PARAM);
+    List<ProposalDto> proposalDtoList = (List<ProposalDto>) request.getAttribute(DTO_LIST_PARAM);
 %>
 <div class="container text-center">
     <%@include file="/include_files/count_on_page_buttons_group.jsp" %>

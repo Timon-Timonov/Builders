@@ -2,11 +2,11 @@ package it.academy.servlet.adminServlets.getServlets;
 
 import it.academy.controller.AdminController;
 import it.academy.controller.impl.AdminControllerImpl;
-import it.academy.dto.Page;
+import it.academy.service.dto.Page;
 import it.academy.dto.ProposalDto;
 import it.academy.pojo.enums.ProposalStatus;
 import it.academy.util.ExceptionRedirector;
-import it.academy.util.ParameterFinder;
+import it.academy.servlet.utils.ParameterFinder;
 import lombok.extern.log4j.Log4j2;
 
 import javax.servlet.ServletException;
@@ -53,7 +53,7 @@ public class GetProposalsFromContractorAdministratorServlet extends HttpServlet 
         List<ProposalDto> proposalDtoList = proposalDtoPage.getList();
         HttpSession session = req.getSession();
 
-        req.setAttribute(PROPOSAL_DTO_LIST_PARAM, proposalDtoList);
+        req.setAttribute(DTO_LIST_PARAM, proposalDtoList);
         session.setAttribute(PROPOSAL_PAGE_PARAM, page);
         session.setAttribute(PROPOSAL_COUNT_ON_PAGE_PARAM, count);
         session.setAttribute(PROPOSAL_STATUS_PARAM, status);

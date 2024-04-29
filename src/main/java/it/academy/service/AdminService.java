@@ -1,6 +1,6 @@
 package it.academy.service;
 
-import it.academy.dto.Page;
+import it.academy.service.dto.Page;
 import it.academy.exceptions.NotUpdateDataInDbException;
 import it.academy.pojo.*;
 import it.academy.pojo.enums.ProjectStatus;

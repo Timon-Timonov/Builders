@@ -26,7 +26,7 @@
     int countOnPage = (Integer) session.getAttribute(countName);
     int pageNumber = (Integer) session.getAttribute(pageNumberParamName);
     ProposalStatus status = (ProposalStatus) session.getAttribute(PROPOSAL_STATUS_PARAM);
-    List<ProposalDto> proposalDtoList = (List<ProposalDto>) request.getAttribute(PROPOSAL_DTO_LIST_PARAM);
+    List<ProposalDto> proposalDtoList = (List<ProposalDto>) request.getAttribute(DTO_LIST_PARAM);
 
     String projectName = (String) session.getAttribute(PROJECT_NAME_PARAM);
     String chapterName = (String) session.getAttribute(CHAPTER_NAME_PARAM);

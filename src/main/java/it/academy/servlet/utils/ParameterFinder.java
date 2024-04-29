@@ -1,4 +1,4 @@
-package it.academy.util;
+package it.academy.servlet.utils;
 
 import it.academy.pojo.enums.ChapterStatus;
 import it.academy.pojo.enums.ProjectStatus;

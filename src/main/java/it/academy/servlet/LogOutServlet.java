@@ -1,6 +1,6 @@
 package it.academy.servlet;
 
-import it.academy.util.SessionCleaner;
+import it.academy.servlet.utils.SessionCleaner;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -10,8 +10,8 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
+import static it.academy.servlet.utils.SessionCleaner.logOutClean;
 import static it.academy.util.constants.JspURLs.INDEX_JSP;
-import static it.academy.util.constants.ParameterNames.*;
 import static it.academy.util.constants.ServletURLs.LOGOUT_SERVLET;
 import static it.academy.util.constants.ServletURLs.SLASH_STRING;
 
@@ -22,20 +22,8 @@ public class LogOutServlet extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
         HttpSession session = req.getSession();
-
         SessionCleaner.clearSession(session);
-
-        session.removeAttribute(EMAIL_PARAM);
-        session.removeAttribute(PASSWORD_PARAM);
-        session.removeAttribute(ROLE_PARAM);
-        session.removeAttribute(ID_PARAM);
-
+        logOutClean(req);
         getServletContext().getRequestDispatcher(INDEX_JSP).forward(req, resp);
-    }
-
-    @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-
-        doGet(req, resp);
     }
 }

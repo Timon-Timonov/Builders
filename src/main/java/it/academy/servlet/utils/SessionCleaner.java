@@ -1,4 +1,4 @@
-package it.academy.util;
+package it.academy.servlet.utils;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -101,7 +101,14 @@ public class SessionCleaner {
         session.removeAttribute(PROPOSAL_PAGE_PARAM);
         session.removeAttribute(PROPOSAL_COUNT_ON_PAGE_PARAM);
         session.removeAttribute(PROPOSAL_STATUS_PARAM);
-
     }
 
+    public static void logOutClean(HttpServletRequest req) {
+
+        HttpSession session = req.getSession();
+        session.removeAttribute(EMAIL_PARAM);
+        session.removeAttribute(PASSWORD_PARAM);
+        session.removeAttribute(ROLE_PARAM);
+        session.removeAttribute(ID_PARAM);
+    }
 }

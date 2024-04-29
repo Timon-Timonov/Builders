@@ -1,6 +1,6 @@
 <%@ page import="it.academy.dto.ContractorDto" %>
 <%@ page import="it.academy.pojo.enums.ProjectStatus" %>
-<%@ page import="it.academy.servlet.WhatToDo" %>
+<%@ page import="it.academy.servlet.utils.WhatToDo" %>
 <%@ page import="java.util.List" %>
 <%@ page import="static it.academy.util.constants.ServletURLs.MAIN_DEVELOPER_SERVLET" %>
 <%@ page import="static it.academy.util.constants.ParameterNames.*" %>
@@ -30,7 +30,7 @@
     int countOnPage = (Integer) session.getAttribute(countName);
     int pageNumber = (Integer) session.getAttribute(pageNumberParamName);
     ProjectStatus status = (ProjectStatus) session.getAttribute(PROJECT_STATUS_PARAM);
-    List<ContractorDto> contractorDtoList = (List<ContractorDto>) request.getAttribute(CONTRACTOR_DTO_LIST_PARAM);
+    List<ContractorDto> contractorDtoList = (List<ContractorDto>) request.getAttribute(DTO_LIST_PARAM);
 %>
 <div class="container text-center">
     <%@include file="/include_files/count_on_page_buttons_group.jsp" %>
@@ -73,6 +73,7 @@
             <td>
                 <form action="<%=GET_CHAPTERS_OF_CONTRACTOR_DEVELOPER_SERVLET%>" method="get">
                     <input type="hidden" value="<%=contractorDto.getId().toString()%>" name="<%=CONTRACTOR_ID_PARAM%>">
+                    <input type="hidden" value="<%=contractorName%>" name="<%=CHAPTER_CONTRACTOR_NAME_PARAM%>">
                     <button class="btn btn-light" type="submit">Details</button>
                 </form>
             </td>

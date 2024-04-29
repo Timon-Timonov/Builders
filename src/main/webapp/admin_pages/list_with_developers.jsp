@@ -1,7 +1,7 @@
 <%@ page import="it.academy.dto.AddressDto" %>
 <%@ page import="it.academy.dto.DeveloperDto" %>
 <%@ page import="it.academy.pojo.enums.UserStatus" %>
-<%@ page import="it.academy.servlet.WhatToDo" %>
+<%@ page import="it.academy.servlet.utils.WhatToDo" %>
 <%@ page import="java.util.List" %>
 <%@ page import="static it.academy.util.constants.ParameterNames.DEVELOPER_COUNT_ON_PAGE_PARAM" %>
 <%@ page import="static it.academy.util.constants.ParameterNames.DEVELOPER_PAGE_PARAM" %>
@@ -31,7 +31,7 @@
     int countOnPage = (Integer) session.getAttribute(countName);
     int pageNumber = (Integer) session.getAttribute(pageNumberParamName);
     UserStatus status = (UserStatus) session.getAttribute(USER_STATUS_PARAM);
-    List<DeveloperDto> developerDtoList = (List<DeveloperDto>) request.getAttribute(DEVELOPER_DTO_LIST_PARAM);
+    List<DeveloperDto> developerDtoList = (List<DeveloperDto>) request.getAttribute(DTO_LIST_PARAM);
 %>
 
 <div class="container text-center">

@@ -1,7 +1,7 @@
 <%@ page import="it.academy.dto.AddressDto" %>
 <%@ page import="it.academy.dto.ProjectDto" %>
 <%@ page import="it.academy.pojo.enums.ProjectStatus" %>
-<%@ page import="it.academy.servlet.WhatToDo" %>
+<%@ page import="it.academy.servlet.utils.WhatToDo" %>
 <%@ page import="java.util.List" %>
 <%@ page import="java.util.Optional" %>
 <%@ page import="static it.academy.util.constants.ParameterNames.*" %>
@@ -29,7 +29,7 @@
     int countOnPage = (Integer) session.getAttribute(countName);
     int pageNumber = (Integer) session.getAttribute(pageNumberParamName);
     ProjectStatus status = (ProjectStatus) session.getAttribute(PROJECT_STATUS_PARAM);
-    List<ProjectDto> projectDtoList = (List<ProjectDto>) request.getAttribute(PROJECT_DTO_LIST_PARAM);
+    List<ProjectDto> projectDtoList = (List<ProjectDto>) request.getAttribute(DTO_LIST_PARAM);
 %>
 
 <div class="container text-center">

@@ -1,12 +1,12 @@
-package it.academy.servlet.contractorServlets;
+package it.academy.servlet.contractorServlets.getServlets;
 
 import it.academy.controller.ContractorController;
 import it.academy.controller.impl.ContractorControllerImpl;
 import it.academy.dto.CalculationDto;
-import it.academy.dto.Page;
+import it.academy.service.dto.Page;
 import it.academy.exceptions.NotUpdateDataInDbException;
 import it.academy.util.ExceptionRedirector;
-import it.academy.util.ParameterFinder;
+import it.academy.servlet.utils.ParameterFinder;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -52,7 +52,7 @@ public class GetMyCalculationServlet extends HttpServlet {
         page = calculationDtoPage.getPageNumber();
         HttpSession session = req.getSession();
 
-        req.setAttribute(CALCULATION_DTO_LIST_PARAM, calculationDtoList);
+        req.setAttribute(DTO_LIST_PARAM, calculationDtoList);
         session.setAttribute(CHAPTER_ID_PARAM, chapterId);
         session.setAttribute(CHAPTER_NAME_PARAM, chapterName);
         session.setAttribute(CHAPTER_PRICE_PARAM, chapterPrice);

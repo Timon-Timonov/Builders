@@ -1,6 +1,6 @@
 <%@ page import="it.academy.dto.UserDto" %>
 <%@ page import="it.academy.pojo.enums.UserStatus" %>
-<%@ page import="it.academy.servlet.WhatToDo" %>
+<%@ page import="it.academy.servlet.utils.WhatToDo" %>
 <%@ page import="static it.academy.util.constants.ParameterNames.*" %>
 <%@ page import="static it.academy.util.constants.ServletURLs.*" %>
 <%@ page import="java.util.List" %>
@@ -22,7 +22,7 @@
 <br>
 <%
     String actionParameterToDoValue = WhatToDo.SHOW_ADMINISTRATORS.toString();
-    List<UserDto> userDtoList = (List<UserDto>) request.getAttribute(USER_DTO_LIST_PARAM);
+    List<UserDto> userDtoList = (List<UserDto>) request.getAttribute(DTO_LIST_PARAM);
 %>
 
 <br>

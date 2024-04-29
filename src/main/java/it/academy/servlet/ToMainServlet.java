@@ -1,7 +1,7 @@
 package it.academy.servlet;
 
 import it.academy.pojo.enums.Roles;
-import it.academy.util.SessionCleaner;
+import it.academy.servlet.utils.SessionCleaner;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -23,6 +23,7 @@ public class ToMainServlet extends HttpServlet {
 
         HttpSession session = req.getSession();
         Roles role = (Roles) session.getAttribute(ROLE_PARAM);
+
         String url;
         switch (role) {
             case DEVELOPER:

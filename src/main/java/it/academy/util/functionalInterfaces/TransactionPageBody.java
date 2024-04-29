@@ -1,6 +1,6 @@
 package it.academy.util.functionalInterfaces;
 
-import it.academy.dto.Page;
+import it.academy.service.dto.Page;
 
 @FunctionalInterface
 public interface TransactionPageBody<T> {

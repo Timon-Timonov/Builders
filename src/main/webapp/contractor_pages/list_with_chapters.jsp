@@ -1,5 +1,5 @@
 <%@ page import="it.academy.dto.ChapterDto" %>
-<%@ page import="it.academy.servlet.WhatToDo" %>
+<%@ page import="it.academy.servlet.utils.WhatToDo" %>
 <%@ page import="java.util.List" %>
 <%@ page import="java.util.Optional" %>
 <%@ page import="static it.academy.util.constants.ParameterNames.*" %>
@@ -18,7 +18,7 @@
 
 <body>
 <%
-    List<ChapterDto> chapterDtoList = (List<ChapterDto>) request.getAttribute(CHAPTER_DTO_LIST_PARAM);
+    List<ChapterDto> chapterDtoList = (List<ChapterDto>) request.getAttribute(DTO_LIST_PARAM);
 %>
 
 <div class="container text-center">

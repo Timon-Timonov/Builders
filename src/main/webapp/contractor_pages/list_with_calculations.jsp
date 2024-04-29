@@ -2,7 +2,7 @@
 <%@ page import="static it.academy.util.constants.ParameterNames.*" %>
 <%@ page import="static it.academy.util.constants.ServletURLs.GET_MY_CALCULATION_CONTRACTOR_SERVLET" %>
 <%@ page import="it.academy.dto.CalculationDto" %>
-<%@ page import="it.academy.servlet.WhatToDo" %>
+<%@ page import="it.academy.servlet.utils.WhatToDo" %>
 <%@ page import="java.util.List" %>
 <%@ page import="static it.academy.util.constants.ServletURLs.*" %>
 <%@ page contentType="text/html;charset=UTF-8" %>
@@ -26,7 +26,7 @@
 
     String actionParameterToDoValue = null;
 
-    List<CalculationDto> calculationDtoList = (List<CalculationDto>) request.getAttribute(CALCULATION_DTO_LIST_PARAM);
+    List<CalculationDto> calculationDtoList = (List<CalculationDto>) request.getAttribute(DTO_LIST_PARAM);
 %>
 <div class="container text-center">
     <h2>The list of my calculations from chapter </h2>

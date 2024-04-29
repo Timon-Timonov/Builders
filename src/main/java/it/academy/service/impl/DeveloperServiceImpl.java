@@ -2,7 +2,7 @@ package it.academy.service.impl;
 
 import it.academy.dao.*;
 import it.academy.dao.impl.*;
-import it.academy.dto.Page;
+import it.academy.service.dto.Page;
 import it.academy.exceptions.EmailOccupaidException;
 import it.academy.exceptions.NotCreateDataInDbException;
 import it.academy.exceptions.NotUpdateDataInDbException;
@@ -590,14 +590,6 @@ public class DeveloperServiceImpl implements DeveloperService {
         }
     }
 
-    @Override
-    public int getProjectDept(Project project) {
-
-        return project.getChapters()
-                   .stream()
-                   .map(Util::getDebtByChapter)
-                   .reduce(ZERO_INT_VALUE, Integer::sum);
-    }
 
     @Override
     public int getTotalDeptByContractor(long contractorId, long developerId) throws IOException {

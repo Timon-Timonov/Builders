@@ -3,7 +3,7 @@ package it.academy.servlet.adminServlets.deleteServlets;
 import it.academy.controller.impl.AdminControllerImpl;
 import it.academy.exceptions.NotUpdateDataInDbException;
 import it.academy.util.ExceptionRedirector;
-import it.academy.util.ParameterFinder;
+import it.academy.servlet.utils.ParameterFinder;
 import lombok.extern.log4j.Log4j2;
 
 import javax.servlet.ServletException;

@@ -1,4 +1,4 @@
-package it.academy.servlet.contractorServlets;
+package it.academy.servlet.contractorServlets.createServlets;
 
 import it.academy.controller.ContractorController;
 import it.academy.controller.impl.ContractorControllerImpl;

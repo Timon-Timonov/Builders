@@ -1,10 +1,10 @@
-package it.academy.servlet.contractorServlets;
+package it.academy.servlet.contractorServlets.createServlets;
 
 import it.academy.controller.ContractorController;
 import it.academy.controller.impl.ContractorControllerImpl;
 import it.academy.exceptions.NotCreateDataInDbException;
 import it.academy.util.ExceptionRedirector;
-import it.academy.util.ParameterFinder;
+import it.academy.servlet.utils.ParameterFinder;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;

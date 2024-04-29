@@ -2,10 +2,12 @@ package it.academy.util;
 
 import it.academy.pojo.Calculation;
 import it.academy.pojo.Chapter;
+import it.academy.pojo.MoneyTransfer;
+import it.academy.pojo.Project;
 import it.academy.pojo.enums.PaymentType;
 import lombok.extern.log4j.Log4j2;
 
-import java.util.concurrent.atomic.AtomicReference;
+import java.util.Set;
 
 import static it.academy.util.constants.Constants.*;
 
@@ -22,7 +24,7 @@ public class Util {
         }
         int lastPage = totalCount == 0L ?
                            FIRST_PAGE_NUMBER
-                           : ((totalCount % count == 0) ?
+                           : ((totalCount % count == ZERO_INT_VALUE) ?
                                   (int) (totalCount / count)
                                   : (int) (1 + (totalCount / count)));
         if (page == DEFAULT_LAST_PAGE_NUMBER || page > lastPage) {
@@ -31,36 +33,45 @@ public class Util {
         return page;
     }
 
-    public static Integer[] getDebtFromCalculation(Calculation calculation) {
+    public static Integer[] getCalculationSums(Calculation calculation) {
 
         if (calculation == null) {
-            return new Integer[]{0, 0, 0};
+            return new Integer[]{ZERO_INT_VALUE, ZERO_INT_VALUE, ZERO_INT_VALUE};
         }
-        AtomicReference<Integer> sumAdvance = new AtomicReference<>(0);
-        AtomicReference<Integer> sumForWork = new AtomicReference<>(0);
-        calculation.getTransferSet()
-            .forEach(moneyTransfer -> {
-                if (PaymentType.ADVANCE_PAYMENT.equals(moneyTransfer.getType())) {
-                    sumAdvance.updateAndGet(v -> v + moneyTransfer.getSum());
-                } else if (PaymentType.PAYMENT_FOR_WORK.equals(moneyTransfer.getType())) {
-                    sumForWork.updateAndGet(v -> v + moneyTransfer.getSum());
-                }
-            });
+        Set<MoneyTransfer> transferSet = calculation.getTransferSet();
+
+        int sumAdvance = transferSet.stream()
+                             .filter(moneyTransfer -> PaymentType.ADVANCE_PAYMENT.equals(moneyTransfer.getType()))
+                             .map(MoneyTransfer::getSum)
+                             .reduce(ZERO_INT_VALUE, Integer::sum);
+        int sumForWork = transferSet.stream()
+                             .filter(moneyTransfer -> PaymentType.PAYMENT_FOR_WORK.equals(moneyTransfer.getType()))
+                             .map(MoneyTransfer::getSum)
+                             .reduce(ZERO_INT_VALUE, Integer::sum);
+
         int workPriceFact = calculation.getWorkPriceFact() == null ? 0 : calculation.getWorkPriceFact();
-        int calculationDebt = workPriceFact - sumAdvance.get() - sumForWork.get();
-        return new Integer[]{calculationDebt, sumAdvance.get(), sumForWork.get()};
+        int calculationDebt = workPriceFact - sumAdvance - sumForWork;
+        return new Integer[]{calculationDebt, sumAdvance, sumForWork};
     }
 
     public static Integer getDebtByChapter(Chapter chapter) {
 
         if (chapter == null) {
-            return 0;
+            return ZERO_INT_VALUE;
         }
         return chapter.getCalculationSet()
                    .stream()
-                   .map(Util::getDebtFromCalculation)
+                   .map(Util::getCalculationSums)
                    .map(integers -> integers[0])
-                   .reduce(0, Integer::sum);
+                   .reduce(ZERO_INT_VALUE, Integer::sum);
+    }
+
+    public static int getProjectDept(Project project) {
+
+        return project.getChapters()
+                   .stream()
+                   .map(Util::getDebtByChapter)
+                   .reduce(ZERO_INT_VALUE, Integer::sum);
     }
 
 }

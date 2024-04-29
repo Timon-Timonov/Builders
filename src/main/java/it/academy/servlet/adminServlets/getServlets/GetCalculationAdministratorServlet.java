@@ -2,9 +2,9 @@ package it.academy.servlet.adminServlets.getServlets;
 
 import it.academy.controller.impl.AdminControllerImpl;
 import it.academy.dto.CalculationDto;
-import it.academy.dto.Page;
+import it.academy.service.dto.Page;
 import it.academy.util.ExceptionRedirector;
-import it.academy.util.ParameterFinder;
+import it.academy.servlet.utils.ParameterFinder;
 import lombok.extern.log4j.Log4j2;
 
 import javax.servlet.ServletException;
@@ -55,7 +55,7 @@ public class GetCalculationAdministratorServlet extends HttpServlet {
         page = calculationDtoPage.getPageNumber();
         HttpSession session = req.getSession();
 
-        req.setAttribute(CALCULATION_DTO_LIST_PARAM, calculationDtoList);
+        req.setAttribute(DTO_LIST_PARAM, calculationDtoList);
         session.setAttribute(CHAPTER_ID_PARAM, chapterId);
         session.setAttribute(CALCULATION_PAGE_PARAM, page);
         session.setAttribute(CALCULATION_COUNT_ON_PAGE_PARAM, count);

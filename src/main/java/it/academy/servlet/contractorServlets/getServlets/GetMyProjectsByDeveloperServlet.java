@@ -1,12 +1,12 @@
-package it.academy.servlet.contractorServlets;
+package it.academy.servlet.contractorServlets.getServlets;
 
 import it.academy.controller.ContractorController;
 import it.academy.controller.impl.ContractorControllerImpl;
-import it.academy.dto.Page;
+import it.academy.service.dto.Page;
 import it.academy.dto.ProjectDto;
 import it.academy.pojo.enums.ProjectStatus;
 import it.academy.util.ExceptionRedirector;
-import it.academy.util.ParameterFinder;
+import it.academy.servlet.utils.ParameterFinder;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -56,7 +56,7 @@ public class GetMyProjectsByDeveloperServlet extends HttpServlet {
         List<ProjectDto> projectDtoList = projectDtoPage.getList();
 
         HttpSession session = req.getSession();
-        req.setAttribute(PROJECT_DTO_LIST_PARAM, projectDtoList);
+        req.setAttribute(DTO_LIST_PARAM, projectDtoList);
         session.setAttribute(PROJECT_STATUS_PARAM, status);
         session.setAttribute(PROJECT_PAGE_PARAM, page);
         session.setAttribute(PROJECT_COUNT_ON_PAGE_PARAM, count);
