@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.9.xsd">
+
+    <changeSet author="Timonov_Timon" id="01">
+        <createTable tableName="legal_entities">
+            <column name="entity_type" type="char">
+                <constraints nullable="false"/>
+            </column>
+            <column name="id" type="bigint">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="building" type="varchar(255)"/>
+            <column name="city" type="varchar(255)"/>
+            <column name="street" type="varchar(255)"/>
+            <column name="name" type="varchar(255)"/>
+        </createTable>
+    </changeSet>
+</databaseChangeLog>
+
+        <!--
+
+                create table legal_entities
+                (
+                entity_type char         not null,
+                id          bigint       not null
+                primary key,
+                building    int          null,
+                city        varchar(255) null,
+                street      varchar(255) null,
+                name        varchar(255) null
+                );
+
+        -->
+
+
