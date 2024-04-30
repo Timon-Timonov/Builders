@@ -8,7 +8,7 @@ import it.academy.dto.ChapterDto;
 import it.academy.pojo.enums.ProjectStatus;
 import it.academy.servlet.utils.ParameterFinder;
 import it.academy.servlet.utils.SessionAttributeSetter;
-import it.academy.util.ExceptionRedirector;
+import it.academy.servlet.utils.ExceptionRedirector;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;

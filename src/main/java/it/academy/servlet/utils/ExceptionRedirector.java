@@ -1,4 +1,4 @@
-package it.academy.util;
+package it.academy.servlet.utils;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;

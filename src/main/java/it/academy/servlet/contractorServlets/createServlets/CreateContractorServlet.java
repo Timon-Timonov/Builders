@@ -5,8 +5,7 @@ import it.academy.controller.dto.CreateRequestDto;
 import it.academy.controller.dto.LoginDto;
 import it.academy.controller.impl.ContractorControllerImpl;
 import it.academy.servlet.utils.SessionAttributeSetter;
-import it.academy.util.ExceptionRedirector;
-import lombok.extern.log4j.Log4j2;
+import it.academy.servlet.utils.ExceptionRedirector;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -19,7 +18,6 @@ import static it.academy.util.constants.ParameterNames.*;
 import static it.academy.util.constants.ServletURLs.CREATE_CONTRACTOR_SERVLET;
 import static it.academy.util.constants.ServletURLs.SLASH_STRING;
 
-@Log4j2
 @WebServlet(name = "createContractorServlet", urlPatterns = SLASH_STRING + CREATE_CONTRACTOR_SERVLET)
 public class CreateContractorServlet extends HttpServlet {
 

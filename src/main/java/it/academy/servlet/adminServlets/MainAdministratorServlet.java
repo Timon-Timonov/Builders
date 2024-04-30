@@ -1,15 +1,13 @@
 package it.academy.servlet.adminServlets;
 
+import it.academy.controller.dto.DtoWithPageForUi;
+import it.academy.controller.dto.PageRequestDto;
 import it.academy.controller.impl.AdminControllerImpl;
 import it.academy.dto.ContractorDto;
 import it.academy.dto.DeveloperDto;
-import it.academy.service.dto.Page;
 import it.academy.dto.UserDto;
 import it.academy.pojo.enums.UserStatus;
-import it.academy.servlet.utils.WhatToDo;
-import it.academy.util.ExceptionRedirector;
-import it.academy.servlet.utils.ParameterFinder;
-import it.academy.servlet.utils.SessionCleaner;
+import it.academy.servlet.utils.*;
 import lombok.extern.log4j.Log4j2;
 
 import javax.servlet.ServletException;
@@ -17,14 +15,9 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 import static it.academy.util.constants.Constants.*;
-import static it.academy.util.constants.JspURLs.*;
-import static it.academy.util.constants.Messages.BAD_CONNECTION;
 import static it.academy.util.constants.Messages.INVALID_VALUE;
 import static it.academy.util.constants.ParameterNames.*;
 import static it.academy.util.constants.ServletURLs.MAIN_ADMINISTRATOR_SERVLET;
@@ -47,7 +40,6 @@ public class MainAdministratorServlet extends HttpServlet {
             log.debug(TODO_PARAM + toDoString, e);
         }
 
-
         if (toDoNow != null) {
             switch (toDoNow) {
                 case SHOW_ADMINISTRATORS:
@@ -59,12 +51,9 @@ public class MainAdministratorServlet extends HttpServlet {
                 case SHOW_DEVELOPERS:
                     showDevelopers(req, resp);
                     break;
-                default:
-                    ExceptionRedirector.forwardToException3(req, resp, this, INVALID_VALUE);
             }
-        } else {
-            ExceptionRedirector.forwardToException3(req, resp, this, INVALID_VALUE);
         }
+        ExceptionRedirector.forwardToException3(req, resp, this, INVALID_VALUE);
     }
 
     @Override
@@ -75,18 +64,16 @@ public class MainAdministratorServlet extends HttpServlet {
 
     private void showAdmins(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
+        DtoWithPageForUi<UserDto> dto = controller.getAllAdministrators();
 
-        List<UserDto> userDtoList = new ArrayList<>();
-        try {
-            userDtoList = controller.getAllAdministrators();
-        } catch (IOException e) {
-            ExceptionRedirector.forwardToException3(req, resp, this, BAD_CONNECTION);
-        } catch (Exception e) {
-            ExceptionRedirector.forwardToException3(req, resp, this, e.getMessage());
+        if (dto.getExceptionMessage() != null) {
+            ExceptionRedirector.forwardToException3(req, resp, this, dto.getExceptionMessage());
+        } else {
+            SessionAttributeSetter.setPageData(req, null,
+                null, null,
+                null, null, dto);
+            getServletContext().getRequestDispatcher(dto.getUrl()).forward(req, resp);
         }
-        req.setAttribute(DTO_LIST_PARAM, userDtoList);
-
-        getServletContext().getRequestDispatcher(ADMIN_PAGES_LIST_WITH_ADMINS_JSP).forward(req, resp);
     }
 
     private void showContractors(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -95,24 +82,22 @@ public class MainAdministratorServlet extends HttpServlet {
         int page = ParameterFinder.getNumberValueFromParameter(req, CONTRACTOR_PAGE_PARAM, FIRST_PAGE_NUMBER);
         int count = ParameterFinder.getNumberValueFromParameter(req, CONTRACTOR_COUNT_ON_PAGE_PARAM, DEFAULT_COUNT_ON_PAGE_5);
 
-        Page<ContractorDto> contractorDtoPage = new Page<>(new ArrayList<>(), FIRST_PAGE_NUMBER);
-        try {
-            contractorDtoPage = controller.getAllContractors(status, page, count);
-        } catch (IOException e) {
-            ExceptionRedirector.forwardToException3(req, resp, this, BAD_CONNECTION);
-        } catch (Exception e) {
-            ExceptionRedirector.forwardToException3(req, resp, this, e.getMessage());
+        PageRequestDto requestDto = PageRequestDto.builder()
+                                        .status(status)
+                                        .page(page)
+                                        .count(count)
+                                        .build();
+
+        DtoWithPageForUi<ContractorDto> dto = controller.getAllContractors(requestDto);
+
+        if (dto.getExceptionMessage() != null) {
+            ExceptionRedirector.forwardToException3(req, resp, this, dto.getExceptionMessage());
+        } else {
+            SessionAttributeSetter.setPageData(req, USER_STATUS_PARAM,
+                CONTRACTOR_PAGE_PARAM, CONTRACTOR_COUNT_ON_PAGE_PARAM,
+                null, null, dto);
+            getServletContext().getRequestDispatcher(dto.getUrl()).forward(req, resp);
         }
-        page = contractorDtoPage.getPageNumber();
-        List<ContractorDto> contractorDtoList = contractorDtoPage.getList();
-
-        HttpSession session = req.getSession();
-        req.setAttribute(DTO_LIST_PARAM, contractorDtoList);
-        session.setAttribute(USER_STATUS_PARAM, status);
-        session.setAttribute(CONTRACTOR_PAGE_PARAM, page);
-        session.setAttribute(CONTRACTOR_COUNT_ON_PAGE_PARAM, count);
-
-        getServletContext().getRequestDispatcher(ADMIN_PAGES_LIST_WITH_CONTRACTORS_JSP).forward(req, resp);
     }
 
     private void showDevelopers(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -122,23 +107,21 @@ public class MainAdministratorServlet extends HttpServlet {
         int page = ParameterFinder.getNumberValueFromParameter(req, DEVELOPER_PAGE_PARAM, FIRST_PAGE_NUMBER);
         int count = ParameterFinder.getNumberValueFromParameter(req, DEVELOPER_COUNT_ON_PAGE_PARAM, DEFAULT_COUNT_ON_PAGE_5);
 
-        Page<DeveloperDto> developerDtoPage = new Page<>(new ArrayList<>(), FIRST_PAGE_NUMBER);
-        try {
-            developerDtoPage = controller.getAllDevelopers(status, page, count);
-        } catch (IOException e) {
-            ExceptionRedirector.forwardToException3(req, resp, this, BAD_CONNECTION);
-        } catch (Exception e) {
-            ExceptionRedirector.forwardToException3(req, resp, this, e.getMessage());
+        PageRequestDto requestDto = PageRequestDto.builder()
+                                        .status(status)
+                                        .page(page)
+                                        .count(count)
+                                        .build();
+
+        DtoWithPageForUi<DeveloperDto> dto = controller.getAllDevelopers(requestDto);
+
+        if (dto.getExceptionMessage() != null) {
+            ExceptionRedirector.forwardToException3(req, resp, this, dto.getExceptionMessage());
+        } else {
+            SessionAttributeSetter.setPageData(req, USER_STATUS_PARAM,
+                DEVELOPER_PAGE_PARAM, DEVELOPER_COUNT_ON_PAGE_PARAM,
+                null, null, dto);
+            getServletContext().getRequestDispatcher(dto.getUrl()).forward(req, resp);
         }
-        page = developerDtoPage.getPageNumber();
-        List<DeveloperDto> contractorDtoList = developerDtoPage.getList();
-
-        HttpSession session = req.getSession();
-        req.setAttribute(DTO_LIST_PARAM, contractorDtoList);
-        session.setAttribute(USER_STATUS_PARAM, status);
-        session.setAttribute(DEVELOPER_PAGE_PARAM, page);
-        session.setAttribute(DEVELOPER_COUNT_ON_PAGE_PARAM, count);
-
-        getServletContext().getRequestDispatcher(ADMIN_PAGES_LIST_WITH_DEVELOPERS_JSP).forward(req, resp);
     }
 }

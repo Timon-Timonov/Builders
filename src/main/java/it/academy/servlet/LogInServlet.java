@@ -3,7 +3,7 @@ package it.academy.servlet;
 import it.academy.controller.AdminController;
 import it.academy.controller.dto.LoginDto;
 import it.academy.controller.impl.AdminControllerImpl;
-import it.academy.util.ExceptionRedirector;
+import it.academy.servlet.utils.ExceptionRedirector;
 import it.academy.util.converters.UserConverter;
 
 import javax.servlet.ServletException;

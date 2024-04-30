@@ -1,9 +1,11 @@
 package it.academy.servlet.adminServlets.deleteServlets;
 
+import it.academy.controller.dto.DtoWithPageForUi;
+import it.academy.controller.dto.PageRequestDto;
 import it.academy.controller.impl.AdminControllerImpl;
-import it.academy.util.ExceptionRedirector;
+import it.academy.dto.ChapterDto;
+import it.academy.servlet.utils.ExceptionRedirector;
 import it.academy.servlet.utils.ParameterFinder;
-import lombok.extern.log4j.Log4j2;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -13,12 +15,10 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 import static it.academy.util.constants.Constants.ZERO_LONG_VALUE;
-import static it.academy.util.constants.Messages.BAD_CONNECTION;
-import static it.academy.util.constants.Messages.DELETE_FAIL_CHAPTER_ID;
 import static it.academy.util.constants.ParameterNames.CHAPTER_ID_PARAM;
-import static it.academy.util.constants.ServletURLs.*;
+import static it.academy.util.constants.ServletURLs.DELETE_CHAPTER_ADMINISTRATOR_SERVLET;
+import static it.academy.util.constants.ServletURLs.SLASH_STRING;
 
-@Log4j2
 @WebServlet(name = "DeleteChapterAdministratorServlet", urlPatterns = SLASH_STRING + DELETE_CHAPTER_ADMINISTRATOR_SERVLET)
 public class DeleteChapterAdministratorServlet extends HttpServlet {
 
@@ -28,21 +28,16 @@ public class DeleteChapterAdministratorServlet extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
         long chapterId = ParameterFinder.getNumberValueFromParameter(req, CHAPTER_ID_PARAM, ZERO_LONG_VALUE);
-        try {
-            controller.deleteChapter(chapterId);
-        } catch (IOException e) {
-            log.error(DELETE_FAIL_CHAPTER_ID + chapterId, e);
-            ExceptionRedirector.forwardToException3(req, resp, this, BAD_CONNECTION);
-        } catch (Exception e) {
-            log.error(DELETE_FAIL_CHAPTER_ID + chapterId, e);
-            ExceptionRedirector.forwardToException3(req, resp, this, DELETE_FAIL_CHAPTER_ID + chapterId);
+
+        PageRequestDto requestDto = PageRequestDto.builder()
+                                        .id(chapterId)
+                                        .build();
+        DtoWithPageForUi<ChapterDto> dto = controller.deleteChapter(requestDto);
+
+        if (dto.getExceptionMessage() != null) {
+            ExceptionRedirector.forwardToException3(req, resp, this, dto.getExceptionMessage());
+        } else {
+            getServletContext().getRequestDispatcher(dto.getUrl()).forward(req, resp);
         }
-        getServletContext().getRequestDispatcher(SLASH_STRING + GET_CHAPTERS_FROM_PROJECT_ADMINISTRATOR_SERVLET).forward(req, resp);
-    }
-
-    @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-
-        doGet(req, resp);
     }
 }

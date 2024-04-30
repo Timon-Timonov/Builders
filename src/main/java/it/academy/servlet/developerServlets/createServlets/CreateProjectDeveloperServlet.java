@@ -7,8 +7,7 @@ import it.academy.controller.impl.DeveloperControllerImpl;
 import it.academy.dto.ProjectDto;
 import it.academy.servlet.utils.ParameterFinder;
 import it.academy.servlet.utils.SessionAttributeSetter;
-import it.academy.util.ExceptionRedirector;
-import lombok.extern.log4j.Log4j2;
+import it.academy.servlet.utils.ExceptionRedirector;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -25,7 +24,6 @@ import static it.academy.util.constants.ParameterNames.*;
 import static it.academy.util.constants.ServletURLs.CREATE_PROJECT_DEVELOPER_SERVLET;
 import static it.academy.util.constants.ServletURLs.SLASH_STRING;
 
-@Log4j2
 @WebServlet(name = "createProjectDeveloperServlet", urlPatterns = SLASH_STRING + CREATE_PROJECT_DEVELOPER_SERVLET)
 public class CreateProjectDeveloperServlet extends HttpServlet {
 

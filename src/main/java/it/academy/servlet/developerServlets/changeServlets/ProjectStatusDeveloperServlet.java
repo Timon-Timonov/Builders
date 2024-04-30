@@ -7,7 +7,7 @@ import it.academy.controller.impl.DeveloperControllerImpl;
 import it.academy.dto.ProjectDto;
 import it.academy.pojo.enums.ProjectStatus;
 import it.academy.servlet.utils.ParameterFinder;
-import it.academy.util.ExceptionRedirector;
+import it.academy.servlet.utils.ExceptionRedirector;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;

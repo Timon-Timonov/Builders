@@ -5,7 +5,7 @@ import it.academy.controller.dto.CreateRequestDto;
 import it.academy.controller.dto.LoginDto;
 import it.academy.controller.impl.DeveloperControllerImpl;
 import it.academy.servlet.utils.SessionAttributeSetter;
-import it.academy.util.ExceptionRedirector;
+import it.academy.servlet.utils.ExceptionRedirector;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;

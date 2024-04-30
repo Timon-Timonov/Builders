@@ -6,8 +6,7 @@ import it.academy.controller.dto.PageRequestDto;
 import it.academy.controller.impl.DeveloperControllerImpl;
 import it.academy.dto.ChapterDto;
 import it.academy.servlet.utils.ParameterFinder;
-import it.academy.util.ExceptionRedirector;
-import lombok.extern.log4j.Log4j2;
+import it.academy.servlet.utils.ExceptionRedirector;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -21,7 +20,6 @@ import static it.academy.util.constants.ParameterNames.CHAPTER_ID_PARAM;
 import static it.academy.util.constants.ServletURLs.CANCEL_CHAPTER_STATUS_DEVELOPER_SERVLET;
 import static it.academy.util.constants.ServletURLs.SLASH_STRING;
 
-@Log4j2
 @WebServlet(name = "changeChapterStatusDeveloperServlet", urlPatterns = SLASH_STRING + CANCEL_CHAPTER_STATUS_DEVELOPER_SERVLET)
 public class CancelChapterStatusDeveloperServlet extends HttpServlet {
 

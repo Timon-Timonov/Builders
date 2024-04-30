@@ -105,6 +105,7 @@ public final class Messages {
     public static final String PROPOSAL_STATUSES_OF_ALL_CHAPTER_CHANGED_CHAPTER_ID = "Proposal statuses of all chapter changed. Chapter id= ";
     public static final String DEVELOPER_CREATED_ID = "Developer created: id=";
     public static final String SOMETHING_WENT_WRONG = "Something went wrong.";
+    public static final String PROPOSAL_DELETE_FAILED = "Proposal delete failed!";
 
     private Messages() {
     }

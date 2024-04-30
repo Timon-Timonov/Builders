@@ -10,11 +10,7 @@ import it.academy.dto.ProjectDto;
 import it.academy.dto.ProposalDto;
 import it.academy.pojo.enums.ProjectStatus;
 import it.academy.pojo.enums.ProposalStatus;
-import it.academy.servlet.utils.ParameterFinder;
-import it.academy.servlet.utils.SessionAttributeSetter;
-import it.academy.servlet.utils.SessionCleaner;
-import it.academy.servlet.utils.WhatToDo;
-import it.academy.util.ExceptionRedirector;
+import it.academy.servlet.utils.*;
 import lombok.extern.log4j.Log4j2;
 
 import javax.servlet.ServletException;
@@ -61,12 +57,9 @@ public class MainContractorServlet extends HttpServlet {
                 case TRY_TO_CHOOSE_NEW_PROJECT:
                     chooseNewProject(req, resp);
                     break;
-                default:
-                    ExceptionRedirector.forwardToException3(req, resp, this, INVALID_VALUE);
             }
-        } else {
-            ExceptionRedirector.forwardToException3(req, resp, this, INVALID_VALUE);
         }
+        ExceptionRedirector.forwardToException3(req, resp, this, INVALID_VALUE);
     }
 
     private void showDevelopers(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {

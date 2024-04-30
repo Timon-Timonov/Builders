@@ -9,11 +9,7 @@ import it.academy.dto.ProjectDto;
 import it.academy.dto.ProposalDto;
 import it.academy.pojo.enums.ProjectStatus;
 import it.academy.pojo.enums.ProposalStatus;
-import it.academy.servlet.utils.ParameterFinder;
-import it.academy.servlet.utils.SessionAttributeSetter;
-import it.academy.servlet.utils.SessionCleaner;
-import it.academy.servlet.utils.WhatToDo;
-import it.academy.util.ExceptionRedirector;
+import it.academy.servlet.utils.*;
 import it.academy.util.constants.Constants;
 import lombok.extern.log4j.Log4j2;
 
@@ -60,11 +56,9 @@ public class MainDeveloperServlet extends HttpServlet {
                     showProposals(req, resp);
                     break;
                 default:
-                    ExceptionRedirector.forwardToException3(req, resp, this, INVALID_VALUE);
             }
-        } else {
-            ExceptionRedirector.forwardToException3(req, resp, this, INVALID_VALUE);
         }
+        ExceptionRedirector.forwardToException3(req, resp, this, INVALID_VALUE);
     }
 
     private void showContractors(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {

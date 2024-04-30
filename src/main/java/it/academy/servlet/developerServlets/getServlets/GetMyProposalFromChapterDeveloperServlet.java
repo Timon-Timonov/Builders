@@ -8,8 +8,7 @@ import it.academy.dto.ProposalDto;
 import it.academy.pojo.enums.ProposalStatus;
 import it.academy.servlet.utils.ParameterFinder;
 import it.academy.servlet.utils.SessionAttributeSetter;
-import it.academy.util.ExceptionRedirector;
-import lombok.extern.log4j.Log4j2;
+import it.academy.servlet.utils.ExceptionRedirector;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -25,7 +24,6 @@ import static it.academy.util.constants.ParameterNames.*;
 import static it.academy.util.constants.ServletURLs.GET_MY_PROPOSALS_FROM_CHAPTER_DEVELOPER_SERVLET;
 import static it.academy.util.constants.ServletURLs.SLASH_STRING;
 
-@Log4j2
 @WebServlet(name = "getMyProposalFromChapterDeveloperServlet", urlPatterns = SLASH_STRING + GET_MY_PROPOSALS_FROM_CHAPTER_DEVELOPER_SERVLET)
 public class GetMyProposalFromChapterDeveloperServlet extends HttpServlet {
 

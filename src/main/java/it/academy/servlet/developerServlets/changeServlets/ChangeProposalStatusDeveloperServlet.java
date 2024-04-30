@@ -7,8 +7,7 @@ import it.academy.controller.impl.DeveloperControllerImpl;
 import it.academy.dto.ProposalDto;
 import it.academy.pojo.enums.ProposalStatus;
 import it.academy.servlet.utils.ParameterFinder;
-import it.academy.util.ExceptionRedirector;
-import lombok.extern.log4j.Log4j2;
+import it.academy.servlet.utils.ExceptionRedirector;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -23,7 +22,6 @@ import static it.academy.util.constants.ParameterNames.*;
 import static it.academy.util.constants.ServletURLs.CHANGE_PROPOSAL_STATUS_DEVELOPER_SERVLET;
 import static it.academy.util.constants.ServletURLs.SLASH_STRING;
 
-@Log4j2
 @WebServlet(name = "changeProposalStatusDeveloperServlet", urlPatterns = SLASH_STRING + CHANGE_PROPOSAL_STATUS_DEVELOPER_SERVLET)
 public class ChangeProposalStatusDeveloperServlet extends HttpServlet {
 

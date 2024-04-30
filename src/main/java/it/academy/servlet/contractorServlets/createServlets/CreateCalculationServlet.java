@@ -6,7 +6,7 @@ import it.academy.controller.dto.DtoWithPageForUi;
 import it.academy.controller.impl.ContractorControllerImpl;
 import it.academy.dto.CalculationDto;
 import it.academy.servlet.utils.ParameterFinder;
-import it.academy.util.ExceptionRedirector;
+import it.academy.servlet.utils.ExceptionRedirector;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;

@@ -1,32 +1,28 @@
 package it.academy.servlet.adminServlets.getServlets;
 
 import it.academy.controller.AdminController;
+import it.academy.controller.dto.DtoWithPageForUi;
+import it.academy.controller.dto.PageRequestDto;
 import it.academy.controller.impl.AdminControllerImpl;
-import it.academy.service.dto.Page;
 import it.academy.dto.ProposalDto;
 import it.academy.pojo.enums.ProposalStatus;
-import it.academy.util.ExceptionRedirector;
+import it.academy.servlet.utils.ExceptionRedirector;
 import it.academy.servlet.utils.ParameterFinder;
-import lombok.extern.log4j.Log4j2;
+import it.academy.servlet.utils.SessionAttributeSetter;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 import static it.academy.util.constants.Constants.*;
-import static it.academy.util.constants.JspURLs.ADMIN_PAGES_LIST_WITH_PROPOSALS_FROM_CONTRACTOR_JSP;
-import static it.academy.util.constants.Messages.BAD_CONNECTION;
 import static it.academy.util.constants.ParameterNames.*;
 import static it.academy.util.constants.ServletURLs.GET_PROPOSALS_FROM_CONTRACTOR_ADMINISTRATOR_SERVLET;
 import static it.academy.util.constants.ServletURLs.SLASH_STRING;
 
-@Log4j2
+
 @WebServlet(name = "getProposalsFromContractorAdministratorServlet", urlPatterns = SLASH_STRING + GET_PROPOSALS_FROM_CONTRACTOR_ADMINISTRATOR_SERVLET)
 public class GetProposalsFromContractorAdministratorServlet extends HttpServlet {
 
@@ -40,26 +36,25 @@ public class GetProposalsFromContractorAdministratorServlet extends HttpServlet 
         int page = ParameterFinder.getNumberValueFromParameter(req, PROPOSAL_PAGE_PARAM, FIRST_PAGE_NUMBER);
         int count = ParameterFinder.getNumberValueFromParameter(req, PROPOSAL_COUNT_ON_PAGE_PARAM, DEFAULT_COUNT_ON_PAGE_5);
 
-        Page<ProposalDto> proposalDtoPage = new Page<>(new ArrayList<>(), FIRST_PAGE_NUMBER);
+        PageRequestDto requestDto = PageRequestDto.builder()
+                                        .id(contractorId)
+                                        .status(status)
+                                        .page(page)
+                                        .count(count)
+                                        .build();
 
-        try {
-            proposalDtoPage = controller.getProposalsByContractorId(contractorId, status, page, count);
-        } catch (IOException e) {
-            ExceptionRedirector.forwardToException3(req, resp, this, BAD_CONNECTION);
-        } catch (Exception e) {
-            ExceptionRedirector.forwardToException3(req, resp, this, e.getMessage());
+        DtoWithPageForUi<ProposalDto> dto = controller.getProposalsByContractorId(requestDto);
+
+        if (dto.getExceptionMessage() != null) {
+            ExceptionRedirector.forwardToException3(req, resp, this, dto.getExceptionMessage());
+        } else {
+
+            SessionAttributeSetter.setPageData(req, PROPOSAL_STATUS_PARAM,
+                PROPOSAL_PAGE_PARAM, PROPOSAL_COUNT_ON_PAGE_PARAM,
+                CONTRACTOR_ID_PARAM, null, dto);
+
+            getServletContext().getRequestDispatcher(dto.getUrl()).forward(req, resp);
         }
-        page = proposalDtoPage.getPageNumber();
-        List<ProposalDto> proposalDtoList = proposalDtoPage.getList();
-        HttpSession session = req.getSession();
-
-        req.setAttribute(DTO_LIST_PARAM, proposalDtoList);
-        session.setAttribute(PROPOSAL_PAGE_PARAM, page);
-        session.setAttribute(PROPOSAL_COUNT_ON_PAGE_PARAM, count);
-        session.setAttribute(PROPOSAL_STATUS_PARAM, status);
-        session.setAttribute(CONTRACTOR_ID_PARAM, contractorId);
-
-        getServletContext().getRequestDispatcher(ADMIN_PAGES_LIST_WITH_PROPOSALS_FROM_CONTRACTOR_JSP).forward(req, resp);
     }
 
     @Override

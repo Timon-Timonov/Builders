@@ -1,55 +1,50 @@
 package it.academy.controller;
 
+import it.academy.controller.dto.CreateRequestDto;
+import it.academy.controller.dto.DtoWithPageForUi;
 import it.academy.controller.dto.LoginDto;
-import it.academy.service.dto.Page;
+import it.academy.controller.dto.PageRequestDto;
 import it.academy.dto.*;
-import it.academy.exceptions.NotUpdateDataInDbException;
-import it.academy.pojo.enums.ProjectStatus;
-import it.academy.pojo.enums.ProposalStatus;
-import it.academy.pojo.enums.UserStatus;
-
-import java.io.IOException;
-import java.util.List;
 
 public interface AdminController {
 
     LoginDto logIn(UserDto userDto);
 
-    void createAdmin(String email, String password) throws Exception;
+    LoginDto createAdmin(CreateRequestDto dto);
 
     UserDto getUser(String email) throws Exception;
 
-    Page<ContractorDto> getAllContractors(UserStatus status, int page, int count) throws Exception;
+    DtoWithPageForUi<ContractorDto> getAllContractors(PageRequestDto dto);
 
-    List<UserDto> getAllAdministrators() throws Exception;
+    DtoWithPageForUi<UserDto> getAllAdministrators();
 
-    Page<DeveloperDto> getAllDevelopers(UserStatus status, int page, int count) throws Exception;
+    DtoWithPageForUi<DeveloperDto> getAllDevelopers(PageRequestDto dto);
 
-    Page<ProjectDto> getProjectsByDeveloper(long developerId, ProjectStatus status, int page, int count) throws Exception;
+    DtoWithPageForUi<ProjectDto> getProjectsByDeveloper(PageRequestDto dto);
 
-    List<ChapterDto> getChaptersByProjectId(long projectId) throws Exception;
+    DtoWithPageForUi<ChapterDto> getChaptersByProjectId(PageRequestDto dto);
 
-    Page<ChapterDto> getChaptersByContractorId(long contractorId, int page, int count) throws Exception;
+    DtoWithPageForUi<ChapterDto> getChaptersByContractorId(PageRequestDto dto);
 
-    List<MoneyTransferDto> getMoneyTransfers(long calculationId) throws Exception;
+    DtoWithPageForUi<MoneyTransferDto> getMoneyTransfers(PageRequestDto dto);
 
-    Page<CalculationDto> getCalculationsByChapterId(long chapterId, int page, int count) throws Exception;
+    DtoWithPageForUi<CalculationDto> getCalculationsByChapterId(PageRequestDto dto);
 
-    Page<ProposalDto> getProposalsByChapterId(long chapterId, ProposalStatus status, int page, int count) throws Exception;
+    DtoWithPageForUi<ProposalDto> getProposalsByChapterId(PageRequestDto dto);
 
-    Page<ProposalDto> getProposalsByContractorId(long contractorId, ProposalStatus status, int page, int count) throws Exception;
+    DtoWithPageForUi<ProposalDto> getProposalsByContractorId(PageRequestDto dto);
 
-    void changeUserStatus(long userId, UserStatus newStatus) throws Exception;
+    DtoWithPageForUi<UserDto> changeUserStatus(PageRequestDto dto);
 
-    void deleteUser(long userId) throws IOException, NotUpdateDataInDbException;
+    DtoWithPageForUi<UserDto> deleteUser(PageRequestDto dto);
 
-    void deleteCalculation(long calculationId) throws IOException, NotUpdateDataInDbException;
+    DtoWithPageForUi<CalculationDto> deleteCalculation(PageRequestDto dto);
 
-    void deleteChapter(long chapterId) throws IOException, NotUpdateDataInDbException;
+    DtoWithPageForUi<ChapterDto> deleteChapter(PageRequestDto dto);
 
-    void deleteMoneyTransfer(long transferId) throws IOException, NotUpdateDataInDbException;
+    DtoWithPageForUi<ProjectDto> deleteMoneyTransfer(PageRequestDto dto);
 
-    void deleteProject(long projectId) throws IOException, NotUpdateDataInDbException;
+    DtoWithPageForUi<ProjectDto> deleteProject(PageRequestDto dto);
 
-    void deleteProposal(long proposalId) throws IOException, NotUpdateDataInDbException;
+    DtoWithPageForUi<ProposalDto> deleteProposal(PageRequestDto dto);
 }

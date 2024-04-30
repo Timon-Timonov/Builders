@@ -22,7 +22,7 @@ public class Util {
         if (page == ZERO_PAGE_NUMBER || page == FIRST_PAGE_NUMBER) {
             return FIRST_PAGE_NUMBER;
         }
-        int lastPage = totalCount == 0L ?
+        int lastPage = totalCount == ZERO_LONG_VALUE ?
                            FIRST_PAGE_NUMBER
                            : ((totalCount % count == ZERO_INT_VALUE) ?
                                   (int) (totalCount / count)
@@ -73,5 +73,4 @@ public class Util {
                    .map(Util::getDebtByChapter)
                    .reduce(ZERO_INT_VALUE, Integer::sum);
     }
-
 }

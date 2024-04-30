@@ -6,8 +6,7 @@ import it.academy.controller.dto.DtoWithPageForUi;
 import it.academy.controller.impl.ContractorControllerImpl;
 import it.academy.dto.ProposalDto;
 import it.academy.servlet.utils.ParameterFinder;
-import it.academy.util.ExceptionRedirector;
-import lombok.extern.log4j.Log4j2;
+import it.academy.servlet.utils.ExceptionRedirector;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -22,7 +21,6 @@ import static it.academy.util.constants.ParameterNames.ID_PARAM;
 import static it.academy.util.constants.ServletURLs.CREATE_PROPOSAL_CONTRACTOR_SERVLET;
 import static it.academy.util.constants.ServletURLs.SLASH_STRING;
 
-@Log4j2
 @WebServlet(name = "createProposalServlet", urlPatterns = SLASH_STRING + CREATE_PROPOSAL_CONTRACTOR_SERVLET)
 public class CreateProposalServlet extends HttpServlet {
 
