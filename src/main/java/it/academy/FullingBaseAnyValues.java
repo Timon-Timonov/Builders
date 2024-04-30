@@ -1,9 +1,8 @@
-/*
 package it.academy;
 
-import it.academy.exceptions.EmailOccupaidException;
+import it.academy.dao.CalculationDao;
+import it.academy.dao.impl.CalculationDaoImpl;
 import it.academy.exceptions.NotCreateDataInDbException;
-import it.academy.exceptions.NotUpdateDataInDbException;
 import it.academy.pojo.Calculation;
 import it.academy.pojo.Chapter;
 import it.academy.pojo.Project;
@@ -27,18 +26,47 @@ import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
-public class TestFullingBase {
+import static it.academy.util.constants.Constants.FIRST_PAGE_NUMBER;
+
+public class FullingBaseAnyValues {
+
+    public static final String MY_EMAIL = "myEmail.";
+    public static final String MAIL_RU = "@mail.ru";
+    public static final String STRING1111 = "1111";
+    public static final String STRING2222 = "2222";
+    public static final String UNIQUE_USER_NAME = "UniqueUserName";
+    public static final String WEST_AVENUE = "WestAvenue";
+    public static final String UNIQUE_PROJECT_NAME = "UniqueProjectName";
+    public static final int INT0 = 0;
+    public static final int INT1 = 1;
+    public static final int INT2 = 2;
+    public static final int INT3 = 3;
+    public static final int INT4 = 4;
+    public static final int INT5 = 5;
+    public static final int INT7 = 7;
+    public static final int INT8 = 8;
+    public static final int INT9 = 9;
+    public static final int INT10 = 10;
+    public static final int INT11 = 11;
+    public static final int INT12 = 12;
+
+    public static final int INT115 = 115;
+    public static final int INT100 = 100;
+    public static final int BOUND2 = 50_000;
 
     public static final int MAX_COUNT_OF_CALCULATIONS = 15;
     public static final int ONE_PART_OF_PRICE_FOR_ADVANCE = 10;
     public static final int COUNT_OF_PROPOSALS_TO_APPROVE = 45;
     public static final int COUNT_OF_PROPOSALS_TO_REJECT = 5;
+    public static final int BOUND3 = 2558;
+    public static final int BOUND4 = 2023;
     public static int MAX_PROPOSAL_COUNT_PER_CONTRACTOR = 15;
     public static final int DEVELOPER_COUNT = 10;
     public static final int CONTRACTOR_COUNT = 10;
-    public static final Random RANDOM = new Random();
     public static final String[] CHAPTER_NAMES = {"GP", "KG", "NVK", "VK", "TS", "EL", "AR", "AOP", "TEL", "TL"};
     public static final String[] CITY_NAMES = {"New York", "Moscow", "Minsk", "Piter", "Vilnus", "Warshawa", "Berlin"};
+
+    public static final Random RANDOM = new Random();
     private final AdminService ADMIN_SERVICE = new AdminServiceImpl();
     private final DeveloperService DEVELOPER_SERVICE = new DeveloperServiceImpl();
     private final ContractorService CONTRACTOR_SERVICE = new ContractorServiceImpl();
@@ -51,7 +79,7 @@ public class TestFullingBase {
 
     public static void main(String[] args) throws Exception {
 
-        TestFullingBase fuller = new TestFullingBase();
+        FullingBaseAnyValues fuller = new FullingBaseAnyValues();
         fuller.MakeBaseFull();
     }
 
@@ -93,16 +121,16 @@ public class TestFullingBase {
                 allProjectList.forEach(project -> {
                     try {
                         activeChapterList.addAll(DEVELOPER_SERVICE.getChaptersByProjectId(project.getId()));
-                    } catch (IOException ignored) {
+                    } catch (Exception ignored) {
                     }
                 });
-            } catch (IOException ignored) {
+            } catch (Exception ignored) {
             }
         });
         activeChapterList.forEach(chapter -> {
             try {
                 proposalList.addAll(DEVELOPER_SERVICE.getProposalsByChapterId(chapter.getId(), ProposalStatus.CONSIDERATION, 1, proposalCount).getList());
-            } catch (IOException ignored) {
+            } catch (Exception ignored) {
             }
         });
         return proposalList;
@@ -113,17 +141,17 @@ public class TestFullingBase {
         AtomicInteger calculationIndex = new AtomicInteger(1);
         calculationList.forEach(calculation -> {
             try {
-                if (calculationIndex.get() % 2 == 0) {
+                if (calculationIndex.get() % INT2 == INT0) {
                     int sum = calculation.getWorkPricePlan() / ONE_PART_OF_PRICE_FOR_ADVANCE;
                     DEVELOPER_SERVICE.payAdvance(sum, calculation.getId());
-                    DEVELOPER_SERVICE.payForWork(sum * (calculationIndex.get() % 9), calculation.getId());
+                    DEVELOPER_SERVICE.payForWork(sum * (calculationIndex.get() % INT9), calculation.getId());
                 } else {
-                    int k = (calculationIndex.get() % 5 * 2);
-                    int sum = calculation.getWorkPricePlan() * k / 10;
+                    int k = (calculationIndex.get() % INT5 * INT2);
+                    int sum = calculation.getWorkPricePlan() * k / INT10;
                     DEVELOPER_SERVICE.payForWork(sum, calculation.getId());
                 }
                 calculationIndex.getAndIncrement();
-            } catch (IOException | NotCreateDataInDbException ignored) {
+            } catch (Exception ignored) {
             }
         });
     }
@@ -131,19 +159,33 @@ public class TestFullingBase {
     private List<Calculation> createCalculations(List<Chapter> chaptersInWork) {
 
         List<Calculation> calculationList = new ArrayList<>();
+        CalculationDao calculationDao = new CalculationDaoImpl();
         chaptersInWork.forEach(chapter -> {
             int thisCalculationCount = RANDOM.nextInt(MAX_COUNT_OF_CALCULATIONS);
             for (int i = 0; i < thisCalculationCount; i++) {
-                int mm = i % 12 + 1;
+                int mm = i % INT12 + INT1;
                 try {
-                    int workPricePlan = (2558 * (i + 8)) / (i + 2);
-                    Calculation calculation = CONTRACTOR_SERVICE
-                                                  .createCalculation(chapter.getId(), 2023, mm, workPricePlan);
-                    int workPriceFact = workPricePlan * 115 / 100;
-                    CONTRACTOR_SERVICE.updateWorkPriceFact(workPriceFact, calculation.getId());
-                    calculationList.add(calculation);
-                } catch (IOException | NotCreateDataInDbException | NotUpdateDataInDbException ignored) {
+                    int workPricePlan = (BOUND3 * (i + INT8)) / (i + INT2);
+                    CONTRACTOR_SERVICE.createCalculation(chapter.getId(), BOUND4, mm, workPricePlan);
+
+
+                } catch (Exception ignored) {
                 }
+            }
+            try {
+                List<Calculation> list = calculationDao.getCalculationsByChapterId(chapter.getId(), FIRST_PAGE_NUMBER, Integer.MAX_VALUE);
+                calculationList.addAll(list);
+                list.forEach(calculation -> {
+                    int workPriceFact = calculation.getWorkPricePlan() * INT115 / INT100;
+                    try {
+                        CONTRACTOR_SERVICE.updateWorkPriceFact(workPriceFact, calculation.getId());
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
+                });
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         });
         return calculationList;
@@ -155,7 +197,7 @@ public class TestFullingBase {
                    .peek(proposal -> {
                        try {
                            CONTRACTOR_SERVICE.setProposalStatus(proposal.getId(), ProposalStatus.ACCEPTED_BY_CONTRACTOR);
-                       } catch (IOException | NotUpdateDataInDbException ignored) {
+                       } catch (Exception ignored) {
                        }
                    })
                    .map(Proposal::getChapter)
@@ -169,10 +211,11 @@ public class TestFullingBase {
         for (int i = 0; i < stop; i++) {
             try {
                 Proposal proposal = proposalList.remove(RANDOM.nextInt(proposalList.size()));
-                DEVELOPER_SERVICE.approveProposal((proposal.getId()));
+                DEVELOPER_SERVICE.changeStatusOfProposal(proposal.getId(), ProposalStatus.APPROVED);
                 proposal.setStatus(ProposalStatus.APPROVED);
                 approvedList.add(proposal);
-            } catch (IOException | NotUpdateDataInDbException ignored) {
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
         return approvedList;
@@ -183,8 +226,9 @@ public class TestFullingBase {
         for (int i = 0; i < COUNT_OF_PROPOSALS_TO_REJECT; i++) {
             try {
                 Proposal proposal = proposalList.remove(RANDOM.nextInt(proposalList.size()));
-                DEVELOPER_SERVICE.rejectProposal(proposal.getId());
-            } catch (IOException | NotUpdateDataInDbException ignored) {
+                DEVELOPER_SERVICE.changeStatusOfProposal(proposal.getId(), ProposalStatus.REJECTED);
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
     }
@@ -192,32 +236,31 @@ public class TestFullingBase {
 
     private void changeProjectStatus(List<Project> allProjectList) {
 
-        AtomicInteger projectIndex = new AtomicInteger(1);
+        AtomicInteger projectIndex = new AtomicInteger(INT1);
         allProjectList.forEach(project -> {
-            if (projectIndex.get() % 4 != 0) {
+            if (projectIndex.get() % INT4 != INT0) {
                 try {
-                    DEVELOPER_SERVICE.startProject(project.getId());
+                    DEVELOPER_SERVICE.changeProjectStatus(project.getId(), ProjectStatus.IN_PROCESS);
                     project.setStatus(ProjectStatus.IN_PROCESS);
-                } catch (IOException ignored) {
-                } catch (NotUpdateDataInDbException e) {
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
-                if (projectIndex.get() % 7 == 0) {
+                if (projectIndex.get() % INT7 == INT0) {
                     try {
-                        DEVELOPER_SERVICE.endProject(project.getId());
+                        DEVELOPER_SERVICE.changeProjectStatus(project.getId(), ProjectStatus.COMPLETED);
                         project.setStatus(ProjectStatus.COMPLETED);
                     } catch (IOException ignored) {
-                    } catch (NotUpdateDataInDbException e) {
+                    } catch (Exception e) {
                         e.printStackTrace();
                     }
                 }
             } else {
-                if (projectIndex.get() % 8 == 0) {
+                if (projectIndex.get() % INT8 == INT0) {
                     try {
-                        DEVELOPER_SERVICE.cancelProject(project.getId());
+                        DEVELOPER_SERVICE.changeProjectStatus(project.getId(), ProjectStatus.CANCELED);
                         project.setStatus(ProjectStatus.CANCELED);
                     } catch (IOException ignored) {
-                    } catch (NotUpdateDataInDbException e) {
+                    } catch (Exception e) {
                         e.printStackTrace();
                     }
                 }
@@ -230,66 +273,60 @@ public class TestFullingBase {
 
         ADMIN_SERVICE.createAdmin(getUniqEmail(), getPassword());
         for (int i = 0; i < DEVELOPER_COUNT; i++) {
-            Developer dev = DEVELOPER_SERVICE.createDeveloper(getUniqEmail(), getPassword(), getUserName(), CITY_NAMES[i % CITY_NAMES.length], getStreet(), String.valueOf(userCount * 4 / 3));
-            int thisProjectCount = RANDOM.nextInt(5);
+            Developer dev = DEVELOPER_SERVICE.createDeveloper(getUniqEmail(), getPassword(), getUserName(), CITY_NAMES[i % CITY_NAMES.length], getStreet(), String.valueOf(userCount * INT4 / INT3));
+            int thisProjectCount = RANDOM.nextInt(INT5);
             for (int j = 0; j < thisProjectCount; j++) {
-                DEVELOPER_SERVICE.createProject(dev.getId(), getProjectName(), CITY_NAMES[RANDOM.nextInt(CITY_NAMES.length)], getStreet(), String.valueOf(projectCount * 4 / 3));
+                DEVELOPER_SERVICE.createProject(dev.getId(), getProjectName(), CITY_NAMES[RANDOM.nextInt(CITY_NAMES.length)], getStreet(), String.valueOf(projectCount * INT4 / INT3));
 
-                int thisChapterCount = RANDOM.nextInt(11);
+                int thisChapterCount = RANDOM.nextInt(INT11);
                 for (int k = 0; k < thisChapterCount; k++) {
-                    DEVELOPER_SERVICE.createChapter((long) projectCount, CHAPTER_NAMES[k], RANDOM.nextInt(50_000));
-                    if (thisChapterCount % 5 == 0) {
-                        DEVELOPER_SERVICE.cancelChapter((long) chapterCount);
+                    DEVELOPER_SERVICE.createChapter(projectCount, CHAPTER_NAMES[k], RANDOM.nextInt(BOUND2));
+                    if (thisChapterCount % INT5 == 0) {
+                        DEVELOPER_SERVICE.cancelChapter(chapterCount);
                     }
                     chapterCount++;
                 }
                 projectCount++;
-                if (thisProjectCount % 5 == 0) {
-                    DEVELOPER_SERVICE.cancelProject((long) projectCount);
-                }
             }
         }
         for (int i = 0; i < CONTRACTOR_COUNT; i++) {
 
-            Contractor con = CONTRACTOR_SERVICE.createContractor(getUniqEmail(), getPassword(), getUserName(), CITY_NAMES[i % CITY_NAMES.length], getStreet(), String.valueOf(userCount * 4 / 3));
+            Contractor con = CONTRACTOR_SERVICE.createContractor(getUniqEmail(), getPassword(), getUserName(), CITY_NAMES[i % CITY_NAMES.length], getStreet(), String.valueOf(userCount * INT4 / INT3));
             int thisProposalCount = RANDOM.nextInt(MAX_PROPOSAL_COUNT_PER_CONTRACTOR);
             for (int j = 0; j < thisProposalCount; j++) {
                 Proposal proposal;
                 try {
-                    proposal = CONTRACTOR_SERVICE.createProposal((long) (RANDOM.nextInt(chapterCount) + 1), con.getId());
+                    CONTRACTOR_SERVICE.createProposal((RANDOM.nextInt(chapterCount) + INT1), con.getId());
                 } catch (NotCreateDataInDbException e) {
                     continue;
                 }
-                if (proposal.getId() == proposalCount) {
-                    proposalCount++;
-                }
+                proposalCount++;
             }
         }
     }
 
     private String getUniqEmail() {
 
-        return "myEmail." + (userCount++) + "@mail.ru";
+        return MY_EMAIL + (userCount++) + MAIL_RU;
     }
 
     private String getPassword() {
 
-        return userCount % 2 == 0 ? "1111" : "2222";
+        return userCount % INT2 == INT0 ? STRING1111 : STRING2222;
     }
 
     private String getUserName() {
 
-        return "UniqueUserName" + userCount;
+        return UNIQUE_USER_NAME + userCount;
     }
 
     private String getStreet() {
 
-        return "WestAvenue" + userCount % 7;
+        return WEST_AVENUE + userCount % 7;
     }
 
     private String getProjectName() {
 
-        return ("UniqueProjectName" + projectCount);
+        return (UNIQUE_PROJECT_NAME + projectCount);
     }
 }
-*/
