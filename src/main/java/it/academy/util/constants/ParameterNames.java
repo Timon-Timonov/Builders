@@ -27,6 +27,7 @@ public final class ParameterNames {
     public static final String CALCULATION_PAGE_PARAM = "calculation_page";
     public static final String CHAPTER_PAGE_PARAM = "chapter_page";
     public static final String PROPOSAL_PAGE_PARAM = "proposal_page";
+    public static final String LAST_PAGE_NUMBER_PARAM = "last_page_number";
 
     public static final String USER_STATUS_PARAM = "user_status";
     public static final String PROJECT_STATUS_PARAM = "project_status";

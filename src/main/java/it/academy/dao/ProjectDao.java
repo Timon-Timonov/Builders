@@ -8,8 +8,6 @@ import java.util.List;
 
 public interface ProjectDao extends Dao<Project, Long> {
 
-    List<Project> getProjects(ProjectStatus status, int page, int count) throws NoResultException;
-
     List<Project> getProjectsByContractorId(Long contractorId, ProjectStatus status, int page, int count)
         throws NoResultException;
 
@@ -19,8 +17,6 @@ public interface ProjectDao extends Dao<Project, Long> {
 
     List<Project> getProjectsByDeveloperId(Long developerId, ProjectStatus status, int page, int count)
         throws NoResultException;
-
-    Long getCountOfProjects(ProjectStatus status) throws NoResultException;
 
     Long getCountOfProjectsByContractorId(Long contractorId, ProjectStatus status)
         throws NoResultException;

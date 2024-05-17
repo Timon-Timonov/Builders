@@ -12,4 +12,6 @@ public class Page<DTO> {
     private final List<DTO> list;
 
     private final Integer pageNumber;
+
+    private final Integer lastPageNumber;
 }

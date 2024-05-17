@@ -29,6 +29,7 @@
     String actionParameterToDoValue = null;
     int countOnPage = (Integer) session.getAttribute(countName);
     int pageNumber = (Integer) session.getAttribute(pageNumberParamName);
+    int lastPageNumber = (Integer) session.getAttribute(LAST_PAGE_NUMBER_PARAM);
     String developerName = (String) session.getAttribute(DEVELOPER_NAME_PARAM);
     String developerAddress = (String) session.getAttribute(DEVELOPER_ADDRESS_PARAM);
     ProjectStatus status = (ProjectStatus) session.getAttribute(PROJECT_STATUS_PARAM);

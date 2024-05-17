@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static it.academy.util.constants.Constants.FIRST_PAGE_NUMBER;
 import static it.academy.util.constants.Constants.ZERO_INT_VALUE;
 import static it.academy.util.constants.JspURLs.*;
 import static it.academy.util.constants.Messages.*;
@@ -89,11 +90,13 @@ public class ContractorControllerImpl implements ContractorController {
         List<ProjectDto> list = new ArrayList<>();
         Integer page = dto.getPage();
         Integer count = dto.getCount();
+        Integer lastPageNumber = FIRST_PAGE_NUMBER;
         ProjectStatus status = null;
         try {
             status = (ProjectStatus) dto.getStatus();
             Page<Project> projectPage = service.getMyProjects(dto.getId(), status, page, count);
             page = projectPage.getPageNumber();
+            lastPageNumber = projectPage.getLastPageNumber();
             list.addAll(projectPage.getList()
                             .stream()
                             .map(project -> getProjectDtoForContractor(dto.getId(), project))
@@ -118,6 +121,7 @@ public class ContractorControllerImpl implements ContractorController {
                                    .list(list)
                                    .page(page)
                                    .countOnPage(count)
+                                   .lastPageNumber(lastPageNumber)
                                    .status(status)
                                    .url(CONTRACTOR_PAGES_LIST_WITH_PROJECTS_JSP)
                                    .build();
@@ -132,11 +136,13 @@ public class ContractorControllerImpl implements ContractorController {
         List<ProjectDto> list = new ArrayList<>();
         Integer page = dto.getPage();
         Integer count = dto.getCount();
+        Integer lastPageNumber = FIRST_PAGE_NUMBER;
         ProjectStatus status = null;
         try {
             status = (ProjectStatus) dto.getStatus();
             Page<Project> projectPage = service.getMyProjectsByDeveloper(dto.getId(), dto.getSecondId(), status, page, count);
             page = projectPage.getPageNumber();
+            lastPageNumber = projectPage.getLastPageNumber();
             list.addAll(projectPage.getList().stream()
                             .map(project -> getProjectDtoForContractor(dto.getSecondId(), project))
                             .collect(Collectors.toList()));
@@ -161,6 +167,7 @@ public class ContractorControllerImpl implements ContractorController {
                                    .status(status)
                                    .page(page)
                                    .countOnPage(count)
+                                   .lastPageNumber(lastPageNumber)
                                    .id(dto.getId())
                                    .name(dto.getName())
                                    .url(CONTRACTOR_PAGES_LIST_WITH_PROJECTS_JSP)
@@ -208,12 +215,14 @@ public class ContractorControllerImpl implements ContractorController {
         List<ChapterDto> list = new ArrayList<>();
         Integer page = dto.getPage();
         Integer count = dto.getCount();
+        Integer lastPageNumber = FIRST_PAGE_NUMBER;
         ProjectStatus status = null;
 
         try {
             status = (ProjectStatus) dto.getStatus();
             Page<Chapter> chapterPage = service.getFreeChapters(dto.getId(), dto.getName(), status, page, count);
             page = chapterPage.getPageNumber();
+            lastPageNumber = chapterPage.getLastPageNumber();
             list.addAll(chapterPage.getList()
                             .stream()
                             .map(chapter -> ChapterConverter.getChapterDtoForContractor(chapter, null))
@@ -240,6 +249,7 @@ public class ContractorControllerImpl implements ContractorController {
                                    .status(status)
                                    .page(page)
                                    .countOnPage(count)
+                                   .lastPageNumber(lastPageNumber)
                                    .name(dto.getName())
                                    .url(CONTRACTOR_PAGES_LIST_WITH_FREE_CHAPTERS_JSP)
                                    .build();
@@ -254,11 +264,13 @@ public class ContractorControllerImpl implements ContractorController {
         List<DeveloperDto> list = new ArrayList<>();
         Integer page = dto.getPage();
         Integer count = dto.getCount();
+        Integer lastPageNumber = FIRST_PAGE_NUMBER;
         ProjectStatus status = null;
         try {
             status = (ProjectStatus) dto.getStatus();
             Page<Developer> developerPage = service.getMyDevelopers(dto.getId(), status, page, count);
             page = developerPage.getPageNumber();
+            lastPageNumber = developerPage.getLastPageNumber();
             list.addAll(developerPage.getList()
                             .stream()
                             .map(developer -> {
@@ -291,6 +303,7 @@ public class ContractorControllerImpl implements ContractorController {
             dtoWithPageForUi = DtoWithPageForUi.<DeveloperDto>builder()
                                    .page(page)
                                    .countOnPage(count)
+                                   .lastPageNumber(lastPageNumber)
                                    .list(list)
                                    .status(status)
                                    .url(CONTRACTOR_PAGES_LIST_WITH_DEVELOPERS_JSP)
@@ -306,11 +319,13 @@ public class ContractorControllerImpl implements ContractorController {
         List<ProposalDto> list = new ArrayList<>();
         Integer page = dto.getPage();
         Integer count = dto.getCount();
+        Integer lastPageNumber = FIRST_PAGE_NUMBER;
         ProposalStatus status = null;
         try {
             status = (ProposalStatus) dto.getStatus();
             Page<Proposal> proposalPage = service.getMyProposals(dto.getId(), status, page, count);
             page = proposalPage.getPageNumber();
+            lastPageNumber = proposalPage.getLastPageNumber();
             list.addAll(proposalPage.getList()
                             .stream()
                             .map(ProposalConverter::convertToDto)
@@ -335,6 +350,7 @@ public class ContractorControllerImpl implements ContractorController {
             dtoWithPageForUi = DtoWithPageForUi.<ProposalDto>builder()
                                    .page(page)
                                    .countOnPage(count)
+                                   .lastPageNumber(lastPageNumber)
                                    .list(list)
                                    .status(status)
                                    .url(CONTRACTOR_PAGES_LIST_WITH_PROPOSALS_JSP)
@@ -387,10 +403,12 @@ public class ContractorControllerImpl implements ContractorController {
         List<CalculationDto> list = new ArrayList<>();
         Integer page = dto.getPage();
         Integer count = dto.getCount();
+        Integer lastPageNumber = FIRST_PAGE_NUMBER;
 
         try {
             Page<Calculation> calculationPage = service.getCalculationsByChapter(dto.getId(), page, count);
             page = calculationPage.getPageNumber();
+            lastPageNumber = calculationPage.getLastPageNumber();
             list.addAll(calculationPage.getList().stream()
                             .map(calculation -> {
                                 Integer[] sums = Util.getCalculationSums(calculation);
@@ -414,6 +432,7 @@ public class ContractorControllerImpl implements ContractorController {
             dtoWithPageForUi = DtoWithPageForUi.<CalculationDto>builder()
                                    .page(page)
                                    .countOnPage(count)
+                                   .lastPageNumber(lastPageNumber)
                                    .id(dto.getId())
                                    .name(dto.getName())
                                    .list(list)

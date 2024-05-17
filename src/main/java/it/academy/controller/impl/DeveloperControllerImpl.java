@@ -30,6 +30,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static it.academy.util.constants.Constants.FIRST_PAGE_NUMBER;
 import static it.academy.util.constants.Constants.ZERO_INT_VALUE;
 import static it.academy.util.constants.JspURLs.*;
 import static it.academy.util.constants.Messages.*;
@@ -89,12 +90,14 @@ public class DeveloperControllerImpl implements DeveloperController {
         List<ProjectDto> list = new ArrayList<>();
         Integer page = dto.getPage();
         Integer count = dto.getCount();
+        Integer lastPageNumber = FIRST_PAGE_NUMBER;
         ProjectStatus status = null;
 
         try {
             status = (ProjectStatus) dto.getStatus();
             Page<Project> projectPage = service.getMyProjects(dto.getId(), status, page, count);
             page = projectPage.getPageNumber();
+            lastPageNumber = projectPage.getLastPageNumber();
             list.addAll(projectPage.getList().stream()
                             .map(project -> {
                                 Integer projectPrice = project.getChapters().stream()
@@ -124,6 +127,7 @@ public class DeveloperControllerImpl implements DeveloperController {
                                    .list(list)
                                    .page(page)
                                    .countOnPage(count)
+                                   .lastPageNumber(lastPageNumber)
                                    .status(status)
                                    .url(DEVELOPER_PAGES_LIST_WITH_PROJECTS_JSP)
                                    .build();
@@ -138,11 +142,13 @@ public class DeveloperControllerImpl implements DeveloperController {
         List<ContractorDto> list = new ArrayList<>();
         Integer page = dto.getPage();
         Integer count = dto.getCount();
+        Integer lastPageNumber = FIRST_PAGE_NUMBER;
         ProjectStatus status = null;
         try {
             status = (ProjectStatus) dto.getStatus();
             Page<Contractor> contractorPage = service.getMyContractors(dto.getId(), status, page, count);
             page = contractorPage.getPageNumber();
+            lastPageNumber = contractorPage.getLastPageNumber();
             list.addAll(contractorPage.getList().stream()
                             .map(contractor -> {
                                 Integer contractorDebt = null;
@@ -174,6 +180,7 @@ public class DeveloperControllerImpl implements DeveloperController {
             dtoWithPageForUi = DtoWithPageForUi.<ContractorDto>builder()
                                    .page(page)
                                    .countOnPage(count)
+                                   .lastPageNumber(lastPageNumber)
                                    .list(list)
                                    .status(status)
                                    .url(DEVELOPER_PAGES_LIST_WITH_CONTRACTORS_JSP)
@@ -189,11 +196,13 @@ public class DeveloperControllerImpl implements DeveloperController {
         List<ProposalDto> list = new ArrayList<>();
         Integer page = dto.getPage();
         Integer count = dto.getCount();
+        Integer lastPageNumber = FIRST_PAGE_NUMBER;
         ProposalStatus status = null;
         try {
             status = (ProposalStatus) dto.getStatus();
             Page<Proposal> proposalPage = service.getAllMyProposals(dto.getId(), status, page, count);
             page = proposalPage.getPageNumber();
+            lastPageNumber = proposalPage.getLastPageNumber();
             list.addAll(proposalPage.getList().stream()
                             .map(ProposalConverter::convertToDto)
                             .collect(Collectors.toList()));
@@ -217,6 +226,7 @@ public class DeveloperControllerImpl implements DeveloperController {
             dtoWithPageForUi = DtoWithPageForUi.<ProposalDto>builder()
                                    .page(page)
                                    .countOnPage(count)
+                                   .lastPageNumber(lastPageNumber)
                                    .list(list)
                                    .status(status)
                                    .url(DEVELOPER_PAGES_LIST_WITH_ALL_PROPOSALS_JSP)
@@ -371,6 +381,7 @@ public class DeveloperControllerImpl implements DeveloperController {
         List<ChapterDto> list = new ArrayList<>();
         Integer page = dto.getPage();
         Integer count = dto.getCount();
+        Integer lastPageNumber = FIRST_PAGE_NUMBER;
         ProjectStatus status = null;
 
         try {
@@ -378,6 +389,7 @@ public class DeveloperControllerImpl implements DeveloperController {
             Page<Chapter> chapterPage = service.getChaptersByContractorIdAndDeveloperId(
                 dto.getSecondId(), dto.getId(), status, page, count);
             page = chapterPage.getPageNumber();
+            lastPageNumber = chapterPage.getLastPageNumber();
             list.addAll(chapterPage.getList().stream()
                             .map(ChapterConverter::getChapterDtoForDeveloper)
                             .collect(Collectors.toList()));
@@ -401,6 +413,7 @@ public class DeveloperControllerImpl implements DeveloperController {
             dtoWithPageForUi = DtoWithPageForUi.<ChapterDto>builder()
                                    .page(page)
                                    .countOnPage(count)
+                                   .lastPageNumber(lastPageNumber)
                                    .list(list)
                                    .name(dto.getName())
                                    .id(dto.getId())
@@ -417,7 +430,7 @@ public class DeveloperControllerImpl implements DeveloperController {
         String exceptionMessage = null;
         String url = WhatToDo.SHOW_PROPOSALS.toString().equals(dto.getName()) ?
                          SLASH_STRING + MAIN_DEVELOPER_SERVLET
-                         :SLASH_STRING + GET_MY_PROPOSALS_FROM_CHAPTER_DEVELOPER_SERVLET;
+                         : SLASH_STRING + GET_MY_PROPOSALS_FROM_CHAPTER_DEVELOPER_SERVLET;
 
         try {
             service.changeStatusOfProposal(dto.getId(), (ProposalStatus) dto.getStatus());
@@ -458,12 +471,14 @@ public class DeveloperControllerImpl implements DeveloperController {
         List<ProposalDto> list = new ArrayList<>();
         Integer page = dto.getPage();
         Integer count = dto.getCount();
+        Integer lastPageNumber = FIRST_PAGE_NUMBER;
         ProposalStatus status = null;
 
         try {
             status = (ProposalStatus) dto.getStatus();
             Page<Proposal> proposalPage = service.getProposalsByChapterId(dto.getId(), status, page, count);
             page = proposalPage.getPageNumber();
+            lastPageNumber = proposalPage.getLastPageNumber();
             list.addAll(proposalPage.getList().stream()
                             .map(ProposalConverter::convertToDto)
                             .collect(Collectors.toList()));
@@ -487,6 +502,7 @@ public class DeveloperControllerImpl implements DeveloperController {
             dtoWithPageForUi = DtoWithPageForUi.<ProposalDto>builder()
                                    .page(page)
                                    .countOnPage(count)
+                                   .lastPageNumber(lastPageNumber)
                                    .list(list)
                                    .status(status)
                                    .name(dto.getName())
@@ -539,11 +555,13 @@ public class DeveloperControllerImpl implements DeveloperController {
         List<CalculationDto> list = new ArrayList<>();
         Integer page = dto.getPage();
         Integer count = dto.getCount();
+        Integer lastPageNumber = FIRST_PAGE_NUMBER;
 
         try {
             Page<Calculation> calculationPage = service.getCalculationsByChapterId(
                 dto.getId(), page, count);
             page = calculationPage.getPageNumber();
+            lastPageNumber = calculationPage.getLastPageNumber();
             list.addAll(calculationPage.getList().stream()
                             .map(calculation -> {
                                 Integer[] sums = Util.getCalculationSums(calculation);
@@ -568,6 +586,7 @@ public class DeveloperControllerImpl implements DeveloperController {
                                    .id(dto.getId())
                                    .page(page)
                                    .countOnPage(count)
+                                   .lastPageNumber(lastPageNumber)
                                    .name(dto.getName())
                                    .list(list)
                                    .url(DEVELOPER_PAGES_LIST_WITH_CALCULATIONS_JSP)

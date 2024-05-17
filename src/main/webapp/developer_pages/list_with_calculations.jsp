@@ -20,6 +20,7 @@
     String pageNumberParamName = CALCULATION_PAGE_PARAM;
     int countOnPage = (Integer) session.getAttribute(countName);
     int pageNumber = (Integer) session.getAttribute(pageNumberParamName);
+    int lastPageNumber = (Integer) session.getAttribute(LAST_PAGE_NUMBER_PARAM);
 
     String actionParameterToDoValue = null;
 

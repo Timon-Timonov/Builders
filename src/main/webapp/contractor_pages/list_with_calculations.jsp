@@ -23,6 +23,7 @@
     String pageNumberParamName = CALCULATION_PAGE_PARAM;
     int countOnPage = (Integer) session.getAttribute(countName);
     int pageNumber = (Integer) session.getAttribute(pageNumberParamName);
+    int lastPageNumber = (Integer) session.getAttribute(LAST_PAGE_NUMBER_PARAM);
 
     String actionParameterToDoValue = null;
 
@@ -68,9 +69,9 @@
         <%for (int i = 0; i < calculationDtoList.size(); i++) {%>
         <%
             CalculationDto calculationDto = calculationDtoList.get(i);
-            String workPriceFact = calculationDto.getWorkPriceFact() == null ?
-                    ""
-                    : calculationDto.getWorkPriceFact().toString();
+            Integer workPriceFact = calculationDto.getWorkPriceFact() == null ?
+                    ZERO_INT_VALUE
+                    : calculationDto.getWorkPriceFact();
         %>
         <tr>
             <td><%=(i + 1)%>
@@ -97,14 +98,16 @@
             <td><%=calculationDto.getWorkPricePlan()%>
             </td>
             <td>
+                <%if (workPriceFact == ZERO_INT_VALUE) {%>
                 <form action="<%=CHANGE_WORK_PRICE_FACT_CONTRACTOR_SERVLET%>" method="get">
                     <input type="hidden" value="<%=calculationDto.getId().toString()%>"
                            name="<%=CALCULATION_ID_PARAM%>">
-                    New Value of work price fact: <label>
+                    Value of work price fact: <label>
                     <input type="text" value="<%=workPriceFact%>" name="<%=WORK_PRICE_FACT_PARAM%>">
                     <button class="btn btn-light" type="submit">Edit work price fact</button>
                 </label>
                 </form>
+                <%}%>
             </td>
         </tr>
         <tr></tr>

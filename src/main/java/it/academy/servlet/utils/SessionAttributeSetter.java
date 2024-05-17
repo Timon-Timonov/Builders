@@ -37,6 +37,7 @@ public class SessionAttributeSetter {
         if (pageParamName != null) {
             session.setAttribute(pageParamName, dto.getPage());
             session.setAttribute(countParamName, dto.getCountOnPage());
+            session.setAttribute(LAST_PAGE_NUMBER_PARAM, dto.getLastPageNumber());
         }
         if (statusParamName != null) {
             session.setAttribute(statusParamName, dto.getStatus());

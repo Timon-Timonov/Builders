@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static it.academy.util.constants.Constants.FIRST_PAGE_NUMBER;
 import static it.academy.util.constants.JspURLs.*;
 import static it.academy.util.constants.Messages.*;
 import static it.academy.util.constants.ServletURLs.*;
@@ -151,11 +152,13 @@ public class AdminControllerImpl implements AdminController {
         List<ContractorDto> list = new ArrayList<>();
         Integer page = dto.getPage();
         Integer count = dto.getCount();
+        Integer lastPageNumber = FIRST_PAGE_NUMBER;
         UserStatus status = null;
         try {
             status = (UserStatus) dto.getStatus();
             Page<Contractor> contractorPage = service.getAllContractors(status, page, count);
             page = contractorPage.getPageNumber();
+            lastPageNumber = contractorPage.getLastPageNumber();
             list.addAll(contractorPage.getList()
                             .stream()
                             .map(contractor -> ContractorConverter.convertToDto(contractor, null))
@@ -180,6 +183,7 @@ public class AdminControllerImpl implements AdminController {
             dtoWithPageForUi = DtoWithPageForUi.<ContractorDto>builder()
                                    .page(page)
                                    .countOnPage(count)
+                                   .lastPageNumber(lastPageNumber)
                                    .list(list)
                                    .status(status)
                                    .url(ADMIN_PAGES_LIST_WITH_CONTRACTORS_JSP)
@@ -227,11 +231,13 @@ public class AdminControllerImpl implements AdminController {
         List<DeveloperDto> list = new ArrayList<>();
         Integer page = dto.getPage();
         Integer count = dto.getCount();
+        Integer lastPageNumber = FIRST_PAGE_NUMBER;
         UserStatus status = null;
         try {
             status = (UserStatus) dto.getStatus();
             Page<Developer> developerPage = service.getAllDevelopers(status, page, count);
             page = developerPage.getPageNumber();
+            lastPageNumber = developerPage.getLastPageNumber();
             list.addAll(developerPage.getList()
                             .stream()
                             .map(developer -> DeveloperConverter.convertToDto(developer, null))
@@ -256,6 +262,7 @@ public class AdminControllerImpl implements AdminController {
             dtoWithPageForUi = DtoWithPageForUi.<DeveloperDto>builder()
                                    .page(page)
                                    .countOnPage(count)
+                                   .lastPageNumber(lastPageNumber)
                                    .list(list)
                                    .status(status)
                                    .url(ADMIN_PAGES_LIST_WITH_DEVELOPERS_JSP)
@@ -272,11 +279,13 @@ public class AdminControllerImpl implements AdminController {
         Integer page = dto.getPage();
         Integer count = dto.getCount();
         ProjectStatus status = null;
+        Integer lastPageNumber = FIRST_PAGE_NUMBER;
 
         try {
             status = (ProjectStatus) dto.getStatus();
             Page<Project> projectPage = service.getProjectsByDeveloper(dto.getId(), status, page, count);
             page = projectPage.getPageNumber();
+            lastPageNumber = projectPage.getLastPageNumber();
             list.addAll(projectPage.getList()
                             .stream()
                             .map(project -> ProjectConverter.convertToDto(project, null, null))
@@ -300,6 +309,7 @@ public class AdminControllerImpl implements AdminController {
             dtoWithPageForUi = DtoWithPageForUi.<ProjectDto>builder()
                                    .list(list)
                                    .page(page)
+                                   .lastPageNumber(lastPageNumber)
                                    .countOnPage(count)
                                    .status(status)
                                    .url(ADMIN_PAGES_LIST_WITH_PROJECTS_JSP)
@@ -351,10 +361,12 @@ public class AdminControllerImpl implements AdminController {
         List<ChapterDto> list = new ArrayList<>();
         Integer page = dto.getPage();
         Integer count = dto.getCount();
+        Integer lastPageNumber = FIRST_PAGE_NUMBER;
 
         try {
             Page<Chapter> chapterPage = service.getChaptersByContractorId(dto.getId(), page, count);
             page = chapterPage.getPageNumber();
+            lastPageNumber = chapterPage.getLastPageNumber();
             list.addAll(chapterPage.getList()
                             .stream()
                             .map(chapter -> ChapterConverter.getChapterDtoForContractor(chapter, null))
@@ -376,6 +388,7 @@ public class AdminControllerImpl implements AdminController {
             dtoWithPageForUi = DtoWithPageForUi.<ChapterDto>builder()
                                    .page(page)
                                    .countOnPage(count)
+                                   .lastPageNumber(lastPageNumber)
                                    .list(list)
                                    .name(dto.getName())
                                    .id(dto.getId())
@@ -428,10 +441,12 @@ public class AdminControllerImpl implements AdminController {
         List<CalculationDto> list = new ArrayList<>();
         Integer page = dto.getPage();
         Integer count = dto.getCount();
+        Integer lastPageNumber = FIRST_PAGE_NUMBER;
 
         try {
             Page<Calculation> calculationPage = service.getCalculationsByChapterId(dto.getId(), page, count);
             page = calculationPage.getPageNumber();
+            lastPageNumber = calculationPage.getLastPageNumber();
             list.addAll(calculationPage.getList().stream()
                             .map(calculation -> {
                                 Integer[] sums = Util.getCalculationSums(calculation);
@@ -455,6 +470,7 @@ public class AdminControllerImpl implements AdminController {
             dtoWithPageForUi = DtoWithPageForUi.<CalculationDto>builder()
                                    .page(page)
                                    .countOnPage(count)
+                                   .lastPageNumber(lastPageNumber)
                                    .id(dto.getId())
                                    .name(dto.getName())
                                    .list(list)
@@ -471,12 +487,14 @@ public class AdminControllerImpl implements AdminController {
         List<ProposalDto> list = new ArrayList<>();
         Integer page = dto.getPage();
         Integer count = dto.getCount();
+        Integer lastPageNumber = FIRST_PAGE_NUMBER;
         ProposalStatus status = null;
 
         try {
             status = (ProposalStatus) dto.getStatus();
             Page<Proposal> proposalPage = service.getProposalsByChapterId(dto.getId(), status, page, count);
             page = proposalPage.getPageNumber();
+            lastPageNumber = proposalPage.getLastPageNumber();
             list.addAll(proposalPage.getList().stream()
                             .map(ProposalConverter::convertToDto)
                             .collect(Collectors.toList()));
@@ -500,6 +518,7 @@ public class AdminControllerImpl implements AdminController {
             dtoWithPageForUi = DtoWithPageForUi.<ProposalDto>builder()
                                    .page(page)
                                    .countOnPage(count)
+                                   .lastPageNumber(lastPageNumber)
                                    .list(list)
                                    .status(status)
                                    .url(ADMIN_PAGES_LIST_WITH_PROPOSALS_FROM_CHAPTER_JSP)
@@ -515,12 +534,14 @@ public class AdminControllerImpl implements AdminController {
         List<ProposalDto> list = new ArrayList<>();
         Integer page = dto.getPage();
         Integer count = dto.getCount();
+        Integer lastPageNumber = FIRST_PAGE_NUMBER;
         ProposalStatus status = null;
 
         try {
             status = (ProposalStatus) dto.getStatus();
             Page<Proposal> proposalPage = service.getProposalsByContractorId(dto.getId(), status, page, count);
             page = proposalPage.getPageNumber();
+            lastPageNumber = proposalPage.getLastPageNumber();
             list.addAll(proposalPage.getList().stream()
                             .map(ProposalConverter::convertToDto)
                             .collect(Collectors.toList()));
@@ -544,6 +565,7 @@ public class AdminControllerImpl implements AdminController {
             dtoWithPageForUi = DtoWithPageForUi.<ProposalDto>builder()
                                    .page(page)
                                    .countOnPage(count)
+                                   .lastPageNumber(lastPageNumber)
                                    .list(list)
                                    .status(status)
                                    .url(ADMIN_PAGES_LIST_WITH_PROPOSALS_FROM_CONTRACTOR_JSP)

@@ -19,8 +19,6 @@ public interface DeveloperService {
         String email, String password, String name, String city, String street, String building)
         throws Exception;
 
-    Developer getDeveloper(long userId) throws Exception;
-
     Page<Project> getMyProjects(long developerId, ProjectStatus status, int page, int count) throws Exception;
 
     Page<Contractor> getMyContractors(long developerId, ProjectStatus status, int page, int count) throws Exception;

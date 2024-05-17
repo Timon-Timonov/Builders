@@ -31,6 +31,7 @@
     String actionParameterToDoValue = WhatToDo.SHOW_DEVELOPERS.toString();
     int countOnPage = (Integer) session.getAttribute(countName);
     int pageNumber = (Integer) session.getAttribute(pageNumberParamName);
+    int lastPageNumber = (Integer) session.getAttribute(LAST_PAGE_NUMBER_PARAM);
     ProjectStatus status = (ProjectStatus) session.getAttribute(PROJECT_STATUS_PARAM);
     List<DeveloperDto> developerDtoList = (List<DeveloperDto>) request.getAttribute(DTO_LIST_PARAM);
 %>

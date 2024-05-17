@@ -1,6 +1,5 @@
 package it.academy.service;
 
-import it.academy.service.dto.Page;
 import it.academy.pojo.Calculation;
 import it.academy.pojo.Chapter;
 import it.academy.pojo.Project;
@@ -9,6 +8,7 @@ import it.academy.pojo.enums.ProjectStatus;
 import it.academy.pojo.enums.ProposalStatus;
 import it.academy.pojo.legalEntities.Contractor;
 import it.academy.pojo.legalEntities.Developer;
+import it.academy.service.dto.Page;
 
 import java.io.IOException;
 import java.util.List;
@@ -18,8 +18,6 @@ public interface ContractorService {
     Contractor createContractor(
         String email, String password, String name, String city, String street, String building)
         throws Exception;
-
-    Contractor getContractor(long userId) throws Exception;
 
     Page<Project> getMyProjects(long contractorId, ProjectStatus status, int page, int count) throws Exception;
 

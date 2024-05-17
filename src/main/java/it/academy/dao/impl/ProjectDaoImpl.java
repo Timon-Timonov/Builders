@@ -17,19 +17,6 @@ public class ProjectDaoImpl extends DaoImpl<Project, Long> implements ProjectDao
     }
 
     @Override
-    public List<Project> getProjects(ProjectStatus status, int page, int count)
-        throws NoResultException {
-
-        TypedQuery<Project> query = getEm().createQuery(
-            "SELECT p FROM Project p WHERE  p.status=:status ORDER BY p.developer.name ASC, p.name ASC",
-            Project.class);
-        return query.setParameter("status", status)
-                   .setMaxResults(count)
-                   .setFirstResult((page - 1) * count)
-                   .getResultList();
-    }
-
-    @Override
     public List<Project> getProjectsByContractorId(Long contractorId, ProjectStatus status, int page, int count)
         throws NoResultException {
 
@@ -73,15 +60,6 @@ public class ProjectDaoImpl extends DaoImpl<Project, Long> implements ProjectDao
                    .getResultList();
     }
 
-    @Override
-    public Long getCountOfProjects(ProjectStatus status) throws NoResultException {
-
-        TypedQuery<Long> query = getEm().createQuery(
-            "SELECT COUNT(p) FROM Project p WHERE p.status=:status",
-            Long.class);
-        return query.setParameter("status", status)
-                   .getSingleResult();
-    }
 
     @Override
     public Long getCountOfProjectsByContractorId(Long contractorId, ProjectStatus status) throws NoResultException {

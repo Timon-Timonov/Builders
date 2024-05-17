@@ -5,7 +5,6 @@ import it.academy.dao.impl.*;
 import it.academy.exceptions.EmailOccupaidException;
 import it.academy.exceptions.NotCreateDataInDbException;
 import it.academy.exceptions.NotUpdateDataInDbException;
-import it.academy.exceptions.RoleException;
 import it.academy.pojo.*;
 import it.academy.pojo.enums.*;
 import it.academy.pojo.legalEntities.Contractor;
@@ -100,53 +99,23 @@ public class ContractorServiceImpl implements ContractorService {
     }
 
     @Override
-    public Contractor getContractor(long userId) throws Exception {
-
-        Contractor contractorFromDb;
-        try {
-            contractorFromDb = contractorDao.executeInOneEntityTransaction(() -> {
-                Contractor contractor = null;
-                User user;
-                try {
-                    user = userDao.get(userId);
-                } catch (EntityNotFoundException e) {
-                    log.error(CONTRACTOR_NOT_FOUND_WITH_ID + userId);
-                    throw e;
-                }
-                if (user != null) {
-                    if (Roles.CONTRACTOR.equals(user.getRole())) {
-                        contractor = ((Contractor) user.getLegalEntity());
-                    } else {
-                        log.error(USER_NOT_CONTRACTOR_ID + userId);
-                        throw new RoleException(USER_NOT_CONTRACTOR);
-                    }
-                }
-                return contractor;
-            });
-        } catch (RollbackException e) {
-            log.error(BAD_CONNECTION, e);
-            throw new IOException(BAD_CONNECTION);
-        }
-        return contractorFromDb;
-    }
-
-    @Override
     public Page<Project> getMyProjects(long contractorId, ProjectStatus status, int page, int count)
         throws Exception {
 
         Page<Project> projectPage;
         try {
             projectPage = projectDao.executeInOnePageTransaction(() -> {
-                int correctPage = FIRST_PAGE_NUMBER;
-                List<Project> list = new ArrayList<>();
+                Page<Project> page1 = null;
                 try {
                     long totalCount = projectDao.getCountOfProjectsByContractorId(contractorId, status);
-                    correctPage = Util.getCorrectPageNumber(page, count, totalCount);
-                    list.addAll(projectDao.getProjectsByContractorId(contractorId, status, correctPage, count));
+                    page1 = Util.getPageWithCorrectNumbers(page, count, totalCount);
+                    page1.getList().addAll(projectDao.getProjectsByContractorId(
+                        contractorId, status, page1.getPageNumber(), count));
                 } catch (NoResultException e) {
                     log.error(THERE_IS_NO_SUCH_DATA_IN_DB_WITH_CONTRACTOR_ID + contractorId);
                 }
-                return new Page<>(list, correctPage);
+                return page1 != null ? page1
+                           : new Page<>(new ArrayList<>(), FIRST_PAGE_NUMBER, FIRST_PAGE_NUMBER);
             });
         } catch (RollbackException e) {
             log.error(BAD_CONNECTION, e);
@@ -163,17 +132,19 @@ public class ContractorServiceImpl implements ContractorService {
         Page<Project> projectPage;
         try {
             projectPage = projectDao.executeInOnePageTransaction(() -> {
-                int correctPage = FIRST_PAGE_NUMBER;
-                List<Project> list = new ArrayList<>();
+                Page<Project> page1 = null;
                 try {
-                    long totalCount = projectDao.getCountOfProjectsByDeveloperIdContractorId(developerId, contractorId, status);
-                    correctPage = Util.getCorrectPageNumber(page, count, totalCount);
-                    list.addAll(projectDao.getProjectsByDeveloperIdContractorId(developerId, contractorId, status, correctPage, count));
+                    long totalCount = projectDao.getCountOfProjectsByDeveloperIdContractorId(
+                        developerId, contractorId, status);
+                    page1 = Util.getPageWithCorrectNumbers(page, count, totalCount);
+                    page1.getList().addAll(projectDao.getProjectsByDeveloperIdContractorId(
+                        developerId, contractorId, status, page1.getPageNumber(), count));
                 } catch (NoResultException e) {
                     log.error(THERE_IS_NO_SUCH_DATA_IN_DB_WITH_CONTRACTOR_ID + contractorId +
                                   AND_DELELOPER_ID + developerId);
                 }
-                return new Page<>(list, correctPage);
+                return page1 != null ? page1
+                           : new Page<>(new ArrayList<>(), FIRST_PAGE_NUMBER, FIRST_PAGE_NUMBER);
             });
         } catch (RollbackException e) {
             log.error(BAD_CONNECTION, e);
@@ -202,16 +173,18 @@ public class ContractorServiceImpl implements ContractorService {
         Page<Chapter> chapterPage;
         try {
             chapterPage = chapterDao.executeInOnePageTransaction(() -> {
-                int correctPage = FIRST_PAGE_NUMBER;
-                List<Chapter> list = new ArrayList<>();
+                Page<Chapter> page1 = null;
                 try {
-                    long totalCount = chapterDao.getCountOfFreeChaptersByName(contractorId, chapterName, projectStatus);
-                    correctPage = Util.getCorrectPageNumber(page, count, totalCount);
-                    list.addAll(chapterDao.getFreeChapters(contractorId, chapterName, projectStatus, correctPage, count));
+                    long totalCount = chapterDao.getCountOfFreeChaptersByName(
+                        contractorId, chapterName, projectStatus);
+                    page1 = Util.getPageWithCorrectNumbers(page, count, totalCount);
+                    page1.getList().addAll(chapterDao.getFreeChapters(
+                        contractorId, chapterName, projectStatus, page1.getPageNumber(), count));
                 } catch (NoResultException e) {
                     log.error(THERE_IS_NO_SUCH_DATA_IN_DB, e);
                 }
-                return new Page<>(list, correctPage);
+                return page1 != null ? page1
+                           : new Page<>(new ArrayList<>(), FIRST_PAGE_NUMBER, FIRST_PAGE_NUMBER);
             });
         } catch (RollbackException e) {
             log.error(BAD_CONNECTION, e);
@@ -227,16 +200,17 @@ public class ContractorServiceImpl implements ContractorService {
         Page<Developer> developerPage;
         try {
             developerPage = developerDao.executeInOnePageTransaction(() -> {
-                int correctPage = FIRST_PAGE_NUMBER;
-                List<Developer> list = new ArrayList<>();
+                Page<Developer> page1 = null;
                 try {
                     long totalCount = developerDao.getCountOfDevelopers(contractorId, status);
-                    correctPage = Util.getCorrectPageNumber(page, count, totalCount);
-                    list.addAll(developerDao.getDevelopersByContractorId(contractorId, status, correctPage, count));
+                    page1 = Util.getPageWithCorrectNumbers(page, count, totalCount);
+                    page1.getList().addAll(developerDao.getDevelopersByContractorId(
+                        contractorId, status, page1.getPageNumber(), count));
                 } catch (NoResultException e) {
                     log.error(THERE_IS_NO_SUCH_DATA_IN_DB, e);
                 }
-                return new Page<>(list, correctPage);
+                return page1 != null ? page1
+                           : new Page<>(new ArrayList<>(), FIRST_PAGE_NUMBER, FIRST_PAGE_NUMBER);
             });
         } catch (RollbackException e) {
             log.error(BAD_CONNECTION, e);
@@ -252,16 +226,17 @@ public class ContractorServiceImpl implements ContractorService {
         Page<Proposal> proposalPage;
         try {
             proposalPage = proposalDao.executeInOnePageTransaction(() -> {
-                int correctPage = FIRST_PAGE_NUMBER;
-                List<Proposal> list = new ArrayList<>();
+                Page<Proposal> page1 = null;
                 try {
                     long totalCount = proposalDao.getCountOfProposalsByContractorId(contractorId, status);
-                    correctPage = Util.getCorrectPageNumber(page, count, totalCount);
-                    list.addAll(proposalDao.getProposalsByContractorId(contractorId, status, correctPage, count));
+                    page1 = Util.getPageWithCorrectNumbers(page, count, totalCount);
+                    page1.getList().addAll(proposalDao.getProposalsByContractorId(
+                        contractorId, status, page1.getPageNumber(), count));
                 } catch (NoResultException e) {
                     log.error(THERE_IS_NO_SUCH_DATA_IN_DB, e);
                 }
-                return new Page<>(list, correctPage);
+                return page1 != null ? page1
+                           : new Page<>(new ArrayList<>(), FIRST_PAGE_NUMBER, FIRST_PAGE_NUMBER);
             });
         } catch (RollbackException e) {
             log.error(BAD_CONNECTION, e);
@@ -299,16 +274,17 @@ public class ContractorServiceImpl implements ContractorService {
         Page<Calculation> calculationPage;
         try {
             calculationPage = calculationDao.executeInOnePageTransaction(() -> {
-                int correctPage = FIRST_PAGE_NUMBER;
-                List<Calculation> list = new ArrayList<>();
+                Page<Calculation> page1 = null;
                 try {
                     long totalCount = calculationDao.getCountOfCalculationsByChapterId(chapterId);
-                    correctPage = Util.getCorrectPageNumber(page, count, totalCount);
-                    list.addAll(calculationDao.getCalculationsByChapterId(chapterId, correctPage, count));
+                    page1 = Util.getPageWithCorrectNumbers(page, count, totalCount);
+                    page1.getList().addAll(calculationDao.getCalculationsByChapterId(
+                        chapterId, page1.getPageNumber(), count));
                 } catch (NoResultException e) {
                     log.error(THERE_IS_NO_SUCH_DATA_IN_DB, e);
                 }
-                return new Page<>(list, correctPage);
+                return page1 != null ? page1
+                           : new Page<>(new ArrayList<>(), FIRST_PAGE_NUMBER, FIRST_PAGE_NUMBER);
             });
         } catch (RollbackException e) {
             log.error(BAD_CONNECTION, e);

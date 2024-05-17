@@ -16,6 +16,7 @@ public class DtoWithPageForUi<T> {
 
     Integer page;
     Integer countOnPage;
+    Integer lastPageNumber;
     Object status;
     String exceptionMessage;
 

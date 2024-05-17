@@ -5,8 +5,10 @@ import it.academy.pojo.Chapter;
 import it.academy.pojo.MoneyTransfer;
 import it.academy.pojo.Project;
 import it.academy.pojo.enums.PaymentType;
+import it.academy.service.dto.Page;
 import lombok.extern.log4j.Log4j2;
 
+import java.util.ArrayList;
 import java.util.Set;
 
 import static it.academy.util.constants.Constants.*;
@@ -17,20 +19,21 @@ public class Util {
     private Util() {
     }
 
-    public static int getCorrectPageNumber(int page, int count, long totalCount) {
+    public static <T> Page<T> getPageWithCorrectNumbers(int page, int count, long totalCount) {
 
-        if (page == ZERO_PAGE_NUMBER || page == FIRST_PAGE_NUMBER) {
-            return FIRST_PAGE_NUMBER;
-        }
         int lastPage = totalCount == ZERO_LONG_VALUE ?
                            FIRST_PAGE_NUMBER
                            : ((totalCount % count == ZERO_INT_VALUE) ?
                                   (int) (totalCount / count)
                                   : (int) (1 + (totalCount / count)));
-        if (page == DEFAULT_LAST_PAGE_NUMBER || page > lastPage) {
-            page = lastPage;
+
+        int correctPage = FIRST_PAGE_NUMBER;
+        if (page < ZERO_PAGE_NUMBER || page > lastPage) {
+            correctPage = lastPage;
+        } else if (page != ZERO_PAGE_NUMBER) {
+            correctPage = page;
         }
-        return page;
+        return new Page<>(new ArrayList<>(), correctPage, lastPage);
     }
 
     public static Integer[] getCalculationSums(Calculation calculation) {

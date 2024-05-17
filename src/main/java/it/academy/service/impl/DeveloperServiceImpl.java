@@ -2,16 +2,15 @@ package it.academy.service.impl;
 
 import it.academy.dao.*;
 import it.academy.dao.impl.*;
-import it.academy.service.dto.Page;
 import it.academy.exceptions.EmailOccupaidException;
 import it.academy.exceptions.NotCreateDataInDbException;
 import it.academy.exceptions.NotUpdateDataInDbException;
-import it.academy.exceptions.RoleException;
 import it.academy.pojo.*;
 import it.academy.pojo.enums.*;
 import it.academy.pojo.legalEntities.Contractor;
 import it.academy.pojo.legalEntities.Developer;
 import it.academy.service.DeveloperService;
+import it.academy.service.dto.Page;
 import it.academy.util.Util;
 import lombok.extern.log4j.Log4j2;
 import org.hibernate.exception.ConstraintViolationException;
@@ -99,52 +98,23 @@ public class DeveloperServiceImpl implements DeveloperService {
     }
 
     @Override
-    public Developer getDeveloper(long userId) throws Exception {
-
-        Developer developer;
-        developer = developerDao.executeInOneEntityTransaction(() -> {
-            User user;
-            try {
-                user = userDao.get(userId);
-            } catch (EntityNotFoundException e) {
-                log.error(USER_NOT_FOUND_WITH_ID + userId);
-                throw e;
-            } finally {
-                userDao.closeManager();
-            }
-            if (user != null) {
-                if (Roles.DEVELOPER.equals(user.getRole())) {
-                    return (Developer) user.getLegalEntity();
-                } else {
-                    log.error(USER_NOT_DEVELOPER_ID + userId);
-                }
-            }
-            return null;
-        });
-        if (developer == null) {
-            throw new RoleException(USER_NOT_DEVELOPER);
-        }
-        return developer;
-    }
-
-    @Override
     public Page<Project> getMyProjects(long developerId, ProjectStatus status, int page, int count)
         throws Exception {
 
         Page<Project> projectPage;
-
         try {
             projectPage = projectDao.executeInOnePageTransaction(() -> {
-                int correctPage = FIRST_PAGE_NUMBER;
-                List<Project> list = new ArrayList<>();
+                Page<Project> page1 = null;
                 try {
                     long totalCount = projectDao.getCountOfProjectsByDeveloperId(developerId, status);
-                    correctPage = Util.getCorrectPageNumber(page, count, totalCount);
-                    list.addAll(projectDao.getProjectsByDeveloperId(developerId, status, correctPage, count));
+                    page1 = Util.getPageWithCorrectNumbers(page, count, totalCount);
+                    page1.getList().addAll(projectDao.getProjectsByDeveloperId(
+                        developerId, status, page1.getPageNumber(), count));
                 } catch (NoResultException e) {
                     log.error(THERE_IS_NO_SUCH_DATA_IN_DB, e);
                 }
-                return new Page<>(list, correctPage);
+                return page1 != null ? page1
+                           : new Page<>(new ArrayList<>(), FIRST_PAGE_NUMBER, FIRST_PAGE_NUMBER);
             });
         } catch (RollbackException e) {
             log.error(BAD_CONNECTION, e);
@@ -160,16 +130,17 @@ public class DeveloperServiceImpl implements DeveloperService {
         Page<Contractor> contractorPage;
         try {
             contractorPage = contractorDao.executeInOnePageTransaction(() -> {
-                int correctPage = FIRST_PAGE_NUMBER;
-                List<Contractor> list = new ArrayList<>();
+                Page<Contractor> page1 = null;
                 try {
                     long totalCount = contractorDao.getCountOfContractorsByDeveloperId(developerId, status);
-                    correctPage = Util.getCorrectPageNumber(page, count, totalCount);
-                    list.addAll(contractorDao.getContractorsByDeveloperId(developerId, status, correctPage, count));
+                    page1 = Util.getPageWithCorrectNumbers(page, count, totalCount);
+                    page1.getList().addAll(
+                        contractorDao.getContractorsByDeveloperId(developerId, status, page1.getPageNumber(), count));
                 } catch (NoResultException e) {
                     log.error(THERE_IS_NO_SUCH_DATA_IN_DB_WITH_USER_STATUS + status, e);
                 }
-                return new Page<>(list, correctPage);
+                return page1 != null ? page1
+                           : new Page<>(new ArrayList<>(), FIRST_PAGE_NUMBER, FIRST_PAGE_NUMBER);
             });
         } catch (RollbackException e) {
             log.error(BAD_CONNECTION, e);
@@ -185,16 +156,17 @@ public class DeveloperServiceImpl implements DeveloperService {
         Page<Proposal> proposalPage;
         try {
             proposalPage = proposalDao.executeInOnePageTransaction(() -> {
-                int correctPage = FIRST_PAGE_NUMBER;
-                List<Proposal> list = new ArrayList<>();
+                Page<Proposal> page1 = null;
                 try {
                     long totalCount = proposalDao.getCountOfProposalsByDeveloperId(developerId, status);
-                    correctPage = Util.getCorrectPageNumber(page, count, totalCount);
-                    list.addAll(proposalDao.getProposalsByDeveloperId(developerId, status, correctPage, count));
+                    page1 = Util.getPageWithCorrectNumbers(page, count, totalCount);
+                    page1.getList()
+                        .addAll(proposalDao.getProposalsByDeveloperId(developerId, status, page1.getPageNumber(), count));
                 } catch (NoResultException e) {
                     log.error(THERE_IS_NO_SUCH_DATA_IN_DB, e);
                 }
-                return new Page<>(list, correctPage);
+                return page1 != null ? page1
+                           : new Page<>(new ArrayList<>(), FIRST_PAGE_NUMBER, FIRST_PAGE_NUMBER);
             });
         } catch (RollbackException e) {
             log.error(BAD_CONNECTION, e);
@@ -304,24 +276,25 @@ public class DeveloperServiceImpl implements DeveloperService {
         Page<Chapter> chapterPage;
         try {
             chapterPage = chapterDao.executeInOnePageTransaction(() -> {
-                int correctPage = FIRST_PAGE_NUMBER;
-                List<Chapter> list = new ArrayList<>();
+                Page<Chapter> page1 = null;
                 try {
-                    long totalCount = chapterDao.getCountOfChaptersByContractorIdAndDeveloperId(developerId, contractorId, status);
-                    correctPage = Util.getCorrectPageNumber(page, count, totalCount);
-                    list.addAll(chapterDao.getChaptersByContractorIdAndDeveloperId(developerId, contractorId, status, correctPage, count));
+                    long totalCount = chapterDao.getCountOfChaptersByContractorIdAndDeveloperId(
+                        developerId, contractorId, status);
+                    page1 = Util.getPageWithCorrectNumbers(page, count, totalCount);
+                    page1.getList().addAll(
+                        chapterDao.getChaptersByContractorIdAndDeveloperId(
+                            developerId, contractorId, status, page1.getPageNumber(), count));
                 } catch (NoResultException e) {
                     log.error(THERE_IS_NO_SUCH_DATA_IN_DB_WITH_DEVELOPER_ID + developerId);
                 }
-                return new Page<>(list, correctPage);
+                return page1 != null ? page1
+                           : new Page<>(new ArrayList<>(), FIRST_PAGE_NUMBER, FIRST_PAGE_NUMBER);
             });
         } catch (RollbackException e) {
             log.error(BAD_CONNECTION, e);
             throw new IOException(BAD_CONNECTION);
         }
         return chapterPage;
-
-
     }
 
     @Override
@@ -437,16 +410,17 @@ public class DeveloperServiceImpl implements DeveloperService {
         Page<Proposal> proposalPage;
         try {
             proposalPage = proposalDao.executeInOnePageTransaction(() -> {
-                int correctPage = FIRST_PAGE_NUMBER;
-                List<Proposal> list = new ArrayList<>();
+                Page<Proposal> page1 = null;
                 try {
                     long totalCount = proposalDao.getCountOfProposalsByChapterId(chapterId, status);
-                    correctPage = Util.getCorrectPageNumber(page, count, totalCount);
-                    list.addAll(proposalDao.getProposalsByChapterId(chapterId, status, correctPage, count));
+                    page1 = Util.getPageWithCorrectNumbers(page, count, totalCount);
+                    page1.getList().addAll(proposalDao.getProposalsByChapterId(
+                        chapterId, status, page1.getPageNumber(), count));
                 } catch (NoResultException e) {
                     log.error(THERE_IS_NO_SUCH_DATA_IN_DB_CHAPTER_ID + chapterId);
                 }
-                return new Page<>(list, correctPage);
+                return page1 != null ? page1
+                           : new Page<>(new ArrayList<>(), FIRST_PAGE_NUMBER, FIRST_PAGE_NUMBER);
             });
         } catch (RollbackException e) {
             log.error(BAD_CONNECTION, e);
@@ -526,16 +500,17 @@ public class DeveloperServiceImpl implements DeveloperService {
 
         try {
             calculationPage = calculationDao.executeInOnePageTransaction(() -> {
-                int correctPage = FIRST_PAGE_NUMBER;
-                List<Calculation> list = new ArrayList<>();
+                Page<Calculation> page1 = null;
                 try {
                     long totalCount = calculationDao.getCountOfCalculationsByChapterId(chapterId);
-                    correctPage = Util.getCorrectPageNumber(page, count, totalCount);
-                    list.addAll(calculationDao.getCalculationsByChapterId(chapterId, correctPage, count));
+                    page1 = Util.getPageWithCorrectNumbers(page, count, totalCount);
+                    page1.getList().addAll(
+                        calculationDao.getCalculationsByChapterId(chapterId, page1.getPageNumber(), count));
                 } catch (NoResultException e) {
                     log.error(THERE_IS_NO_SUCH_DATA_IN_DB_CHAPTER_ID + chapterId);
                 }
-                return new Page<>(list, correctPage);
+                return page1 != null ? page1
+                           : new Page<>(new ArrayList<>(), FIRST_PAGE_NUMBER, FIRST_PAGE_NUMBER);
             });
         } catch (RollbackException e) {
             log.error(BAD_CONNECTION, e);
@@ -589,7 +564,6 @@ public class DeveloperServiceImpl implements DeveloperService {
             throw new NotCreateDataInDbException();
         }
     }
-
 
     @Override
     public int getTotalDeptByContractor(long contractorId, long developerId) throws IOException {
