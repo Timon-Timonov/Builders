@@ -1,8 +1,7 @@
 package it.academy.servlet.adminServlets.deleteServlets;
 
-import it.academy.dto.DtoWithPageForUi;
-import it.academy.dto.FilterPageDto;
 import it.academy.controller.impl.AdminControllerImpl;
+import it.academy.dto.DtoWithPageForUi;
 import it.academy.dto.ProjectDto;
 import it.academy.util.ExceptionRedirector;
 import it.academy.util.ParameterFinder;
@@ -28,11 +27,7 @@ public class DeleteProjectAdministratorServlet extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
         long projectId = ParameterFinder.getNumberValueFromParameter(req, PROJECT_ID_PARAM, ZERO_LONG_VALUE);
-
-        FilterPageDto requestDto = FilterPageDto.builder()
-                                        .id(projectId)
-                                        .build();
-        DtoWithPageForUi<ProjectDto> dto = controller.deleteProject(requestDto);
+        DtoWithPageForUi<ProjectDto> dto = controller.deleteProject(projectId);
 
         if (dto.getExceptionMessage() != null) {
             ExceptionRedirector.forwardToException3(req, resp, this, dto.getExceptionMessage());

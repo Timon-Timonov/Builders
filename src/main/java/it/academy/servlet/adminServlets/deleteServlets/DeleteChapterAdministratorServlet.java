@@ -28,11 +28,7 @@ public class DeleteChapterAdministratorServlet extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
         long chapterId = ParameterFinder.getNumberValueFromParameter(req, CHAPTER_ID_PARAM, ZERO_LONG_VALUE);
-
-        FilterPageDto requestDto = FilterPageDto.builder()
-                                        .id(chapterId)
-                                        .build();
-        DtoWithPageForUi<ChapterDto> dto = controller.deleteChapter(requestDto);
+        DtoWithPageForUi<ChapterDto> dto = controller.deleteChapter(chapterId);
 
         if (dto.getExceptionMessage() != null) {
             ExceptionRedirector.forwardToException3(req, resp, this, dto.getExceptionMessage());

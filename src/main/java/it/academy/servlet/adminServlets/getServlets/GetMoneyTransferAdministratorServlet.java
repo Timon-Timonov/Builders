@@ -1,8 +1,7 @@
 package it.academy.servlet.adminServlets.getServlets;
 
-import it.academy.dto.DtoWithPageForUi;
-import it.academy.dto.FilterPageDto;
 import it.academy.controller.impl.AdminControllerImpl;
+import it.academy.dto.DtoWithPageForUi;
 import it.academy.dto.MoneyTransferDto;
 import it.academy.util.ExceptionRedirector;
 import it.academy.util.ParameterFinder;
@@ -30,11 +29,7 @@ public class GetMoneyTransferAdministratorServlet extends HttpServlet {
 
         long calculationId = ParameterFinder.getNumberValueFromParameter(req, CALCULATION_ID_PARAM, ZERO_LONG_VALUE);
 
-        FilterPageDto requestDto = FilterPageDto.builder()
-                                        .id(calculationId)
-                                        .build();
-
-        DtoWithPageForUi<MoneyTransferDto> dto = controller.getMoneyTransfers(requestDto);
+        DtoWithPageForUi<MoneyTransferDto> dto = controller.getMoneyTransfers(calculationId);
 
         if (dto.getExceptionMessage() != null) {
             ExceptionRedirector.forwardToException3(req, resp, this, dto.getExceptionMessage());

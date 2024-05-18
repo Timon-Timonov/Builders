@@ -1,9 +1,8 @@
 package it.academy.servlet.adminServlets.getServlets;
 
-import it.academy.dto.DtoWithPageForUi;
-import it.academy.dto.FilterPageDto;
 import it.academy.controller.impl.AdminControllerImpl;
 import it.academy.dto.ChapterDto;
+import it.academy.dto.DtoWithPageForUi;
 import it.academy.util.ExceptionRedirector;
 import it.academy.util.ParameterFinder;
 import it.academy.util.SessionAttributeSetter;
@@ -32,24 +31,20 @@ public class GetChaptersFromProjectAdministratorServlet extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
         long projectId = ParameterFinder.getNumberValueFromParameter(req, PROJECT_ID_PARAM, ZERO_LONG_VALUE);
-        String projectName = ParameterFinder.getStringValueFromParameter(req, PROJECT_NAME_PARAM, BLANK_STRING);
+        DtoWithPageForUi<ChapterDto> dto = controller.getChaptersByProjectId(projectId);
 
-
-        FilterPageDto requestDto = FilterPageDto.builder()
-                                        .id(projectId)
-                                        .name(projectName)
-                                        .build();
-        DtoWithPageForUi<ChapterDto> dto = controller.getChaptersByProjectId(requestDto);
         if (dto.getExceptionMessage() != null) {
             ExceptionRedirector.forwardToException3(req, resp, this, dto.getExceptionMessage());
         } else {
             SessionAttributeSetter.setPageData(req, null,
                 null, null,
-                PROJECT_ID_PARAM, PROJECT_NAME_PARAM, dto);
+                PROJECT_ID_PARAM, null, dto);
 
             HttpSession session = req.getSession();
+            String projectName = ParameterFinder.getStringValueFromParameter(req, PROJECT_NAME_PARAM, BLANK_STRING);
             String projectAddress = ParameterFinder.getStringValueFromParameter(req, PROJECT_ADDRESS_PARAM, BLANK_STRING);
             session.setAttribute(PROJECT_ADDRESS_PARAM, projectAddress);
+            session.setAttribute(PROJECT_NAME_PARAM, projectName);
             getServletContext().getRequestDispatcher(dto.getUrl()).forward(req, resp);
         }
     }

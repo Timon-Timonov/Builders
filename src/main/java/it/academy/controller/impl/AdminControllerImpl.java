@@ -383,13 +383,13 @@ public class AdminControllerImpl implements AdminController {
     }
 
     @Override
-    public DtoWithPageForUi<ChapterDto> getChaptersByProjectId(FilterPageDto dto) {
+    public DtoWithPageForUi<ChapterDto> getChaptersByProjectId(long projectId) {
 
         String exceptionMessage = null;
         List<ChapterDto> list = new ArrayList<>();
 
         try {
-            list.addAll(service.getChaptersByProjectId(dto.getId()).stream()
+            list.addAll(service.getChaptersByProjectId(projectId).stream()
                             .map(chapter -> ChapterConverter.getChapterDtoForContractor(chapter, null))
                             .collect(Collectors.toList()));
         } catch (IOException e) {
@@ -407,9 +407,8 @@ public class AdminControllerImpl implements AdminController {
                                    .build();
         } else {
             dtoWithListForUi = DtoWithPageForUi.<ChapterDto>builder()
-                                   .id(dto.getId())
+                                   .id(projectId)
                                    .list(list)
-                                   .name(dto.getName())
                                    .url(ADMIN_PAGES_LIST_WITH_CHAPTERS_FROM_PROJECT_JSP)
                                    .build();
         }
@@ -461,18 +460,18 @@ public class AdminControllerImpl implements AdminController {
     }
 
     @Override
-    public DtoWithPageForUi<MoneyTransferDto> getMoneyTransfers(FilterPageDto dto) {
+    public DtoWithPageForUi<MoneyTransferDto> getMoneyTransfers(long calculationId) {
 
         String exceptionMessage = null;
         List<MoneyTransferDto> list = new ArrayList<>();
 
         try {
-            list.addAll(service.getMoneyTransfers(dto.getId()).stream()
+            list.addAll(service.getMoneyTransfers(calculationId).stream()
                             .map(MoneyTransferConverter::convertToDto)
                             .collect(Collectors.toList()));
         } catch (NoResultException e) {
             exceptionMessage = THERE_IS_NO_SUCH_DATA_IN_DB;
-            log.error(THERE_IS_NO_SUCH_DATA_IN_DB_WITH_ID + dto.getId(), e);
+            log.error(THERE_IS_NO_SUCH_DATA_IN_DB_WITH_ID + calculationId, e);
         } catch (IOException e) {
             exceptionMessage = BAD_CONNECTION;
             log.error(BAD_CONNECTION, e);
@@ -488,7 +487,7 @@ public class AdminControllerImpl implements AdminController {
                                    .build();
         } else {
             dtoWithPageForUi = DtoWithPageForUi.<MoneyTransferDto>builder()
-                                   .id(dto.getId())
+                                   .id(calculationId)
                                    .list(list)
                                    .url(ADMIN_PAGES_LIST_WITH_MONEY_TRANSFERS_JSP)
                                    .build();
@@ -640,7 +639,7 @@ public class AdminControllerImpl implements AdminController {
     }
 
     @Override
-    public DtoWithPageForUi<UserDto> changeUserStatus(FilterPageDto dto) {
+    public DtoWithPageForUi<UserDto> changeUserStatus(ChangeRequestDto dto) {
 
         String exceptionMessage = null;
         Roles role = null;
@@ -698,7 +697,7 @@ public class AdminControllerImpl implements AdminController {
     }
 
     @Override
-    public DtoWithPageForUi<UserDto> deleteUser(FilterPageDto dto) {
+    public DtoWithPageForUi<UserDto> deleteUser(ChangeRequestDto dto) {
 
         String exceptionMessage = null;
         Roles role = null;
@@ -754,16 +753,16 @@ public class AdminControllerImpl implements AdminController {
     }
 
     @Override
-    public DtoWithPageForUi<CalculationDto> deleteCalculation(FilterPageDto dto) {
+    public DtoWithPageForUi<CalculationDto> deleteCalculation(long calculationId) {
 
         String exceptionMessage = null;
 
         try {
-            service.deleteCalculation(dto.getId());
-            log.trace(CHAPTER_DELETE_ID + dto.getId());
+            service.deleteCalculation(calculationId);
+            log.trace(CHAPTER_DELETE_ID + calculationId);
         } catch (NotUpdateDataInDbException e) {
-            exceptionMessage = DELETE_FAIL_CALCULATION_ID + dto.getId();
-            log.error(DELETE_FAIL_CALCULATION_ID + dto.getId(), e);
+            exceptionMessage = DELETE_FAIL_CALCULATION_ID + calculationId;
+            log.error(DELETE_FAIL_CALCULATION_ID + calculationId, e);
         } catch (IOException e) {
             exceptionMessage = BAD_CONNECTION;
             log.error(BAD_CONNECTION, e);
@@ -786,16 +785,16 @@ public class AdminControllerImpl implements AdminController {
     }
 
     @Override
-    public DtoWithPageForUi<ChapterDto> deleteChapter(FilterPageDto dto) {
+    public DtoWithPageForUi<ChapterDto> deleteChapter(long chapterId) {
 
         String exceptionMessage = null;
 
         try {
-            service.deleteChapter(dto.getId());
-            log.trace(CHAPTER_DELETE_ID + dto.getId());
+            service.deleteChapter(chapterId);
+            log.trace(CHAPTER_DELETE_ID + chapterId);
         } catch (NotUpdateDataInDbException e) {
-            exceptionMessage = DELETE_FAIL_CHAPTER_ID + dto.getId();
-            log.error(DELETE_FAIL_CHAPTER_ID + dto.getId(), e);
+            exceptionMessage = DELETE_FAIL_CHAPTER_ID + chapterId;
+            log.error(DELETE_FAIL_CHAPTER_ID + chapterId, e);
         } catch (IOException e) {
             exceptionMessage = BAD_CONNECTION;
             log.error(BAD_CONNECTION, e);
@@ -818,16 +817,16 @@ public class AdminControllerImpl implements AdminController {
     }
 
     @Override
-    public DtoWithPageForUi<ProjectDto> deleteMoneyTransfer(FilterPageDto dto) {
+    public DtoWithPageForUi<ProjectDto> deleteMoneyTransfer(long moneyTransferId) {
 
         String exceptionMessage = null;
 
         try {
-            service.deleteMoneyTransfer(dto.getId());
-            log.trace(MONEY_TRANSFER_DELETE_ID + dto.getId());
+            service.deleteMoneyTransfer(moneyTransferId);
+            log.trace(MONEY_TRANSFER_DELETE_ID + moneyTransferId);
         } catch (NotUpdateDataInDbException e) {
-            exceptionMessage = DELETE_FAIL_MONEY_TRANSFER_ID + dto.getId();
-            log.error(DELETE_FAIL_MONEY_TRANSFER_ID + dto.getId(), e);
+            exceptionMessage = DELETE_FAIL_MONEY_TRANSFER_ID + moneyTransferId;
+            log.error(DELETE_FAIL_MONEY_TRANSFER_ID + moneyTransferId, e);
         } catch (IOException e) {
             exceptionMessage = BAD_CONNECTION;
             log.error(BAD_CONNECTION, e);
@@ -850,16 +849,16 @@ public class AdminControllerImpl implements AdminController {
     }
 
     @Override
-    public DtoWithPageForUi<ProjectDto> deleteProject(FilterPageDto dto) {
+    public DtoWithPageForUi<ProjectDto> deleteProject(long projectId) {
 
         String exceptionMessage = null;
 
         try {
-            service.deleteProject(dto.getId());
-            log.trace(PROJECT_DELETE_ID + dto.getId());
+            service.deleteProject(projectId);
+            log.trace(PROJECT_DELETE_ID + projectId);
         } catch (NotUpdateDataInDbException e) {
             exceptionMessage = PROJECT_NOT_DELETE;
-            log.debug(DELETE_FAIL_PROJECT_ID + dto.getId(), e);
+            log.debug(DELETE_FAIL_PROJECT_ID + projectId, e);
         } catch (IOException e) {
             exceptionMessage = BAD_CONNECTION;
             log.error(BAD_CONNECTION, e);
@@ -882,7 +881,7 @@ public class AdminControllerImpl implements AdminController {
     }
 
     @Override
-    public DtoWithPageForUi<ProposalDto> deleteProposal(FilterPageDto dto) {
+    public DtoWithPageForUi<ProposalDto> deleteProposal(ChangeRequestDto dto) {
 
         String exceptionMessage = null;
         boolean showByContractor = Boolean.parseBoolean(dto.getName());

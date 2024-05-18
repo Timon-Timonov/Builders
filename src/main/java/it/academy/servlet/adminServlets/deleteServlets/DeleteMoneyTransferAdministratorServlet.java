@@ -1,8 +1,7 @@
 package it.academy.servlet.adminServlets.deleteServlets;
 
-import it.academy.dto.DtoWithPageForUi;
-import it.academy.dto.FilterPageDto;
 import it.academy.controller.impl.AdminControllerImpl;
+import it.academy.dto.DtoWithPageForUi;
 import it.academy.dto.ProjectDto;
 import it.academy.util.ExceptionRedirector;
 import it.academy.util.ParameterFinder;
@@ -28,11 +27,7 @@ public class DeleteMoneyTransferAdministratorServlet extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
         long moneyTransferId = ParameterFinder.getNumberValueFromParameter(req, MONEY_TRANSFER_ID_PARAM, ZERO_LONG_VALUE);
-
-        FilterPageDto requestDto = FilterPageDto.builder()
-                                        .id(moneyTransferId)
-                                        .build();
-        DtoWithPageForUi<ProjectDto> dto = controller.deleteMoneyTransfer(requestDto);
+        DtoWithPageForUi<ProjectDto> dto = controller.deleteMoneyTransfer(moneyTransferId);
 
         if (dto.getExceptionMessage() != null) {
             ExceptionRedirector.forwardToException3(req, resp, this, dto.getExceptionMessage());

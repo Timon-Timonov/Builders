@@ -1,11 +1,11 @@
 package it.academy.servlet.adminServlets.deleteServlets;
 
-import it.academy.dto.DtoWithPageForUi;
-import it.academy.dto.FilterPageDto;
 import it.academy.controller.impl.AdminControllerImpl;
+import it.academy.converters.RequestDtoConverter;
+import it.academy.dto.ChangeRequestDto;
+import it.academy.dto.DtoWithPageForUi;
 import it.academy.dto.UserDto;
 import it.academy.util.ExceptionRedirector;
-import it.academy.util.ParameterFinder;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -14,9 +14,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-import static it.academy.util.constants.Constants.ZERO_LONG_VALUE;
-import static it.academy.util.constants.ParameterNames.ROLE_OF_UPDATING_USER_PARAM;
-import static it.academy.util.constants.ParameterNames.USER_ID_PARAM;
 import static it.academy.util.constants.ServletURLs.DELETE_USER_ADMINISTRATOR_SERVLET;
 import static it.academy.util.constants.ServletURLs.SLASH_STRING;
 
@@ -29,13 +26,7 @@ public class DeleteUserAdministratorServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
-        long userId = ParameterFinder.getNumberValueFromParameter(req, USER_ID_PARAM, ZERO_LONG_VALUE);
-        String role = req.getParameter(ROLE_OF_UPDATING_USER_PARAM);
-
-        FilterPageDto requestDto = FilterPageDto.builder()
-                                       .id(userId)
-                                       .name(role)
-                                       .build();
+        ChangeRequestDto requestDto = RequestDtoConverter.getChangeRequestDtoDeleteUser(req);
         DtoWithPageForUi<UserDto> dto = controller.deleteUser(requestDto);
 
         if (dto.getExceptionMessage() != null) {

@@ -1,12 +1,12 @@
 package it.academy.servlet.adminServlets.getServlets;
 
 import it.academy.controller.AdminController;
+import it.academy.controller.impl.AdminControllerImpl;
+import it.academy.converters.FilterPageDtoConverter;
+import it.academy.dto.ChapterDto;
 import it.academy.dto.DtoWithPageForUi;
 import it.academy.dto.FilterPageDto;
-import it.academy.controller.impl.AdminControllerImpl;
-import it.academy.dto.ChapterDto;
 import it.academy.util.ExceptionRedirector;
-import it.academy.util.ParameterFinder;
 import it.academy.util.SessionAttributeSetter;
 
 import javax.servlet.ServletException;
@@ -16,7 +16,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-import static it.academy.util.constants.Constants.*;
 import static it.academy.util.constants.ParameterNames.*;
 import static it.academy.util.constants.ServletURLs.GET_CHAPTERS_FROM_CONTRACTOR_ADMINISTRATOR_SERVLET;
 import static it.academy.util.constants.ServletURLs.SLASH_STRING;
@@ -29,17 +28,8 @@ public class GetChaptersFromContractorAdministratorServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
-        long contractorId = ParameterFinder.getNumberValueFromParameter(req, CONTRACTOR_ID_PARAM, ZERO_LONG_VALUE);
-        int page = ParameterFinder.getNumberValueFromParameter(req, CHAPTER_PAGE_PARAM, FIRST_PAGE_NUMBER);
-        int count = ParameterFinder.getNumberValueFromParameter(req, CHAPTER_COUNT_ON_PAGE_PARAM, DEFAULT_COUNT_ON_PAGE_5);
-
-        FilterPageDto requestDto = FilterPageDto.builder()
-                                        .id(contractorId)
-                                        .page(page)
-                                        .count(count)
-                                        .build();
-
-        DtoWithPageForUi<ChapterDto> dto = controller.getChaptersByContractorId(requestDto);
+        FilterPageDto filter = FilterPageDtoConverter.getFilterPageDtoGetChaptersByContractor(req);
+        DtoWithPageForUi<ChapterDto> dto = controller.getChaptersByContractorId(filter);
 
         if (dto.getExceptionMessage() != null) {
             ExceptionRedirector.forwardToException3(req, resp, this, dto.getExceptionMessage());

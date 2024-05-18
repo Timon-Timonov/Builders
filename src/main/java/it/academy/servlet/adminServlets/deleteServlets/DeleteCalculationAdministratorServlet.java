@@ -1,9 +1,8 @@
 package it.academy.servlet.adminServlets.deleteServlets;
 
-import it.academy.dto.DtoWithPageForUi;
-import it.academy.dto.FilterPageDto;
 import it.academy.controller.impl.AdminControllerImpl;
 import it.academy.dto.CalculationDto;
+import it.academy.dto.DtoWithPageForUi;
 import it.academy.util.ExceptionRedirector;
 import it.academy.util.ParameterFinder;
 
@@ -28,11 +27,7 @@ public class DeleteCalculationAdministratorServlet extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
         long calculationId = ParameterFinder.getNumberValueFromParameter(req, CALCULATION_ID_PARAM, ZERO_LONG_VALUE);
-
-        FilterPageDto requestDto = FilterPageDto.builder()
-                                        .id(calculationId)
-                                        .build();
-        DtoWithPageForUi<CalculationDto> dto = controller.deleteCalculation(requestDto);
+        DtoWithPageForUi<CalculationDto> dto = controller.deleteCalculation(calculationId);
 
         if (dto.getExceptionMessage() != null) {
             ExceptionRedirector.forwardToException3(req, resp, this, dto.getExceptionMessage());

@@ -1,8 +1,9 @@
 package it.academy.servlet.adminServlets;
 
+import it.academy.controller.impl.AdminControllerImpl;
+import it.academy.converters.RequestDtoConverter;
 import it.academy.dto.CreateRequestDto;
 import it.academy.dto.LoginDto;
-import it.academy.controller.impl.AdminControllerImpl;
 import it.academy.util.ExceptionRedirector;
 
 import javax.servlet.ServletException;
@@ -12,8 +13,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-import static it.academy.util.constants.ParameterNames.EMAIL_PARAM;
-import static it.academy.util.constants.ParameterNames.PASSWORD_PARAM;
 import static it.academy.util.constants.ServletURLs.CREATE_ADMIN_ADMINISTRATOR_SERVLET;
 import static it.academy.util.constants.ServletURLs.SLASH_STRING;
 
@@ -26,13 +25,7 @@ public class CreateAdministratorServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
-        String email = req.getParameter(EMAIL_PARAM);
-        String password = req.getParameter(PASSWORD_PARAM);
-
-        CreateRequestDto requestDto = CreateRequestDto.builder()
-                                          .email(email)
-                                          .password(password)
-                                          .build();
+        CreateRequestDto requestDto = RequestDtoConverter.getCreateRequestDtoCreateAdmin(req);
 
         LoginDto dto = controller.createAdmin(requestDto);
 

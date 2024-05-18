@@ -1,9 +1,5 @@
 package it.academy.controller;
 
-import it.academy.dto.CreateRequestDto;
-import it.academy.dto.DtoWithPageForUi;
-import it.academy.dto.LoginDto;
-import it.academy.dto.FilterPageDto;
 import it.academy.dto.*;
 
 public interface AdminController {
@@ -26,11 +22,11 @@ public interface AdminController {
 
     DtoWithPageForUi<ProjectDto> getProjectsByDeveloper(FilterPageDto dto);
 
-    DtoWithPageForUi<ChapterDto> getChaptersByProjectId(FilterPageDto dto);
+    DtoWithPageForUi<ChapterDto> getChaptersByProjectId(long projectId);
 
     DtoWithPageForUi<ChapterDto> getChaptersByContractorId(FilterPageDto dto);
 
-    DtoWithPageForUi<MoneyTransferDto> getMoneyTransfers(FilterPageDto dto);
+    DtoWithPageForUi<MoneyTransferDto> getMoneyTransfers(long calculationId);
 
     DtoWithPageForUi<CalculationDto> getCalculationsByChapterId(FilterPageDto dto);
 
@@ -38,17 +34,17 @@ public interface AdminController {
 
     DtoWithPageForUi<ProposalDto> getProposalsByContractorId(FilterPageDto dto);
 
-    DtoWithPageForUi<UserDto> changeUserStatus(FilterPageDto dto);
+    DtoWithPageForUi<UserDto> changeUserStatus(ChangeRequestDto dto);
 
-    DtoWithPageForUi<UserDto> deleteUser(FilterPageDto dto);
+    DtoWithPageForUi<UserDto> deleteUser(ChangeRequestDto dto);
 
-    DtoWithPageForUi<CalculationDto> deleteCalculation(FilterPageDto dto);
+    DtoWithPageForUi<CalculationDto> deleteCalculation(long calculationId);
 
-    DtoWithPageForUi<ChapterDto> deleteChapter(FilterPageDto dto);
+    DtoWithPageForUi<ChapterDto> deleteChapter(long chapterId);
 
-    DtoWithPageForUi<ProjectDto> deleteMoneyTransfer(FilterPageDto dto);
+    DtoWithPageForUi<ProjectDto> deleteMoneyTransfer(long moneyTransferId);
 
-    DtoWithPageForUi<ProjectDto> deleteProject(FilterPageDto dto);
+    DtoWithPageForUi<ProjectDto> deleteProject(long projectId);
 
-    DtoWithPageForUi<ProposalDto> deleteProposal(FilterPageDto dto);
+    DtoWithPageForUi<ProposalDto> deleteProposal(ChangeRequestDto dto);
 }

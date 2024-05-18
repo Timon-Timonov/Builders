@@ -4,6 +4,7 @@ import it.academy.dto.ChangeRequestDto;
 import it.academy.dto.CreateRequestDto;
 import it.academy.pojo.enums.ProjectStatus;
 import it.academy.pojo.enums.ProposalStatus;
+import it.academy.pojo.enums.UserStatus;
 import it.academy.util.ParameterFinder;
 
 import javax.servlet.http.HttpServletRequest;
@@ -153,4 +154,48 @@ public class RequestDtoConverter {
                    .build();
     }
 
+    public static CreateRequestDto getCreateRequestDtoCreateAdmin(HttpServletRequest req) {
+
+        String email = req.getParameter(EMAIL_PARAM);
+        String password = req.getParameter(PASSWORD_PARAM);
+
+        return CreateRequestDto.builder()
+                   .email(email)
+                   .password(password)
+                   .build();
+    }
+
+    public static ChangeRequestDto getChangeRequestDtoChangeUserStatus(HttpServletRequest req) {
+
+        long userId = ParameterFinder.getNumberValueFromParameter(req, USER_ID_PARAM, ZERO_LONG_VALUE);
+        UserStatus newStatus = ParameterFinder.getUserStatusFromParameter(req, NEW_USER_STATUS_PARAM, DEFAULT_USER_STATUS);
+        String updatingUserRole = req.getParameter(ROLE_OF_UPDATING_USER_PARAM);
+        return ChangeRequestDto.builder()
+                   .id(userId)
+                   .status(newStatus)
+                   .name(updatingUserRole)
+                   .build();
+    }
+
+    public static ChangeRequestDto getChangeRequestDtoDeleteUser(HttpServletRequest req) {
+
+        long userId = ParameterFinder.getNumberValueFromParameter(req, USER_ID_PARAM, ZERO_LONG_VALUE);
+        String role = req.getParameter(ROLE_OF_UPDATING_USER_PARAM);
+
+        return ChangeRequestDto.builder()
+                   .id(userId)
+                   .name(role)
+                   .build();
+    }
+
+    public static ChangeRequestDto getChangeRequestDtoDeleteProposal(HttpServletRequest req) {
+
+        long proposalId = ParameterFinder.getNumberValueFromParameter(req, PROPOSAL_ID_PARAM, ZERO_LONG_VALUE);
+        String toDo = req.getParameter(SHOW_PROPOSAL_LIST_BY_CONTRACTOR_PARAM);
+
+        return ChangeRequestDto.builder()
+                   .id(proposalId)
+                   .name(toDo)
+                   .build();
+    }
 }
