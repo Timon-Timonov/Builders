@@ -1,11 +1,11 @@
 package it.academy.servlet.adminServlets.deleteServlets;
 
-import it.academy.controller.dto.DtoWithPageForUi;
-import it.academy.controller.dto.PageRequestDto;
+import it.academy.dto.DtoWithPageForUi;
+import it.academy.dto.FilterPageDto;
 import it.academy.controller.impl.AdminControllerImpl;
 import it.academy.dto.ProjectDto;
-import it.academy.servlet.utils.ExceptionRedirector;
-import it.academy.servlet.utils.ParameterFinder;
+import it.academy.util.ExceptionRedirector;
+import it.academy.util.ParameterFinder;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -29,7 +29,7 @@ public class DeleteMoneyTransferAdministratorServlet extends HttpServlet {
 
         long moneyTransferId = ParameterFinder.getNumberValueFromParameter(req, MONEY_TRANSFER_ID_PARAM, ZERO_LONG_VALUE);
 
-        PageRequestDto requestDto = PageRequestDto.builder()
+        FilterPageDto requestDto = FilterPageDto.builder()
                                         .id(moneyTransferId)
                                         .build();
         DtoWithPageForUi<ProjectDto> dto = controller.deleteMoneyTransfer(requestDto);

@@ -1,11 +1,10 @@
 <%@ page import="it.academy.dto.ProposalDto" %>
 <%@ page import="it.academy.pojo.enums.ProposalStatus" %>
-<%@ page import="it.academy.servlet.utils.WhatToDo" %>
+<%@ page import="java.util.List" %>
 <%@ page import="static it.academy.util.constants.ParameterNames.PROPOSAL_COUNT_ON_PAGE_PARAM" %>
 <%@ page import="static it.academy.util.constants.ParameterNames.PROPOSAL_PAGE_PARAM" %>
 <%@ page import="static it.academy.util.constants.ParameterNames.*" %>
 <%@ page import="static it.academy.util.constants.ServletURLs.*" %>
-<%@ page import="java.util.List" %>
 <%@ page contentType="text/html;charset=UTF-8" %>
 <html>
 <head>
@@ -23,7 +22,6 @@
     String countName = PROPOSAL_COUNT_ON_PAGE_PARAM;
     String pageNumberParamName = PROPOSAL_PAGE_PARAM;
 
-    String actionParameterToDoValue = null;
     int countOnPage = (Integer) session.getAttribute(countName);
     int pageNumber = (Integer) session.getAttribute(pageNumberParamName);
     int lastPageNumber = (Integer) session.getAttribute(LAST_PAGE_NUMBER_PARAM);
@@ -39,6 +37,13 @@
     <%@include file="/include_files/count_on_page_buttons_group.jsp" %>
     <br>
     <%@include file="/include_files/proposal_status_buttons_group.jsp" %>
+    <form action="<%=actionName%>" method="get">
+        <input type="hidden" value="<%=ProposalStatus.ACCEPTED_BY_CONTRACTOR.toString()%>"
+               name="<%=PROPOSAL_STATUS_PARAM%>">
+        <button class="<%=ProposalStatus.ACCEPTED_BY_CONTRACTOR.equals(status)?"btn btn-success":"btn btn-light"%>"
+                type="submit">Status <%=ProposalStatus.ACCEPTED_BY_CONTRACTOR.toString().toLowerCase()%>
+        </button>
+    </form>
     <br>
     <%@include file="/include_files/pagination_buttons_group.jsp" %>
 </div>
@@ -95,8 +100,7 @@
 <br>
 <br>
 <div class="container text-center">
-    <form action="<%=MAIN_ADMINISTRATOR_SERVLET%>" method="get">
-        <input type="hidden" value="<%=WhatToDo.SHOW_CONTRACTORS%>" name="<%=TODO_PARAM%>">
+    <form action="<%=GET_ALL_CONTRACTORS_ADMINISTRATOR_SERVLET%>" method="get">
         <button class="btn btn-light" type="submit">To list with contractors</button>
     </form>
     <%@include file="/include_files/go_to_main_button_file.jsp" %>

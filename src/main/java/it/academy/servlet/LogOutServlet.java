@@ -1,6 +1,6 @@
 package it.academy.servlet;
 
-import it.academy.servlet.utils.SessionCleaner;
+import it.academy.util.SessionCleaner;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -10,7 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
-import static it.academy.servlet.utils.SessionCleaner.logOutClean;
+import static it.academy.util.SessionCleaner.logOutClean;
 import static it.academy.util.constants.JspURLs.INDEX_JSP;
 import static it.academy.util.constants.ServletURLs.LOGOUT_SERVLET;
 import static it.academy.util.constants.ServletURLs.SLASH_STRING;

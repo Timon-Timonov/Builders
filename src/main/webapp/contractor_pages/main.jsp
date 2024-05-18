@@ -1,9 +1,8 @@
-<%@ page import="it.academy.servlet.utils.WhatToDo" %>
-<%@ page import="static it.academy.util.constants.ServletURLs.MAIN_CONTRACTOR_SERVLET" %>
-<%@ page import="static it.academy.util.constants.ParameterNames.TODO_PARAM" %>
 <%@ page import="static it.academy.util.constants.ParameterNames.ROLE_PARAM" %>
 <%@ page import="static it.academy.util.constants.Messages.ACCOUNT" %>
 <%@ page import="static it.academy.util.constants.Messages.EXIT_FROM" %>
+<%@ page import="static it.academy.util.constants.ServletURLs.GET_ALL_MY_DEVELOPERS_CONTRACTOR_SERVLET" %>
+<%@ page import="static it.academy.util.constants.ServletURLs.*" %>
 <%@ page contentType="text/html;charset=UTF-8" %>
 <html>
 <head>
@@ -23,30 +22,25 @@
     <table>
         <tr>
             <td>
-                <form action="<%=MAIN_CONTRACTOR_SERVLET%>" method="get">
-                    <input type="hidden" value="<%=WhatToDo.SHOW_PROJECTS.toString()%>" name="<%=TODO_PARAM%>">
+                <form action="<%=GET_ALL_MY_PROJECTS_CONTRACTOR_SERVLET%>" method="get">
                     <button class="btn btn-secondary" type="submit">Show all my projects</button>
                 </form>
             </td>
             <td><p></p></td>
             <td>
-                <form action="<%=MAIN_CONTRACTOR_SERVLET%>" method="get">
-                    <input type="hidden" value="<%=WhatToDo.SHOW_DEVELOPERS.toString()%>" name="<%=TODO_PARAM%>">
+                <form action="<%=GET_ALL_MY_DEVELOPERS_CONTRACTOR_SERVLET%>" method="get">
                     <button class="btn btn-secondary" type="submit">Show all my developers</button>
                 </form>
             </td>
             <td><p></p></td>
             <td>
-                <form action="<%=MAIN_CONTRACTOR_SERVLET%>" method="get">
-                    <input type="hidden" value="<%=WhatToDo.SHOW_PROPOSALS.toString()%>" name="<%=TODO_PARAM%>">
+                <form action="<%=GET_ALL_MY_PROPOSALS_CONTRACTOR_SERVLET%>" method="get">
                     <button class="btn btn-secondary" type="submit">Show all my proposals</button>
                 </form>
             </td>
             <td><p></p></td>
             <td>
-                <form action="<%=MAIN_CONTRACTOR_SERVLET%>" method="get">
-                    <input type="hidden" value="<%=WhatToDo.TRY_TO_CHOOSE_NEW_PROJECT.toString()%>"
-                           name="<%=TODO_PARAM%>">
+                <form action="<%=GET_ALL_CHAPTER_NAMES_CONTRACTOR_SERVLET%>" method="get">
                     <button class="btn btn-secondary" type="submit">Try to choose new project</button>
                 </form>
             </td>

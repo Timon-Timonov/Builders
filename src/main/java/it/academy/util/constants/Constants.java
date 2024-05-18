@@ -24,7 +24,6 @@ public final class Constants {
     public static final ProposalStatus DEFAULT_PROPOSAL_STATUS = ProposalStatus.CONSIDERATION;
     public static final UserStatus DEFAULT_USER_STATUS = UserStatus.ACTIVE;
 
-
     private Constants() {
     }
 }

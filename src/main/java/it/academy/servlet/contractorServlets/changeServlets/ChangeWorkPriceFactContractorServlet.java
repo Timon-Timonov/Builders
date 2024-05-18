@@ -1,12 +1,12 @@
 package it.academy.servlet.contractorServlets.changeServlets;
 
 import it.academy.controller.ContractorController;
-import it.academy.controller.dto.DtoWithPageForUi;
-import it.academy.controller.dto.PageRequestDto;
+import it.academy.dto.DtoWithPageForUi;
+import it.academy.dto.FilterPageDto;
 import it.academy.controller.impl.ContractorControllerImpl;
 import it.academy.dto.CalculationDto;
-import it.academy.servlet.utils.ParameterFinder;
-import it.academy.servlet.utils.ExceptionRedirector;
+import it.academy.util.ParameterFinder;
+import it.academy.util.ExceptionRedirector;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -33,7 +33,7 @@ public class ChangeWorkPriceFactContractorServlet extends HttpServlet {
         long calculationId = ParameterFinder.getNumberValueFromParameter(req, CALCULATION_ID_PARAM, ZERO_LONG_VALUE);
         int workPrice = ParameterFinder.getNumberValueFromParameter(req, WORK_PRICE_FACT_PARAM, ZERO_INT_VALUE);
 
-        PageRequestDto requestDto = PageRequestDto.builder()
+        FilterPageDto requestDto = FilterPageDto.builder()
                                         .id(calculationId)
                                         .count(workPrice)
                                         .build();

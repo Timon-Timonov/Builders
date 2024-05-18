@@ -8,7 +8,7 @@ import it.academy.pojo.enums.ProjectStatus;
 import it.academy.pojo.enums.ProposalStatus;
 import it.academy.pojo.legalEntities.Contractor;
 import it.academy.pojo.legalEntities.Developer;
-import it.academy.service.dto.Page;
+import it.academy.dto.Page;
 
 import java.io.IOException;
 import java.util.List;

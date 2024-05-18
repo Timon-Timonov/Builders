@@ -1,11 +1,11 @@
 package it.academy.servlet.adminServlets.deleteServlets;
 
-import it.academy.controller.dto.DtoWithPageForUi;
-import it.academy.controller.dto.PageRequestDto;
+import it.academy.dto.DtoWithPageForUi;
+import it.academy.dto.FilterPageDto;
 import it.academy.controller.impl.AdminControllerImpl;
 import it.academy.dto.ProposalDto;
-import it.academy.servlet.utils.ExceptionRedirector;
-import it.academy.servlet.utils.ParameterFinder;
+import it.academy.util.ExceptionRedirector;
+import it.academy.util.ParameterFinder;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -31,7 +31,7 @@ public class DeleteProposalAdministratorServlet extends HttpServlet {
         long proposalId = ParameterFinder.getNumberValueFromParameter(req, PROPOSAL_ID_PARAM, ZERO_LONG_VALUE);
         String toDo = req.getParameter(SHOW_PROPOSAL_LIST_BY_CONTRACTOR_PARAM);
 
-        PageRequestDto requestDto = PageRequestDto.builder()
+        FilterPageDto requestDto = FilterPageDto.builder()
                                         .id(proposalId)
                                         .name(toDo)
                                         .build();

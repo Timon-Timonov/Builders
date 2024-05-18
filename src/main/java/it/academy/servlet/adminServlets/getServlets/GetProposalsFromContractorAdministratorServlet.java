@@ -1,14 +1,14 @@
 package it.academy.servlet.adminServlets.getServlets;
 
 import it.academy.controller.AdminController;
-import it.academy.controller.dto.DtoWithPageForUi;
-import it.academy.controller.dto.PageRequestDto;
+import it.academy.dto.DtoWithPageForUi;
+import it.academy.dto.FilterPageDto;
 import it.academy.controller.impl.AdminControllerImpl;
 import it.academy.dto.ProposalDto;
 import it.academy.pojo.enums.ProposalStatus;
-import it.academy.servlet.utils.ExceptionRedirector;
-import it.academy.servlet.utils.ParameterFinder;
-import it.academy.servlet.utils.SessionAttributeSetter;
+import it.academy.util.ExceptionRedirector;
+import it.academy.util.ParameterFinder;
+import it.academy.util.SessionAttributeSetter;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -36,7 +36,7 @@ public class GetProposalsFromContractorAdministratorServlet extends HttpServlet 
         int page = ParameterFinder.getNumberValueFromParameter(req, PROPOSAL_PAGE_PARAM, FIRST_PAGE_NUMBER);
         int count = ParameterFinder.getNumberValueFromParameter(req, PROPOSAL_COUNT_ON_PAGE_PARAM, DEFAULT_COUNT_ON_PAGE_5);
 
-        PageRequestDto requestDto = PageRequestDto.builder()
+        FilterPageDto requestDto = FilterPageDto.builder()
                                         .id(contractorId)
                                         .status(status)
                                         .page(page)

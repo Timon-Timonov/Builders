@@ -1,13 +1,13 @@
 package it.academy.servlet.contractorServlets.changeServlets;
 
 import it.academy.controller.ContractorController;
-import it.academy.controller.dto.DtoWithPageForUi;
-import it.academy.controller.dto.PageRequestDto;
+import it.academy.dto.DtoWithPageForUi;
+import it.academy.dto.FilterPageDto;
 import it.academy.controller.impl.ContractorControllerImpl;
 import it.academy.dto.ProposalDto;
 import it.academy.pojo.enums.ProposalStatus;
-import it.academy.servlet.utils.ParameterFinder;
-import it.academy.servlet.utils.ExceptionRedirector;
+import it.academy.util.ParameterFinder;
+import it.academy.util.ExceptionRedirector;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -33,7 +33,7 @@ public class ChangeProposalStatusContractorServlet extends HttpServlet {
         long proposalId = ParameterFinder.getNumberValueFromParameter(req, PROPOSAL_ID_PARAM, ZERO_LONG_VALUE);
         ProposalStatus newStatus = ParameterFinder.getProposalStatusFromParameter(req, NEW_PROPOSAL_STATUS_PARAM, null);
 
-        PageRequestDto requestDto = PageRequestDto.builder()
+        FilterPageDto requestDto = FilterPageDto.builder()
                                         .id(proposalId)
                                         .status(newStatus)
                                         .build();

@@ -1,10 +1,10 @@
 package it.academy.controller.impl;
 
 import it.academy.controller.DeveloperController;
-import it.academy.controller.dto.CreateRequestDto;
-import it.academy.controller.dto.DtoWithPageForUi;
-import it.academy.controller.dto.LoginDto;
-import it.academy.controller.dto.PageRequestDto;
+import it.academy.dto.CreateRequestDto;
+import it.academy.dto.DtoWithPageForUi;
+import it.academy.dto.FilterPageDto;
+import it.academy.dto.LoginDto;
 import it.academy.dto.*;
 import it.academy.exceptions.EmailOccupaidException;
 import it.academy.exceptions.NotCreateDataInDbException;
@@ -18,11 +18,10 @@ import it.academy.pojo.enums.ProposalStatus;
 import it.academy.pojo.legalEntities.Contractor;
 import it.academy.pojo.legalEntities.Developer;
 import it.academy.service.DeveloperService;
-import it.academy.service.dto.Page;
+import it.academy.dto.Page;
 import it.academy.service.impl.DeveloperServiceImpl;
-import it.academy.servlet.utils.WhatToDo;
 import it.academy.util.Util;
-import it.academy.util.converters.*;
+import it.academy.converters.*;
 import lombok.extern.log4j.Log4j2;
 
 import java.io.IOException;
@@ -84,7 +83,7 @@ public class DeveloperControllerImpl implements DeveloperController {
     }
 
     @Override
-    public DtoWithPageForUi<ProjectDto> getMyProjects(PageRequestDto dto) {
+    public DtoWithPageForUi<ProjectDto> getMyProjects(FilterPageDto dto) {
 
         String exceptionMessage = null;
         List<ProjectDto> list = new ArrayList<>();
@@ -136,7 +135,7 @@ public class DeveloperControllerImpl implements DeveloperController {
     }
 
     @Override
-    public DtoWithPageForUi<ContractorDto> getMyContractors(PageRequestDto dto) {
+    public DtoWithPageForUi<ContractorDto> getMyContractors(FilterPageDto dto) {
 
         String exceptionMessage = null;
         List<ContractorDto> list = new ArrayList<>();
@@ -190,7 +189,7 @@ public class DeveloperControllerImpl implements DeveloperController {
     }
 
     @Override
-    public DtoWithPageForUi<ProposalDto> getAllMyProposals(PageRequestDto dto) {
+    public DtoWithPageForUi<ProposalDto> getAllMyProposals(FilterPageDto dto) {
 
         String exceptionMessage = null;
         List<ProposalDto> list = new ArrayList<>();
@@ -309,7 +308,7 @@ public class DeveloperControllerImpl implements DeveloperController {
     }
 
     @Override
-    public DtoWithPageForUi<ChapterDto> cancelChapter(PageRequestDto dto) {
+    public DtoWithPageForUi<ChapterDto> cancelChapter(FilterPageDto dto) {
 
         String exceptionMessage = null;
 
@@ -341,7 +340,7 @@ public class DeveloperControllerImpl implements DeveloperController {
     }
 
     @Override
-    public DtoWithPageForUi<ChapterDto> getChaptersByProject(PageRequestDto dto) {
+    public DtoWithPageForUi<ChapterDto> getChaptersByProject(FilterPageDto dto) {
 
         String exceptionMessage = null;
         List<ChapterDto> list = new ArrayList<>();
@@ -375,7 +374,7 @@ public class DeveloperControllerImpl implements DeveloperController {
     }
 
     @Override
-    public DtoWithPageForUi<ChapterDto> getChaptersByContractorIdAndDeveloperId(PageRequestDto dto) {
+    public DtoWithPageForUi<ChapterDto> getChaptersByContractorIdAndDeveloperId(FilterPageDto dto) {
 
         String exceptionMessage = null;
         List<ChapterDto> list = new ArrayList<>();
@@ -425,12 +424,12 @@ public class DeveloperControllerImpl implements DeveloperController {
     }
 
     @Override
-    public DtoWithPageForUi<ProposalDto> changeStatusOfProposal(PageRequestDto dto) {
+    public DtoWithPageForUi<ProposalDto> changeStatusOfProposal(FilterPageDto dto) {
 
         String exceptionMessage = null;
-        String url = WhatToDo.SHOW_PROPOSALS.toString().equals(dto.getName()) ?
-                         SLASH_STRING + MAIN_DEVELOPER_SERVLET
-                         : SLASH_STRING + GET_MY_PROPOSALS_FROM_CHAPTER_DEVELOPER_SERVLET;
+        String url = Boolean.TRUE.toString().equalsIgnoreCase(dto.getName()) ?
+                         SLASH_STRING + GET_MY_PROPOSALS_FROM_CHAPTER_DEVELOPER_SERVLET
+                         : SLASH_STRING + GET_ALL_MY_PROPOSALS_DEVELOPER_SERVLET;
 
         try {
             service.changeStatusOfProposal(dto.getId(), (ProposalStatus) dto.getStatus());
@@ -465,7 +464,7 @@ public class DeveloperControllerImpl implements DeveloperController {
     }
 
     @Override
-    public DtoWithPageForUi<ProposalDto> getProposalsByChapter(PageRequestDto dto) {
+    public DtoWithPageForUi<ProposalDto> getProposalsByChapter(FilterPageDto dto) {
 
         String exceptionMessage = null;
         List<ProposalDto> list = new ArrayList<>();
@@ -514,7 +513,7 @@ public class DeveloperControllerImpl implements DeveloperController {
     }
 
     @Override
-    public DtoWithPageForUi<ProjectDto> changeProjectStatus(PageRequestDto dto) {
+    public DtoWithPageForUi<ProjectDto> changeProjectStatus(FilterPageDto dto) {
 
         String exceptionMessage = null;
 
@@ -549,7 +548,7 @@ public class DeveloperControllerImpl implements DeveloperController {
     }
 
     @Override
-    public DtoWithPageForUi<CalculationDto> getCalculationsByChapterId(PageRequestDto dto) {
+    public DtoWithPageForUi<CalculationDto> getCalculationsByChapterId(FilterPageDto dto) {
 
         String exceptionMessage = null;
         List<CalculationDto> list = new ArrayList<>();
@@ -633,4 +632,6 @@ public class DeveloperControllerImpl implements DeveloperController {
         }
         return dtoWithPageForUi;
     }
+
+
 }

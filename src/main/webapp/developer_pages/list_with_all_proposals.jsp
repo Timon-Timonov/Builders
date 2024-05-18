@@ -1,8 +1,6 @@
 <%@ page import="it.academy.dto.ProposalDto" %>
 <%@ page import="it.academy.pojo.enums.ProposalStatus" %>
-<%@ page import="it.academy.servlet.utils.WhatToDo" %>
 <%@ page import="java.util.List" %>
-<%@ page import="static it.academy.util.constants.ServletURLs.MAIN_DEVELOPER_SERVLET" %>
 <%@ page import="static it.academy.util.constants.ParameterNames.*" %>
 <%@ page import="static it.academy.util.constants.ServletURLs.*" %>
 <%@ page contentType="text/html;charset=UTF-8" %>
@@ -22,11 +20,11 @@
 </div>
 <br>
 <%
-    String actionName = MAIN_DEVELOPER_SERVLET;
+    String actionName = GET_ALL_MY_PROPOSALS_DEVELOPER_SERVLET;
     String countName = PROPOSAL_COUNT_ON_PAGE_PARAM;
     String pageNumberParamName = PROPOSAL_PAGE_PARAM;
+    boolean showProposalsFromChapter = false;
 
-    String actionParameterToDoValue = WhatToDo.SHOW_PROPOSALS.toString();
     int countOnPage = (Integer) session.getAttribute(countName);
     int pageNumber = (Integer) session.getAttribute(pageNumberParamName);
     int lastPageNumber = (Integer) session.getAttribute(LAST_PAGE_NUMBER_PARAM);

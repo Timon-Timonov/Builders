@@ -1,9 +1,9 @@
 package it.academy.servlet.adminServlets;
 
-import it.academy.controller.dto.CreateRequestDto;
-import it.academy.controller.dto.LoginDto;
+import it.academy.dto.CreateRequestDto;
+import it.academy.dto.LoginDto;
 import it.academy.controller.impl.AdminControllerImpl;
-import it.academy.servlet.utils.ExceptionRedirector;
+import it.academy.util.ExceptionRedirector;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;

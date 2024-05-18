@@ -10,7 +10,7 @@ import it.academy.pojo.enums.*;
 import it.academy.pojo.legalEntities.Contractor;
 import it.academy.pojo.legalEntities.Developer;
 import it.academy.service.ContractorService;
-import it.academy.service.dto.Page;
+import it.academy.dto.Page;
 import it.academy.util.Util;
 import lombok.extern.log4j.Log4j2;
 import org.hibernate.exception.ConstraintViolationException;

@@ -9,8 +9,9 @@ public final class ServletURLs {
     public static final String CONTRACTOR_SERVLET = "_contractor_servlet";
     public static final String DEVELOPER_SERVLET = "_developer_servlet";
 
-
-    public static final String MAIN_ADMINISTRATOR_SERVLET = "main_administrator_servlet";
+    public static final String GET_ALL_ADMINS_ADMINISTRATOR_SERVLET = "get_all_admins_administrator_servlet";
+    public static final String GET_ALL_CONTRACTORS_ADMINISTRATOR_SERVLET = "get_all_contractors_administrator_servlet";
+    public static final String GET_ALL_DEVELOPERS_ADMINISTRATOR_SERVLET = "get_all_developers_administrator_servlet";
     public static final String CREATE_ADMIN_ADMINISTRATOR_SERVLET = "create_admin_administrator_servlet";
     public static final String CHANGE_USER_STATUS_ADMINISTRATOR_SERVLET = "change_user_status_administrator_servlet";
 
@@ -36,7 +37,11 @@ public final class ServletURLs {
     public static final String CREATE_DEVELOPER_SERVLET = "create_developer_servlet_WF";
     public static final String CREATE_CONTRACTOR_SERVLET = "create_contractor_servlet_WF";
 
-    public static final String MAIN_CONTRACTOR_SERVLET = "main_contractor_servlet";
+    public static final String GET_ALL_MY_DEVELOPERS_CONTRACTOR_SERVLET = "get_all_my_developers_contractor_servlet";
+    public static final String GET_ALL_MY_PROJECTS_CONTRACTOR_SERVLET = "get_all_my_projects_contractor_servlet";
+    public static final String GET_ALL_MY_PROPOSALS_CONTRACTOR_SERVLET = "get_all_my_proposals_contractor_servlet";
+    public static final String GET_ALL_CHAPTER_NAMES_CONTRACTOR_SERVLET = "get_all_chapter_names_contractor_servlet";
+
     public static final String GET_MY_CHAPTERS_CONTRACTOR_SERVLET = "get_my_chapters_contractor_servlet";
     public static final String GET_FREE_CHAPTERS_CONTRACTOR_SERVLET = "get_free_chapters_contractor_servlet";
     public static final String CHANGE_PROPOSAL_STATUS_CONTRACTOR_SERVLET = "change_proposal_status_contractor_servlet";
@@ -46,13 +51,16 @@ public final class ServletURLs {
     public static final String CREATE_PROPOSAL_CONTRACTOR_SERVLET = "create_proposal_contractor_servlet";
     public static final String CHANGE_WORK_PRICE_FACT_CONTRACTOR_SERVLET = "change_work_price_fact_contractor_servlet";
 
-    public static final String MAIN_DEVELOPER_SERVLET = "main_developer_servlet";
-    public static final String CREATE_CHAPTER_DEVELOPER_SERVLET = "create_chapter_developer_servlet";
+    public static final String GET_ALL_MY_PROPOSALS_DEVELOPER_SERVLET = "get_all_my_proposals_developer_servlet";
+    public static final String GET_ALL_MY_CONTRACTORS_DEVELOPER_SERVLET = "get_all_my_contractors_developer_servlet";
+    public static final String GET_ALL_MY_PROJECTS_DEVELOPER_SERVLET = "get_all_my_projects_developer_servlet";
+
     public static final String GET_MY_CALCULATION_DEVELOPER_SERVLET = "get_my_calculation_developer_servlet";
     public static final String GET_MY_PROPOSALS_FROM_CHAPTER_DEVELOPER_SERVLET = "get_my_proposal_from_chapter_developer_servlet";
     public static final String GET_CHAPTERS_OF_CONTRACTOR_DEVELOPER_SERVLET = "get_chapters_of_contractor_developer_servlet";
-    public static final String CREATE_PROJECT_DEVELOPER_SERVLET = "create_project_developer_servlet";
     public static final String GET_CHAPTERS_OF_PROJECT_DEVELOPER_SERVLET = "get_chapters_of_project_developer_servlet";
+    public static final String CREATE_CHAPTER_DEVELOPER_SERVLET = "create_chapter_developer_servlet";
+    public static final String CREATE_PROJECT_DEVELOPER_SERVLET = "create_project_developer_servlet";
     public static final String PROJECT_STATUS_DEVELOPER_SERVLET = "project_status_developer_servlet";
     public static final String CHANGE_PROPOSAL_STATUS_DEVELOPER_SERVLET = "change_proposal_status_developer_servlet";
     public static final String PAY_MONEY_DEVELOPER_SERVLET = "pay_money_developer_servlet";

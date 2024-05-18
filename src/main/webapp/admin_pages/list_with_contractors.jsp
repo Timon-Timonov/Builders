@@ -1,9 +1,9 @@
 <%@ page import="it.academy.dto.AddressDto" %>
 <%@ page import="it.academy.dto.ContractorDto" %>
-<%@ page import="it.academy.pojo.enums.UserStatus" %>
+<%@ page import="it.academy.pojo.enums.Roles" %>
 <%@ page import="static it.academy.util.constants.ParameterNames.*" %>
 <%@ page import="static it.academy.util.constants.ServletURLs.*" %>
-<%@ page import="it.academy.servlet.utils.WhatToDo" %>
+<%@ page import="it.academy.pojo.enums.UserStatus" %>
 <%@ page import="java.util.List" %>
 <%@ page contentType="text/html;charset=UTF-8" %>
 <html>
@@ -22,11 +22,10 @@
 </div>
 <br>
 <%
-    String actionName = MAIN_ADMINISTRATOR_SERVLET;
+    String actionName = GET_ALL_CONTRACTORS_ADMINISTRATOR_SERVLET;
     String countName = CONTRACTOR_COUNT_ON_PAGE_PARAM;
     String pageNumberParamName = CONTRACTOR_PAGE_PARAM;
 
-    String actionParameterToDoValue = WhatToDo.SHOW_CONTRACTORS.toString();
     int countOnPage = (Integer) session.getAttribute(countName);
     int pageNumber = (Integer) session.getAttribute(pageNumberParamName);
     int lastPageNumber = (Integer) session.getAttribute(LAST_PAGE_NUMBER_PARAM);
@@ -91,7 +90,8 @@
                 <form action="<%=CHANGE_USER_STATUS_ADMINISTRATOR_SERVLET%>" method="get">
                     <input type="hidden" value="<%=contractorId%>" name="<%=USER_ID_PARAM%>">
                     <input type="hidden" value="<%=UserStatus.CANCELED.toString()%>" name="<%=NEW_USER_STATUS_PARAM%>">
-                    <input type="hidden" value="<%=actionParameterToDoValue%>" name="<%=TODO_PARAM%>">
+                    <input type="hidden" value="<%=Roles.CONTRACTOR.toString()%>"
+                           name="<%=ROLE_OF_UPDATING_USER_PARAM%>">
                     <button class="btn btn-light" type="submit">Cancel contractor</button>
                 </form>
             </td>
@@ -100,7 +100,8 @@
                 <form action="<%=CHANGE_USER_STATUS_ADMINISTRATOR_SERVLET%>" method="get">
                     <input type="hidden" value="<%=contractorId%>" name="<%=USER_ID_PARAM%>">
                     <input type="hidden" value="<%=UserStatus.ACTIVE.toString()%>" name="<%=NEW_USER_STATUS_PARAM%>">
-                    <input type="hidden" value="<%=actionParameterToDoValue%>" name="<%=TODO_PARAM%>">
+                    <input type="hidden" value="<%=Roles.CONTRACTOR.toString()%>"
+                           name="<%=ROLE_OF_UPDATING_USER_PARAM%>">
                     <button class="btn btn-light" type="submit">Return contractor to active status</button>
                 </form>
             </td>
@@ -108,7 +109,8 @@
             <td>
                 <form action="<%=DELETE_USER_ADMINISTRATOR_SERVLET%>" method="get">
                     <input type="hidden" value="<%=contractorId%>" name="<%=USER_ID_PARAM%>">
-                    <input type="hidden" value="<%=actionParameterToDoValue%>" name="<%=TODO_PARAM%>">
+                    <input type="hidden" value="<%=Roles.CONTRACTOR.toString()%>"
+                           name="<%=ROLE_OF_UPDATING_USER_PARAM%>">
                     <button class="btn btn-light" type="submit">Delete contractor</button>
                 </form>
             </td>

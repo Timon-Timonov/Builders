@@ -1,8 +1,7 @@
 <%@ page import="static it.academy.util.constants.ParameterNames.*" %>
 <%@ page import="it.academy.dto.ChapterDto" %>
-<%@ page import="it.academy.servlet.utils.WhatToDo" %>
-<%@ page import="static it.academy.util.constants.ServletURLs.*" %>
 <%@ page import="java.util.List" %>
+<%@ page import="static it.academy.util.constants.ServletURLs.*" %>
 <%@ page contentType="text/html;charset=UTF-8" %>
 <html>
 <head>
@@ -15,8 +14,7 @@
 
 <body>
 <%
-    String actionName = MAIN_CONTRACTOR_SERVLET;
-    String actionParameterToDoValue = WhatToDo.TRY_TO_CHOOSE_NEW_PROJECT.toString();
+    String actionName = GET_ALL_CHAPTER_NAMES_CONTRACTOR_SERVLET;
     List<ChapterDto> chapterNamesList = (List<ChapterDto>) request.getAttribute(DTO_LIST_PARAM);
 %>
 

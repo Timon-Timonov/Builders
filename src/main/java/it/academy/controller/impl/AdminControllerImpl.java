@@ -1,10 +1,10 @@
 package it.academy.controller.impl;
 
 import it.academy.controller.AdminController;
-import it.academy.controller.dto.CreateRequestDto;
-import it.academy.controller.dto.DtoWithPageForUi;
-import it.academy.controller.dto.LoginDto;
-import it.academy.controller.dto.PageRequestDto;
+import it.academy.dto.CreateRequestDto;
+import it.academy.dto.DtoWithPageForUi;
+import it.academy.dto.FilterPageDto;
+import it.academy.dto.LoginDto;
 import it.academy.dto.*;
 import it.academy.exceptions.EmailOccupaidException;
 import it.academy.exceptions.NotCreateDataInDbException;
@@ -17,10 +17,10 @@ import it.academy.pojo.enums.UserStatus;
 import it.academy.pojo.legalEntities.Contractor;
 import it.academy.pojo.legalEntities.Developer;
 import it.academy.service.AdminService;
-import it.academy.service.dto.Page;
+import it.academy.dto.Page;
 import it.academy.service.impl.AdminServiceImpl;
 import it.academy.util.Util;
-import it.academy.util.converters.*;
+import it.academy.converters.*;
 import lombok.extern.log4j.Log4j2;
 
 import javax.persistence.NoResultException;
@@ -133,7 +133,7 @@ public class AdminControllerImpl implements AdminController {
                            .build();
         } else {
             loginDto = LoginDto.builder()
-                           .url(SLASH_STRING + MAIN_ADMINISTRATOR_SERVLET)
+                           .url(SLASH_STRING + GET_ALL_ADMINS_ADMINISTRATOR_SERVLET)
                            .build();
         }
         return loginDto;
@@ -146,7 +146,7 @@ public class AdminControllerImpl implements AdminController {
     }
 
     @Override
-    public DtoWithPageForUi<ContractorDto> getAllContractors(PageRequestDto dto) {
+    public DtoWithPageForUi<ContractorDto> getAllContractors(FilterPageDto dto) {
 
         String exceptionMessage = null;
         List<ContractorDto> list = new ArrayList<>();
@@ -193,6 +193,46 @@ public class AdminControllerImpl implements AdminController {
     }
 
     @Override
+    public DtoWithPageForUi<UserDto> toMainPage(Object role) {
+
+        Roles roles = null;
+        String exceptionMessage = null;
+        String url = null;
+        try {
+            roles = (Roles) role;
+        } catch (ClassCastException e) {
+            exceptionMessage = ROLE_IS_INVALID;
+            log.debug(ROLE_IS_INVALID, e);
+        }
+
+        switch (roles) {
+            case DEVELOPER:
+                url = DEVELOPER_PAGES_MAIN_JSP;
+                break;
+            case CONTRACTOR:
+                url = CONTRACTOR_PAGES_MAIN_JSP;
+                break;
+            case ADMIN:
+                url = ADMIN_PAGES_MAIN_JSP;
+                break;
+            default:
+                exceptionMessage = ROLE_IS_INVALID;
+                log.debug(ROLE_IS_INVALID + roles);
+        }
+        DtoWithPageForUi<UserDto> dtoWithPageForUi;
+        if (exceptionMessage != null) {
+            dtoWithPageForUi = DtoWithPageForUi.<UserDto>builder()
+                                   .exceptionMessage(exceptionMessage)
+                                   .build();
+        } else {
+            dtoWithPageForUi = DtoWithPageForUi.<UserDto>builder()
+                                   .url(url)
+                                   .build();
+        }
+        return dtoWithPageForUi;
+    }
+
+    @Override
     public DtoWithPageForUi<UserDto> getAllAdministrators() {
 
         String exceptionMessage = null;
@@ -225,7 +265,7 @@ public class AdminControllerImpl implements AdminController {
     }
 
     @Override
-    public DtoWithPageForUi<DeveloperDto> getAllDevelopers(PageRequestDto dto) {
+    public DtoWithPageForUi<DeveloperDto> getAllDevelopers(FilterPageDto dto) {
 
         String exceptionMessage = null;
         List<DeveloperDto> list = new ArrayList<>();
@@ -272,7 +312,7 @@ public class AdminControllerImpl implements AdminController {
     }
 
     @Override
-    public DtoWithPageForUi<ProjectDto> getProjectsByDeveloper(PageRequestDto dto) {
+    public DtoWithPageForUi<ProjectDto> getProjectsByDeveloper(FilterPageDto dto) {
 
         String exceptionMessage = null;
         List<ProjectDto> list = new ArrayList<>();
@@ -321,7 +361,7 @@ public class AdminControllerImpl implements AdminController {
     }
 
     @Override
-    public DtoWithPageForUi<ChapterDto> getChaptersByProjectId(PageRequestDto dto) {
+    public DtoWithPageForUi<ChapterDto> getChaptersByProjectId(FilterPageDto dto) {
 
         String exceptionMessage = null;
         List<ChapterDto> list = new ArrayList<>();
@@ -355,7 +395,7 @@ public class AdminControllerImpl implements AdminController {
     }
 
     @Override
-    public DtoWithPageForUi<ChapterDto> getChaptersByContractorId(PageRequestDto dto) {
+    public DtoWithPageForUi<ChapterDto> getChaptersByContractorId(FilterPageDto dto) {
 
         String exceptionMessage = null;
         List<ChapterDto> list = new ArrayList<>();
@@ -399,7 +439,7 @@ public class AdminControllerImpl implements AdminController {
     }
 
     @Override
-    public DtoWithPageForUi<MoneyTransferDto> getMoneyTransfers(PageRequestDto dto) {
+    public DtoWithPageForUi<MoneyTransferDto> getMoneyTransfers(FilterPageDto dto) {
 
         String exceptionMessage = null;
         List<MoneyTransferDto> list = new ArrayList<>();
@@ -435,7 +475,7 @@ public class AdminControllerImpl implements AdminController {
     }
 
     @Override
-    public DtoWithPageForUi<CalculationDto> getCalculationsByChapterId(PageRequestDto dto) {
+    public DtoWithPageForUi<CalculationDto> getCalculationsByChapterId(FilterPageDto dto) {
 
         String exceptionMessage = null;
         List<CalculationDto> list = new ArrayList<>();
@@ -481,7 +521,7 @@ public class AdminControllerImpl implements AdminController {
     }
 
     @Override
-    public DtoWithPageForUi<ProposalDto> getProposalsByChapterId(PageRequestDto dto) {
+    public DtoWithPageForUi<ProposalDto> getProposalsByChapterId(FilterPageDto dto) {
 
         String exceptionMessage = null;
         List<ProposalDto> list = new ArrayList<>();
@@ -521,6 +561,8 @@ public class AdminControllerImpl implements AdminController {
                                    .lastPageNumber(lastPageNumber)
                                    .list(list)
                                    .status(status)
+                                   .name(dto.getName())
+                                   .id(dto.getId())
                                    .url(ADMIN_PAGES_LIST_WITH_PROPOSALS_FROM_CHAPTER_JSP)
                                    .build();
         }
@@ -528,7 +570,7 @@ public class AdminControllerImpl implements AdminController {
     }
 
     @Override
-    public DtoWithPageForUi<ProposalDto> getProposalsByContractorId(PageRequestDto dto) {
+    public DtoWithPageForUi<ProposalDto> getProposalsByContractorId(FilterPageDto dto) {
 
         String exceptionMessage = null;
         List<ProposalDto> list = new ArrayList<>();
@@ -568,6 +610,7 @@ public class AdminControllerImpl implements AdminController {
                                    .lastPageNumber(lastPageNumber)
                                    .list(list)
                                    .status(status)
+                                   .id(dto.getId())
                                    .url(ADMIN_PAGES_LIST_WITH_PROPOSALS_FROM_CONTRACTOR_JSP)
                                    .build();
         }
@@ -575,25 +618,49 @@ public class AdminControllerImpl implements AdminController {
     }
 
     @Override
-    public DtoWithPageForUi<UserDto> changeUserStatus(PageRequestDto dto) {
+    public DtoWithPageForUi<UserDto> changeUserStatus(FilterPageDto dto) {
 
         String exceptionMessage = null;
+        Roles role = null;
+        String url = null;
 
         try {
-            service.changeUserStatus(dto.getId(), (UserStatus) dto.getStatus());
-            log.trace(USER_STATUS_CHANED_USER_ID + dto.getId());
-        } catch (ClassCastException e) {
-            exceptionMessage = INVALID_VALUE;
-            log.debug(INVALID_VALUE + dto.getStatus().toString(), e);
-        } catch (NotUpdateDataInDbException e) {
-            exceptionMessage = PROJECT_STATUS_NOT_UPDATE;
-            log.debug(PROJECT_STATUS_NOT_UPDATE + dto.toString(), e);
-        } catch (IOException e) {
-            exceptionMessage = BAD_CONNECTION;
-            log.error(BAD_CONNECTION, e);
-        } catch (Exception e) {
-            exceptionMessage = SOMETHING_WENT_WRONG;
-            log.error(SOMETHING_WENT_WRONG, e);
+            role = Roles.valueOf(dto.getName());
+        } catch (IllegalArgumentException e) {
+            exceptionMessage = ROLE_IS_INVALID;
+            log.debug(INVALID_VALUE + dto.getName(), e);
+        }
+        if (role != null) {
+            switch (role) {
+                case CONTRACTOR:
+                    url = GET_ALL_CONTRACTORS_ADMINISTRATOR_SERVLET;
+                    break;
+                case DEVELOPER:
+                    url = GET_ALL_DEVELOPERS_ADMINISTRATOR_SERVLET;
+                    break;
+                case ADMIN:
+                    url = GET_ALL_ADMINS_ADMINISTRATOR_SERVLET;
+                    break;
+                default:
+                    exceptionMessage = ROLE_IS_INVALID;
+                    log.debug(INVALID_VALUE + dto.getName());
+            }
+            try {
+                service.changeUserStatus(dto.getId(), (UserStatus) dto.getStatus());
+                log.trace(USER_STATUS_CHANED_USER_ID + dto.getId());
+            } catch (ClassCastException e) {
+                exceptionMessage = INVALID_VALUE;
+                log.debug(INVALID_VALUE + dto.getStatus().toString(), e);
+            } catch (NotUpdateDataInDbException e) {
+                exceptionMessage = PROJECT_STATUS_NOT_UPDATE;
+                log.debug(PROJECT_STATUS_NOT_UPDATE + dto.toString(), e);
+            } catch (IOException e) {
+                exceptionMessage = BAD_CONNECTION;
+                log.error(BAD_CONNECTION, e);
+            } catch (Exception e) {
+                exceptionMessage = SOMETHING_WENT_WRONG;
+                log.error(SOMETHING_WENT_WRONG, e);
+            }
         }
         DtoWithPageForUi<UserDto> dtoWithPageForUi;
         if (exceptionMessage != null) {
@@ -602,29 +669,53 @@ public class AdminControllerImpl implements AdminController {
                                    .build();
         } else {
             dtoWithPageForUi = DtoWithPageForUi.<UserDto>builder()
-                                   .url(SLASH_STRING + MAIN_ADMINISTRATOR_SERVLET)
+                                   .url(SLASH_STRING + url)
                                    .build();
         }
         return dtoWithPageForUi;
     }
 
     @Override
-    public DtoWithPageForUi<UserDto> deleteUser(PageRequestDto dto) {
+    public DtoWithPageForUi<UserDto> deleteUser(FilterPageDto dto) {
 
         String exceptionMessage = null;
+        Roles role = null;
+        String url = null;
 
         try {
-            service.deleteUser(dto.getId());
-            log.trace(USER_DELETE_ID + dto.getId());
-        } catch (NotUpdateDataInDbException e) {
-            exceptionMessage = USER_NOT_DELETE;
-            log.debug(DELETE_FAIL_USER_ID + dto.getId(), e);
-        } catch (IOException e) {
-            exceptionMessage = BAD_CONNECTION;
-            log.error(BAD_CONNECTION, e);
-        } catch (Exception e) {
-            exceptionMessage = SOMETHING_WENT_WRONG;
-            log.error(SOMETHING_WENT_WRONG, e);
+            role = Roles.valueOf(dto.getName());
+        } catch (IllegalArgumentException e) {
+            exceptionMessage = ROLE_IS_INVALID;
+            log.debug(INVALID_VALUE + dto.getName(), e);
+        }
+        if (role != null) {
+            switch (role) {
+                case CONTRACTOR:
+                    url = GET_ALL_CONTRACTORS_ADMINISTRATOR_SERVLET;
+                    break;
+                case DEVELOPER:
+                    url = GET_ALL_DEVELOPERS_ADMINISTRATOR_SERVLET;
+                    break;
+                case ADMIN:
+                    url = GET_ALL_ADMINS_ADMINISTRATOR_SERVLET;
+                    break;
+                default:
+                    exceptionMessage = ROLE_IS_INVALID;
+                    log.debug(INVALID_VALUE + dto.getName());
+            }
+            try {
+                service.deleteUser(dto.getId());
+                log.trace(USER_DELETE_ID + dto.getId());
+            } catch (NotUpdateDataInDbException e) {
+                exceptionMessage = USER_NOT_DELETE;
+                log.debug(DELETE_FAIL_USER_ID + dto.getId(), e);
+            } catch (IOException e) {
+                exceptionMessage = BAD_CONNECTION;
+                log.error(BAD_CONNECTION, e);
+            } catch (Exception e) {
+                exceptionMessage = SOMETHING_WENT_WRONG;
+                log.error(SOMETHING_WENT_WRONG, e);
+            }
         }
 
         DtoWithPageForUi<UserDto> dtoWithPageForUi;
@@ -634,14 +725,14 @@ public class AdminControllerImpl implements AdminController {
                                    .build();
         } else {
             dtoWithPageForUi = DtoWithPageForUi.<UserDto>builder()
-                                   .url(SLASH_STRING + MAIN_ADMINISTRATOR_SERVLET)
+                                   .url(SLASH_STRING + url)
                                    .build();
         }
         return dtoWithPageForUi;
     }
 
     @Override
-    public DtoWithPageForUi<CalculationDto> deleteCalculation(PageRequestDto dto) {
+    public DtoWithPageForUi<CalculationDto> deleteCalculation(FilterPageDto dto) {
 
         String exceptionMessage = null;
 
@@ -673,7 +764,7 @@ public class AdminControllerImpl implements AdminController {
     }
 
     @Override
-    public DtoWithPageForUi<ChapterDto> deleteChapter(PageRequestDto dto) {
+    public DtoWithPageForUi<ChapterDto> deleteChapter(FilterPageDto dto) {
 
         String exceptionMessage = null;
 
@@ -705,7 +796,7 @@ public class AdminControllerImpl implements AdminController {
     }
 
     @Override
-    public DtoWithPageForUi<ProjectDto> deleteMoneyTransfer(PageRequestDto dto) {
+    public DtoWithPageForUi<ProjectDto> deleteMoneyTransfer(FilterPageDto dto) {
 
         String exceptionMessage = null;
 
@@ -737,7 +828,7 @@ public class AdminControllerImpl implements AdminController {
     }
 
     @Override
-    public DtoWithPageForUi<ProjectDto> deleteProject(PageRequestDto dto) {
+    public DtoWithPageForUi<ProjectDto> deleteProject(FilterPageDto dto) {
 
         String exceptionMessage = null;
 
@@ -769,7 +860,7 @@ public class AdminControllerImpl implements AdminController {
     }
 
     @Override
-    public DtoWithPageForUi<ProposalDto> deleteProposal(PageRequestDto dto) {
+    public DtoWithPageForUi<ProposalDto> deleteProposal(FilterPageDto dto) {
 
         String exceptionMessage = null;
         boolean showByContractor = Boolean.parseBoolean(dto.getName());

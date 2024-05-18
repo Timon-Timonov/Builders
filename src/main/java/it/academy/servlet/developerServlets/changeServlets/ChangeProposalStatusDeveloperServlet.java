@@ -1,13 +1,13 @@
 package it.academy.servlet.developerServlets.changeServlets;
 
 import it.academy.controller.DeveloperController;
-import it.academy.controller.dto.DtoWithPageForUi;
-import it.academy.controller.dto.PageRequestDto;
+import it.academy.dto.DtoWithPageForUi;
+import it.academy.dto.FilterPageDto;
 import it.academy.controller.impl.DeveloperControllerImpl;
 import it.academy.dto.ProposalDto;
 import it.academy.pojo.enums.ProposalStatus;
-import it.academy.servlet.utils.ParameterFinder;
-import it.academy.servlet.utils.ExceptionRedirector;
+import it.academy.util.ExceptionRedirector;
+import it.academy.util.ParameterFinder;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -33,13 +33,13 @@ public class ChangeProposalStatusDeveloperServlet extends HttpServlet {
         long proposalId = ParameterFinder.getNumberValueFromParameter(req, PROPOSAL_ID_PARAM, ZERO_LONG_VALUE);
         ProposalStatus status = ParameterFinder.getProposalStatusFromParameter(req, PROPOSAL_STATUS_PARAM, DEFAULT_PROPOSAL_STATUS);
         ProposalStatus newStatus = ParameterFinder.getProposalStatusFromParameter(req, NEW_PROPOSAL_STATUS_PARAM, status);
-        String whatToDo = req.getParameter(TODO_PARAM);
+        String showByChapter = req.getParameter(SHOW_PROPOSAL_LIST_BY_CHAPTER_PARAM);
 
-        PageRequestDto requestDto = PageRequestDto.builder()
-                                        .id(proposalId)
-                                        .status(newStatus)
-                                        .name(whatToDo)
-                                        .build();
+        FilterPageDto requestDto = FilterPageDto.builder()
+                                       .id(proposalId)
+                                       .status(newStatus)
+                                       .name(showByChapter)
+                                       .build();
 
         DtoWithPageForUi<ProposalDto> dto = controller.changeStatusOfProposal(requestDto);
 

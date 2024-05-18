@@ -1,7 +1,6 @@
 <%@ page import="it.academy.dto.AddressDto" %>
 <%@ page import="it.academy.dto.ProjectDto" %>
 <%@ page import="it.academy.pojo.enums.ProjectStatus" %>
-<%@ page import="it.academy.servlet.utils.WhatToDo" %>
 <%@ page import="java.util.List" %>
 <%@ page import="java.util.Optional" %>
 <%@ page import="static it.academy.util.constants.ParameterNames.*" %>
@@ -21,11 +20,10 @@
     <h2>The list of my projects</h2>
 </div>
 <%
-    String actionName = MAIN_DEVELOPER_SERVLET;
+    String actionName = GET_ALL_MY_PROJECTS_DEVELOPER_SERVLET;
     String countName = PROJECT_COUNT_ON_PAGE_PARAM;
     String pageNumberParamName = PROJECT_PAGE_PARAM;
 
-    String actionParameterToDoValue = WhatToDo.SHOW_PROJECTS.toString();
     int countOnPage = (Integer) session.getAttribute(countName);
     int pageNumber = (Integer) session.getAttribute(pageNumberParamName);
     int lastPageNumber = (Integer) session.getAttribute(LAST_PAGE_NUMBER_PARAM);

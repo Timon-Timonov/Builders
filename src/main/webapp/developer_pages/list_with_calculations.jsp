@@ -1,5 +1,4 @@
 <%@ page import="it.academy.dto.CalculationDto" %>
-<%@ page import="it.academy.servlet.utils.WhatToDo" %>
 <%@ page import="java.util.List" %>
 <%@ page import="static it.academy.util.constants.ParameterNames.*" %>
 <%@ page import="static it.academy.util.constants.ServletURLs.*" %>
@@ -142,8 +141,7 @@
     </form>
     <br>
     <%}%>
-    <form action="<%=MAIN_DEVELOPER_SERVLET%>" method="get">
-        <input type="hidden" value="<%=WhatToDo.SHOW_PROJECTS.toString()%>" name="<%=TODO_PARAM%>">
+    <form action="<%=GET_ALL_MY_PROJECTS_DEVELOPER_SERVLET%>" method="get">
         <button class="btn btn-light" type="submit">To list with projects</button>
     </form>
     <br>

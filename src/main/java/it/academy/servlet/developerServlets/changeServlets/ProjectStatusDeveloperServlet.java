@@ -1,13 +1,13 @@
 package it.academy.servlet.developerServlets.changeServlets;
 
 import it.academy.controller.DeveloperController;
-import it.academy.controller.dto.DtoWithPageForUi;
-import it.academy.controller.dto.PageRequestDto;
+import it.academy.dto.DtoWithPageForUi;
+import it.academy.dto.FilterPageDto;
 import it.academy.controller.impl.DeveloperControllerImpl;
 import it.academy.dto.ProjectDto;
 import it.academy.pojo.enums.ProjectStatus;
-import it.academy.servlet.utils.ParameterFinder;
-import it.academy.servlet.utils.ExceptionRedirector;
+import it.academy.util.ExceptionRedirector;
+import it.academy.util.ParameterFinder;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -33,10 +33,10 @@ public class ProjectStatusDeveloperServlet extends HttpServlet {
         long projectId = ParameterFinder.getNumberValueFromParameter(req, PROJECT_ID_PARAM, ZERO_LONG_VALUE);
         ProjectStatus newStatus = ParameterFinder.getProjectStatusFromParameter(req, NEW_PROJECT_STATUS_PARAM, null);
 
-        PageRequestDto requestDto = PageRequestDto.builder()
-                                        .id(projectId)
-                                        .status(newStatus)
-                                        .build();
+        FilterPageDto requestDto = FilterPageDto.builder()
+                                       .id(projectId)
+                                       .status(newStatus)
+                                       .build();
 
         DtoWithPageForUi<ProjectDto> dto = controller.changeProjectStatus(requestDto);
 

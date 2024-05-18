@@ -1,13 +1,12 @@
 package it.academy.servlet.adminServlets.getServlets;
 
-import it.academy.controller.dto.DtoWithPageForUi;
-import it.academy.controller.dto.PageRequestDto;
+import it.academy.dto.DtoWithPageForUi;
+import it.academy.dto.FilterPageDto;
 import it.academy.controller.impl.AdminControllerImpl;
 import it.academy.dto.MoneyTransferDto;
-import it.academy.servlet.utils.ExceptionRedirector;
-import it.academy.servlet.utils.ParameterFinder;
-import it.academy.servlet.utils.SessionAttributeSetter;
-import lombok.extern.log4j.Log4j2;
+import it.academy.util.ExceptionRedirector;
+import it.academy.util.ParameterFinder;
+import it.academy.util.SessionAttributeSetter;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -31,7 +30,7 @@ public class GetMoneyTransferAdministratorServlet extends HttpServlet {
 
         long calculationId = ParameterFinder.getNumberValueFromParameter(req, CALCULATION_ID_PARAM, ZERO_LONG_VALUE);
 
-        PageRequestDto requestDto = PageRequestDto.builder()
+        FilterPageDto requestDto = FilterPageDto.builder()
                                         .id(calculationId)
                                         .build();
 

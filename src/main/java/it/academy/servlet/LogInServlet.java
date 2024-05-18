@@ -1,10 +1,10 @@
 package it.academy.servlet;
 
 import it.academy.controller.AdminController;
-import it.academy.controller.dto.LoginDto;
+import it.academy.dto.LoginDto;
 import it.academy.controller.impl.AdminControllerImpl;
-import it.academy.servlet.utils.ExceptionRedirector;
-import it.academy.util.converters.UserConverter;
+import it.academy.util.ExceptionRedirector;
+import it.academy.converters.UserConverter;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -13,7 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-import static it.academy.servlet.utils.SessionAttributeSetter.setSessionUserData;
+import static it.academy.util.SessionAttributeSetter.setSessionUserData;
 import static it.academy.util.constants.JspURLs.LOGIN_PAGE_JSP;
 import static it.academy.util.constants.ParameterNames.EMAIL_PARAM;
 import static it.academy.util.constants.ParameterNames.PASSWORD_PARAM;

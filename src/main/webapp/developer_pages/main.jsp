@@ -1,9 +1,7 @@
-<%@ page import="it.academy.servlet.utils.WhatToDo" %>
-<%@ page import="static it.academy.util.constants.ServletURLs.MAIN_DEVELOPER_SERVLET" %>
-<%@ page import="static it.academy.util.constants.ParameterNames.TODO_PARAM" %>
 <%@ page import="static it.academy.util.constants.Messages.EXIT_FROM" %>
 <%@ page import="static it.academy.util.constants.ParameterNames.ROLE_PARAM" %>
 <%@ page import="static it.academy.util.constants.Messages.ACCOUNT" %>
+<%@ page import="static it.academy.util.constants.ServletURLs.*" %>
 <%@ page contentType="text/html;charset=UTF-8" %>
 <html>
 <head>
@@ -23,22 +21,19 @@
     <table>
         <tr>
             <td>
-                <form action="<%=MAIN_DEVELOPER_SERVLET%>" method="get">
-                    <input type="hidden" value="<%=WhatToDo.SHOW_PROJECTS.toString()%>" name="<%=TODO_PARAM%>">
+                <form action="<%=GET_ALL_MY_PROJECTS_DEVELOPER_SERVLET%>" method="get">
                     <button class="btn btn-secondary" type="submit">Show all my projects</button>
                 </form>
             </td>
             <td><p></p></td>
             <td>
-                <form action="<%=MAIN_DEVELOPER_SERVLET%>" method="get">
-                    <input type="hidden" value="<%=WhatToDo.SHOW_CONTRACTORS.toString()%>" name="<%=TODO_PARAM%>">
+                <form action="<%=GET_ALL_MY_CONTRACTORS_DEVELOPER_SERVLET%>" method="get">
                     <button class="btn btn-secondary" type="submit">Show all my contractors</button>
                 </form>
             </td>
             <td><p></p></td>
             <td>
-                <form action="<%=MAIN_DEVELOPER_SERVLET%>" method="get">
-                    <input type="hidden" value="<%=WhatToDo.SHOW_PROPOSALS.toString()%>" name="<%=TODO_PARAM%>">
+                <form action="<%=GET_ALL_MY_PROPOSALS_DEVELOPER_SERVLET%>" method="get">
                     <button class="btn btn-secondary" type="submit">Show all my proposals</button>
                 </form>
             </td>

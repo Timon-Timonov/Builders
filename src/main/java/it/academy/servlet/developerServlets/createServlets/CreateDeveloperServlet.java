@@ -1,11 +1,11 @@
 package it.academy.servlet.developerServlets.createServlets;
 
 import it.academy.controller.DeveloperController;
-import it.academy.controller.dto.CreateRequestDto;
-import it.academy.controller.dto.LoginDto;
+import it.academy.dto.CreateRequestDto;
+import it.academy.dto.LoginDto;
 import it.academy.controller.impl.DeveloperControllerImpl;
-import it.academy.servlet.utils.SessionAttributeSetter;
-import it.academy.servlet.utils.ExceptionRedirector;
+import it.academy.util.ExceptionRedirector;
+import it.academy.util.SessionAttributeSetter;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;

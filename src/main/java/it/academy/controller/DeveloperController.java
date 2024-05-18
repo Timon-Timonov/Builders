@@ -1,39 +1,38 @@
 package it.academy.controller;
 
-import it.academy.controller.dto.CreateRequestDto;
-import it.academy.controller.dto.DtoWithPageForUi;
-import it.academy.controller.dto.LoginDto;
-import it.academy.controller.dto.PageRequestDto;
+import it.academy.dto.CreateRequestDto;
+import it.academy.dto.DtoWithPageForUi;
+import it.academy.dto.LoginDto;
+import it.academy.dto.FilterPageDto;
 import it.academy.dto.*;
-import it.academy.pojo.enums.ProposalStatus;
 
 public interface DeveloperController {
 
     LoginDto createDeveloper(CreateRequestDto dto);
 
-    DtoWithPageForUi<ProjectDto> getMyProjects(PageRequestDto dto);
+    DtoWithPageForUi<ProjectDto> getMyProjects(FilterPageDto dto);
 
-    DtoWithPageForUi<ContractorDto> getMyContractors(PageRequestDto dto);
+    DtoWithPageForUi<ContractorDto> getMyContractors(FilterPageDto dto);
 
-    DtoWithPageForUi<ProposalDto> getAllMyProposals(PageRequestDto dto);
+    DtoWithPageForUi<ProposalDto> getAllMyProposals(FilterPageDto dto);
 
     DtoWithPageForUi<ProjectDto> createProject(CreateRequestDto dto);
 
     DtoWithPageForUi<ChapterDto> createChapter(CreateRequestDto dto);
 
-    DtoWithPageForUi<ChapterDto> cancelChapter(PageRequestDto dto);
+    DtoWithPageForUi<ChapterDto> cancelChapter(FilterPageDto dto);
 
-    DtoWithPageForUi<ChapterDto> getChaptersByProject(PageRequestDto dto);
+    DtoWithPageForUi<ChapterDto> getChaptersByProject(FilterPageDto dto);
 
-    DtoWithPageForUi<ChapterDto> getChaptersByContractorIdAndDeveloperId(PageRequestDto dto);
+    DtoWithPageForUi<ChapterDto> getChaptersByContractorIdAndDeveloperId(FilterPageDto dto);
 
-    DtoWithPageForUi<ProposalDto> changeStatusOfProposal(PageRequestDto dto);
+    DtoWithPageForUi<ProposalDto> changeStatusOfProposal(FilterPageDto dto);
 
-    DtoWithPageForUi<ProposalDto> getProposalsByChapter(PageRequestDto dto);
+    DtoWithPageForUi<ProposalDto> getProposalsByChapter(FilterPageDto dto);
 
-    DtoWithPageForUi<ProjectDto> changeProjectStatus(PageRequestDto dto);
+    DtoWithPageForUi<ProjectDto> changeProjectStatus(FilterPageDto dto);
 
-    DtoWithPageForUi<CalculationDto> getCalculationsByChapterId(PageRequestDto dto);
+    DtoWithPageForUi<CalculationDto> getCalculationsByChapterId(FilterPageDto dto);
 
     DtoWithPageForUi<MoneyTransferDto> payMoney(CreateRequestDto dto);
 }

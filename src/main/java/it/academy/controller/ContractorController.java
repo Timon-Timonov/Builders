@@ -1,37 +1,36 @@
 package it.academy.controller;
 
-import it.academy.controller.dto.CreateRequestDto;
-import it.academy.controller.dto.DtoWithPageForUi;
-import it.academy.controller.dto.LoginDto;
-import it.academy.controller.dto.PageRequestDto;
+import it.academy.dto.CreateRequestDto;
+import it.academy.dto.DtoWithPageForUi;
+import it.academy.dto.LoginDto;
+import it.academy.dto.FilterPageDto;
 import it.academy.dto.*;
-import it.academy.pojo.enums.ProposalStatus;
 
 public interface ContractorController {
 
     LoginDto createContractor(CreateRequestDto dto);
 
-    DtoWithPageForUi<ProjectDto> getMyProjects(PageRequestDto dto);
+    DtoWithPageForUi<ProjectDto> getMyProjects(FilterPageDto dto);
 
-    DtoWithPageForUi<ProjectDto> getMyProjectsByDeveloper(PageRequestDto dto);
+    DtoWithPageForUi<ProjectDto> getMyProjectsByDeveloper(FilterPageDto dto);
 
     DtoWithPageForUi<ChapterDto> getAllChapterNames();
 
-    DtoWithPageForUi<ChapterDto> getFreeChapters(PageRequestDto dto);
+    DtoWithPageForUi<ChapterDto> getFreeChapters(FilterPageDto dto);
 
-    DtoWithPageForUi<DeveloperDto> getMyDevelopers(PageRequestDto dto);
+    DtoWithPageForUi<DeveloperDto> getMyDevelopers(FilterPageDto dto);
 
-    DtoWithPageForUi<ProposalDto> getMyProposals(PageRequestDto dto);
+    DtoWithPageForUi<ProposalDto> getMyProposals(FilterPageDto dto);
 
-    DtoWithPageForUi<ChapterDto> getMyChaptersByProjectId(PageRequestDto dto);
+    DtoWithPageForUi<ChapterDto> getMyChaptersByProjectId(FilterPageDto dto);
 
-    DtoWithPageForUi<CalculationDto> getCalculationsByChapter(PageRequestDto dto);
+    DtoWithPageForUi<CalculationDto> getCalculationsByChapter(FilterPageDto dto);
 
-    DtoWithPageForUi<CalculationDto> updateWorkPriceFact(PageRequestDto dto);
+    DtoWithPageForUi<CalculationDto> updateWorkPriceFact(FilterPageDto dto);
 
     DtoWithPageForUi<CalculationDto> createCalculation(CreateRequestDto dto);
 
-    DtoWithPageForUi<ProposalDto> setProposalStatus(PageRequestDto dto);
+    DtoWithPageForUi<ProposalDto> setProposalStatus(FilterPageDto dto);
 
     DtoWithPageForUi<ProposalDto> createProposal(CreateRequestDto dto);
 

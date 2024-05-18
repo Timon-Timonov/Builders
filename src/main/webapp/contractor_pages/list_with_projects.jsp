@@ -1,12 +1,10 @@
 <%@ page import="it.academy.dto.AddressDto" %>
 <%@ page import="it.academy.dto.ProjectDto" %>
 <%@ page import="it.academy.pojo.enums.ProjectStatus" %>
-<%@ page import="it.academy.servlet.utils.WhatToDo" %>
 <%@ page import="java.util.List" %>
 <%@ page import="java.util.Optional" %>
 <%@ page import="static it.academy.util.constants.ParameterNames.SHOW_PROJECT_LIST_BY_DEVELOPER_PARAM" %>
 <%@ page import="static it.academy.util.constants.ServletURLs.GET_MY_PROJECTS_BY_DEVELOPER_CONTRACTOR_SERVLET" %>
-<%@ page import="static it.academy.util.constants.ServletURLs.MAIN_CONTRACTOR_SERVLET" %>
 <%@ page import="static it.academy.util.constants.ParameterNames.PROJECT_COUNT_ON_PAGE_PARAM" %>
 <%@ page import="static it.academy.util.constants.ParameterNames.*" %>
 <%@ page import="static it.academy.util.constants.ServletURLs.*" %>
@@ -26,11 +24,10 @@
 
     String actionName = showListByDeveloper ?
             GET_MY_PROJECTS_BY_DEVELOPER_CONTRACTOR_SERVLET
-            : MAIN_CONTRACTOR_SERVLET;
+            : GET_ALL_MY_PROJECTS_CONTRACTOR_SERVLET;
     String countName = PROJECT_COUNT_ON_PAGE_PARAM;
     String pageNumberParamName = PROJECT_PAGE_PARAM;
 
-    String actionParameterToDoValue = WhatToDo.SHOW_PROJECTS.toString();
     int countOnPage = (Integer) session.getAttribute(countName);
     int pageNumber = (Integer) session.getAttribute(pageNumberParamName);
     int lastPageNumber = (Integer) session.getAttribute(LAST_PAGE_NUMBER_PARAM);
@@ -133,8 +130,7 @@
 <div class="container text-center">
 
     <% if (showListByDeveloper) {%>
-    <form action="<%=MAIN_CONTRACTOR_SERVLET%>" method="get">
-        <input type="hidden" value="<%= WhatToDo.SHOW_DEVELOPERS.toString()%>" name="<%=TODO_PARAM%>">
+    <form action="<%=GET_ALL_MY_DEVELOPERS_CONTRACTOR_SERVLET%>" method="get">
         <button class="btn btn-secondary" type="submit">Return to list of developers</button>
     </form>
     <% }%>

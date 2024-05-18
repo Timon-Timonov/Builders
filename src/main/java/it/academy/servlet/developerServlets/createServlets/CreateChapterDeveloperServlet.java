@@ -1,12 +1,12 @@
 package it.academy.servlet.developerServlets.createServlets;
 
 import it.academy.controller.DeveloperController;
-import it.academy.controller.dto.CreateRequestDto;
-import it.academy.controller.dto.DtoWithPageForUi;
+import it.academy.dto.CreateRequestDto;
+import it.academy.dto.DtoWithPageForUi;
 import it.academy.controller.impl.DeveloperControllerImpl;
 import it.academy.dto.ChapterDto;
-import it.academy.servlet.utils.ParameterFinder;
-import it.academy.servlet.utils.ExceptionRedirector;
+import it.academy.util.ExceptionRedirector;
+import it.academy.util.ParameterFinder;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;

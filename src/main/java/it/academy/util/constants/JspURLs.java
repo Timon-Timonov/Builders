@@ -44,10 +44,6 @@ public final class JspURLs {
     public static final String ADMIN_PAGES_LIST_WITH_PROPOSALS_FROM_CONTRACTOR_JSP = "/admin_pages/list_with_proposals_from_contractor.jsp";
     public static final String ADMIN_PAGES_LIST_WITH_CHAPTERS_FROM_CONTRACTOR_JSP = "/admin_pages/list_with_chapters_from_contractor.jsp";
 
-
-
-
-
     private JspURLs() {
     }
 }

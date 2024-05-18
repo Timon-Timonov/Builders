@@ -1,5 +1,4 @@
 <%@ page import="it.academy.dto.ChapterDto" %>
-<%@ page import="it.academy.servlet.utils.WhatToDo" %>
 <%@ page import="java.util.List" %>
 <%@ page import="static it.academy.util.constants.ParameterNames.*" %>
 <%@ page import="static it.academy.util.constants.ServletURLs.*" %>
@@ -100,8 +99,7 @@
     <br>
     <% } %>
 
-    <form action="<%=MAIN_ADMINISTRATOR_SERVLET%>" method="get">
-        <input type="hidden" value="<%= WhatToDo.SHOW_DEVELOPERS.toString()%>" name="<%=TODO_PARAM%>">
+    <form action="<%=GET_ALL_DEVELOPERS_ADMINISTRATOR_SERVLET%>" method="get">
         <button class="btn btn-secondary" type="submit">Return to list with developers</button>
     </form>
     <br>

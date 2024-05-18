@@ -2,7 +2,6 @@
 <%@ page import="static it.academy.util.constants.ParameterNames.*" %>
 <%@ page import="static it.academy.util.constants.ServletURLs.GET_MY_CALCULATION_CONTRACTOR_SERVLET" %>
 <%@ page import="it.academy.dto.CalculationDto" %>
-<%@ page import="it.academy.servlet.utils.WhatToDo" %>
 <%@ page import="java.util.List" %>
 <%@ page import="static it.academy.util.constants.ServletURLs.*" %>
 <%@ page contentType="text/html;charset=UTF-8" %>
@@ -24,8 +23,6 @@
     int countOnPage = (Integer) session.getAttribute(countName);
     int pageNumber = (Integer) session.getAttribute(pageNumberParamName);
     int lastPageNumber = (Integer) session.getAttribute(LAST_PAGE_NUMBER_PARAM);
-
-    String actionParameterToDoValue = null;
 
     List<CalculationDto> calculationDtoList = (List<CalculationDto>) request.getAttribute(DTO_LIST_PARAM);
 %>
@@ -126,8 +123,7 @@
         <button class="btn btn-light" type="submit">Return to list with chapters of project</button>
     </form>
     <br>
-    <form action="<%=MAIN_CONTRACTOR_SERVLET%>" method="get">
-        <input type="hidden" value="<%=WhatToDo.SHOW_PROJECTS.toString()%>" name="<%=TODO_PARAM%>">
+    <form action="<%=GET_ALL_MY_PROJECTS_CONTRACTOR_SERVLET%>" method="get">
         <button class="btn btn-light" type="submit">Return to list with projects</button>
     </form>
     <br>

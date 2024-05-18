@@ -1,12 +1,11 @@
 <%@ page import="it.academy.dto.ProposalDto" %>
 <%@ page import="it.academy.pojo.enums.ProposalStatus" %>
-<%@ page import="it.academy.servlet.utils.WhatToDo" %>
 <%@ page import="java.util.List" %>
-<%@ page import="static it.academy.util.constants.ServletURLs.MAIN_CONTRACTOR_SERVLET" %>
 <%@ page import="static it.academy.util.constants.ParameterNames.PROPOSAL_COUNT_ON_PAGE_PARAM" %>
 <%@ page import="static it.academy.util.constants.ParameterNames.PROPOSAL_PAGE_PARAM" %>
 <%@ page import="static it.academy.util.constants.ParameterNames.*" %>
 <%@ page import="static it.academy.util.constants.ServletURLs.CHANGE_PROPOSAL_STATUS_CONTRACTOR_SERVLET" %>
+<%@ page import="static it.academy.util.constants.ServletURLs.*" %>
 <%@ page contentType="text/html;charset=UTF-8" %>
 <html>
 <head>
@@ -20,11 +19,10 @@
 <body>
 <%
 
-    String actionName = MAIN_CONTRACTOR_SERVLET;
+    String actionName = GET_ALL_MY_PROPOSALS_CONTRACTOR_SERVLET;
     String countName = PROPOSAL_COUNT_ON_PAGE_PARAM;
     String pageNumberParamName = PROPOSAL_PAGE_PARAM;
 
-    String actionParameterToDoValue = WhatToDo.SHOW_PROPOSALS.toString();
     int countOnPage = (Integer) session.getAttribute(countName);
     int pageNumber = (Integer) session.getAttribute(pageNumberParamName);
     int lastPageNumber = (Integer) session.getAttribute(LAST_PAGE_NUMBER_PARAM);
@@ -103,7 +101,6 @@
             %>
             <td>
                 <form action="<%=CHANGE_PROPOSAL_STATUS_CONTRACTOR_SERVLET%>" method="get">
-                    <input type="hidden" value="<%=actionParameterToDoValue%>" name="<%=TODO_PARAM%>">
                     <input type="hidden" value="<%=ProposalStatus.ACCEPTED_BY_CONTRACTOR.toString()%>"
                            name="<%=NEW_PROPOSAL_STATUS_PARAM%>">
                     <input type="hidden" value="<%=proposalId%>" name="<%=PROPOSAL_ID_PARAM%>">
@@ -115,7 +112,6 @@
             %>
             <td>
                 <form action="<%=CHANGE_PROPOSAL_STATUS_CONTRACTOR_SERVLET%>" method="get">
-                    <input type="hidden" value="<%=actionParameterToDoValue%>" name="<%=TODO_PARAM%>">
                     <input type="hidden" value="<%=ProposalStatus.CANCELED.toString()%>"
                            name="<%=NEW_PROPOSAL_STATUS_PARAM%>">
                     <input type="hidden" value="<%=proposalId%>" name="<%=PROPOSAL_ID_PARAM%>">
@@ -128,7 +124,6 @@
             %>
             <td>
                 <form action="<%=CHANGE_PROPOSAL_STATUS_CONTRACTOR_SERVLET%>" method="get">
-                    <input type="hidden" value="<%=actionParameterToDoValue%>" name="<%=TODO_PARAM%>">
                     <input type="hidden" value="<%=ProposalStatus.CONSIDERATION.toString()%>"
                            name="<%=NEW_PROPOSAL_STATUS_PARAM%>">
                     <input type="hidden" value="<%=proposalId%>" name="<%=PROPOSAL_ID_PARAM%>">

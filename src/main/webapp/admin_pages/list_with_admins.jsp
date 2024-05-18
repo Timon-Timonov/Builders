@@ -1,6 +1,6 @@
 <%@ page import="it.academy.dto.UserDto" %>
+<%@ page import="it.academy.pojo.enums.Roles" %>
 <%@ page import="it.academy.pojo.enums.UserStatus" %>
-<%@ page import="it.academy.servlet.utils.WhatToDo" %>
 <%@ page import="static it.academy.util.constants.ParameterNames.*" %>
 <%@ page import="static it.academy.util.constants.ServletURLs.*" %>
 <%@ page import="java.util.List" %>
@@ -21,7 +21,6 @@
 </div>
 <br>
 <%
-    String actionParameterToDoValue = WhatToDo.SHOW_ADMINISTRATORS.toString();
     List<UserDto> userDtoList = (List<UserDto>) request.getAttribute(DTO_LIST_PARAM);
 %>
 
@@ -62,7 +61,7 @@
                 <form action="<%=CHANGE_USER_STATUS_ADMINISTRATOR_SERVLET%>" method="get">
                     <input type="hidden" value="<%=userId%>" name="<%=USER_ID_PARAM%>">
                     <input type="hidden" value="<%=UserStatus.CANCELED.toString()%>" name="<%=NEW_USER_STATUS_PARAM%>">
-                    <input type="hidden" value="<%=actionParameterToDoValue%>" name="<%=TODO_PARAM%>">
+                    <input type="hidden" value="<%=Roles.ADMIN.toString()%>" name="<%=ROLE_OF_UPDATING_USER_PARAM%>">
                     <button class="btn btn-light" type="submit">Cancel user</button>
                 </form>
             </td>
@@ -71,7 +70,7 @@
                 <form action="<%=CHANGE_USER_STATUS_ADMINISTRATOR_SERVLET%>" method="get">
                     <input type="hidden" value="<%=userId%>" name="<%=USER_ID_PARAM%>">
                     <input type="hidden" value="<%=UserStatus.ACTIVE.toString()%>" name="<%=NEW_USER_STATUS_PARAM%>">
-                    <input type="hidden" value="<%=actionParameterToDoValue%>" name="<%=TODO_PARAM%>">
+                    <input type="hidden" value="<%=Roles.ADMIN.toString()%>" name="<%=ROLE_OF_UPDATING_USER_PARAM%>">
                     <button class="btn btn-light" type="submit">Return user to active status</button>
                 </form>
             </td>
@@ -79,7 +78,7 @@
             <td>
                 <form action="<%=DELETE_USER_ADMINISTRATOR_SERVLET%>" method="get">
                     <input type="hidden" value="<%=userId%>" name="<%=USER_ID_PARAM%>">
-                    <input type="hidden" value="<%=actionParameterToDoValue%>" name="<%=TODO_PARAM%>">
+                    <input type="hidden" value="<%=Roles.ADMIN.toString()%>" name="<%=ROLE_OF_UPDATING_USER_PARAM%>">
                     <button class="btn btn-light" type="submit">Delete user</button>
                 </form>
             </td>
@@ -98,7 +97,6 @@
         Input password: <label>
         <input name="<%=PASSWORD_PARAM%>" type="text">
     </label>
-        <input type="hidden" value="<%=actionParameterToDoValue%>" name="<%=TODO_PARAM%>">
         <br>
         <button class="btn btn-light" type="submit">Create new administrator</button>
     </form>

@@ -1,14 +1,14 @@
 package it.academy.servlet.contractorServlets.getServlets;
 
 import it.academy.controller.ContractorController;
-import it.academy.controller.dto.DtoWithPageForUi;
-import it.academy.controller.dto.PageRequestDto;
+import it.academy.dto.DtoWithPageForUi;
+import it.academy.dto.FilterPageDto;
 import it.academy.controller.impl.ContractorControllerImpl;
 import it.academy.dto.ProjectDto;
 import it.academy.pojo.enums.ProjectStatus;
-import it.academy.servlet.utils.ParameterFinder;
-import it.academy.servlet.utils.SessionAttributeSetter;
-import it.academy.servlet.utils.ExceptionRedirector;
+import it.academy.util.ExceptionRedirector;
+import it.academy.util.ParameterFinder;
+import it.academy.util.SessionAttributeSetter;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -24,7 +24,7 @@ import static it.academy.util.constants.ParameterNames.*;
 import static it.academy.util.constants.ServletURLs.GET_MY_PROJECTS_BY_DEVELOPER_CONTRACTOR_SERVLET;
 import static it.academy.util.constants.ServletURLs.SLASH_STRING;
 
-@WebServlet(name = "getMyProjectsByDeveloperServlet", urlPatterns = SLASH_STRING + GET_MY_PROJECTS_BY_DEVELOPER_CONTRACTOR_SERVLET)
+@WebServlet(name = "getMyProjectsByDeveloperContractorServlet", urlPatterns = SLASH_STRING + GET_MY_PROJECTS_BY_DEVELOPER_CONTRACTOR_SERVLET)
 public class GetMyProjectsByDeveloperContractorServlet extends HttpServlet {
 
     ContractorController controller = new ContractorControllerImpl();
@@ -41,14 +41,14 @@ public class GetMyProjectsByDeveloperContractorServlet extends HttpServlet {
 
         String developerAddress = ParameterFinder.getStringValueFromParameter(req, DEVELOPER_ADDRESS_PARAM, BLANK_STRING);
 
-        PageRequestDto requestDto = PageRequestDto.builder()
-                                        .id(developerId)
-                                        .secondId(contractorId)
-                                        .status(status)
-                                        .page(page)
-                                        .count(count)
-                                        .name(developerName)
-                                        .build();
+        FilterPageDto requestDto = FilterPageDto.builder()
+                                       .id(developerId)
+                                       .secondId(contractorId)
+                                       .status(status)
+                                       .page(page)
+                                       .count(count)
+                                       .name(developerName)
+                                       .build();
 
         DtoWithPageForUi<ProjectDto> dto = controller.getMyProjectsByDeveloper(requestDto);
 

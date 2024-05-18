@@ -1,5 +1,4 @@
 <%@ page import="it.academy.dto.ChapterDto" %>
-<%@ page import="it.academy.servlet.utils.WhatToDo" %>
 <%@ page import="java.util.List" %>
 <%@ page import="java.util.Optional" %>
 <%@ page import="static it.academy.util.constants.ParameterNames.*" %>
@@ -87,13 +86,11 @@
         <button class="btn btn-secondary" type="submit">Return to list with projects of this developer</button>
     </form>
     <br>
-    <form action="<%=MAIN_CONTRACTOR_SERVLET%>" method="get">
-        <input type="hidden" value="<%= WhatToDo.SHOW_DEVELOPERS.toString()%>" name="<%=TODO_PARAM%>">
+    <form action="<%=GET_ALL_MY_DEVELOPERS_CONTRACTOR_SERVLET%>" method="get">
         <button class="btn btn-secondary" type="submit">Return to list of developers</button>
     </form>
     <% } else {%>
-    <form action="<%=MAIN_CONTRACTOR_SERVLET%>" method="get">
-        <input type="hidden" value="<%=WhatToDo.SHOW_PROJECTS.toString()%>" name="<%=TODO_PARAM%>">
+    <form action="<%=GET_ALL_MY_PROJECTS_CONTRACTOR_SERVLET%>" method="get">
         <button class="btn btn-light" type="submit">Return to list with projects</button>
     </form>
     <%}%>

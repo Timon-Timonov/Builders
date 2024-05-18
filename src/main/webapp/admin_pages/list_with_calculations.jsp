@@ -1,6 +1,5 @@
 <%@ page import="static it.academy.util.constants.ParameterNames.*" %>
 <%@ page import="it.academy.dto.CalculationDto" %>
-<%@ page import="it.academy.servlet.utils.WhatToDo" %>
 <%@ page import="java.util.List" %>
 <%@ page import="static it.academy.util.constants.ServletURLs.*" %>
 <%@ page contentType="text/html;charset=UTF-8" %>
@@ -22,8 +21,6 @@
     int countOnPage = (Integer) session.getAttribute(countName);
     int pageNumber = (Integer) session.getAttribute(pageNumberParamName);
     int lastPageNumber = (Integer) session.getAttribute(LAST_PAGE_NUMBER_PARAM);
-
-    String actionParameterToDoValue = null;
 
     List<CalculationDto> calculationDtoList = (List<CalculationDto>) request.getAttribute(DTO_LIST_PARAM);
 %>
@@ -131,8 +128,7 @@
     <br>
     <% } %>
 
-    <form action="<%=MAIN_ADMINISTRATOR_SERVLET%>" method="get">
-        <input type="hidden" value="<%=WhatToDo.SHOW_DEVELOPERS.toString()%>" name="<%=TODO_PARAM%>">
+    <form action="<%=GET_ALL_DEVELOPERS_ADMINISTRATOR_SERVLET%>" method="get">
         <button class="btn btn-light" type="submit">To list with developers</button>
     </form>
     <br>

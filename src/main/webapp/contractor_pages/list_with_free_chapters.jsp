@@ -1,7 +1,6 @@
 <%@ page import="it.academy.dto.AddressDto" %>
 <%@ page import="it.academy.dto.ChapterDto" %>
 <%@ page import="it.academy.pojo.enums.ProjectStatus" %>
-<%@ page import="it.academy.servlet.utils.WhatToDo" %>
 <%@ page import="java.util.List" %>
 <%@ page import="java.util.Optional" %>
 <%@ page import="static it.academy.util.constants.ServletURLs.GET_FREE_CHAPTERS_CONTRACTOR_SERVLET" %>
@@ -26,7 +25,6 @@
     String countName = CHAPTER_COUNT_ON_PAGE_PARAM;
     String pageNumberParamName = CHAPTER_PAGE_PARAM;
 
-    String actionParameterToDoValue = null;
     int countOnPage = (Integer) session.getAttribute(countName);
     int pageNumber = (Integer) session.getAttribute(pageNumberParamName);
     int lastPageNumber = (Integer) session.getAttribute(LAST_PAGE_NUMBER_PARAM);
@@ -126,8 +124,7 @@
 <br>
 <div class="container text-center">
 
-    <form action="<%=MAIN_CONTRACTOR_SERVLET%>" method="get">
-        <input type="hidden" value="<%=WhatToDo.TRY_TO_CHOOSE_NEW_PROJECT%>" name="<%=TODO_PARAM%>">
+    <form action="<%=GET_ALL_CHAPTER_NAMES_CONTRACTOR_SERVLET%>" method="get">
         <button class="btn btn-secondary" type="submit">Return to list of chapter names</button>
     </form>
 

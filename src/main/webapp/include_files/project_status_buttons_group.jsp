@@ -8,7 +8,6 @@
         <td>
             <form action="<%=actionName%>" method="get">
                 <input type="hidden" value="<%=preparation.toString()%>" name="<%=PROJECT_STATUS_PARAM%>">
-                <input type="hidden" value="<%=actionParameterToDoValue%>" name="<%=TODO_PARAM%>">
                 <button class="<%=preparation.equals(status)?"btn btn-success":"btn btn-light"%>"
                         type="submit">Status <%=preparation.toString().toLowerCase()%>
                 </button>
@@ -17,7 +16,6 @@
         <td>
             <form action="<%=actionName%>" method="get">
                 <input type="hidden" value="<%=inProcess.toString()%>" name="<%=PROJECT_STATUS_PARAM%>">
-                <input type="hidden" value="<%=actionParameterToDoValue%>" name="<%=TODO_PARAM%>">
                 <button class="<%=inProcess.equals(status)?"btn btn-success":"btn btn-light"%>"
                         type="submit">Status <%=inProcess.toString().toLowerCase()%>
             </form>
@@ -25,7 +23,6 @@
         <td>
             <form action="<%=actionName%>" method="get">
                 <input type="hidden" value="<%=completed.toString()%>" name="<%=PROJECT_STATUS_PARAM%>">
-                <input type="hidden" value="<%=actionParameterToDoValue%>" name="<%=TODO_PARAM%>">
                 <button class="<%=completed.equals(status)?"btn btn-success":"btn btn-light"%>"
                         type="submit">Status <%=completed.toString().toLowerCase()%>
                 </button>
@@ -34,7 +31,6 @@
         <td>
             <form action="<%=actionName%>" method="get">
                 <input type="hidden" value="<%=canceled.toString()%>" name="<%=PROJECT_STATUS_PARAM%>">
-                <input type="hidden" value="<%=actionParameterToDoValue%>" name="<%=TODO_PARAM%>">
                 <button class="<%=canceled.equals(status)?"btn btn-success":"btn btn-light"%>"
                         type="submit">Status <%=canceled.toString().toLowerCase()%>
                 </button>

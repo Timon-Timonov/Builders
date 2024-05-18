@@ -1,14 +1,14 @@
 package it.academy.servlet.developerServlets.getServlets;
 
 import it.academy.controller.DeveloperController;
-import it.academy.controller.dto.DtoWithPageForUi;
-import it.academy.controller.dto.PageRequestDto;
+import it.academy.dto.DtoWithPageForUi;
+import it.academy.dto.FilterPageDto;
 import it.academy.controller.impl.DeveloperControllerImpl;
 import it.academy.dto.ChapterDto;
 import it.academy.pojo.enums.ProjectStatus;
-import it.academy.servlet.utils.ParameterFinder;
-import it.academy.servlet.utils.SessionAttributeSetter;
-import it.academy.servlet.utils.ExceptionRedirector;
+import it.academy.util.ExceptionRedirector;
+import it.academy.util.ParameterFinder;
+import it.academy.util.SessionAttributeSetter;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -39,14 +39,14 @@ public class GetChaptersOfContractorDeveloperServlet extends HttpServlet {
         int count = ParameterFinder.getNumberValueFromParameter(req, CHAPTER_COUNT_ON_PAGE_PARAM, DEFAULT_COUNT_ON_PAGE_5);
         String contractorName = ParameterFinder.getStringValueFromParameter(req, CHAPTER_CONTRACTOR_NAME_PARAM, BLANK_STRING);
 
-        PageRequestDto requestDto = PageRequestDto.builder()
-                                        .id(contractorId)
-                                        .secondId(developerId)
-                                        .name(contractorName)
-                                        .status(status)
-                                        .page(page)
-                                        .count(count)
-                                        .build();
+        FilterPageDto requestDto = FilterPageDto.builder()
+                                       .id(contractorId)
+                                       .secondId(developerId)
+                                       .name(contractorName)
+                                       .status(status)
+                                       .page(page)
+                                       .count(count)
+                                       .build();
 
         DtoWithPageForUi<ChapterDto> dto = controller.getChaptersByContractorIdAndDeveloperId(requestDto);
 

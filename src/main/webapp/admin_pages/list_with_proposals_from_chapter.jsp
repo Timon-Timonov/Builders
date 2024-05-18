@@ -22,7 +22,6 @@
     String countName = PROPOSAL_COUNT_ON_PAGE_PARAM;
     String pageNumberParamName = PROPOSAL_PAGE_PARAM;
 
-    String actionParameterToDoValue = null;
     int countOnPage = (Integer) session.getAttribute(countName);
     int pageNumber = (Integer) session.getAttribute(pageNumberParamName);
     int lastPageNumber = (Integer) session.getAttribute(LAST_PAGE_NUMBER_PARAM);
@@ -48,6 +47,12 @@
     <%@include file="/include_files/count_on_page_buttons_group.jsp" %>
     <br>
     <%@include file="/include_files/proposal_status_buttons_group.jsp" %>
+    <form action="<%=actionName%>" method="get">
+        <input type="hidden" value="<%=ProposalStatus.ACCEPTED_BY_CONTRACTOR.toString()%>" name="<%=PROPOSAL_STATUS_PARAM%>">
+        <button class="<%=ProposalStatus.ACCEPTED_BY_CONTRACTOR.equals(status)?"btn btn-success":"btn btn-light"%>"
+                type="submit">Status <%=ProposalStatus.ACCEPTED_BY_CONTRACTOR.toString().toLowerCase()%>
+        </button>
+    </form>
     <br>
     <%@include file="/include_files/pagination_buttons_group.jsp" %>
 </div>

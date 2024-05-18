@@ -1,6 +1,5 @@
 <%@ page import="static it.academy.util.constants.ParameterNames.*" %>
 <%@ page import="it.academy.dto.MoneyTransferDto" %>
-<%@ page import="it.academy.servlet.utils.WhatToDo" %>
 <%@ page import="java.util.List" %>
 <%@ page import="static it.academy.util.constants.ServletURLs.*" %>
 <%@ page contentType="text/html;charset=UTF-8" %>
@@ -17,7 +16,6 @@
 
 <%
     String actionName = GET_MONEY_TRANSFER_ADMINISTRATOR_SERVLET;
-
 
     List<MoneyTransferDto> moneyTransferDtoList = (List<MoneyTransferDto>) request.getAttribute(DTO_LIST_PARAM);
 %>
@@ -85,8 +83,7 @@
     </form>
     <br>
     <% } %>
-    <form action="<%=MAIN_ADMINISTRATOR_SERVLET%>" method="get">
-        <input type="hidden" value="<%=WhatToDo.SHOW_PROJECTS.toString()%>" name="<%=TODO_PARAM%>">
+    <form action="<%=GET_PROJECTS_ADMINISTRATOR_SERVLET%>" method="get">
         <button class="btn btn-light" type="submit">Return to list with projects</button>
     </form>
     <br>

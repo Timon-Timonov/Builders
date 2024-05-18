@@ -1,5 +1,3 @@
-<%@ page import="it.academy.servlet.utils.WhatToDo" %>
-<%@ page import="static it.academy.util.constants.ParameterNames.TODO_PARAM" %>
 <%@ page import="static it.academy.util.constants.Messages.EXIT_FROM" %>
 <%@ page import="static it.academy.util.constants.ParameterNames.ROLE_PARAM" %>
 <%@ page import="static it.academy.util.constants.Messages.ACCOUNT" %>
@@ -23,22 +21,19 @@
     <table>
         <tr>
             <td>
-                <form action="<%=MAIN_ADMINISTRATOR_SERVLET%>" method="get">
-                    <input type="hidden" value="<%=WhatToDo.SHOW_DEVELOPERS.toString()%>" name="<%=TODO_PARAM%>">
+                <form action="<%=GET_ALL_DEVELOPERS_ADMINISTRATOR_SERVLET%>" method="get">
                     <button class="btn btn-secondary" type="submit">Show all developers</button>
                 </form>
             </td>
             <td><p></p></td>
             <td>
-                <form action="<%=MAIN_ADMINISTRATOR_SERVLET%>" method="get">
-                    <input type="hidden" value="<%=WhatToDo.SHOW_CONTRACTORS.toString()%>" name="<%=TODO_PARAM%>">
+                <form action="<%=GET_ALL_CONTRACTORS_ADMINISTRATOR_SERVLET%>" method="get">
                     <button class="btn btn-secondary" type="submit">Show all contractors</button>
                 </form>
             </td>
             <td><p></p></td>
             <td>
-                <form action="<%=MAIN_ADMINISTRATOR_SERVLET%>" method="get">
-                    <input type="hidden" value="<%=WhatToDo.SHOW_ADMINISTRATORS.toString()%>" name="<%=TODO_PARAM%>">
+                <form action="<%=GET_ALL_ADMINS_ADMINISTRATOR_SERVLET%>" method="get">
                     <button class="btn btn-secondary" type="submit">Show all administrators</button>
                 </form>
             </td>

@@ -26,11 +26,10 @@
 <br>
 <%
     String actionName = GET_MY_PROPOSALS_FROM_CHAPTER_DEVELOPER_SERVLET;
-    String todoName = TODO_PARAM;
     String countName = PROPOSAL_COUNT_ON_PAGE_PARAM;
     String pageNumberParamName = PROPOSAL_PAGE_PARAM;
+    boolean showProposalsFromChapter = true;
 
-    String actionParameterToDoValue = null;
     int countOnPage = (Integer) session.getAttribute(countName);
     int pageNumber = (Integer) session.getAttribute(pageNumberParamName);
     int lastPageNumber = (Integer) session.getAttribute(LAST_PAGE_NUMBER_PARAM);

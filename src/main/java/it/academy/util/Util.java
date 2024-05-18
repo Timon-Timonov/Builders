@@ -5,7 +5,7 @@ import it.academy.pojo.Chapter;
 import it.academy.pojo.MoneyTransfer;
 import it.academy.pojo.Project;
 import it.academy.pojo.enums.PaymentType;
-import it.academy.service.dto.Page;
+import it.academy.dto.Page;
 import lombok.extern.log4j.Log4j2;
 
 import java.util.ArrayList;

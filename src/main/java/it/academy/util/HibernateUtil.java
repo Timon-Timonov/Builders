@@ -18,9 +18,4 @@ public final class HibernateUtil {
         }
         return entityManagerFactory.createEntityManager();
     }
-
-    public static void closeFactory() {
-
-        entityManagerFactory.close();
-    }
 }

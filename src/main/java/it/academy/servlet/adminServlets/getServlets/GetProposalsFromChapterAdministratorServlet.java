@@ -1,13 +1,13 @@
 package it.academy.servlet.adminServlets.getServlets;
 
-import it.academy.controller.dto.DtoWithPageForUi;
-import it.academy.controller.dto.PageRequestDto;
 import it.academy.controller.impl.AdminControllerImpl;
+import it.academy.dto.DtoWithPageForUi;
+import it.academy.dto.FilterPageDto;
 import it.academy.dto.ProposalDto;
 import it.academy.pojo.enums.ProposalStatus;
-import it.academy.servlet.utils.ExceptionRedirector;
-import it.academy.servlet.utils.ParameterFinder;
-import it.academy.servlet.utils.SessionAttributeSetter;
+import it.academy.util.ExceptionRedirector;
+import it.academy.util.ParameterFinder;
+import it.academy.util.SessionAttributeSetter;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -39,25 +39,24 @@ public class GetProposalsFromChapterAdministratorServlet extends HttpServlet {
         String chapterName = ParameterFinder.getStringValueFromParameter(req, CHAPTER_NAME_PARAM, BLANK_STRING);
         int chapterPrice = ParameterFinder.getNumberValueFromParameter(req, CHAPTER_PRICE_PARAM, ZERO_INT_VALUE);
 
-        PageRequestDto requestDto = PageRequestDto.builder()
-                                        .id(chapterId)
-                                        .status(status)
-                                        .page(page)
-                                        .count(count)
-                                        .build();
+        FilterPageDto requestDto = FilterPageDto.builder()
+                                       .id(chapterId)
+                                       .status(status)
+                                       .page(page)
+                                       .count(count)
+                                       .name(chapterName)
+                                       .build();
 
         DtoWithPageForUi<ProposalDto> dto = controller.getProposalsByChapterId(requestDto);
 
         if (dto.getExceptionMessage() != null) {
             ExceptionRedirector.forwardToException3(req, resp, this, dto.getExceptionMessage());
         } else {
-
             SessionAttributeSetter.setPageData(req, PROPOSAL_STATUS_PARAM,
                 PROPOSAL_PAGE_PARAM, PROPOSAL_COUNT_ON_PAGE_PARAM,
-                CHAPTER_ID_PARAM, null, dto);
+                CHAPTER_ID_PARAM, CHAPTER_NAME_PARAM, dto);
             HttpSession session = req.getSession();
             session.setAttribute(CHAPTER_PRICE_PARAM, chapterPrice);
-            session.setAttribute(CHAPTER_NAME_PARAM, chapterName);
 
             getServletContext().getRequestDispatcher(dto.getUrl()).forward(req, resp);
         }

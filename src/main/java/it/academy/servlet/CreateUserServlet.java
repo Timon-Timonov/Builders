@@ -1,7 +1,7 @@
 package it.academy.servlet;
 
 import it.academy.pojo.enums.Roles;
-import it.academy.servlet.utils.ExceptionRedirector;
+import it.academy.util.ExceptionRedirector;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;

@@ -1,10 +1,7 @@
 package it.academy.controller.impl;
 
 import it.academy.controller.ContractorController;
-import it.academy.controller.dto.CreateRequestDto;
-import it.academy.controller.dto.DtoWithPageForUi;
-import it.academy.controller.dto.LoginDto;
-import it.academy.controller.dto.PageRequestDto;
+import it.academy.converters.*;
 import it.academy.dto.*;
 import it.academy.exceptions.EmailOccupaidException;
 import it.academy.exceptions.NotCreateDataInDbException;
@@ -18,10 +15,8 @@ import it.academy.pojo.enums.ProposalStatus;
 import it.academy.pojo.legalEntities.Contractor;
 import it.academy.pojo.legalEntities.Developer;
 import it.academy.service.ContractorService;
-import it.academy.service.dto.Page;
 import it.academy.service.impl.ContractorServiceImpl;
 import it.academy.util.Util;
-import it.academy.util.converters.*;
 import lombok.extern.log4j.Log4j2;
 
 import java.io.IOException;
@@ -30,7 +25,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static it.academy.util.constants.Constants.FIRST_PAGE_NUMBER;
-import static it.academy.util.constants.Constants.ZERO_INT_VALUE;
 import static it.academy.util.constants.JspURLs.*;
 import static it.academy.util.constants.Messages.*;
 import static it.academy.util.constants.ServletURLs.*;
@@ -84,7 +78,7 @@ public class ContractorControllerImpl implements ContractorController {
     }
 
     @Override
-    public DtoWithPageForUi<ProjectDto> getMyProjects(PageRequestDto dto) {
+    public DtoWithPageForUi<ProjectDto> getMyProjects(FilterPageDto dto) {
 
         String exceptionMessage = null;
         List<ProjectDto> list = new ArrayList<>();
@@ -99,7 +93,7 @@ public class ContractorControllerImpl implements ContractorController {
             lastPageNumber = projectPage.getLastPageNumber();
             list.addAll(projectPage.getList()
                             .stream()
-                            .map(project -> getProjectDtoForContractor(dto.getId(), project))
+                            .map(project -> ProjectConverter.getProjectDtoForContractor(dto.getId(), project))
                             .collect(Collectors.toList()));
         } catch (ClassCastException e) {
             exceptionMessage = INVALID_VALUE;
@@ -130,7 +124,7 @@ public class ContractorControllerImpl implements ContractorController {
     }
 
     @Override
-    public DtoWithPageForUi<ProjectDto> getMyProjectsByDeveloper(PageRequestDto dto) {
+    public DtoWithPageForUi<ProjectDto> getMyProjectsByDeveloper(FilterPageDto dto) {
 
         String exceptionMessage = null;
         List<ProjectDto> list = new ArrayList<>();
@@ -144,7 +138,7 @@ public class ContractorControllerImpl implements ContractorController {
             page = projectPage.getPageNumber();
             lastPageNumber = projectPage.getLastPageNumber();
             list.addAll(projectPage.getList().stream()
-                            .map(project -> getProjectDtoForContractor(dto.getSecondId(), project))
+                            .map(project -> ProjectConverter.getProjectDtoForContractor(dto.getSecondId(), project))
                             .collect(Collectors.toList()));
         } catch (ClassCastException e) {
             exceptionMessage = INVALID_VALUE;
@@ -209,7 +203,7 @@ public class ContractorControllerImpl implements ContractorController {
     }
 
     @Override
-    public DtoWithPageForUi<ChapterDto> getFreeChapters(PageRequestDto dto) {
+    public DtoWithPageForUi<ChapterDto> getFreeChapters(FilterPageDto dto) {
 
         String exceptionMessage = null;
         List<ChapterDto> list = new ArrayList<>();
@@ -258,7 +252,7 @@ public class ContractorControllerImpl implements ContractorController {
     }
 
     @Override
-    public DtoWithPageForUi<DeveloperDto> getMyDevelopers(PageRequestDto dto) {
+    public DtoWithPageForUi<DeveloperDto> getMyDevelopers(FilterPageDto dto) {
 
         String exceptionMessage = null;
         List<DeveloperDto> list = new ArrayList<>();
@@ -313,7 +307,7 @@ public class ContractorControllerImpl implements ContractorController {
     }
 
     @Override
-    public DtoWithPageForUi<ProposalDto> getMyProposals(PageRequestDto dto) {
+    public DtoWithPageForUi<ProposalDto> getMyProposals(FilterPageDto dto) {
 
         String exceptionMessage = null;
         List<ProposalDto> list = new ArrayList<>();
@@ -360,7 +354,7 @@ public class ContractorControllerImpl implements ContractorController {
     }
 
     @Override
-    public DtoWithPageForUi<ChapterDto> getMyChaptersByProjectId(PageRequestDto dto) {
+    public DtoWithPageForUi<ChapterDto> getMyChaptersByProjectId(FilterPageDto dto) {
 
         String exceptionMessage = null;
         List<ChapterDto> list = new ArrayList<>();
@@ -397,7 +391,7 @@ public class ContractorControllerImpl implements ContractorController {
     }
 
     @Override
-    public DtoWithPageForUi<CalculationDto> getCalculationsByChapter(PageRequestDto dto) {
+    public DtoWithPageForUi<CalculationDto> getCalculationsByChapter(FilterPageDto dto) {
 
         String exceptionMessage = null;
         List<CalculationDto> list = new ArrayList<>();
@@ -443,7 +437,7 @@ public class ContractorControllerImpl implements ContractorController {
     }
 
     @Override
-    public DtoWithPageForUi<CalculationDto> updateWorkPriceFact(PageRequestDto dto) {
+    public DtoWithPageForUi<CalculationDto> updateWorkPriceFact(FilterPageDto dto) {
 
         String exceptionMessage = null;
         try {
@@ -503,7 +497,7 @@ public class ContractorControllerImpl implements ContractorController {
     }
 
     @Override
-    public DtoWithPageForUi<ProposalDto> setProposalStatus(PageRequestDto dto) {
+    public DtoWithPageForUi<ProposalDto> setProposalStatus(FilterPageDto dto) {
 
         String exceptionMessage = null;
 
@@ -530,7 +524,7 @@ public class ContractorControllerImpl implements ContractorController {
                                    .build();
         } else {
             dtoWithPageForUi = DtoWithPageForUi.<ProposalDto>builder()
-                                   .url(SLASH_STRING + MAIN_CONTRACTOR_SERVLET)
+                                   .url(SLASH_STRING + GET_ALL_MY_PROPOSALS_CONTRACTOR_SERVLET)
                                    .status(dto.getStatus())
                                    .build();
         }
@@ -567,18 +561,5 @@ public class ContractorControllerImpl implements ContractorController {
         return dtoWithPageForUi;
     }
 
-    private ProjectDto getProjectDtoForContractor(long contractorId, Project project) {
 
-        Integer projectPrice = project.getChapters().stream()
-                                   .filter(chapter -> chapter.getContractor() != null)
-                                   .filter(chapter -> chapter.getContractor().getId().equals(contractorId))
-                                   .map(Chapter::getPrice)
-                                   .reduce(ZERO_INT_VALUE, Integer::sum);
-        Integer projectDebt = project.getChapters().stream()
-                                  .filter(chapter -> chapter.getContractor() != null)
-                                  .filter(chapter -> chapter.getContractor().getId().equals(contractorId))
-                                  .map(Util::getDebtByChapter)
-                                  .reduce(ZERO_INT_VALUE, Integer::sum);
-        return ProjectConverter.convertToDto(project, projectPrice, projectDebt);
-    }
 }
