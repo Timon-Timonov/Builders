@@ -437,7 +437,7 @@ public class ContractorControllerImpl implements ContractorController {
     }
 
     @Override
-    public DtoWithPageForUi<CalculationDto> updateWorkPriceFact(FilterPageDto dto) {
+    public DtoWithPageForUi<CalculationDto> updateWorkPriceFact(ChangeRequestDto dto) {
 
         String exceptionMessage = null;
         try {
@@ -497,7 +497,7 @@ public class ContractorControllerImpl implements ContractorController {
     }
 
     @Override
-    public DtoWithPageForUi<ProposalDto> setProposalStatus(FilterPageDto dto) {
+    public DtoWithPageForUi<ProposalDto> setProposalStatus(ChangeRequestDto dto) {
 
         String exceptionMessage = null;
 

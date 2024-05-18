@@ -1,7 +1,12 @@
 package it.academy.servlet;
 
+import it.academy.controller.AdminController;
+import it.academy.controller.impl.AdminControllerImpl;
+import it.academy.dto.DtoWithPageForUi;
+import it.academy.dto.UserDto;
 import it.academy.pojo.enums.Roles;
 import it.academy.util.ExceptionRedirector;
+import it.academy.util.SessionCleaner;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -20,6 +25,8 @@ import static it.academy.util.constants.ServletURLs.SLASH_STRING;
 @WebServlet(name = "createUserServlet", urlPatterns = SLASH_STRING + CREATE_USER_SERVLET)
 public class CreateUserServlet extends HttpServlet {
 
+    AdminController controller = new AdminControllerImpl();
+
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
@@ -30,14 +37,13 @@ public class CreateUserServlet extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
         String role = req.getParameter(ROLE_PARAM);
+        DtoWithPageForUi<UserDto> dto = controller.createUser(role);
 
-        if (Roles.CONTRACTOR.toString().equals(role)) {
-            req.getSession().setAttribute(ROLE_PARAM, Roles.CONTRACTOR);
-        } else if (Roles.DEVELOPER.toString().equals(role)) {
-            req.getSession().setAttribute(ROLE_PARAM, Roles.DEVELOPER);
+        if (dto.getExceptionMessage() != null) {
+            ExceptionRedirector.forwardToException1(req, resp, this, dto.getExceptionMessage());
         } else {
-            ExceptionRedirector.forwardToException1(req, resp, this, ROLE_IS_INVALID);
+            req.getSession().setAttribute(ROLE_PARAM,dto.getStatus());
+            getServletContext().getRequestDispatcher(dto.getUrl()).forward(req, resp);
         }
-        getServletContext().getRequestDispatcher(CREATE_USER_PAGE_JSP).forward(req, resp);
     }
 }

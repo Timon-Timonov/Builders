@@ -1,14 +1,14 @@
 package it.academy.servlet.developerServlets.getServlets;
 
 import it.academy.controller.DeveloperController;
+import it.academy.controller.impl.DeveloperControllerImpl;
+import it.academy.converters.FilterPageDtoConverter;
 import it.academy.dto.DtoWithPageForUi;
 import it.academy.dto.FilterPageDto;
-import it.academy.controller.impl.DeveloperControllerImpl;
 import it.academy.dto.ProjectDto;
 import it.academy.util.ExceptionRedirector;
 import it.academy.util.SessionAttributeSetter;
 import it.academy.util.SessionCleaner;
-import it.academy.converters.FilterRequestDtoConverter;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -29,8 +29,7 @@ public class GetAllMyProjectsDeveloperServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
-        FilterPageDto filter = FilterRequestDtoConverter.getPageRequestDtoShowProjects(req);
-
+        FilterPageDto filter = FilterPageDtoConverter.getPageRequestDtoShowProjects(req);
         DtoWithPageForUi<ProjectDto> dto = controller.getMyProjects(filter);
 
         if (dto.getExceptionMessage() != null) {

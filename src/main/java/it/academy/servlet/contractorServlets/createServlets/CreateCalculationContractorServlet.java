@@ -1,11 +1,11 @@
 package it.academy.servlet.contractorServlets.createServlets;
 
 import it.academy.controller.ContractorController;
+import it.academy.controller.impl.ContractorControllerImpl;
+import it.academy.converters.RequestDtoConverter;
+import it.academy.dto.CalculationDto;
 import it.academy.dto.CreateRequestDto;
 import it.academy.dto.DtoWithPageForUi;
-import it.academy.controller.impl.ContractorControllerImpl;
-import it.academy.dto.CalculationDto;
-import it.academy.util.ParameterFinder;
 import it.academy.util.ExceptionRedirector;
 
 import javax.servlet.ServletException;
@@ -15,10 +15,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-import static it.academy.util.constants.Constants.ZERO_INT_VALUE;
-import static it.academy.util.constants.Constants.ZERO_LONG_VALUE;
 import static it.academy.util.constants.JspURLs.CONTRACTOR_PAGES_CREATE_CALCULATION_JSP;
-import static it.academy.util.constants.ParameterNames.*;
 import static it.academy.util.constants.ServletURLs.CREATE_CALCULATION_CONTRACTOR_SERVLET;
 import static it.academy.util.constants.ServletURLs.SLASH_STRING;
 
@@ -36,18 +33,7 @@ public class CreateCalculationContractorServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
-        long chapterId = ParameterFinder.getNumberValueFromParameter(req, CHAPTER_ID_PARAM, ZERO_LONG_VALUE);
-        int year = ParameterFinder.getNumberValueFromParameter(req, YYYY_PARAM, ZERO_INT_VALUE);
-        int month = ParameterFinder.getNumberValueFromParameter(req, MM_PARAM, ZERO_INT_VALUE);
-        int workPrice = ParameterFinder.getNumberValueFromParameter(req, WORK_PRICE_PLAN_PARAM, ZERO_INT_VALUE);
-
-        CreateRequestDto requestDto = CreateRequestDto.builder()
-                                          .id(chapterId)
-                                          .int1(year)
-                                          .int2(month)
-                                          .int3(workPrice)
-                                          .build();
-
+        CreateRequestDto requestDto = RequestDtoConverter.getCreateRequestDtoCreateCalculation(req);
         DtoWithPageForUi<CalculationDto> dto = controller.createCalculation(requestDto);
 
         if (dto.getExceptionMessage() != null) {

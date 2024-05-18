@@ -1,10 +1,11 @@
 package it.academy.servlet.developerServlets.getServlets;
 
 import it.academy.controller.DeveloperController;
+import it.academy.controller.impl.DeveloperControllerImpl;
+import it.academy.converters.FilterPageDtoConverter;
+import it.academy.dto.ChapterDto;
 import it.academy.dto.DtoWithPageForUi;
 import it.academy.dto.FilterPageDto;
-import it.academy.controller.impl.DeveloperControllerImpl;
-import it.academy.dto.ChapterDto;
 import it.academy.util.ExceptionRedirector;
 import it.academy.util.ParameterFinder;
 import it.academy.util.SessionAttributeSetter;
@@ -17,7 +18,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
-import static it.academy.util.constants.Constants.ZERO_LONG_VALUE;
 import static it.academy.util.constants.Messages.BLANK_STRING;
 import static it.academy.util.constants.ParameterNames.*;
 import static it.academy.util.constants.ServletURLs.GET_CHAPTERS_OF_PROJECT_DEVELOPER_SERVLET;
@@ -31,14 +31,8 @@ public class GetChaptersOfProjectDeveloperServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
-        long projectId = ParameterFinder.getNumberValueFromParameter(req, PROJECT_ID_PARAM, ZERO_LONG_VALUE);
-        String projectName = ParameterFinder.getStringValueFromParameter(req, PROJECT_NAME_PARAM, BLANK_STRING);
-
-        FilterPageDto requestDto = FilterPageDto.builder()
-                                       .id(projectId)
-                                       .name(projectName)
-                                       .build();
-        DtoWithPageForUi<ChapterDto> dto = controller.getChaptersByProject(requestDto);
+        FilterPageDto filter = FilterPageDtoConverter.getFilterPageDtoGetChaptersByProject(req);
+        DtoWithPageForUi<ChapterDto> dto = controller.getChaptersByProject(filter);
         if (dto.getExceptionMessage() != null) {
             ExceptionRedirector.forwardToException3(req, resp, this, dto.getExceptionMessage());
         } else {

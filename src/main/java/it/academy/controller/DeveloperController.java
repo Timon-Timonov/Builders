@@ -20,17 +20,17 @@ public interface DeveloperController {
 
     DtoWithPageForUi<ChapterDto> createChapter(CreateRequestDto dto);
 
-    DtoWithPageForUi<ChapterDto> cancelChapter(FilterPageDto dto);
+    DtoWithPageForUi<ChapterDto> cancelChapter(Long chapterId);
 
     DtoWithPageForUi<ChapterDto> getChaptersByProject(FilterPageDto dto);
 
     DtoWithPageForUi<ChapterDto> getChaptersByContractorIdAndDeveloperId(FilterPageDto dto);
 
-    DtoWithPageForUi<ProposalDto> changeStatusOfProposal(FilterPageDto dto);
+    DtoWithPageForUi<ProposalDto> changeStatusOfProposal(ChangeRequestDto dto);
 
     DtoWithPageForUi<ProposalDto> getProposalsByChapter(FilterPageDto dto);
 
-    DtoWithPageForUi<ProjectDto> changeProjectStatus(FilterPageDto dto);
+    DtoWithPageForUi<ProjectDto> changeProjectStatus(ChangeRequestDto dto);
 
     DtoWithPageForUi<CalculationDto> getCalculationsByChapterId(FilterPageDto dto);
 

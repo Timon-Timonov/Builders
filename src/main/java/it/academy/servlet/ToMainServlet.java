@@ -29,7 +29,6 @@ public class ToMainServlet extends HttpServlet {
 
         HttpSession session = req.getSession();
         Object role = session.getAttribute(ROLE_PARAM);
-
         DtoWithPageForUi<UserDto> dto = controller.toMainPage(role);
 
         if (dto.getExceptionMessage() != null) {

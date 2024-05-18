@@ -7,7 +7,7 @@ import it.academy.controller.impl.DeveloperControllerImpl;
 import it.academy.dto.ContractorDto;
 import it.academy.util.ExceptionRedirector;
 import it.academy.util.SessionAttributeSetter;
-import it.academy.converters.FilterRequestDtoConverter;
+import it.academy.converters.FilterPageDtoConverter;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -28,7 +28,7 @@ public class GetAllMyContractorsDeveloperServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
-        FilterPageDto filter = FilterRequestDtoConverter.getPageRequestDtoShowContractors(req);
+        FilterPageDto filter = FilterPageDtoConverter.getPageRequestDtoShowContractors(req);
         DtoWithPageForUi<ContractorDto> dto = controller.getMyContractors(filter);
 
         if (dto.getExceptionMessage() != null) {

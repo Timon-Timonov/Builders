@@ -1,10 +1,7 @@
 package it.academy.controller.impl;
 
 import it.academy.controller.AdminController;
-import it.academy.dto.CreateRequestDto;
-import it.academy.dto.DtoWithPageForUi;
-import it.academy.dto.FilterPageDto;
-import it.academy.dto.LoginDto;
+import it.academy.converters.*;
 import it.academy.dto.*;
 import it.academy.exceptions.EmailOccupaidException;
 import it.academy.exceptions.NotCreateDataInDbException;
@@ -17,10 +14,8 @@ import it.academy.pojo.enums.UserStatus;
 import it.academy.pojo.legalEntities.Contractor;
 import it.academy.pojo.legalEntities.Developer;
 import it.academy.service.AdminService;
-import it.academy.dto.Page;
 import it.academy.service.impl.AdminServiceImpl;
 import it.academy.util.Util;
-import it.academy.converters.*;
 import lombok.extern.log4j.Log4j2;
 
 import javax.persistence.NoResultException;
@@ -137,6 +132,33 @@ public class AdminControllerImpl implements AdminController {
                            .build();
         }
         return loginDto;
+    }
+
+    @Override
+    public DtoWithPageForUi<UserDto> createUser(String role) {
+
+        String exceptionMessage = null;
+        Roles roles = null;
+        if (Roles.CONTRACTOR.toString().equalsIgnoreCase(role)) {
+            roles = Roles.CONTRACTOR;
+        } else if (Roles.DEVELOPER.toString().equalsIgnoreCase(role)) {
+            roles = Roles.DEVELOPER;
+        } else {
+            exceptionMessage = ROLE_IS_INVALID;
+        }
+
+        DtoWithPageForUi<UserDto> dtoWithPageForUi;
+        if (exceptionMessage != null) {
+            dtoWithPageForUi = DtoWithPageForUi.<UserDto>builder()
+                                   .exceptionMessage(exceptionMessage)
+                                   .build();
+        } else {
+            dtoWithPageForUi = DtoWithPageForUi.<UserDto>builder()
+                                   .url(CREATE_USER_PAGE_JSP)
+                                   .status(roles)
+                                   .build();
+        }
+        return dtoWithPageForUi;
     }
 
     @Override

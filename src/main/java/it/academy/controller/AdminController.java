@@ -12,6 +12,8 @@ public interface AdminController {
 
     LoginDto createAdmin(CreateRequestDto dto);
 
+    DtoWithPageForUi<UserDto> createUser(String role);
+
     UserDto getUser(String email) throws Exception;
 
     DtoWithPageForUi<ContractorDto> getAllContractors(FilterPageDto dto);

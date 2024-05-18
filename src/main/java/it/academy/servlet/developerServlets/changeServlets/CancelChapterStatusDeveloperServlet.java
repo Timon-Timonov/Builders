@@ -1,10 +1,9 @@
 package it.academy.servlet.developerServlets.changeServlets;
 
 import it.academy.controller.DeveloperController;
-import it.academy.dto.DtoWithPageForUi;
-import it.academy.dto.FilterPageDto;
 import it.academy.controller.impl.DeveloperControllerImpl;
 import it.academy.dto.ChapterDto;
+import it.academy.dto.DtoWithPageForUi;
 import it.academy.util.ExceptionRedirector;
 import it.academy.util.ParameterFinder;
 
@@ -29,12 +28,7 @@ public class CancelChapterStatusDeveloperServlet extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
         long chapterId = ParameterFinder.getNumberValueFromParameter(req, CHAPTER_ID_PARAM, ZERO_LONG_VALUE);
-
-        FilterPageDto requestDto = FilterPageDto.builder()
-                                       .id(chapterId)
-                                       .build();
-
-        DtoWithPageForUi<ChapterDto> dto = controller.cancelChapter(requestDto);
+        DtoWithPageForUi<ChapterDto> dto = controller.cancelChapter(chapterId);
 
         if (dto.getExceptionMessage() != null) {
             ExceptionRedirector.forwardToException3(req, resp, this, dto.getExceptionMessage());

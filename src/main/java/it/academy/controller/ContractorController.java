@@ -26,11 +26,11 @@ public interface ContractorController {
 
     DtoWithPageForUi<CalculationDto> getCalculationsByChapter(FilterPageDto dto);
 
-    DtoWithPageForUi<CalculationDto> updateWorkPriceFact(FilterPageDto dto);
+    DtoWithPageForUi<CalculationDto> updateWorkPriceFact(ChangeRequestDto dto);
 
     DtoWithPageForUi<CalculationDto> createCalculation(CreateRequestDto dto);
 
-    DtoWithPageForUi<ProposalDto> setProposalStatus(FilterPageDto dto);
+    DtoWithPageForUi<ProposalDto> setProposalStatus(ChangeRequestDto dto);
 
     DtoWithPageForUi<ProposalDto> createProposal(CreateRequestDto dto);
 

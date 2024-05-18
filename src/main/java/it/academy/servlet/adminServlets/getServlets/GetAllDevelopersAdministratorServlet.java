@@ -7,7 +7,7 @@ import it.academy.dto.DeveloperDto;
 import it.academy.util.ExceptionRedirector;
 import it.academy.util.SessionAttributeSetter;
 import it.academy.util.SessionCleaner;
-import it.academy.converters.FilterRequestDtoConverter;
+import it.academy.converters.FilterPageDtoConverter;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -28,7 +28,7 @@ public class GetAllDevelopersAdministratorServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
-        FilterPageDto filter = FilterRequestDtoConverter.getPageRequestDtoShowLegalEntities(req, DEVELOPER_PAGE_PARAM, DEVELOPER_COUNT_ON_PAGE_PARAM);
+        FilterPageDto filter = FilterPageDtoConverter.getPageRequestDtoShowLegalEntities(req, DEVELOPER_PAGE_PARAM, DEVELOPER_COUNT_ON_PAGE_PARAM);
         DtoWithPageForUi<DeveloperDto> dto = controller.getAllDevelopers(filter);
 
         if (dto.getExceptionMessage() != null) {

@@ -9,7 +9,7 @@ import it.academy.dto.ProjectDto;
 import it.academy.util.ExceptionRedirector;
 import it.academy.util.SessionAttributeSetter;
 import it.academy.util.SessionCleaner;
-import it.academy.converters.FilterRequestDtoConverter;
+import it.academy.converters.FilterPageDtoConverter;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -32,7 +32,7 @@ public class GetAllMyProjectsContractorServlet  extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
-        FilterPageDto filter = FilterRequestDtoConverter.getPageRequestDtoShowProjects(req);
+        FilterPageDto filter = FilterPageDtoConverter.getPageRequestDtoShowProjects(req);
         DtoWithPageForUi<ProjectDto> dto = controller.getMyProjects(filter);
 
         if (dto.getExceptionMessage() != null) {

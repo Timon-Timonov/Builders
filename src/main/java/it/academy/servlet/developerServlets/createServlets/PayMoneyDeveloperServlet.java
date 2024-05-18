@@ -1,12 +1,12 @@
 package it.academy.servlet.developerServlets.createServlets;
 
 import it.academy.controller.DeveloperController;
+import it.academy.controller.impl.DeveloperControllerImpl;
+import it.academy.converters.RequestDtoConverter;
 import it.academy.dto.CreateRequestDto;
 import it.academy.dto.DtoWithPageForUi;
-import it.academy.controller.impl.DeveloperControllerImpl;
 import it.academy.dto.MoneyTransferDto;
 import it.academy.util.ExceptionRedirector;
-import it.academy.util.ParameterFinder;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -15,9 +15,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-import static it.academy.util.constants.Constants.ZERO_INT_VALUE;
-import static it.academy.util.constants.Constants.ZERO_LONG_VALUE;
-import static it.academy.util.constants.ParameterNames.*;
 import static it.academy.util.constants.ServletURLs.PAY_MONEY_DEVELOPER_SERVLET;
 import static it.academy.util.constants.ServletURLs.SLASH_STRING;
 
@@ -29,15 +26,7 @@ public class PayMoneyDeveloperServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
-        long calculationId = ParameterFinder.getNumberValueFromParameter(req, CALCULATION_ID_PARAM, ZERO_LONG_VALUE);
-        int sumAdvance = ParameterFinder.getNumberValueFromParameter(req, SUM_ADVANCE_PARAM, ZERO_INT_VALUE);
-        int sumForWork = ParameterFinder.getNumberValueFromParameter(req, SUM_FOR_WORK_PARAM, ZERO_INT_VALUE);
-
-        CreateRequestDto requestDto = CreateRequestDto.builder()
-                                          .id(calculationId)
-                                          .int1(sumAdvance)
-                                          .int2(sumForWork)
-                                          .build();
+        CreateRequestDto requestDto = RequestDtoConverter.getCreateRequestDtoPayMoney(req);
 
         DtoWithPageForUi<MoneyTransferDto> dto = controller.payMoney(requestDto);
 

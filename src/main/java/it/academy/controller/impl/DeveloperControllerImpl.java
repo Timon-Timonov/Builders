@@ -1,10 +1,7 @@
 package it.academy.controller.impl;
 
 import it.academy.controller.DeveloperController;
-import it.academy.dto.CreateRequestDto;
-import it.academy.dto.DtoWithPageForUi;
-import it.academy.dto.FilterPageDto;
-import it.academy.dto.LoginDto;
+import it.academy.converters.*;
 import it.academy.dto.*;
 import it.academy.exceptions.EmailOccupaidException;
 import it.academy.exceptions.NotCreateDataInDbException;
@@ -18,10 +15,8 @@ import it.academy.pojo.enums.ProposalStatus;
 import it.academy.pojo.legalEntities.Contractor;
 import it.academy.pojo.legalEntities.Developer;
 import it.academy.service.DeveloperService;
-import it.academy.dto.Page;
 import it.academy.service.impl.DeveloperServiceImpl;
 import it.academy.util.Util;
-import it.academy.converters.*;
 import lombok.extern.log4j.Log4j2;
 
 import java.io.IOException;
@@ -308,16 +303,16 @@ public class DeveloperControllerImpl implements DeveloperController {
     }
 
     @Override
-    public DtoWithPageForUi<ChapterDto> cancelChapter(FilterPageDto dto) {
+    public DtoWithPageForUi<ChapterDto> cancelChapter(Long chapterId) {
 
         String exceptionMessage = null;
 
         try {
-            service.cancelChapter(dto.getId());
-            log.trace(CHAPTER_STATUS_CHANGED + dto.getId());
+            service.cancelChapter(chapterId);
+            log.trace(CHAPTER_STATUS_CHANGED + chapterId);
         } catch (NotUpdateDataInDbException e) {
             exceptionMessage = CHANGING_OF_CHAPTER_STATUS_FAILED;
-            log.error(CHANGING_OF_CHAPTER_STATUS_FAILED + dto.getId(), e);
+            log.error(CHANGING_OF_CHAPTER_STATUS_FAILED + chapterId, e);
         } catch (IOException e) {
             exceptionMessage = BAD_CONNECTION;
             log.error(BAD_CONNECTION, e);
@@ -333,7 +328,6 @@ public class DeveloperControllerImpl implements DeveloperController {
         } else {
             dtoWithPageForUi = DtoWithPageForUi.<ChapterDto>builder()
                                    .url(SLASH_STRING + GET_CHAPTERS_OF_PROJECT_DEVELOPER_SERVLET)
-                                   .status(dto.getStatus())
                                    .build();
         }
         return dtoWithPageForUi;
@@ -424,7 +418,7 @@ public class DeveloperControllerImpl implements DeveloperController {
     }
 
     @Override
-    public DtoWithPageForUi<ProposalDto> changeStatusOfProposal(FilterPageDto dto) {
+    public DtoWithPageForUi<ProposalDto> changeStatusOfProposal(ChangeRequestDto dto) {
 
         String exceptionMessage = null;
         String url = Boolean.TRUE.toString().equalsIgnoreCase(dto.getName()) ?
@@ -513,7 +507,7 @@ public class DeveloperControllerImpl implements DeveloperController {
     }
 
     @Override
-    public DtoWithPageForUi<ProjectDto> changeProjectStatus(FilterPageDto dto) {
+    public DtoWithPageForUi<ProjectDto> changeProjectStatus(ChangeRequestDto dto) {
 
         String exceptionMessage = null;
 
@@ -541,7 +535,6 @@ public class DeveloperControllerImpl implements DeveloperController {
         } else {
             dtoWithPageForUi = DtoWithPageForUi.<ProjectDto>builder()
                                    .url(SLASH_STRING + GET_CHAPTERS_OF_PROJECT_DEVELOPER_SERVLET)
-                                   .status(dto.getStatus())
                                    .build();
         }
         return dtoWithPageForUi;

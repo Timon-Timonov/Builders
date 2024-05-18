@@ -8,7 +8,7 @@ import it.academy.dto.ProposalDto;
 import it.academy.util.ExceptionRedirector;
 import it.academy.util.SessionAttributeSetter;
 import it.academy.util.SessionCleaner;
-import it.academy.converters.FilterRequestDtoConverter;
+import it.academy.converters.FilterPageDtoConverter;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -30,7 +30,7 @@ public class GetAllMyProposalsContractorServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
-        FilterPageDto filter = FilterRequestDtoConverter.getPageRequestDtoShowProposals(req);
+        FilterPageDto filter = FilterPageDtoConverter.getPageRequestDtoShowProposals(req);
         DtoWithPageForUi<ProposalDto> dto = controller.getMyProposals(filter);
 
         if (dto.getExceptionMessage() != null) {

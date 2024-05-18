@@ -1,12 +1,11 @@
 package it.academy.servlet.contractorServlets.changeServlets;
 
 import it.academy.controller.ContractorController;
-import it.academy.dto.DtoWithPageForUi;
-import it.academy.dto.FilterPageDto;
 import it.academy.controller.impl.ContractorControllerImpl;
+import it.academy.converters.RequestDtoConverter;
+import it.academy.dto.ChangeRequestDto;
+import it.academy.dto.DtoWithPageForUi;
 import it.academy.dto.ProposalDto;
-import it.academy.pojo.enums.ProposalStatus;
-import it.academy.util.ParameterFinder;
 import it.academy.util.ExceptionRedirector;
 
 import javax.servlet.ServletException;
@@ -16,9 +15,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-import static it.academy.util.constants.Constants.ZERO_LONG_VALUE;
-import static it.academy.util.constants.ParameterNames.NEW_PROPOSAL_STATUS_PARAM;
-import static it.academy.util.constants.ParameterNames.PROPOSAL_ID_PARAM;
 import static it.academy.util.constants.ServletURLs.CHANGE_PROPOSAL_STATUS_CONTRACTOR_SERVLET;
 import static it.academy.util.constants.ServletURLs.SLASH_STRING;
 
@@ -30,14 +26,7 @@ public class ChangeProposalStatusContractorServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
-        long proposalId = ParameterFinder.getNumberValueFromParameter(req, PROPOSAL_ID_PARAM, ZERO_LONG_VALUE);
-        ProposalStatus newStatus = ParameterFinder.getProposalStatusFromParameter(req, NEW_PROPOSAL_STATUS_PARAM, null);
-
-        FilterPageDto requestDto = FilterPageDto.builder()
-                                        .id(proposalId)
-                                        .status(newStatus)
-                                        .build();
-
+        ChangeRequestDto requestDto = RequestDtoConverter.getChangeRequestDtoSetProposalStatus(req);
         DtoWithPageForUi<ProposalDto> dto = controller.setProposalStatus(requestDto);
 
         if (dto.getExceptionMessage() != null) {
