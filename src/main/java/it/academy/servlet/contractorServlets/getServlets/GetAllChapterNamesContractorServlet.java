@@ -1,9 +1,9 @@
 package it.academy.servlet.contractorServlets.getServlets;
 
-import it.academy.controller.ContractorController;
-import it.academy.dto.DtoWithPageForUi;
-import it.academy.controller.impl.ContractorControllerImpl;
 import it.academy.dto.ChapterDto;
+import it.academy.dto.DtoWithPageForUi;
+import it.academy.service.ContractorService;
+import it.academy.service.impl.ContractorServiceImpl;
 import it.academy.util.ExceptionRedirector;
 import it.academy.util.SessionAttributeSetter;
 import it.academy.util.SessionCleaner;
@@ -22,12 +22,12 @@ import static it.academy.util.constants.ServletURLs.SLASH_STRING;
 @WebServlet(name = "getAllChapterNamesContractorServlet", urlPatterns = SLASH_STRING + GET_ALL_CHAPTER_NAMES_CONTRACTOR_SERVLET)
 public class GetAllChapterNamesContractorServlet extends HttpServlet {
 
-    private final ContractorController controller = new ContractorControllerImpl();
+    private final ContractorService service = new ContractorServiceImpl();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
-        DtoWithPageForUi<ChapterDto> dto = controller.getAllChapterNames();
+        DtoWithPageForUi<ChapterDto> dto = service.getAllChapterNames();
 
         if (dto.getExceptionMessage() != null) {
             ExceptionRedirector.forwardToException3(req, resp, this, dto.getExceptionMessage());

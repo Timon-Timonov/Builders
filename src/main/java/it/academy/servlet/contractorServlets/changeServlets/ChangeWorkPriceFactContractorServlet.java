@@ -1,7 +1,7 @@
 package it.academy.servlet.contractorServlets.changeServlets;
 
-import it.academy.controller.ContractorController;
-import it.academy.controller.impl.ContractorControllerImpl;
+import it.academy.service.ContractorService;
+import it.academy.service.impl.ContractorServiceImpl;
 import it.academy.converters.RequestDtoConverter;
 import it.academy.dto.CalculationDto;
 import it.academy.dto.ChangeRequestDto;
@@ -21,13 +21,13 @@ import static it.academy.util.constants.ServletURLs.SLASH_STRING;
 @WebServlet(name = "changeWorkPriceFactContractorServlet", urlPatterns = SLASH_STRING + CHANGE_WORK_PRICE_FACT_CONTRACTOR_SERVLET)
 public class ChangeWorkPriceFactContractorServlet extends HttpServlet {
 
-    ContractorController controller = new ContractorControllerImpl();
+   private final ContractorService service = new ContractorServiceImpl();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
         ChangeRequestDto requestDto = RequestDtoConverter.getChangeRequestDtoUpdateWorkPrice(req);
-        DtoWithPageForUi<CalculationDto> dto = controller.updateWorkPriceFact(requestDto);
+        DtoWithPageForUi<CalculationDto> dto = service.updateWorkPriceFact(requestDto);
 
         if (dto.getExceptionMessage() != null) {
             ExceptionRedirector.forwardToException3(req, resp, this, dto.getExceptionMessage());

@@ -1,49 +1,33 @@
 package it.academy.service;
 
-import it.academy.pojo.Calculation;
-import it.academy.pojo.Chapter;
-import it.academy.pojo.Project;
-import it.academy.pojo.Proposal;
-import it.academy.pojo.enums.ProjectStatus;
-import it.academy.pojo.enums.ProposalStatus;
-import it.academy.pojo.legalEntities.Contractor;
-import it.academy.pojo.legalEntities.Developer;
-import it.academy.dto.Page;
-
-import java.io.IOException;
-import java.util.List;
+import it.academy.dto.*;
 
 public interface ContractorService {
 
-    Contractor createContractor(
-        String email, String password, String name, String city, String street, String building)
-        throws Exception;
+    LoginDto createContractor(CreateRequestDto dto);
 
-    Page<Project> getMyProjects(long contractorId, ProjectStatus status, int page, int count) throws Exception;
+    DtoWithPageForUi<ProjectDto> getMyProjects(FilterPageDto dto);
 
-    Page<Project> getMyProjectsByDeveloper
-        (long developerId, long contractorId, ProjectStatus status, int page, int count)
-        throws Exception;
+    DtoWithPageForUi<ProjectDto> getMyProjectsByDeveloper(FilterPageDto dto);
 
-    Page<Chapter> getFreeChapters(long contractorId, String chapterName, ProjectStatus projectStatus, int page, int count) throws Exception;
+    DtoWithPageForUi<ChapterDto> getAllChapterNames();
 
-    Page<Developer> getMyDevelopers(long contractorId, ProjectStatus status, int page, int count) throws Exception;
+    DtoWithPageForUi<ChapterDto> getFreeChapters(FilterPageDto dto);
 
-    Page<Proposal> getMyProposals(long contractorId, ProposalStatus status, int page, int count) throws Exception;
+    DtoWithPageForUi<DeveloperDto> getMyDevelopers(FilterPageDto dto);
 
-    Page<Calculation> getCalculationsByChapter(long chapterId, int page, int count) throws Exception;
+    DtoWithPageForUi<ProposalDto> getMyProposals(FilterPageDto dto);
 
-    List<Chapter> getMyChaptersByProjectId(long ProjectId, long ContractorId) throws Exception;
+    DtoWithPageForUi<ChapterDto> getMyChaptersByProjectId(FilterPageDto dto);
 
-    List<String> getAllChapterNames() throws IOException;
+    DtoWithPageForUi<CalculationDto> getCalculationsByChapter(FilterPageDto dto);
 
-    void createCalculation(long chapterId, int YYYY, int MM, int workPricePlan) throws Exception;
+    DtoWithPageForUi<CalculationDto> updateWorkPriceFact(ChangeRequestDto dto);
 
-    void createProposal(long chapterId, long contractorId) throws Exception;
+    DtoWithPageForUi<CalculationDto> createCalculation(CreateRequestDto dto);
 
-    int getTotalDeptByDeveloper(long contractorId, long developerId) throws IOException;
+    DtoWithPageForUi<ProposalDto> setProposalStatus(ChangeRequestDto dto);
 
-    void updateWorkPriceFact(int workPrice, long calculationId) throws Exception;
+    DtoWithPageForUi<ProposalDto> createProposal(CreateRequestDto dto);
 
-    void setProposalStatus(long proposalId, ProposalStatus newStatus) throws Exception;
 }

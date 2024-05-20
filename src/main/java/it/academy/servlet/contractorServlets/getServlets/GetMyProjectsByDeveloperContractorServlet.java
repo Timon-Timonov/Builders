@@ -1,11 +1,11 @@
 package it.academy.servlet.contractorServlets.getServlets;
 
-import it.academy.controller.ContractorController;
-import it.academy.controller.impl.ContractorControllerImpl;
 import it.academy.converters.FilterPageDtoConverter;
 import it.academy.dto.DtoWithPageForUi;
 import it.academy.dto.FilterPageDto;
 import it.academy.dto.ProjectDto;
+import it.academy.service.ContractorService;
+import it.academy.service.impl.ContractorServiceImpl;
 import it.academy.util.ExceptionRedirector;
 import it.academy.util.ParameterFinder;
 import it.academy.util.SessionAttributeSetter;
@@ -26,14 +26,14 @@ import static it.academy.util.constants.ServletURLs.SLASH_STRING;
 @WebServlet(name = "getMyProjectsByDeveloperContractorServlet", urlPatterns = SLASH_STRING + GET_MY_PROJECTS_BY_DEVELOPER_CONTRACTOR_SERVLET)
 public class GetMyProjectsByDeveloperContractorServlet extends HttpServlet {
 
-    ContractorController controller = new ContractorControllerImpl();
+    private final ContractorService service = new ContractorServiceImpl();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
         FilterPageDto filter = FilterPageDtoConverter.getFilterPageDtoGetProjectsByDeveloperAndContractor(req);
 
-        DtoWithPageForUi<ProjectDto> dto = controller.getMyProjectsByDeveloper(filter);
+        DtoWithPageForUi<ProjectDto> dto = service.getMyProjectsByDeveloper(filter);
 
         if (dto.getExceptionMessage() != null) {
             ExceptionRedirector.forwardToException3(req, resp, this, dto.getExceptionMessage());

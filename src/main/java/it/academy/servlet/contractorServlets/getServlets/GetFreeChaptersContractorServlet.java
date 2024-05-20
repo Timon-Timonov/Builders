@@ -1,7 +1,7 @@
 package it.academy.servlet.contractorServlets.getServlets;
 
-import it.academy.controller.ContractorController;
-import it.academy.controller.impl.ContractorControllerImpl;
+import it.academy.service.ContractorService;
+import it.academy.service.impl.ContractorServiceImpl;
 import it.academy.converters.FilterPageDtoConverter;
 import it.academy.dto.ChapterDto;
 import it.academy.dto.DtoWithPageForUi;
@@ -23,13 +23,13 @@ import static it.academy.util.constants.ServletURLs.SLASH_STRING;
 @WebServlet(name = "getFreeChaptersContractorServlet", urlPatterns = SLASH_STRING + GET_FREE_CHAPTERS_CONTRACTOR_SERVLET)
 public class GetFreeChaptersContractorServlet extends HttpServlet {
 
-    ContractorController controller = new ContractorControllerImpl();
+   private final ContractorService service = new ContractorServiceImpl();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
         FilterPageDto filter = FilterPageDtoConverter.getFilterPageDtoGetFreeChapters(req);
-        DtoWithPageForUi<ChapterDto> dto = controller.getFreeChapters(filter);
+        DtoWithPageForUi<ChapterDto> dto = service.getFreeChapters(filter);
 
         if (dto.getExceptionMessage() != null) {
             ExceptionRedirector.forwardToException3(req, resp, this, dto.getExceptionMessage());

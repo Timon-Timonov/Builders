@@ -1,7 +1,7 @@
 package it.academy.servlet.contractorServlets.createServlets;
 
-import it.academy.controller.ContractorController;
-import it.academy.controller.impl.ContractorControllerImpl;
+import it.academy.service.ContractorService;
+import it.academy.service.impl.ContractorServiceImpl;
 import it.academy.converters.RequestDtoConverter;
 import it.academy.dto.CreateRequestDto;
 import it.academy.dto.DtoWithPageForUi;
@@ -21,13 +21,13 @@ import static it.academy.util.constants.ServletURLs.SLASH_STRING;
 @WebServlet(name = "createProposalContractorServlet", urlPatterns = SLASH_STRING + CREATE_PROPOSAL_CONTRACTOR_SERVLET)
 public class CreateProposalContractorServlet extends HttpServlet {
 
-    ContractorController controller = new ContractorControllerImpl();
+   private final ContractorService service = new ContractorServiceImpl();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
         CreateRequestDto requestDto = RequestDtoConverter.getCreateRequestDtoCreateProposal(req);
-        DtoWithPageForUi<ProposalDto> dto = controller.createProposal(requestDto);
+        DtoWithPageForUi<ProposalDto> dto = service.createProposal(requestDto);
 
         if (dto.getExceptionMessage() != null) {
             ExceptionRedirector.forwardToException3(req, resp, this, dto.getExceptionMessage());

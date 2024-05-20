@@ -1,7 +1,7 @@
 package it.academy.servlet.contractorServlets.getServlets;
 
-import it.academy.controller.ContractorController;
-import it.academy.controller.impl.ContractorControllerImpl;
+import it.academy.service.ContractorService;
+import it.academy.service.impl.ContractorServiceImpl;
 import it.academy.converters.FilterPageDtoConverter;
 import it.academy.dto.CalculationDto;
 import it.academy.dto.DtoWithPageForUi;
@@ -26,13 +26,13 @@ import static it.academy.util.constants.ServletURLs.SLASH_STRING;
 @WebServlet(name = "getMyCalculationContractorServlet", urlPatterns = SLASH_STRING + GET_MY_CALCULATION_CONTRACTOR_SERVLET)
 public class GetMyCalculationContractorServlet extends HttpServlet {
 
-    private final ContractorController controller = new ContractorControllerImpl();
+    private final ContractorService service = new ContractorServiceImpl();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
         FilterPageDto filter = FilterPageDtoConverter.getFilterPageDtoGetCalculationsByChapter(req);
-        DtoWithPageForUi<CalculationDto> dto = controller.getCalculationsByChapter(filter);
+        DtoWithPageForUi<CalculationDto> dto = service.getCalculationsByChapter(filter);
 
         if (dto.getExceptionMessage() != null) {
             ExceptionRedirector.forwardToException3(req, resp, this, dto.getExceptionMessage());

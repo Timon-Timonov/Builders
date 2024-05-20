@@ -1,9 +1,9 @@
 package it.academy.servlet.contractorServlets.getServlets;
 
-import it.academy.controller.ContractorController;
+import it.academy.service.ContractorService;
 import it.academy.dto.DtoWithPageForUi;
 import it.academy.dto.FilterPageDto;
-import it.academy.controller.impl.ContractorControllerImpl;
+import it.academy.service.impl.ContractorServiceImpl;
 import it.academy.dto.ProposalDto;
 import it.academy.util.ExceptionRedirector;
 import it.academy.util.SessionAttributeSetter;
@@ -25,13 +25,13 @@ import static it.academy.util.constants.ServletURLs.SLASH_STRING;
 @WebServlet(name = "getAllMyProposalsContractorServlet", urlPatterns = SLASH_STRING + GET_ALL_MY_PROPOSALS_CONTRACTOR_SERVLET)
 public class GetAllMyProposalsContractorServlet extends HttpServlet {
 
-    private final ContractorController controller = new ContractorControllerImpl();
+    private final ContractorService service = new ContractorServiceImpl();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
         FilterPageDto filter = FilterPageDtoConverter.getPageRequestDtoShowProposals(req);
-        DtoWithPageForUi<ProposalDto> dto = controller.getMyProposals(filter);
+        DtoWithPageForUi<ProposalDto> dto = service.getMyProposals(filter);
 
         if (dto.getExceptionMessage() != null) {
             ExceptionRedirector.forwardToException3(req, resp, this, dto.getExceptionMessage());
