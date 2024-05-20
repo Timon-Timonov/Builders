@@ -1,12 +1,10 @@
 package it.academy.servlet;
 
-import it.academy.controller.AdminController;
-import it.academy.controller.impl.AdminControllerImpl;
 import it.academy.dto.DtoWithPageForUi;
 import it.academy.dto.UserDto;
-import it.academy.pojo.enums.Roles;
+import it.academy.service.AdminService;
+import it.academy.service.impl.AdminServiceImpl;
 import it.academy.util.ExceptionRedirector;
-import it.academy.util.SessionCleaner;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -15,9 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-import static it.academy.util.constants.JspURLs.CREATE_USER_PAGE_JSP;
 import static it.academy.util.constants.JspURLs.SELECT_NEW_USER_ROLE_PAGE_JSP;
-import static it.academy.util.constants.Messages.ROLE_IS_INVALID;
 import static it.academy.util.constants.ParameterNames.ROLE_PARAM;
 import static it.academy.util.constants.ServletURLs.CREATE_USER_SERVLET;
 import static it.academy.util.constants.ServletURLs.SLASH_STRING;
@@ -25,7 +21,7 @@ import static it.academy.util.constants.ServletURLs.SLASH_STRING;
 @WebServlet(name = "createUserServlet", urlPatterns = SLASH_STRING + CREATE_USER_SERVLET)
 public class CreateUserServlet extends HttpServlet {
 
-    AdminController controller = new AdminControllerImpl();
+    private final AdminService service = AdminServiceImpl.getInstance();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -37,12 +33,12 @@ public class CreateUserServlet extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
         String role = req.getParameter(ROLE_PARAM);
-        DtoWithPageForUi<UserDto> dto = controller.createUser(role);
+        DtoWithPageForUi<UserDto> dto = service.createUser(role);
 
         if (dto.getExceptionMessage() != null) {
             ExceptionRedirector.forwardToException1(req, resp, this, dto.getExceptionMessage());
         } else {
-            req.getSession().setAttribute(ROLE_PARAM,dto.getStatus());
+            req.getSession().setAttribute(ROLE_PARAM, dto.getStatus());
             getServletContext().getRequestDispatcher(dto.getUrl()).forward(req, resp);
         }
     }

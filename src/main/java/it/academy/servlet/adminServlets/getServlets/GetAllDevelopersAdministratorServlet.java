@@ -1,10 +1,11 @@
 package it.academy.servlet.adminServlets.getServlets;
 
-import it.academy.controller.impl.AdminControllerImpl;
 import it.academy.converters.FilterPageDtoConverter;
 import it.academy.dto.DeveloperDto;
 import it.academy.dto.DtoWithPageForUi;
 import it.academy.dto.FilterPageDto;
+import it.academy.service.AdminService;
+import it.academy.service.impl.AdminServiceImpl;
 import it.academy.util.ExceptionRedirector;
 import it.academy.util.SessionAttributeSetter;
 import it.academy.util.SessionCleaner;
@@ -23,13 +24,13 @@ import static it.academy.util.constants.ServletURLs.SLASH_STRING;
 @WebServlet(name = "getAllDevelopersAdministratorServlet", urlPatterns = SLASH_STRING + GET_ALL_DEVELOPERS_ADMINISTRATOR_SERVLET)
 public class GetAllDevelopersAdministratorServlet extends HttpServlet {
 
-    AdminControllerImpl controller = new AdminControllerImpl();
+    private final AdminService service = AdminServiceImpl.getInstance();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
         FilterPageDto filter = FilterPageDtoConverter.getPageRequestDtoShowLegalEntities(req, DEVELOPER_PAGE_PARAM, DEVELOPER_COUNT_ON_PAGE_PARAM);
-        DtoWithPageForUi<DeveloperDto> dto = controller.getAllDevelopers(filter);
+        DtoWithPageForUi<DeveloperDto> dto = service.getAllDevelopers(filter);
 
         if (dto.getExceptionMessage() != null) {
             ExceptionRedirector.forwardToException3(req, resp, this, dto.getExceptionMessage());

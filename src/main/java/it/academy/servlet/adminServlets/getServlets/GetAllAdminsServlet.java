@@ -1,8 +1,9 @@
 package it.academy.servlet.adminServlets.getServlets;
 
-import it.academy.controller.impl.AdminControllerImpl;
 import it.academy.dto.DtoWithPageForUi;
 import it.academy.dto.UserDto;
+import it.academy.service.AdminService;
+import it.academy.service.impl.AdminServiceImpl;
 import it.academy.util.ExceptionRedirector;
 import it.academy.util.SessionAttributeSetter;
 
@@ -19,12 +20,12 @@ import static it.academy.util.constants.ServletURLs.SLASH_STRING;
 @WebServlet(name = "getAllAdminsServlet", urlPatterns = SLASH_STRING + GET_ALL_ADMINS_ADMINISTRATOR_SERVLET)
 public class GetAllAdminsServlet extends HttpServlet {
 
-    AdminControllerImpl controller = new AdminControllerImpl();
+    private final AdminService service = AdminServiceImpl.getInstance();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
-        DtoWithPageForUi<UserDto> dto = controller.getAllAdministrators();
+        DtoWithPageForUi<UserDto> dto = service.getAllAdministrators();
 
         if (dto.getExceptionMessage() != null) {
             ExceptionRedirector.forwardToException3(req, resp, this, dto.getExceptionMessage());

@@ -42,6 +42,19 @@ public class ContractorServiceImpl implements ContractorService {
     private final ProposalDao proposalDao = new ProposalDaoImpl();
     private final UserDao userDao = new UserDaoImpl();
 
+    private static ContractorServiceImpl instance;
+
+    private ContractorServiceImpl() {
+    }
+
+    public static synchronized ContractorServiceImpl getInstance() {
+
+        if (instance == null) {
+            instance = new ContractorServiceImpl();
+        }
+        return instance;
+    }
+
     @Override
     public LoginDto createContractor(CreateRequestDto dto) {
 
@@ -49,57 +62,51 @@ public class ContractorServiceImpl implements ContractorService {
         UserDto userFromDb = null;
 
         try {
-            Contractor createdContractor;
-            try {
-                createdContractor = contractorDao.executeInOneEntityTransaction(() -> {
-                    Contractor contractor;
-                    User userFromDB = null;
-                    try {
-                        userFromDB = userDao.executeInOneEntityTransaction(() -> {
-                            User newUser;
-                            try {
-                                newUser = User.builder()
-                                              .email(dto.getEmail())
-                                              .password(dto.getPassword())
-                                              .role(Roles.CONTRACTOR)
-                                              .status(UserStatus.ACTIVE)
-                                              .build();
-                                userDao.create(newUser);
-                            } catch (ConstraintViolationException e) {
-                                log.error(EMAIL + dto.getEmail() + IS_OCCUPIED, e);
-                                return null;
-                            }
-                            return newUser;
-                        });
-                    } catch (RollbackException e) {
-                        log.error(e);
-                    }
+            Contractor createdContractor = contractorDao.executeInOneEntityTransaction(() -> {
+                Contractor contractor;
+                User userFromDB = null;
+                try {
+                    userFromDB = userDao.executeInOneEntityTransaction(() -> {
+                        User newUser;
+                        try {
+                            newUser = User.builder()
+                                          .email(dto.getEmail())
+                                          .password(dto.getPassword())
+                                          .role(Roles.CONTRACTOR)
+                                          .status(UserStatus.ACTIVE)
+                                          .build();
+                            userDao.create(newUser);
+                        } catch (ConstraintViolationException e) {
+                            log.error(EMAIL + dto.getEmail() + IS_OCCUPIED, e);
+                            return null;
+                        }
+                        return newUser;
+                    });
+                } catch (RollbackException e) {
+                    log.error(e);
+                }
 
-                    if (userFromDB != null) {
-                        Contractor newContractor = Contractor.builder()
-                                                       .name(dto.getName())
-                                                       .address(Address.builder()
-                                                                    .city(dto.getCity())
-                                                                    .street(dto.getStreet())
-                                                                    .building(dto.getBuilding())
-                                                                    .build())
-                                                       .user(userFromDB)
-                                                       .build();
-                        contractorDao.create(newContractor);
-                        log.trace(CONTRACTOR_CREATED_ID + newContractor.getId());
-                        contractor = newContractor;
-                    } else {
-                        throw new EmailOccupaidException(EMAIL + dto.getEmail() + OCCUPIED);
-                    }
-                    if (contractor.getId() == null) {
-                        throw new NotCreateDataInDbException();
-                    }
-                    return contractor;
-                });
-            } catch (RollbackException e) {
-                log.error(BAD_CONNECTION, e);
-                throw new IOException(BAD_CONNECTION);
-            }
+                if (userFromDB != null) {
+                    Contractor newContractor = Contractor.builder()
+                                                   .name(dto.getName())
+                                                   .address(Address.builder()
+                                                                .city(dto.getCity())
+                                                                .street(dto.getStreet())
+                                                                .building(dto.getBuilding())
+                                                                .build())
+                                                   .user(userFromDB)
+                                                   .build();
+                    contractorDao.create(newContractor);
+                    log.trace(CONTRACTOR_CREATED_ID + newContractor.getId());
+                    contractor = newContractor;
+                } else {
+                    throw new EmailOccupaidException(EMAIL + dto.getEmail() + OCCUPIED);
+                }
+                if (contractor.getId() == null) {
+                    throw new NotCreateDataInDbException();
+                }
+                return contractor;
+            });
 
             if (createdContractor == null) {
                 throw new NotCreateDataInDbException();
@@ -145,25 +152,20 @@ public class ContractorServiceImpl implements ContractorService {
         ProjectStatus status = null;
         try {
             ProjectStatus projectStatus = (ProjectStatus) dto.getStatus();
-            Page<Project> projectPage;
-            try {
-                projectPage = projectDao.executeInOnePageTransaction(() -> {
-                    Page<Project> page1 = null;
-                    try {
-                        long totalCount = projectDao.getCountOfProjectsByContractorId(dto.getId(), projectStatus);
-                        page1 = Util.getPageWithCorrectNumbers(dto.getPage(), count, totalCount);
-                        page1.getList().addAll(projectDao.getProjectsByContractorId(
-                            dto.getId(), projectStatus, page1.getPageNumber(), count));
-                    } catch (NoResultException e) {
-                        log.error(THERE_IS_NO_SUCH_DATA_IN_DB_WITH_CONTRACTOR_ID + dto.getId());
-                    }
-                    return page1 != null ? page1
-                               : new Page<>(new ArrayList<>(), FIRST_PAGE_NUMBER, FIRST_PAGE_NUMBER);
-                });
-            } catch (RollbackException e) {
-                log.error(BAD_CONNECTION, e);
-                throw new IOException(BAD_CONNECTION);
-            }
+            Page<Project> projectPage = projectDao.executeInOnePageTransaction(() -> {
+                Page<Project> page1 = null;
+                try {
+                    long totalCount = projectDao.getCountOfProjectsByContractorId(dto.getId(), projectStatus);
+                    page1 = Util.getPageWithCorrectNumbers(dto.getPage(), count, totalCount);
+                    page1.getList().addAll(projectDao.getProjectsByContractorId(
+                        dto.getId(), projectStatus, page1.getPageNumber(), count));
+                } catch (NoResultException e) {
+                    log.error(THERE_IS_NO_SUCH_DATA_IN_DB_WITH_CONTRACTOR_ID + dto.getId());
+                }
+                return page1 != null ? page1
+                           : new Page<>(new ArrayList<>(), FIRST_PAGE_NUMBER, FIRST_PAGE_NUMBER);
+            });
+
             status = projectStatus;
             page = projectPage.getPageNumber();
             lastPageNumber = projectPage.getLastPageNumber();
@@ -210,27 +212,22 @@ public class ContractorServiceImpl implements ContractorService {
         ProjectStatus status = null;
         try {
             ProjectStatus projectStatus = (ProjectStatus) dto.getStatus();
-            Page<Project> projectPage;
-            try {
-                projectPage = projectDao.executeInOnePageTransaction(() -> {
-                    Page<Project> page1 = null;
-                    try {
-                        long totalCount = projectDao.getCountOfProjectsByDeveloperIdContractorId(
-                            dto.getId(), dto.getSecondId(), projectStatus);
-                        page1 = Util.getPageWithCorrectNumbers(dto.getPage(), count, totalCount);
-                        page1.getList().addAll(projectDao.getProjectsByDeveloperIdContractorId(
-                            dto.getId(), dto.getSecondId(), projectStatus, page1.getPageNumber(), count));
-                    } catch (NoResultException e) {
-                        log.error(THERE_IS_NO_SUCH_DATA_IN_DB_WITH_CONTRACTOR_ID + dto.getSecondId() +
-                                      AND_DELELOPER_ID + dto.getId());
-                    }
-                    return page1 != null ? page1
-                               : new Page<>(new ArrayList<>(), FIRST_PAGE_NUMBER, FIRST_PAGE_NUMBER);
-                });
-            } catch (RollbackException e) {
-                log.error(BAD_CONNECTION, e);
-                throw new IOException(BAD_CONNECTION);
-            }
+            Page<Project> projectPage = projectDao.executeInOnePageTransaction(() -> {
+                Page<Project> page1 = null;
+                try {
+                    long totalCount = projectDao.getCountOfProjectsByDeveloperIdContractorId(
+                        dto.getId(), dto.getSecondId(), projectStatus);
+                    page1 = Util.getPageWithCorrectNumbers(dto.getPage(), count, totalCount);
+                    page1.getList().addAll(projectDao.getProjectsByDeveloperIdContractorId(
+                        dto.getId(), dto.getSecondId(), projectStatus, page1.getPageNumber(), count));
+                } catch (NoResultException e) {
+                    log.error(THERE_IS_NO_SUCH_DATA_IN_DB_WITH_CONTRACTOR_ID + dto.getSecondId() +
+                                  AND_DELELOPER_ID + dto.getId());
+                }
+                return page1 != null ? page1
+                           : new Page<>(new ArrayList<>(), FIRST_PAGE_NUMBER, FIRST_PAGE_NUMBER);
+            });
+
             status = projectStatus;
             page = projectPage.getPageNumber();
             lastPageNumber = projectPage.getLastPageNumber();
@@ -273,21 +270,20 @@ public class ContractorServiceImpl implements ContractorService {
         String exceptionMessage = null;
         List<ChapterDto> list = new ArrayList<>();
         try {
-            try {
-                list.addAll(chapterDao.getAllChapterNames().stream()
-                                .map(name -> ChapterDto.builder().chapterName(name).build())
-                                .collect(Collectors.toList()));
-            } catch (NoResultException e) {
-                log.error(THERE_IS_NO_SUCH_DATA_IN_DB);
-            } finally {
-                chapterDao.closeManager();
-            }
+
+            list.addAll(chapterDao.getAllChapterNames().stream()
+                            .map(name -> ChapterDto.builder().chapterName(name).build())
+                            .collect(Collectors.toList()));
+        } catch (NoResultException e) {
+            log.error(THERE_IS_NO_SUCH_DATA_IN_DB);
         } catch (IOException e) {
             exceptionMessage = BAD_CONNECTION;
             log.error(BAD_CONNECTION, e);
         } catch (Exception e) {
             exceptionMessage = SOMETHING_WENT_WRONG;
             log.error(SOMETHING_WENT_WRONG, e);
+        } finally {
+            chapterDao.closeManager();
         }
 
         DtoWithPageForUi<ChapterDto> dtoWithListForUi;
@@ -316,26 +312,21 @@ public class ContractorServiceImpl implements ContractorService {
 
         try {
             ProjectStatus projectStatus = (ProjectStatus) dto.getStatus();
-            Page<Chapter> chapterPage;
-            try {
-                chapterPage = chapterDao.executeInOnePageTransaction(() -> {
-                    Page<Chapter> page1 = null;
-                    try {
-                        long totalCount = chapterDao.getCountOfFreeChaptersByName(
-                            dto.getId(), dto.getName(), projectStatus);
-                        page1 = Util.getPageWithCorrectNumbers(dto.getPage(), count, totalCount);
-                        page1.getList().addAll(chapterDao.getFreeChapters(
-                            dto.getId(), dto.getName(), projectStatus, page1.getPageNumber(), count));
-                    } catch (NoResultException e) {
-                        log.error(THERE_IS_NO_SUCH_DATA_IN_DB, e);
-                    }
-                    return page1 != null ? page1
-                               : new Page<>(new ArrayList<>(), FIRST_PAGE_NUMBER, FIRST_PAGE_NUMBER);
-                });
-            } catch (RollbackException e) {
-                log.error(BAD_CONNECTION, e);
-                throw new IOException(BAD_CONNECTION);
-            }
+            Page<Chapter> chapterPage = chapterDao.executeInOnePageTransaction(() -> {
+                Page<Chapter> page1 = null;
+                try {
+                    long totalCount = chapterDao.getCountOfFreeChaptersByName(
+                        dto.getId(), dto.getName(), projectStatus);
+                    page1 = Util.getPageWithCorrectNumbers(dto.getPage(), count, totalCount);
+                    page1.getList().addAll(chapterDao.getFreeChapters(
+                        dto.getId(), dto.getName(), projectStatus, page1.getPageNumber(), count));
+                } catch (NoResultException e) {
+                    log.error(THERE_IS_NO_SUCH_DATA_IN_DB, e);
+                }
+                return page1 != null ? page1
+                           : new Page<>(new ArrayList<>(), FIRST_PAGE_NUMBER, FIRST_PAGE_NUMBER);
+            });
+
             status = projectStatus;
             page = chapterPage.getPageNumber();
             lastPageNumber = chapterPage.getLastPageNumber();
@@ -383,28 +374,22 @@ public class ContractorServiceImpl implements ContractorService {
         Integer lastPageNumber = FIRST_PAGE_NUMBER;
         ProjectStatus status = null;
         try {
-            ProjectStatus status1 = (ProjectStatus) dto.getStatus();
-            Page<Developer> developerPage;
-            try {
-                developerPage = developerDao.executeInOnePageTransaction(() -> {
-                    Page<Developer> page1 = null;
-                    try {
-                        long totalCount = developerDao.getCountOfDevelopers(dto.getId(), status1);
-                        page1 = Util.getPageWithCorrectNumbers(dto.getPage(), count, totalCount);
-                        page1.getList().addAll(developerDao.getDevelopersByContractorId(
-                            dto.getId(), status1, page1.getPageNumber(), count));
-                    } catch (NoResultException e) {
-                        log.error(THERE_IS_NO_SUCH_DATA_IN_DB, e);
-                    }
-                    return page1 != null ? page1
-                               : new Page<>(new ArrayList<>(), FIRST_PAGE_NUMBER, FIRST_PAGE_NUMBER);
-                });
-            } catch (RollbackException e) {
-                log.error(BAD_CONNECTION, e);
-                throw new IOException(BAD_CONNECTION);
-            }
+            ProjectStatus projectStatus = (ProjectStatus) dto.getStatus();
+            Page<Developer> developerPage = developerDao.executeInOnePageTransaction(() -> {
+                Page<Developer> page1 = null;
+                try {
+                    long totalCount = developerDao.getCountOfDevelopers(dto.getId(), projectStatus);
+                    page1 = Util.getPageWithCorrectNumbers(dto.getPage(), count, totalCount);
+                    page1.getList().addAll(developerDao.getDevelopersByContractorId(
+                        dto.getId(), projectStatus, page1.getPageNumber(), count));
+                } catch (NoResultException e) {
+                    log.error(THERE_IS_NO_SUCH_DATA_IN_DB, e);
+                }
+                return page1 != null ? page1
+                           : new Page<>(new ArrayList<>(), FIRST_PAGE_NUMBER, FIRST_PAGE_NUMBER);
+            });
 
-            status = status1;
+            status = projectStatus;
             page = developerPage.getPageNumber();
             lastPageNumber = developerPage.getLastPageNumber();
             list.addAll(developerPage.getList()
@@ -458,28 +443,22 @@ public class ContractorServiceImpl implements ContractorService {
         Integer lastPageNumber = FIRST_PAGE_NUMBER;
         ProposalStatus status = null;
         try {
-            ProposalStatus status1 = (ProposalStatus) dto.getStatus();
-            //Page<Proposal> proposalPage = service.getMyProposals(dto.getId(), status, page, count);
-            Page<Proposal> proposalPage;
-            try {
-                proposalPage = proposalDao.executeInOnePageTransaction(() -> {
-                    Page<Proposal> page1 = null;
-                    try {
-                        long totalCount = proposalDao.getCountOfProposalsByContractorId(dto.getId(), status1);
-                        page1 = Util.getPageWithCorrectNumbers(dto.getPage(), count, totalCount);
-                        page1.getList().addAll(proposalDao.getProposalsByContractorId(
-                            dto.getId(), status1, page1.getPageNumber(), count));
-                    } catch (NoResultException e) {
-                        log.error(THERE_IS_NO_SUCH_DATA_IN_DB, e);
-                    }
-                    return page1 != null ? page1
-                               : new Page<>(new ArrayList<>(), FIRST_PAGE_NUMBER, FIRST_PAGE_NUMBER);
-                });
-            } catch (RollbackException e) {
-                log.error(BAD_CONNECTION, e);
-                throw new IOException(BAD_CONNECTION);
-            }
-            status = status1;
+            ProposalStatus proposalStatus = (ProposalStatus) dto.getStatus();
+            Page<Proposal> proposalPage = proposalDao.executeInOnePageTransaction(() -> {
+                Page<Proposal> page1 = null;
+                try {
+                    long totalCount = proposalDao.getCountOfProposalsByContractorId(dto.getId(), proposalStatus);
+                    page1 = Util.getPageWithCorrectNumbers(dto.getPage(), count, totalCount);
+                    page1.getList().addAll(proposalDao.getProposalsByContractorId(
+                        dto.getId(), proposalStatus, page1.getPageNumber(), count));
+                } catch (NoResultException e) {
+                    log.error(THERE_IS_NO_SUCH_DATA_IN_DB, e);
+                }
+                return page1 != null ? page1
+                           : new Page<>(new ArrayList<>(), FIRST_PAGE_NUMBER, FIRST_PAGE_NUMBER);
+            });
+
+            status = proposalStatus;
             page = proposalPage.getPageNumber();
             lastPageNumber = proposalPage.getLastPageNumber();
             list.addAll(proposalPage.getList()
@@ -522,26 +501,20 @@ public class ContractorServiceImpl implements ContractorService {
         List<ChapterDto> list = new ArrayList<>();
 
         try {
-            try {
-                list = chapterDao.executeInOneListTransaction(() -> {
-                    List<Chapter> chapterList = new ArrayList<>();
-                    try {
-                        chapterList.addAll(chapterDao.getChaptersByProjectIdContractorId(dto.getId(), dto.getSecondId()));
-                    } catch (NoResultException e) {
-                        log.error(THERE_IS_NO_SUCH_DATA_IN_DB, e);
-                    }
-                    return chapterList;
-                }).stream()
-                           .map(chapter -> {
-                               Integer chapterDebt = Util.getDebtByChapter(chapter);
-                               return ChapterConverter.getChapterDtoForContractor(chapter, chapterDebt);
-                           })
-                           .collect(Collectors.toList());
-            } catch (RollbackException e) {
-                log.error(BAD_CONNECTION, e);
-                throw new IOException(BAD_CONNECTION);
-            }
-
+            list = chapterDao.executeInOneListTransaction(() -> {
+                List<Chapter> chapterList = new ArrayList<>();
+                try {
+                    chapterList.addAll(chapterDao.getChaptersByProjectIdContractorId(dto.getId(), dto.getSecondId()));
+                } catch (NoResultException e) {
+                    log.error(THERE_IS_NO_SUCH_DATA_IN_DB, e);
+                }
+                return chapterList;
+            }).stream()
+                       .map(chapter -> {
+                           Integer chapterDebt = Util.getDebtByChapter(chapter);
+                           return ChapterConverter.getChapterDtoForContractor(chapter, chapterDebt);
+                       })
+                       .collect(Collectors.toList());
         } catch (IOException e) {
             exceptionMessage = BAD_CONNECTION;
             log.error(BAD_CONNECTION, e);
@@ -576,26 +549,19 @@ public class ContractorServiceImpl implements ContractorService {
         Integer lastPageNumber = FIRST_PAGE_NUMBER;
 
         try {
-            Page<Calculation> calculationPage;
-            try {
-                calculationPage = calculationDao.executeInOnePageTransaction(() -> {
-                    Page<Calculation> page1 = null;
-                    try {
-                        long totalCount = calculationDao.getCountOfCalculationsByChapterId(dto.getId());
-                        page1 = Util.getPageWithCorrectNumbers(dto.getPage(), count, totalCount);
-                        page1.getList().addAll(calculationDao.getCalculationsByChapterId(
-                            dto.getId(), page1.getPageNumber(), count));
-                    } catch (NoResultException e) {
-                        log.error(THERE_IS_NO_SUCH_DATA_IN_DB, e);
-                    }
-                    return page1 != null ? page1
-                               : new Page<>(new ArrayList<>(), FIRST_PAGE_NUMBER, FIRST_PAGE_NUMBER);
-                });
-            } catch (RollbackException e) {
-                log.error(BAD_CONNECTION, e);
-                throw new IOException(BAD_CONNECTION);
-            }
-
+            Page<Calculation> calculationPage = calculationDao.executeInOnePageTransaction(() -> {
+                Page<Calculation> page1 = null;
+                try {
+                    long totalCount = calculationDao.getCountOfCalculationsByChapterId(dto.getId());
+                    page1 = Util.getPageWithCorrectNumbers(dto.getPage(), count, totalCount);
+                    page1.getList().addAll(calculationDao.getCalculationsByChapterId(
+                        dto.getId(), page1.getPageNumber(), count));
+                } catch (NoResultException e) {
+                    log.error(THERE_IS_NO_SUCH_DATA_IN_DB, e);
+                }
+                return page1 != null ? page1
+                           : new Page<>(new ArrayList<>(), FIRST_PAGE_NUMBER, FIRST_PAGE_NUMBER);
+            });
             page = calculationPage.getPageNumber();
             lastPageNumber = calculationPage.getLastPageNumber();
             list.addAll(calculationPage.getList().stream()
@@ -636,25 +602,19 @@ public class ContractorServiceImpl implements ContractorService {
 
         String exceptionMessage = null;
         try {
-            boolean isUpdated;
-            try {
-                isUpdated = calculationDao.executeInOneBoolTransaction(() -> {
-                    int count = calculationDao.updateWorkPriceFact(dto.getCount(), dto.getId());
-                    if (1 == count) {
-                        log.trace(WORKPRICE_UPDATED_ID + dto.getId() + VALUE + dto.getCount());
-                        return true;
-                    } else {
-                        log.debug(WORKPRICE_NOT_UPDATED_ID + dto.getId());
-                        return false;
-                    }
-                });
-            } catch (RollbackException e) {
-                log.error(CALCULATION_NOT_UPDATED, e);
-                throw new NotCreateDataInDbException();
-            }
+            boolean isUpdated = calculationDao.executeInOneBoolTransaction(() -> {
+                int count = calculationDao.updateWorkPriceFact(dto.getCount(), dto.getId());
+                if (1 == count) {
+                    return true;
+                } else {
+                    log.debug(WORKPRICE_NOT_UPDATED_ID + dto.getId());
+                    return false;
+                }
+            });
             if (!isUpdated) {
                 throw new NotUpdateDataInDbException();
             }
+            log.trace(WORKPRICE_UPDATED_ID + dto.getId() + VALUE + dto.getCount());
         } catch (NotUpdateDataInDbException e) {
             exceptionMessage = CALCULATION_NOT_UPDATED;
             log.debug(CALCULATION_NOT_UPDATED + dto.toString(), e);
@@ -684,38 +644,32 @@ public class ContractorServiceImpl implements ContractorService {
 
         String exceptionMessage = null;
         try {
-            Calculation calculation;
-            try {
-                calculation = calculationDao.executeInOneEntityTransaction(() -> {
-                    Chapter chapter;
-                    try {
-                        chapter = chapterDao.get(dto.getId());
-                    } catch (EntityNotFoundException e) {
-                        log.error(CHAPTER_NOT_FOUND_ID + dto.getId(), e);
-                        return null;
-                    } finally {
-                        chapterDao.closeManager();
-                    }
-                    if (chapter != null && ChapterStatus.OCCUPIED.equals(chapter.getStatus())) {
-                        Calculation newCalculation = Calculation.builder()
-                                                         .chapter(chapter)
-                                                         .month(Date.valueOf("" + dto.getInt1() + "-" + dto.getInt2() + "-" + "01"))
-                                                         .workPricePlan(dto.getInt3())
-                                                         .build();
-                        calculationDao.create(newCalculation);
-                        log.trace(CALCULATION_CREATED_ID + newCalculation.getId());
-                        return newCalculation;
-                    }
-                    log.error(CALCULATION_NOT_CREATED);
+            Calculation calculation = calculationDao.executeInOneEntityTransaction(() -> {
+                Chapter chapter;
+                try {
+                    chapter = chapterDao.get(dto.getId());
+                } catch (EntityNotFoundException e) {
+                    log.error(CHAPTER_NOT_FOUND_ID + dto.getId(), e);
                     return null;
-                });
-            } catch (RollbackException e) {
-                log.error(CALCULATION_NOT_CREATED, e);
-                throw new NotCreateDataInDbException();
-            }
+                } finally {
+                    chapterDao.closeManager();
+                }
+                if (chapter != null && ChapterStatus.OCCUPIED.equals(chapter.getStatus())) {
+                    Calculation newCalculation = Calculation.builder()
+                                                     .chapter(chapter)
+                                                     .month(Date.valueOf("" + dto.getInt1() + "-" + dto.getInt2() + "-" + "01"))
+                                                     .workPricePlan(dto.getInt3())
+                                                     .build();
+                    calculationDao.create(newCalculation);
+                    return newCalculation;
+                }
+                log.error(CALCULATION_NOT_CREATED);
+                return null;
+            });
             if (calculation == null) {
                 throw new NotCreateDataInDbException();
             }
+            log.trace(CALCULATION_CREATED_ID + calculation.getId());
         } catch (NotCreateDataInDbException e) {
             exceptionMessage = CALCULATION_NOT_CREATED;
             log.debug(CALCULATION_NOT_CREATED + dto.toString(), e);
@@ -752,66 +706,60 @@ public class ContractorServiceImpl implements ContractorService {
                 throw new NotUpdateDataInDbException();
             }
 
-            boolean isUpdated;
-            try {
-                isUpdated = proposalDao.executeInOneBoolTransaction(() -> {
-                    Proposal proposal;
-                    try {
-                        proposal = proposalDao.get(dto.getId());
-                    } catch (EntityNotFoundException e) {
-                        log.error(PROPOSAL_NOT_FOUND_ID + dto.getId());
-                        return false;
-                    }
-
-                    if (proposal != null) {
-                        ProposalStatus oldStatus = proposal.getStatus();
-                        switch (oldStatus) {
-                            case CONSIDERATION:
-                                if (ProposalStatus.CANCELED.equals(newStatus)) {
-                                    proposal.setStatus(newStatus);
-                                    proposalDao.update(proposal);
-                                    log.trace(PROPOSAL_STATUS_UPDATE_TO + newStatus.toString());
-                                    return true;
-                                }
-                                break;
-                            case APPROVED:
-                                if (ProposalStatus.CANCELED.equals(newStatus)) {
-                                    proposal.setStatus(newStatus);
-                                    proposalDao.update(proposal);
-                                    log.trace(PROPOSAL_STATUS_UPDATE_TO + newStatus.toString());
-                                    return true;
-                                } else if (ProposalStatus.ACCEPTED_BY_CONTRACTOR.equals(newStatus)) {
-
-                                    Chapter chapter = proposal.getChapter();
-                                    Contractor contractor = proposal.getContractor();
-
-                                    chapter.setContractor(contractor);
-                                    chapter.setStatus(ChapterStatus.OCCUPIED);
-                                    proposal.setStatus(newStatus);
-
-                                    chapterDao.executeInOneVoidTransaction(() -> chapterDao.update(chapter));
-                                    proposalDao.update(proposal);
-                                    log.trace(PROPOSAL_STATUS_UPDATE_TO + newStatus.toString());
-                                    return true;
-                                }
-                                break;
-                            case CANCELED:
-                                if (ProposalStatus.CONSIDERATION.equals(newStatus)) {
-                                    proposal.setStatus(newStatus);
-                                    proposalDao.update(proposal);
-                                    log.trace(PROPOSAL_STATUS_UPDATE_TO + newStatus.toString());
-                                    return true;
-                                }
-                                break;
-                        }
-                    }
-                    log.debug(PROPOSAL_STATUS_NOT_UPDATE_ID + dto.getId());
+            boolean isUpdated = proposalDao.executeInOneBoolTransaction(() -> {
+                Proposal proposal;
+                try {
+                    proposal = proposalDao.get(dto.getId());
+                } catch (EntityNotFoundException e) {
+                    log.error(PROPOSAL_NOT_FOUND_ID + dto.getId());
                     return false;
-                });
-            } catch (RollbackException e) {
-                log.error(PROPOSAL_STATUS_NOT_UPDATE_ID + dto.getId() + NEW_STATUS + newStatus, e);
-                throw new NotCreateDataInDbException();
-            }
+                }
+
+                if (proposal != null) {
+                    ProposalStatus oldStatus = proposal.getStatus();
+                    switch (oldStatus) {
+                        case CONSIDERATION:
+                            if (ProposalStatus.CANCELED.equals(newStatus)) {
+                                proposal.setStatus(newStatus);
+                                proposalDao.update(proposal);
+                                log.trace(PROPOSAL_STATUS_UPDATE_TO + newStatus.toString());
+                                return true;
+                            }
+                            break;
+                        case APPROVED:
+                            if (ProposalStatus.CANCELED.equals(newStatus)) {
+                                proposal.setStatus(newStatus);
+                                proposalDao.update(proposal);
+                                log.trace(PROPOSAL_STATUS_UPDATE_TO + newStatus.toString());
+                                return true;
+                            } else if (ProposalStatus.ACCEPTED_BY_CONTRACTOR.equals(newStatus)) {
+
+                                Chapter chapter = proposal.getChapter();
+                                Contractor contractor = proposal.getContractor();
+
+                                chapter.setContractor(contractor);
+                                chapter.setStatus(ChapterStatus.OCCUPIED);
+                                proposal.setStatus(newStatus);
+
+                                chapterDao.executeInOneVoidTransaction(() -> chapterDao.update(chapter));
+                                proposalDao.update(proposal);
+                                log.trace(PROPOSAL_STATUS_UPDATE_TO + newStatus.toString());
+                                return true;
+                            }
+                            break;
+                        case CANCELED:
+                            if (ProposalStatus.CONSIDERATION.equals(newStatus)) {
+                                proposal.setStatus(newStatus);
+                                proposalDao.update(proposal);
+                                log.trace(PROPOSAL_STATUS_UPDATE_TO + newStatus.toString());
+                                return true;
+                            }
+                            break;
+                    }
+                }
+                log.debug(PROPOSAL_STATUS_NOT_UPDATE_ID + dto.getId() + newStatus);
+                return false;
+            });
             if (!isUpdated) {
                 throw new NotUpdateDataInDbException();
             }
@@ -829,6 +777,7 @@ public class ContractorServiceImpl implements ContractorService {
             exceptionMessage = SOMETHING_WENT_WRONG;
             log.error(SOMETHING_WENT_WRONG, e);
         }
+
         DtoWithPageForUi<ProposalDto> dtoWithPageForUi;
         if (exceptionMessage != null) {
             dtoWithPageForUi = DtoWithPageForUi.<ProposalDto>builder()
@@ -848,58 +797,52 @@ public class ContractorServiceImpl implements ContractorService {
 
         String exceptionMessage = null;
         try {
-            Proposal proposal;
-            try {
-                proposal = proposalDao.executeInOneEntityTransaction(() -> {
-                    Proposal proposalFromDB;
-                    try {
-                        proposalFromDB = proposalDao.getProposalByChapterIdContractorId(dto.getId(), dto.getSecondId());
-                        log.debug(DATA_ALREDY_EXIST_IN_DB_ID + proposalFromDB.getId());
-                        return proposalFromDB;
-                    } catch (NoResultException e) {
-                        log.trace(THERE_IS_NO_SUCH_DATA_IN_DB, e);
-                    }
+            Proposal proposal = proposalDao.executeInOneEntityTransaction(() -> {
+                Proposal proposalFromDB;
+                try {
+                    proposalFromDB = proposalDao.getProposalByChapterIdContractorId(dto.getId(), dto.getSecondId());
+                    log.debug(DATA_ALREDY_EXIST_IN_DB_ID + proposalFromDB.getId());
+                    return proposalFromDB;
+                } catch (NoResultException e) {
+                    log.trace(THERE_IS_NO_SUCH_DATA_IN_DB, e);
+                }
 
-                    Chapter chapter;
-                    try {
-                        chapter = chapterDao.get(dto.getId());
-                    } catch (EntityNotFoundException e) {
-                        log.error(THERE_IS_NO_SUCH_DATA_IN_DB_WITH_CHAPTER_ID + dto.getId());
-                        return null;
-                    } finally {
-                        chapterDao.closeManager();
-                    }
-                    Contractor contractor;
-                    try {
-                        contractor = contractorDao.get(dto.getSecondId());
-                    } catch (EntityNotFoundException e) {
-                        log.error(THERE_IS_NO_SUCH_DATA_IN_DB_WITH_CONTRACTOR_ID + dto.getSecondId());
-                        return null;
-                    } finally {
-                        contractorDao.closeManager();
-                    }
-                    if (chapter != null && contractor != null) {
-                        boolean isAnyProposalApproved = proposalDao.isAnyProposalOfChapterApproved(dto.getId());
-                        Proposal newProposal = Proposal.builder()
-                                                   .chapter(chapter)
-                                                   .contractor(contractor)
-                                                   .status(isAnyProposalApproved ?
-                                                               ProposalStatus.REJECTED
-                                                               : ProposalStatus.CONSIDERATION)
-                                                   .build();
-                        proposalDao.create(newProposal);
-                        log.trace(CREATED_PROPOSAL_WITH_ID + newProposal.getId());
-                        return newProposal;
-                    }
+                Chapter chapter;
+                try {
+                    chapter = chapterDao.get(dto.getId());
+                } catch (EntityNotFoundException e) {
+                    log.error(THERE_IS_NO_SUCH_DATA_IN_DB_WITH_CHAPTER_ID + dto.getId());
                     return null;
-                });
-            } catch (RollbackException e) {
-                log.error(PROPOSAL_NOT_CREATE, e);
-                throw new NotCreateDataInDbException();
-            }
+                } finally {
+                    chapterDao.closeManager();
+                }
+                Contractor contractor;
+                try {
+                    contractor = contractorDao.get(dto.getSecondId());
+                } catch (EntityNotFoundException e) {
+                    log.error(THERE_IS_NO_SUCH_DATA_IN_DB_WITH_CONTRACTOR_ID + dto.getSecondId());
+                    return null;
+                } finally {
+                    contractorDao.closeManager();
+                }
+                if (chapter != null && contractor != null) {
+                    boolean isAnyProposalApproved = proposalDao.isAnyProposalOfChapterApproved(dto.getId());
+                    Proposal newProposal = Proposal.builder()
+                                               .chapter(chapter)
+                                               .contractor(contractor)
+                                               .status(isAnyProposalApproved ?
+                                                           ProposalStatus.REJECTED
+                                                           : ProposalStatus.CONSIDERATION)
+                                               .build();
+                    proposalDao.create(newProposal);
+                    return newProposal;
+                }
+                return null;
+            });
             if (proposal == null) {
                 throw new NotCreateDataInDbException();
             }
+            log.trace(CREATED_PROPOSAL_WITH_ID + proposal.getId());
         } catch (NotCreateDataInDbException e) {
             exceptionMessage = PROPOSAL_NOT_CREATE;
             log.debug(PROPOSAL_NOT_CREATE + dto.toString(), e);

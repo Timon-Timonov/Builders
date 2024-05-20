@@ -1,8 +1,9 @@
 package it.academy.servlet.adminServlets.deleteServlets;
 
-import it.academy.controller.impl.AdminControllerImpl;
 import it.academy.dto.DtoWithPageForUi;
 import it.academy.dto.ProjectDto;
+import it.academy.service.AdminService;
+import it.academy.service.impl.AdminServiceImpl;
 import it.academy.util.ExceptionRedirector;
 import it.academy.util.ParameterFinder;
 
@@ -21,13 +22,13 @@ import static it.academy.util.constants.ServletURLs.SLASH_STRING;
 @WebServlet(name = "deleteProjectAdministratorServlet", urlPatterns = SLASH_STRING + DELETE_PROJECT_ADMINISTRATOR_SERVLET)
 public class DeleteProjectAdministratorServlet extends HttpServlet {
 
-    AdminControllerImpl controller = new AdminControllerImpl();
+    private final AdminService service = AdminServiceImpl.getInstance();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
         long projectId = ParameterFinder.getNumberValueFromParameter(req, PROJECT_ID_PARAM, ZERO_LONG_VALUE);
-        DtoWithPageForUi<ProjectDto> dto = controller.deleteProject(projectId);
+        DtoWithPageForUi<ProjectDto> dto = service.deleteProject(projectId);
 
         if (dto.getExceptionMessage() != null) {
             ExceptionRedirector.forwardToException3(req, resp, this, dto.getExceptionMessage());

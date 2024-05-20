@@ -1,10 +1,11 @@
 package it.academy.servlet.adminServlets.getServlets;
 
-import it.academy.controller.impl.AdminControllerImpl;
 import it.academy.converters.FilterPageDtoConverter;
 import it.academy.dto.DtoWithPageForUi;
 import it.academy.dto.FilterPageDto;
 import it.academy.dto.ProjectDto;
+import it.academy.service.AdminService;
+import it.academy.service.impl.AdminServiceImpl;
 import it.academy.util.ExceptionRedirector;
 import it.academy.util.ParameterFinder;
 import it.academy.util.SessionAttributeSetter;
@@ -25,13 +26,13 @@ import static it.academy.util.constants.ServletURLs.SLASH_STRING;
 @WebServlet(name = "getProjectsAdministratorServlet", urlPatterns = SLASH_STRING + GET_PROJECTS_ADMINISTRATOR_SERVLET)
 public class GetProjectsAdministratorServlet extends HttpServlet {
 
-    AdminControllerImpl controller = new AdminControllerImpl();
+    private final AdminService service = AdminServiceImpl.getInstance();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
         FilterPageDto filter = FilterPageDtoConverter.getFilterPageDtoGetProjectsByDeveloper(req);
-        DtoWithPageForUi<ProjectDto> dto = controller.getProjectsByDeveloper(filter);
+        DtoWithPageForUi<ProjectDto> dto = service.getProjectsByDeveloper(filter);
 
         if (dto.getExceptionMessage() != null) {
             ExceptionRedirector.forwardToException3(req, resp, this, dto.getExceptionMessage());

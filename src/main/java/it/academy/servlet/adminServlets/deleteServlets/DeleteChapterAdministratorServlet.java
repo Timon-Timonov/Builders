@@ -1,9 +1,9 @@
 package it.academy.servlet.adminServlets.deleteServlets;
 
-import it.academy.dto.DtoWithPageForUi;
-import it.academy.dto.FilterPageDto;
-import it.academy.controller.impl.AdminControllerImpl;
 import it.academy.dto.ChapterDto;
+import it.academy.dto.DtoWithPageForUi;
+import it.academy.service.AdminService;
+import it.academy.service.impl.AdminServiceImpl;
 import it.academy.util.ExceptionRedirector;
 import it.academy.util.ParameterFinder;
 
@@ -22,13 +22,13 @@ import static it.academy.util.constants.ServletURLs.SLASH_STRING;
 @WebServlet(name = "DeleteChapterAdministratorServlet", urlPatterns = SLASH_STRING + DELETE_CHAPTER_ADMINISTRATOR_SERVLET)
 public class DeleteChapterAdministratorServlet extends HttpServlet {
 
-    AdminControllerImpl controller = new AdminControllerImpl();
+    private final AdminService service = AdminServiceImpl.getInstance();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
         long chapterId = ParameterFinder.getNumberValueFromParameter(req, CHAPTER_ID_PARAM, ZERO_LONG_VALUE);
-        DtoWithPageForUi<ChapterDto> dto = controller.deleteChapter(chapterId);
+        DtoWithPageForUi<ChapterDto> dto = service.deleteChapter(chapterId);
 
         if (dto.getExceptionMessage() != null) {
             ExceptionRedirector.forwardToException3(req, resp, this, dto.getExceptionMessage());

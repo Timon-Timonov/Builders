@@ -27,7 +27,7 @@ import static it.academy.util.constants.ServletURLs.SLASH_STRING;
 @WebServlet(name = "getMyCalculationDeveloperServlet", urlPatterns = SLASH_STRING + GET_MY_CALCULATION_DEVELOPER_SERVLET)
 public class GetMyCalculationDeveloperServlet extends HttpServlet {
 
-    private final DeveloperService service = new DeveloperServiceImpl();
+    private final DeveloperService service = DeveloperServiceImpl.getInstance();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {

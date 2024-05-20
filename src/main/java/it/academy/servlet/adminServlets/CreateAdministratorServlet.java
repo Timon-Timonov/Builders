@@ -1,9 +1,10 @@
 package it.academy.servlet.adminServlets;
 
-import it.academy.controller.impl.AdminControllerImpl;
 import it.academy.converters.RequestDtoConverter;
 import it.academy.dto.CreateRequestDto;
 import it.academy.dto.LoginDto;
+import it.academy.service.AdminService;
+import it.academy.service.impl.AdminServiceImpl;
 import it.academy.util.ExceptionRedirector;
 
 import javax.servlet.ServletException;
@@ -19,15 +20,14 @@ import static it.academy.util.constants.ServletURLs.SLASH_STRING;
 @WebServlet(name = "createAdministratorServlet", urlPatterns = SLASH_STRING + CREATE_ADMIN_ADMINISTRATOR_SERVLET)
 public class CreateAdministratorServlet extends HttpServlet {
 
-
-    AdminControllerImpl controller = new AdminControllerImpl();
+    private final AdminService service = AdminServiceImpl.getInstance();
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
         CreateRequestDto requestDto = RequestDtoConverter.getCreateRequestDtoCreateAdmin(req);
 
-        LoginDto dto = controller.createAdmin(requestDto);
+        LoginDto dto = service.createAdmin(requestDto);
 
         if (dto.getExceptionMessage() != null) {
             ExceptionRedirector.forwardToException2(req, resp, this, dto.getExceptionMessage());

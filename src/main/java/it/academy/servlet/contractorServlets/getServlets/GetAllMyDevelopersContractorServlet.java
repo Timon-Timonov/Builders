@@ -24,7 +24,7 @@ import static it.academy.util.constants.ServletURLs.*;
 @WebServlet(name = "getAllMyDevelopersContractorServlet", urlPatterns = SLASH_STRING + GET_ALL_MY_DEVELOPERS_CONTRACTOR_SERVLET)
 public class GetAllMyDevelopersContractorServlet extends HttpServlet {
 
-    private final ContractorService service = new ContractorServiceImpl();
+    private final ContractorService service = ContractorServiceImpl.getInstance();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {

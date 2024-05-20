@@ -1,10 +1,10 @@
 package it.academy.filter;
 
-import it.academy.controller.AdminController;
-import it.academy.controller.impl.AdminControllerImpl;
 import it.academy.dto.UserDto;
 import it.academy.pojo.enums.Roles;
 import it.academy.pojo.enums.UserStatus;
+import it.academy.service.AdminService;
+import it.academy.service.impl.AdminServiceImpl;
 
 import javax.servlet.*;
 import javax.servlet.annotation.WebFilter;
@@ -20,7 +20,7 @@ import static it.academy.util.constants.ServletURLs.*;
 public class LogInFilter implements Filter {
 
 
-    private final AdminController controller = new AdminControllerImpl();
+    private final AdminService controller = AdminServiceImpl.getInstance();
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain filterChain) throws IOException, ServletException {

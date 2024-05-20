@@ -1,9 +1,5 @@
 package it.academy.service;
 
-import it.academy.dto.CreateRequestDto;
-import it.academy.dto.DtoWithPageForUi;
-import it.academy.dto.LoginDto;
-import it.academy.dto.FilterPageDto;
 import it.academy.dto.*;
 
 public interface DeveloperService {

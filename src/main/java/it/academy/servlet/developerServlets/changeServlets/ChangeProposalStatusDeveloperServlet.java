@@ -21,7 +21,7 @@ import static it.academy.util.constants.ServletURLs.SLASH_STRING;
 @WebServlet(name = "changeProposalStatusDeveloperServlet", urlPatterns = SLASH_STRING + CHANGE_PROPOSAL_STATUS_DEVELOPER_SERVLET)
 public class ChangeProposalStatusDeveloperServlet extends HttpServlet {
 
-    private final DeveloperService service = new DeveloperServiceImpl();
+    private final DeveloperService service = DeveloperServiceImpl.getInstance();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {

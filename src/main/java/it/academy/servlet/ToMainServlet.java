@@ -1,9 +1,9 @@
 package it.academy.servlet;
 
-import it.academy.controller.AdminController;
 import it.academy.dto.DtoWithPageForUi;
-import it.academy.controller.impl.AdminControllerImpl;
 import it.academy.dto.UserDto;
+import it.academy.service.AdminService;
+import it.academy.service.impl.AdminServiceImpl;
 import it.academy.util.ExceptionRedirector;
 import it.academy.util.SessionCleaner;
 
@@ -22,14 +22,14 @@ import static it.academy.util.constants.ServletURLs.TO_MAIN_SERVLET;
 @WebServlet(name = "toMainServlet", urlPatterns = SLASH_STRING + TO_MAIN_SERVLET)
 public class ToMainServlet extends HttpServlet {
 
-    AdminController controller = new AdminControllerImpl();
+    private final AdminService service = AdminServiceImpl.getInstance();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
         HttpSession session = req.getSession();
         Object role = session.getAttribute(ROLE_PARAM);
-        DtoWithPageForUi<UserDto> dto = controller.toMainPage(role);
+        DtoWithPageForUi<UserDto> dto = service.toMainPage(role);
 
         if (dto.getExceptionMessage() != null) {
             ExceptionRedirector.forwardToException3(req, resp, this, dto.getExceptionMessage());

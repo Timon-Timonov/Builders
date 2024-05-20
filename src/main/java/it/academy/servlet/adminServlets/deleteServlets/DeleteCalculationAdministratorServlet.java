@@ -1,8 +1,9 @@
 package it.academy.servlet.adminServlets.deleteServlets;
 
-import it.academy.controller.impl.AdminControllerImpl;
 import it.academy.dto.CalculationDto;
 import it.academy.dto.DtoWithPageForUi;
+import it.academy.service.AdminService;
+import it.academy.service.impl.AdminServiceImpl;
 import it.academy.util.ExceptionRedirector;
 import it.academy.util.ParameterFinder;
 
@@ -21,13 +22,13 @@ import static it.academy.util.constants.ServletURLs.SLASH_STRING;
 @WebServlet(name = "deleteCalculationAdministratorServlet", urlPatterns = SLASH_STRING + DELETE_CALCULATION_ADMINISTRATOR_SERVLET)
 public class DeleteCalculationAdministratorServlet extends HttpServlet {
 
-    AdminControllerImpl controller = new AdminControllerImpl();
+    private final AdminService service = AdminServiceImpl.getInstance();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
         long calculationId = ParameterFinder.getNumberValueFromParameter(req, CALCULATION_ID_PARAM, ZERO_LONG_VALUE);
-        DtoWithPageForUi<CalculationDto> dto = controller.deleteCalculation(calculationId);
+        DtoWithPageForUi<CalculationDto> dto = service.deleteCalculation(calculationId);
 
         if (dto.getExceptionMessage() != null) {
             ExceptionRedirector.forwardToException3(req, resp, this, dto.getExceptionMessage());

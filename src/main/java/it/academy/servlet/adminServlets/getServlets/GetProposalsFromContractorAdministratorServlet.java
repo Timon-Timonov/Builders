@@ -1,11 +1,11 @@
 package it.academy.servlet.adminServlets.getServlets;
 
-import it.academy.controller.AdminController;
-import it.academy.controller.impl.AdminControllerImpl;
 import it.academy.converters.FilterPageDtoConverter;
 import it.academy.dto.DtoWithPageForUi;
 import it.academy.dto.FilterPageDto;
 import it.academy.dto.ProposalDto;
+import it.academy.service.AdminService;
+import it.academy.service.impl.AdminServiceImpl;
 import it.academy.util.ExceptionRedirector;
 import it.academy.util.SessionAttributeSetter;
 
@@ -24,13 +24,13 @@ import static it.academy.util.constants.ServletURLs.SLASH_STRING;
 @WebServlet(name = "getProposalsFromContractorAdministratorServlet", urlPatterns = SLASH_STRING + GET_PROPOSALS_FROM_CONTRACTOR_ADMINISTRATOR_SERVLET)
 public class GetProposalsFromContractorAdministratorServlet extends HttpServlet {
 
-    AdminController controller = new AdminControllerImpl();
+    private final AdminService service = AdminServiceImpl.getInstance();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
         FilterPageDto filter = FilterPageDtoConverter.getFilterPageDtoGetProposalsByContractor(req);
-        DtoWithPageForUi<ProposalDto> dto = controller.getProposalsByContractorId(filter);
+        DtoWithPageForUi<ProposalDto> dto = service.getProposalsByContractorId(filter);
 
         if (dto.getExceptionMessage() != null) {
             ExceptionRedirector.forwardToException3(req, resp, this, dto.getExceptionMessage());

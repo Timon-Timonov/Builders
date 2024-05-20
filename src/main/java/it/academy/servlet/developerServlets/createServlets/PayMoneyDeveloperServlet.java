@@ -21,7 +21,7 @@ import static it.academy.util.constants.ServletURLs.SLASH_STRING;
 @WebServlet(name = "payMoneyDeveloperServlet", urlPatterns = SLASH_STRING + PAY_MONEY_DEVELOPER_SERVLET)
 public class PayMoneyDeveloperServlet extends HttpServlet {
 
-    private final DeveloperService service = new DeveloperServiceImpl();
+    private final DeveloperService service = DeveloperServiceImpl.getInstance();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
