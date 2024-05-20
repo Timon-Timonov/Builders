@@ -1,11 +1,11 @@
 package it.academy.servlet.developerServlets.getServlets;
 
-import it.academy.controller.DeveloperController;
-import it.academy.controller.impl.DeveloperControllerImpl;
 import it.academy.converters.FilterPageDtoConverter;
 import it.academy.dto.ChapterDto;
 import it.academy.dto.DtoWithPageForUi;
 import it.academy.dto.FilterPageDto;
+import it.academy.service.DeveloperService;
+import it.academy.service.impl.DeveloperServiceImpl;
 import it.academy.util.ExceptionRedirector;
 import it.academy.util.ParameterFinder;
 import it.academy.util.SessionAttributeSetter;
@@ -26,13 +26,13 @@ import static it.academy.util.constants.ServletURLs.SLASH_STRING;
 @WebServlet(name = "getChaptersOfProjectDeveloperServlet", urlPatterns = SLASH_STRING + GET_CHAPTERS_OF_PROJECT_DEVELOPER_SERVLET)
 public class GetChaptersOfProjectDeveloperServlet extends HttpServlet {
 
-    private final DeveloperController controller = new DeveloperControllerImpl();
+    private final DeveloperService service = new DeveloperServiceImpl();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
         FilterPageDto filter = FilterPageDtoConverter.getFilterPageDtoGetChaptersByProject(req);
-        DtoWithPageForUi<ChapterDto> dto = controller.getChaptersByProject(filter);
+        DtoWithPageForUi<ChapterDto> dto = service.getChaptersByProject(filter);
         if (dto.getExceptionMessage() != null) {
             ExceptionRedirector.forwardToException3(req, resp, this, dto.getExceptionMessage());
         } else {

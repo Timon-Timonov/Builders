@@ -1,11 +1,11 @@
 package it.academy.servlet.developerServlets.createServlets;
 
-import it.academy.controller.DeveloperController;
-import it.academy.controller.impl.DeveloperControllerImpl;
 import it.academy.converters.RequestDtoConverter;
 import it.academy.dto.ChapterDto;
 import it.academy.dto.CreateRequestDto;
 import it.academy.dto.DtoWithPageForUi;
+import it.academy.service.DeveloperService;
+import it.academy.service.impl.DeveloperServiceImpl;
 import it.academy.util.ExceptionRedirector;
 
 import javax.servlet.ServletException;
@@ -22,8 +22,7 @@ import static it.academy.util.constants.ServletURLs.SLASH_STRING;
 @WebServlet(name = "createChapterDeveloperServlet", urlPatterns = SLASH_STRING + CREATE_CHAPTER_DEVELOPER_SERVLET)
 public class CreateChapterDeveloperServlet extends HttpServlet {
 
-
-    DeveloperController controller = new DeveloperControllerImpl();
+    private final DeveloperService service = new DeveloperServiceImpl();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -35,7 +34,7 @@ public class CreateChapterDeveloperServlet extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
         CreateRequestDto requestDto = RequestDtoConverter.getCreateRequestDtoCreateChapter(req);
-        DtoWithPageForUi<ChapterDto> dto = controller.createChapter(requestDto);
+        DtoWithPageForUi<ChapterDto> dto = service.createChapter(requestDto);
 
         if (dto.getExceptionMessage() != null) {
             ExceptionRedirector.forwardToException3(req, resp, this, dto.getExceptionMessage());

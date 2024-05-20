@@ -27,6 +27,8 @@ public interface ChapterDao extends Dao<Chapter, Long> {
 
     List<Chapter> getAllChaptersByDeveloperIdContractorId(long developerId, long contractorId) throws NoResultException, IOException;
 
+
+
     List<Chapter> getChaptersByContractorId(long contractorId, int page, int count) throws NoResultException, IOException;
 
     long getCountOfChaptersByContractorId(long contractorId) throws NoResultException, IOException;

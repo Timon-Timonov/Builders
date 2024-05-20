@@ -1,11 +1,11 @@
 package it.academy.servlet.developerServlets.getServlets;
 
-import it.academy.controller.DeveloperController;
-import it.academy.controller.impl.DeveloperControllerImpl;
 import it.academy.converters.FilterPageDtoConverter;
 import it.academy.dto.ChapterDto;
 import it.academy.dto.DtoWithPageForUi;
 import it.academy.dto.FilterPageDto;
+import it.academy.service.DeveloperService;
+import it.academy.service.impl.DeveloperServiceImpl;
 import it.academy.util.ExceptionRedirector;
 import it.academy.util.SessionAttributeSetter;
 
@@ -24,14 +24,14 @@ import static it.academy.util.constants.ServletURLs.SLASH_STRING;
 @WebServlet(name = "getChaptersOfContractorDeveloperServlet", urlPatterns = SLASH_STRING + GET_CHAPTERS_OF_CONTRACTOR_DEVELOPER_SERVLET)
 public class GetChaptersOfContractorDeveloperServlet extends HttpServlet {
 
-    DeveloperController controller = new DeveloperControllerImpl();
+    private final DeveloperService service = new DeveloperServiceImpl();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
         FilterPageDto filter = FilterPageDtoConverter.getFilterPageDtoGetChaptersByContractorAndDeveloper(req);
 
-        DtoWithPageForUi<ChapterDto> dto = controller.getChaptersByContractorIdAndDeveloperId(filter);
+        DtoWithPageForUi<ChapterDto> dto = service.getChaptersByContractorIdAndDeveloperId(filter);
 
         if (dto.getExceptionMessage() != null) {
             ExceptionRedirector.forwardToException3(req, resp, this, dto.getExceptionMessage());

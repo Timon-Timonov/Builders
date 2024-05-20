@@ -23,11 +23,13 @@ public class RequestDtoConverter {
         long calculationId = ParameterFinder.getNumberValueFromParameter(req, CALCULATION_ID_PARAM, ZERO_LONG_VALUE);
         int sumAdvance = ParameterFinder.getNumberValueFromParameter(req, SUM_ADVANCE_PARAM, ZERO_INT_VALUE);
         int sumForWork = ParameterFinder.getNumberValueFromParameter(req, SUM_FOR_WORK_PARAM, ZERO_INT_VALUE);
+        int calculationDebt=ParameterFinder.getNumberValueFromParameter(req, CALCULATION_DEBT_PARAM, ZERO_INT_VALUE);
 
         return CreateRequestDto.builder()
                    .id(calculationId)
                    .int1(sumAdvance)
                    .int2(sumForWork)
+                   .int3(calculationDebt)
                    .build();
     }
 

@@ -1,10 +1,10 @@
 package it.academy.servlet.developerServlets.createServlets;
 
-import it.academy.controller.DeveloperController;
-import it.academy.controller.impl.DeveloperControllerImpl;
 import it.academy.converters.RequestDtoConverter;
 import it.academy.dto.CreateRequestDto;
 import it.academy.dto.LoginDto;
+import it.academy.service.DeveloperService;
+import it.academy.service.impl.DeveloperServiceImpl;
 import it.academy.util.ExceptionRedirector;
 import it.academy.util.SessionAttributeSetter;
 
@@ -21,13 +21,13 @@ import static it.academy.util.constants.ServletURLs.SLASH_STRING;
 @WebServlet(name = "createDeveloperServlet", urlPatterns = SLASH_STRING + CREATE_DEVELOPER_SERVLET)
 public class CreateDeveloperServlet extends HttpServlet {
 
-    DeveloperController controller = new DeveloperControllerImpl();
+    private final DeveloperService service = new DeveloperServiceImpl();
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
         CreateRequestDto requestDto = RequestDtoConverter.getCreateRequestDtoCreateUser(req);
-        LoginDto dto = controller.createDeveloper(requestDto);
+        LoginDto dto = service.createDeveloper(requestDto);
 
         if (dto.getExceptionMessage() != null) {
             ExceptionRedirector.forwardToException2(req, resp, this, dto.getExceptionMessage());

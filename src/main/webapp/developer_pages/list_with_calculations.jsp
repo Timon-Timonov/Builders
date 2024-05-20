@@ -102,6 +102,8 @@
                 <form action="<%=PAY_MONEY_DEVELOPER_SERVLET%>" method="get">
                     <input type="hidden" value="<%=calculationDto.getId().toString()%>"
                            name="<%=CALCULATION_ID_PARAM%>">
+                    <input type="hidden" value="<%=calculationDto.getCalculationDebt()%>"
+                           name="<%=CALCULATION_DEBT_PARAM%>">
                     Sum advance: <label>
                     <input type="text" name="<%=SUM_ADVANCE_PARAM%>">
                     <button class="btn btn-light" type="submit">Pay advance</button>
@@ -113,9 +115,11 @@
                 <%if (calculationDto.getCalculationDebt() > ZERO_INT_VALUE) {%>
                 <form action="<%=PAY_MONEY_DEVELOPER_SERVLET%>" method="get">
                     <input type="hidden" value="<%=calculationDto.getId().toString()%>"
-                           name="<%=CALCULATION_ID_PARAM%>">
+                    name="<%=CALCULATION_ID_PARAM%>">
+                    <input type="hidden" value="<%=calculationDto.getCalculationDebt()%>"
+                           name="<%=CALCULATION_DEBT_PARAM%>">
                     Sum for work: <label>
-                    <input type="text" name="<%=SUM_FOR_WORK_PARAM%>">
+                    <input type="text" value="<%=calculationDto.getCalculationDebt()%>" name="<%=SUM_FOR_WORK_PARAM%>">
                     <button class="btn btn-light" type="submit">Pay for work</button>
                 </label>
                 </form>

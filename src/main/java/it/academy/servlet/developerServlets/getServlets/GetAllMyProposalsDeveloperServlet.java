@@ -1,13 +1,13 @@
 package it.academy.servlet.developerServlets.getServlets;
 
-import it.academy.controller.DeveloperController;
+import it.academy.converters.FilterPageDtoConverter;
 import it.academy.dto.DtoWithPageForUi;
 import it.academy.dto.FilterPageDto;
-import it.academy.controller.impl.DeveloperControllerImpl;
 import it.academy.dto.ProposalDto;
+import it.academy.service.DeveloperService;
+import it.academy.service.impl.DeveloperServiceImpl;
 import it.academy.util.ExceptionRedirector;
 import it.academy.util.SessionAttributeSetter;
-import it.academy.converters.FilterPageDtoConverter;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -23,13 +23,13 @@ import static it.academy.util.constants.ServletURLs.SLASH_STRING;
 @WebServlet(name = "getAllMyProposalsServlet", urlPatterns = SLASH_STRING + GET_ALL_MY_PROPOSALS_DEVELOPER_SERVLET)
 public class GetAllMyProposalsDeveloperServlet extends HttpServlet {
 
-    private final DeveloperController controller = new DeveloperControllerImpl();
+    private final DeveloperService service = new DeveloperServiceImpl();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
         FilterPageDto filter = FilterPageDtoConverter.getPageRequestDtoShowProposals(req);
-        DtoWithPageForUi<ProposalDto> dto = controller.getAllMyProposals(filter);
+        DtoWithPageForUi<ProposalDto> dto = service.getAllMyProposals(filter);
 
         if (dto.getExceptionMessage() != null) {
             ExceptionRedirector.forwardToException3(req, resp, this, dto.getExceptionMessage());

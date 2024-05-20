@@ -24,6 +24,7 @@
 
 <div class="container text-center">
     <h2>The list of chapters of my project </h2>
+
     <p>Project name: <%=session.getAttribute(PROJECT_NAME_PARAM)%>.</p>
     <p>Project address: <%=session.getAttribute(PROJECT_ADDRESS_PARAM)%>.</p>
     <p>Project status: <%=session.getAttribute(PROJECT_STATUS_PARAM)%>.</p>

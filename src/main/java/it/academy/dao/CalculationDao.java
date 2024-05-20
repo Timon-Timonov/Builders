@@ -13,4 +13,6 @@ public interface CalculationDao extends Dao<Calculation, Long> {
     Long getCountOfCalculationsByChapterId(Long chapterId) throws NoResultException, IOException;
 
     int updateWorkPriceFact(Integer workPriceFact, Long calculationId);
+
+    int getTotalDeptByDeveloperIdAndContractorId(long developerId, long contractorId) throws NoResultException, IOException;
 }

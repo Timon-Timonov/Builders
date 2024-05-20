@@ -67,6 +67,7 @@ public final class ParameterNames {
     public static final String SHOW_PROPOSAL_LIST_BY_CHAPTER_PARAM = "show_proposal_list_by_chapter";
 
     public static final String CHAPTER_DEBT_PARAM = "chapter_debt";
+    public static final String CALCULATION_DEBT_PARAM = "calculation_debt";
     public static final String DEVELOPER_DEBT_PARAM = "developer_debt";
     public static final String SUM_FOR_WORK_PARAM = "sum_for_work";
     public static final String SUM_ADVANCE_PARAM = "sum_advance";

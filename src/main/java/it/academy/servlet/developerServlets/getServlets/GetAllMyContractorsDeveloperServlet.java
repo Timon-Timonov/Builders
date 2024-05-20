@@ -1,13 +1,13 @@
 package it.academy.servlet.developerServlets.getServlets;
 
-import it.academy.controller.DeveloperController;
+import it.academy.converters.FilterPageDtoConverter;
+import it.academy.dto.ContractorDto;
 import it.academy.dto.DtoWithPageForUi;
 import it.academy.dto.FilterPageDto;
-import it.academy.controller.impl.DeveloperControllerImpl;
-import it.academy.dto.ContractorDto;
+import it.academy.service.DeveloperService;
+import it.academy.service.impl.DeveloperServiceImpl;
 import it.academy.util.ExceptionRedirector;
 import it.academy.util.SessionAttributeSetter;
-import it.academy.converters.FilterPageDtoConverter;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -23,13 +23,13 @@ import static it.academy.util.constants.ServletURLs.SLASH_STRING;
 @WebServlet(name = "getAllMyContractorsDeveloperServlet", urlPatterns = SLASH_STRING + GET_ALL_MY_CONTRACTORS_DEVELOPER_SERVLET)
 public class GetAllMyContractorsDeveloperServlet extends HttpServlet {
 
-    private final DeveloperController controller = new DeveloperControllerImpl();
+    private final DeveloperService service = new DeveloperServiceImpl();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
         FilterPageDto filter = FilterPageDtoConverter.getPageRequestDtoShowContractors(req);
-        DtoWithPageForUi<ContractorDto> dto = controller.getMyContractors(filter);
+        DtoWithPageForUi<ContractorDto> dto = service.getMyContractors(filter);
 
         if (dto.getExceptionMessage() != null) {
             ExceptionRedirector.forwardToException3(req, resp, this, dto.getExceptionMessage());

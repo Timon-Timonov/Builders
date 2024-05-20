@@ -47,4 +47,17 @@ public class CalculationDaoImpl extends DaoImpl<Calculation, Long> implements Ca
                    .setParameter("calculationId", calculationId)
                    .executeUpdate();
     }
+
+    @Override
+    public int getTotalDeptByDeveloperIdAndContractorId(long developerId, long contractorId) throws NoResultException, IOException {
+
+        TypedQuery<Long> query = getEm().createQuery(
+            "SELECT (SUM(calc.workPriceFact)-SUM(tr.sum)) FROM MoneyTransfer tr ,  Calculation calc , Chapter ch    WHERE ch.contractor.id=:contractorId AND ch.project.developer.id=:developerId AND calc.chapter=ch AND tr.calculation=calc",
+            Long.class);
+
+        long res = query.setParameter("developerId", developerId)
+                       .setParameter("contractorId", contractorId)
+                       .getSingleResult();
+        return (int) res;
+    }
 }
