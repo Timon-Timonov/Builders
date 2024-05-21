@@ -9,6 +9,8 @@ import java.util.List;
 
 public interface ChapterDao extends Dao<Chapter, Long> {
 
+    Chapter getChapterForCalculation(long id) throws NoResultException, IOException;
+
     List<String> getAllChapterNames() throws NoResultException, IOException;
 
     List<Chapter> getFreeChapters(long contractorId, String chapterName, ProjectStatus projectStatus, int page, int count) throws NoResultException, IOException;
@@ -26,7 +28,6 @@ public interface ChapterDao extends Dao<Chapter, Long> {
         throws NoResultException, IOException;
 
     List<Chapter> getAllChaptersByDeveloperIdContractorId(long developerId, long contractorId) throws NoResultException, IOException;
-
 
 
     List<Chapter> getChaptersByContractorId(long contractorId, int page, int count) throws NoResultException, IOException;

@@ -445,6 +445,7 @@ public class AdminServiceImpl implements AdminService {
                 return page1 != null ? page1
                            : new Page<>(new ArrayList<>(), FIRST_PAGE_NUMBER, FIRST_PAGE_NUMBER);
             });
+
             status = projectStatus;
             page = projectPage.getPageNumber();
             lastPageNumber = projectPage.getLastPageNumber();

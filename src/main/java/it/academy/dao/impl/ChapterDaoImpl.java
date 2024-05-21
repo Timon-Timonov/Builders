@@ -20,6 +20,18 @@ public class ChapterDaoImpl extends DaoImpl<Chapter, Long> implements ChapterDao
     }
 
     @Override
+    public Chapter getChapterForCalculation(long id) throws NoResultException, IOException {
+
+        TypedQuery<Chapter> query = getEm().createQuery(
+            "SELECT ch FROM Chapter ch WHERE ch.id=:chapterId AND ch.project.status=:projectStatus AND ch.status=:chapterStatus",
+            Chapter.class);
+        return query.setParameter("chapterId", id)
+                   .setParameter("chapterStatus", ChapterStatus.OCCUPIED)
+                   .setParameter("projectStatus", ProjectStatus.IN_PROCESS)
+                   .getSingleResult();
+    }
+
+    @Override
     public long getCountOfFreeChaptersByName(long contractorId, String chapterName, ProjectStatus projectStatus) throws NoResultException, IOException {
 
         TypedQuery<Long> query = getEm().createQuery(

@@ -943,10 +943,10 @@ public class DeveloperServiceImpl implements DeveloperService {
         try {
             PaymentType type = null;
             int sum = ZERO_INT_VALUE;
-            if (sumAdvance != ZERO_INT_VALUE) {
+            if (sumAdvance > ZERO_INT_VALUE) {
                 type = PaymentType.ADVANCE_PAYMENT;
                 sum = sumAdvance;
-            } else if (sumForWork != ZERO_INT_VALUE) {
+            } else if (sumForWork > ZERO_INT_VALUE) {
                 type = PaymentType.PAYMENT_FOR_WORK;
                 sum = sumForWork;
             }

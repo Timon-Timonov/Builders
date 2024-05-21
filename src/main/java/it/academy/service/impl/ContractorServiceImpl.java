@@ -11,6 +11,7 @@ import it.academy.pojo.*;
 import it.academy.pojo.enums.*;
 import it.academy.pojo.legalEntities.Contractor;
 import it.academy.pojo.legalEntities.Developer;
+import it.academy.pojo.legalEntities.LegalEntity;
 import it.academy.service.ContractorService;
 import it.academy.util.Util;
 import lombok.extern.log4j.Log4j2;
@@ -23,6 +24,7 @@ import java.io.IOException;
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static it.academy.util.constants.Constants.FIRST_PAGE_NUMBER;
@@ -364,7 +366,7 @@ public class ContractorServiceImpl implements ContractorService {
         return dtoWithListForUi;
     }
 
-    @Override
+   /* @Override
     public DtoWithPageForUi<DeveloperDto> getMyDevelopers(FilterPageDto dto) {
 
         String exceptionMessage = null;
@@ -401,6 +403,74 @@ public class ContractorServiceImpl implements ContractorService {
                                 } catch (IOException e) {
                                     log.error(GETTING_OF_DEBT + dto.getId() + WITH_DEVELOPER_ID + developer.getId() + FAILED, e);
                                 }
+                                return DeveloperConverter.convertToDto(developer, developerDebt);
+                            })
+                            .collect(Collectors.toList()));
+        } catch (ClassCastException e) {
+            exceptionMessage = INVALID_VALUE;
+            log.error(INVALID_VALUE + dto.getStatus().toString(), e);
+        } catch (IOException e) {
+            exceptionMessage = BAD_CONNECTION;
+            log.error(BAD_CONNECTION, e);
+        } catch (Exception e) {
+            exceptionMessage = SOMETHING_WENT_WRONG;
+            log.error(SOMETHING_WENT_WRONG, e);
+        }
+
+        DtoWithPageForUi<DeveloperDto> dtoWithPageForUi;
+        if (exceptionMessage != null) {
+            dtoWithPageForUi = DtoWithPageForUi.<DeveloperDto>builder()
+                                   .exceptionMessage(exceptionMessage)
+                                   .build();
+        } else {
+            dtoWithPageForUi = DtoWithPageForUi.<DeveloperDto>builder()
+                                   .page(page)
+                                   .countOnPage(count)
+                                   .lastPageNumber(lastPageNumber)
+                                   .list(list)
+                                   .status(status)
+                                   .url(CONTRACTOR_PAGES_LIST_WITH_DEVELOPERS_JSP)
+                                   .build();
+        }
+        return dtoWithPageForUi;
+    }*/
+
+    @Override
+    public DtoWithPageForUi<DeveloperDto> getMyDevelopers(FilterPageDto dto) {
+
+        String exceptionMessage = null;
+        List<DeveloperDto> list = new ArrayList<>();
+        Integer page = FIRST_PAGE_NUMBER;
+        Integer count = dto.getCount();
+        Integer lastPageNumber = FIRST_PAGE_NUMBER;
+        ProjectStatus status = null;
+        try {
+            ProjectStatus projectStatus = (ProjectStatus) dto.getStatus();
+            Page<Developer> developerPage = developerDao.executeInOnePageTransaction(() -> {
+                Page<Developer> page1 = null;
+                try {
+                    long totalCount = developerDao.getCountOfDevelopers(dto.getId(), projectStatus);
+                    page1 = Util.getPageWithCorrectNumbers(dto.getPage(), count, totalCount);
+
+                    Map<Developer, Integer> map = developerDao.getDevelopersForContractor(
+                        dto.getId(), projectStatus, page1.getPageNumber(), count);
+
+                    page1.setMap(map);
+                } catch (NoResultException e) {
+                    log.error(THERE_IS_NO_SUCH_DATA_IN_DB, e);
+                }
+                return page1 != null ? page1
+                           : new Page<>(new ArrayList<>(), FIRST_PAGE_NUMBER, FIRST_PAGE_NUMBER);
+            });
+
+            status = projectStatus;
+            page = developerPage.getPageNumber();
+            lastPageNumber = developerPage.getLastPageNumber();
+
+            list.addAll(developerPage.getMap().keySet()
+                            .stream()
+                            .map(developer -> {
+                                Integer developerDebt = developerPage.getMap().get(developer);
                                 return DeveloperConverter.convertToDto(developer, developerDebt);
                             })
                             .collect(Collectors.toList()));
@@ -647,14 +717,14 @@ public class ContractorServiceImpl implements ContractorService {
             Calculation calculation = calculationDao.executeInOneEntityTransaction(() -> {
                 Chapter chapter;
                 try {
-                    chapter = chapterDao.get(dto.getId());
-                } catch (EntityNotFoundException e) {
+                    chapter = chapterDao.getChapterForCalculation(dto.getId());
+                } catch (NoResultException e) {
                     log.error(CHAPTER_NOT_FOUND_ID + dto.getId(), e);
                     return null;
                 } finally {
                     chapterDao.closeManager();
                 }
-                if (chapter != null && ChapterStatus.OCCUPIED.equals(chapter.getStatus())) {
+                if (chapter != null) {
                     Calculation newCalculation = Calculation.builder()
                                                      .chapter(chapter)
                                                      .month(Date.valueOf("" + dto.getInt1() + "-" + dto.getInt2() + "-" + "01"))
