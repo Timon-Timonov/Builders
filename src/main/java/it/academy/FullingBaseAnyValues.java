@@ -116,8 +116,8 @@ public class FullingBaseAnyValues {
         allActiveDevelopers.forEach(developer -> {
             try {
                 List<Project> allProjectList = new ArrayList<>();
-                allProjectList.addAll(projectDao.getProjectsByDeveloperId(developer.getId(), ProjectStatus.PREPARATION, FIRST_PAGE_NUMBER, projectCount));
-                allProjectList.addAll(projectDao.getProjectsByDeveloperId(developer.getId(), ProjectStatus.IN_PROCESS, FIRST_PAGE_NUMBER, projectCount));
+                allProjectList.addAll(projectDao.getProjectsByDeveloperId(developer.getId(), ProjectStatus.PREPARATION, FIRST_PAGE_NUMBER, projectCount).keySet());
+                allProjectList.addAll(projectDao.getProjectsByDeveloperId(developer.getId(), ProjectStatus.IN_PROCESS, FIRST_PAGE_NUMBER, projectCount).keySet());
 
                 allProjectList.forEach(project -> {
                     try {
@@ -202,7 +202,7 @@ public class FullingBaseAnyValues {
                 }
             }
             try {
-                List<Calculation> list = calculationDao.getCalculationsByChapterId(chapterId, FIRST_PAGE_NUMBER, Integer.MAX_VALUE);
+                List<Calculation> list = new ArrayList<>(calculationDao.getCalculationsByChapterId(chapterId, FIRST_PAGE_NUMBER, Integer.MAX_VALUE).keySet());
                 calculationList.addAll(list);
                 list.forEach(calculation -> {
                     int workPriceFact = calculation.getWorkPricePlan() * INT115 / INT100;

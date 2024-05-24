@@ -1,4 +1,4 @@
-package it.academy.util.functionalInterfaces;
+package it.academy.dao.functionalInterfaces;
 
 import it.academy.dto.Page;
 

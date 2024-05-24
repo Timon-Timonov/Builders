@@ -22,6 +22,7 @@ import javax.persistence.RollbackException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static it.academy.util.constants.Constants.FIRST_PAGE_NUMBER;
@@ -157,7 +158,7 @@ public class DeveloperServiceImpl implements DeveloperService {
                 try {
                     long totalCount = projectDao.getCountOfProjectsByDeveloperId(dto.getId(), projectStatus);
                     page1 = Util.getPageWithCorrectNumbers(dto.getPage(), count, totalCount);
-                    page1.getList().addAll(projectDao.getProjectsByDeveloperId(
+                    page1.setMap(projectDao.getProjectsByDeveloperId(
                         dto.getId(), projectStatus, page1.getPageNumber(), count));
                 } catch (NoResultException e) {
                     log.error(THERE_IS_NO_SUCH_DATA_IN_DB, e);
@@ -169,13 +170,11 @@ public class DeveloperServiceImpl implements DeveloperService {
             status = projectStatus;
             page = projectPage.getPageNumber();
             lastPageNumber = projectPage.getLastPageNumber();
-            list.addAll(projectPage.getList().stream()
+            Map<Project, Integer[]> map = projectPage.getMap();
+            list.addAll(map.keySet().stream()
                             .map(project -> {
-                                Integer projectPrice = project.getChapters().stream()
-                                                           .map(Chapter::getPrice)
-                                                           .reduce(ZERO_INT_VALUE, Integer::sum);
-                                Integer projectDebt = Util.getProjectDept(project);
-                                return ProjectConverter.convertToDto(project, projectPrice, projectDebt);
+                                Integer[] values = map.get(project);
+                                return ProjectConverter.convertToDto(project, values[0], values[1] - values[2]);
                             })
                             .collect(Collectors.toList()));
         } catch (ClassCastException e) {
@@ -225,8 +224,7 @@ public class DeveloperServiceImpl implements DeveloperService {
                     long totalCount = contractorDao.getCountOfContractorsByDeveloperId(dto.getId(), projectStatus);
                     page1 = Util.getPageWithCorrectNumbers(dto.getPage(), count, totalCount);
                     int correctPage = page1.getPageNumber();
-                    page1.getList().addAll(
-                        contractorDao.getContractorsByDeveloperId(dto.getId(), projectStatus, correctPage, count));
+                    page1.setMap(contractorDao.getContractorsByDeveloperId(dto.getId(), projectStatus, correctPage, count));
                 } catch (NoResultException e) {
                     log.error(THERE_IS_NO_SUCH_DATA_IN_DB_WITH_USER_STATUS + projectStatus, e);
                 }
@@ -236,19 +234,11 @@ public class DeveloperServiceImpl implements DeveloperService {
             page = contractorPage.getPageNumber();
             status = projectStatus;
             lastPageNumber = contractorPage.getLastPageNumber();
-            list.addAll(contractorPage.getList().stream()
+            Map<Contractor, Integer[]> map = contractorPage.getMap();
+            list.addAll(map.keySet().stream()
                             .map(contractor -> {
-                                int contractorDebt = ZERO_INT_VALUE;
-                                try {
-                                    contractorDebt = calculationDao.getTotalDeptByDeveloperIdAndContractorId(dto.getId(), contractor.getId());
-                                } catch (NoResultException e) {
-                                    log.error(THERE_IS_NO_SUCH_DATA_IN_DB_WITH_CONTRACTOR_ID + contractor.getId() + AND_DELELOPER_ID + dto.getId(), e);
-                                } catch (IOException e) {
-                                    log.error(GETING_OF_CONTRACTOR_DEBT_BY_CONTRACTOR_ID + contractor.getId() + AND_DEVELOPER_ID + dto.getId() + FAILED, e);
-                                } finally {
-                                    calculationDao.closeManager();
-                                }
-                                return ContractorConverter.convertToDto(contractor, contractorDebt);
+                                Integer[] values = map.get(contractor);
+                                return ContractorConverter.convertToDto(contractor, values[0] - values[1]);
                             })
                             .collect(Collectors.toList()));
         } catch (ClassCastException e) {
@@ -517,18 +507,21 @@ public class DeveloperServiceImpl implements DeveloperService {
         List<ChapterDto> list = new ArrayList<>();
 
         try {
-            list.addAll((chapterDao.executeInOneListTransaction(
-                () -> {
-                    List<Chapter> chapterList = new ArrayList<>();
-                    try {
-                        chapterList.addAll(chapterDao.getChaptersByProjectId(dto.getId()));
-                    } catch (NoResultException e) {
-                        log.error(THERE_IS_NO_SUCH_DATA_IN_DB, e);
-                    }
-                    return chapterList;
-                }))
-                            .stream()
-                            .map(ChapterConverter::getChapterDtoForDeveloper)
+            Page<Chapter> page = ((chapterDao.executeInOnePageTransaction(() -> {
+                Page<Chapter> page1 = new Page<>(new ArrayList<>(), FIRST_PAGE_NUMBER, FIRST_PAGE_NUMBER);
+                try {
+                    page1.setMap(chapterDao.getChaptersByProjectId(dto.getId()));
+                } catch (NoResultException e) {
+                    log.error(THERE_IS_NO_SUCH_DATA_IN_DB, e);
+                }
+                return page1;
+            })));
+            Map<Chapter, Integer[]> map = page.getMap();
+            list.addAll(map.keySet().stream()
+                            .map(chapter -> {
+                                Integer[] values = map.get(chapter);
+                                return ChapterConverter.convertToDto(chapter, values[0] - values[1]);
+                            })
                             .collect(Collectors.toList()));
         } catch (IOException e) {
             exceptionMessage = BAD_CONNECTION;
@@ -572,9 +565,8 @@ public class DeveloperServiceImpl implements DeveloperService {
                     long totalCount = chapterDao.getCountOfChaptersByContractorIdAndDeveloperId(
                         dto.getSecondId(), dto.getId(), projectStatus);
                     page1 = Util.getPageWithCorrectNumbers(dto.getPage(), count, totalCount);
-                    page1.getList().addAll(
-                        chapterDao.getChaptersByContractorIdAndDeveloperId(
-                            dto.getSecondId(), dto.getId(), projectStatus, page1.getPageNumber(), count));
+                    page1.setMap(chapterDao.getChaptersByContractorIdAndDeveloperId(
+                        dto.getSecondId(), dto.getId(), projectStatus, page1.getPageNumber(), count));
                 } catch (NoResultException e) {
                     log.error(THERE_IS_NO_SUCH_DATA_IN_DB_WITH_DEVELOPER_ID + dto.getSecondId());
                 }
@@ -584,8 +576,12 @@ public class DeveloperServiceImpl implements DeveloperService {
             status = projectStatus;
             page = chapterPage.getPageNumber();
             lastPageNumber = chapterPage.getLastPageNumber();
-            list.addAll(chapterPage.getList().stream()
-                            .map(ChapterConverter::getChapterDtoForDeveloper)
+            Map<Chapter, Integer[]> map = chapterPage.getMap();
+            list.addAll(map.keySet().stream()
+                            .map(chapter -> {
+                                Integer[] values = map.get(chapter);
+                                return ChapterConverter.convertToDto(chapter, values[0] - values[1]);
+                            })
                             .collect(Collectors.toList()));
         } catch (ClassCastException e) {
             exceptionMessage = INVALID_VALUE;
@@ -882,13 +878,9 @@ public class DeveloperServiceImpl implements DeveloperService {
                     long chapterId = dto.getId();
                     int count = dto.getCount();
                     long totalCount = calculationDao.getCountOfCalculationsByChapterId(chapterId);
-
                     page1 = Util.getPageWithCorrectNumbers(dto.getPage(), count, totalCount);
-                    int correctPageNumber = page1.getPageNumber();
-
-                    page1.getList().addAll(
-                        calculationDao.getCalculationsByChapterId(
-                            chapterId, correctPageNumber, count));
+                    page1.setMap(calculationDao.getCalculationsByChapterId(
+                        dto.getId(), page1.getPageNumber(), count));
                 } catch (NoResultException e) {
                     log.error(THERE_IS_NO_SUCH_DATA_IN_DB_CHAPTER_ID + dto.getId());
                 }
@@ -898,13 +890,13 @@ public class DeveloperServiceImpl implements DeveloperService {
 
             page = calculationPage.getPageNumber();
             lastPageNumber = calculationPage.getLastPageNumber();
-            list.addAll(calculationPage.getList().stream()
+            Map<Calculation, Integer[]> map = calculationPage.getMap();
+            list.addAll(map.keySet().stream()
                             .map(calculation -> {
-                                Integer[] sums = Util.getCalculationSums(calculation);
-                                return CalculationConverter.convertToDto(calculation, sums[0], sums[1], sums[2]);
+                                Integer[] values = map.get(calculation);
+                                return CalculationConverter.convertToDto(calculation, values[0], values[1]);
                             })
                             .collect(Collectors.toList()));
-
         } catch (IOException e) {
             exceptionMessage = BAD_CONNECTION;
             log.error(BAD_CONNECTION, e);

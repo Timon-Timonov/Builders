@@ -19,5 +19,5 @@ public class Page<DTO> {
 
     private final Integer lastPageNumber;
 
-    private Map<Developer, Integer> map;
+    private Map<DTO, Integer[]> map;
 }

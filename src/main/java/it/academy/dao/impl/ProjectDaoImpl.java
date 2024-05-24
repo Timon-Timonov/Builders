@@ -6,8 +6,12 @@ import it.academy.pojo.enums.ProjectStatus;
 import it.academy.pojo.enums.UserStatus;
 
 import javax.persistence.NoResultException;
+import javax.persistence.Query;
 import javax.persistence.TypedQuery;
-import java.util.List;
+import java.util.*;
+
+import static it.academy.util.constants.Constants.ZERO_INT_VALUE;
+import static it.academy.util.constants.Constants.ZERO_LONG_VALUE;
 
 public class ProjectDaoImpl extends DaoImpl<Project, Long> implements ProjectDao {
 
@@ -17,47 +21,213 @@ public class ProjectDaoImpl extends DaoImpl<Project, Long> implements ProjectDao
     }
 
     @Override
-    public List<Project> getProjectsByContractorId(Long contractorId, ProjectStatus status, int page, int count)
-        throws NoResultException {
+    public Map<Project, Integer[]> getProjectsByContractorId
+        (Long contractorId, ProjectStatus status, int page, int count) throws NoResultException {
 
-        TypedQuery<Project> query = getEm().createQuery(
-            "SELECT DISTINCT p FROM Project p JOIN Chapter ch ON p.id=ch.project.id WHERE p.status=:status AND ch.contractor.id=:contractorId ORDER BY  p.name ",
-            Project.class);
-        return query.setParameter("contractorId", contractorId)
-                   .setParameter("status", status)
-                   .setMaxResults(count)
-                   .setFirstResult((page - 1) * count)
-                   .getResultList();
+        Query queryTotalPrice = getEm().createQuery(
+            "SELECT  p, SUM(ch.price), dev, us " +
+                "FROM Project p INNER JOIN Chapter ch " +
+                "ON p=ch.project LEFT JOIN Developer dev " +
+                "ON p.developer=dev LEFT JOIN User us " +
+                "ON dev.id=us.id " +
+
+                "WHERE ch.contractor.id=:contractorId " +
+                "AND p.status=:status " +
+
+                "GROUP BY p " +
+                "ORDER BY  p.name ");
+
+
+        Query queryWorkPrice = getEm().createQuery(
+            "SELECT  p, SUM(calc.workPriceFact) " +
+                "FROM Project p INNER JOIN Chapter ch " +
+                "ON p.id=ch.project.id LEFT JOIN Calculation calc " +
+                "ON calc.chapter.id=ch.id " +
+
+                "WHERE ch.contractor.id=:contractorId " +
+                "AND p.status=:status " +
+
+                "GROUP BY p " +
+                "ORDER BY  p.name ");
+
+
+        Query queryTransferSum = getEm().createQuery(
+            "SELECT  p, SUM(tr.sum) " +
+                "FROM Project p INNER JOIN Chapter ch " +
+                "ON p.id=ch.project.id LEFT JOIN Calculation calc " +
+                "ON ch.id=calc.chapter.id LEFT JOIN MoneyTransfer tr " +
+                "ON calc.id=tr.calculation.id " +
+
+                "WHERE ch.contractor.id=:contractorId " +
+                "AND p.status=:status " +
+
+                "GROUP BY p " +
+                "ORDER BY  p.name ");
+
+        List<Query> queries = new ArrayList<>();
+        queries.add(queryTotalPrice);
+        queries.add(queryWorkPrice);
+        queries.add(queryTransferSum);
+
+        queries.forEach(query -> query.setParameter("contractorId", contractorId)
+            .setParameter("status", status)
+            .setMaxResults(count)
+            .setFirstResult((page - 1) * count));
+
+        Map<Project, Integer[]> map = new TreeMap<>(Comparator.comparing(Project::getName));
+
+        List<Object[]> listTotalPrice = (List<Object[]>) queryTotalPrice.getResultList();
+        List<Object[]> listWorkPrice = (List<Object[]>) queryWorkPrice.getResultList();
+        List<Object[]> listTransferSum = (List<Object[]>) queryTransferSum.getResultList();
+
+
+        listTotalPrice.forEach(res -> {
+            Integer[] arr = new Integer[3];
+            Arrays.fill(arr, ZERO_INT_VALUE);
+
+            Project project = (Project) res[0];
+            long price = res[1] != null ? (long) res[1] : ZERO_LONG_VALUE;
+            arr[0] = (int) price;
+
+            map.put(project, arr);
+        });
+
+        listWorkPrice.forEach(res -> {
+            Project project = (Project) res[0];
+            long workPrice = res[1] != null ? (long) res[1] : ZERO_LONG_VALUE;
+            if (map.containsKey(project)) {
+                map.get(project)[1] = (int) workPrice;
+            }
+        });
+
+        listTransferSum.forEach(res -> {
+            Project project = (Project) res[0];
+            long transferSum = res[1] != null ? (long) res[1] : ZERO_LONG_VALUE;
+            if (map.containsKey(project)) {
+                map.get(project)[2] = (int) transferSum;
+            }
+        });
+
+        return map;
     }
 
     @Override
-    public List<Project> getProjectsByDeveloperIdContractorId
+    public Map<Project, Integer[]> getProjectsByDeveloperIdContractorId
         (Long developerId, Long contractorId, ProjectStatus status, int page, int count)
         throws NoResultException {
 
-        TypedQuery<Project> query = getEm().createQuery(
-            "SELECT DISTINCT (p) FROM Project p, Chapter ch WHERE p.developer.id=:developerId AND p.status=:status AND ch MEMBER OF p.chapters AND ch.contractor.id=:contractorId ORDER BY p.name ASC",
-            Project.class);
-        return query.setParameter("contractorId", contractorId)
-                   .setParameter("developerId", developerId)
-                   .setParameter("status", status)
-                   .setMaxResults(count)
-                   .setFirstResult((page - 1) * count)
-                   .getResultList();
+        Query queryPrice = getEm().createQuery(
+            "SELECT proj, SUM(ch.price), us, dev " +
+                "FROM Project proj INNER JOIN Chapter ch " +
+                "ON ch.project.id=proj.id INNER JOIN Developer dev " +
+                "ON dev.id=proj.developer.id INNER JOIN User us " +
+                "ON us.id =dev.id " +
+
+                "WHERE ch.contractor.id=:contractorId " +
+                "AND dev.id=:developerId " +
+                "AND proj.status=:status " +
+
+                "GROUP BY proj " +
+                "ORDER BY proj.name ASC");
+
+        Query queryWorkPrice = getEm().createQuery(
+            "SELECT proj,SUM(calc.workPriceFact) " +
+                "FROM Project proj INNER JOIN Developer dev " +
+                "ON dev.id=proj.developer.id INNER JOIN Chapter ch " +
+                "ON proj.id=ch.project.id LEFT JOIN Calculation calc " +
+                "ON calc.chapter.id=ch.id " +
+
+                "WHERE ch.contractor.id=:contractorId " +
+                "AND dev.id=:developerId " +
+                "AND proj.status=:status " +
+
+                "GROUP BY proj " +
+                "ORDER BY proj.name ASC");
+
+        Query queryTransferSum = getEm().createQuery(
+            "SELECT proj,SUM(tr.sum) " +
+                "FROM Project proj INNER JOIN Developer dev " +
+                "ON dev.id=proj.developer.id INNER JOIN Chapter ch " +
+                "ON proj.id=ch.project.id LEFT JOIN Calculation calc " +
+                "ON ch.id=calc.chapter.id LEFT JOIN MoneyTransfer tr " +
+                "ON tr.calculation.id=calc.id " +
+
+                "WHERE ch.contractor.id=:contractorId " +
+                "AND dev.id=:developerId " +
+                "AND proj.status=:status " +
+
+                "GROUP BY proj " +
+                "ORDER BY proj.name ASC");
+
+        List<Query> queries = new ArrayList<>();
+        queries.add(queryPrice);
+        queries.add(queryWorkPrice);
+        queries.add(queryTransferSum);
+
+        queries.forEach(query -> query.setParameter("contractorId", contractorId)
+            .setParameter("developerId", developerId)
+            .setParameter("status", status)
+            .setMaxResults(count)
+            .setFirstResult((page - 1) * count));
+
+        return getProjectMap(queryPrice, queryWorkPrice, queryTransferSum);
     }
 
     @Override
-    public List<Project> getProjectsByDeveloperId(Long developerId, ProjectStatus status, int page, int count)
+    public Map<Project, Integer[]> getProjectsByDeveloperId(Long developerId, ProjectStatus status, int page, int count)
         throws NoResultException {
 
-        TypedQuery<Project> query = getEm().createQuery(
-            "SELECT p FROM Project p WHERE p.developer.id=:developerId AND p.status=:ProjectStatus ORDER BY p.name ASC",
-            Project.class);
-        return query.setParameter("developerId", developerId)
-                   .setParameter("ProjectStatus", status)
-                   .setMaxResults(count)
-                   .setFirstResult((page - 1) * count)
-                   .getResultList();
+        Query queryPrice = getEm().createQuery(
+            "SELECT proj, SUM(ch.price), us, dev " +
+                "FROM Project proj LEFT JOIN Chapter ch " +
+                "ON ch.project.id=proj.id INNER JOIN Developer dev " +
+                "ON dev.id=proj.developer.id INNER JOIN User us " +
+                "ON us.id =dev.id " +
+
+                "WHERE proj.status=:status " +
+                "AND dev.id=:developerId " +
+
+                "GROUP BY proj " +
+                "ORDER BY proj.name ASC");
+
+        Query queryWorkPrice = getEm().createQuery(
+            "SELECT proj,SUM(calc.workPriceFact) " +
+                "FROM Project proj LEFT JOIN Chapter ch " +
+                "ON ch.project.id=proj.id INNER JOIN Developer dev " +
+                "ON dev.id=proj.developer.id LEFT JOIN Calculation calc " +
+                "ON calc.chapter.id=ch.id " +
+
+                "WHERE proj.status=:status " +
+                "AND dev.id=:developerId " +
+
+                "GROUP BY proj " +
+                "ORDER BY proj.name ASC");
+
+        Query queryTransferSum = getEm().createQuery(
+            "SELECT proj,SUM(tr.sum) " +
+                "FROM Project proj LEFT JOIN Chapter ch " +
+                "ON ch.project.id=proj.id INNER JOIN Developer dev " +
+                "ON dev.id=proj.developer.id LEFT JOIN Calculation calc " +
+                "ON calc.chapter.id=ch.id LEFT JOIN MoneyTransfer tr " +
+                "ON tr.calculation.id=calc.id " +
+
+                "WHERE proj.status=:status " +
+                "AND dev.id=:developerId " +
+
+                "GROUP BY proj " +
+                "ORDER BY proj.name ASC");
+
+        List<Query> queries = new ArrayList<>();
+        queries.add(queryPrice);
+        queries.add(queryWorkPrice);
+        queries.add(queryTransferSum);
+
+        queries.forEach(query -> query.setParameter("developerId", developerId)
+            .setParameter("status", status)
+            .setMaxResults(count)
+            .setFirstResult((page - 1) * count));
+
+        return getProjectMap(queryPrice, queryWorkPrice, queryTransferSum);
     }
 
 
@@ -103,5 +273,37 @@ public class ProjectDaoImpl extends DaoImpl<Project, Long> implements ProjectDao
             Project.class);
         return query.setParameter("status", UserStatus.ACTIVE)
                    .getResultList();
+    }
+
+    private Map<Project, Integer[]> getProjectMap(Query queryPrice, Query queryWorkPrice, Query queryTransferSum) {
+
+        Map<Project, Integer[]> map = new TreeMap<>(Comparator.comparing(Project::getName));
+
+        List<Object[]> listPrice = (List<Object[]>) queryPrice.getResultList();
+        List<Object[]> listWorkPrice = (List<Object[]>) queryWorkPrice.getResultList();
+        List<Object[]> listTransferSum = (List<Object[]>) queryTransferSum.getResultList();
+
+        listPrice.forEach(res -> {
+            Integer[] arr = new Integer[3];
+            Arrays.fill(arr, ZERO_INT_VALUE);
+
+            Project project = (Project) res[0];
+            long price = res[1] != null ? (long) res[1] : ZERO_LONG_VALUE;
+            arr[0] = (int) price;
+
+            map.put(project, arr);
+        });
+        listWorkPrice.forEach(res -> {
+            Project project = (Project) res[0];
+            long workPrice = res[1] != null ? (long) res[1] : ZERO_LONG_VALUE;
+            map.get(project)[1] = (int) workPrice;
+        });
+        listTransferSum.forEach(res -> {
+            Project project = (Project) res[0];
+            long transferSum = res[1] != null ? (long) res[1] : ZERO_LONG_VALUE;
+            map.get(project)[2] = (int) transferSum;
+        });
+
+        return map;
     }
 }

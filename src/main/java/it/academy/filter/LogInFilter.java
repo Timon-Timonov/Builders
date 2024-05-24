@@ -20,7 +20,7 @@ import static it.academy.util.constants.ServletURLs.*;
 public class LogInFilter implements Filter {
 
 
-    private final AdminService controller = AdminServiceImpl.getInstance();
+    private final AdminService service = AdminServiceImpl.getInstance();
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain filterChain) throws IOException, ServletException {
@@ -44,7 +44,7 @@ public class LogInFilter implements Filter {
                 if (userId != null && password != null && role != null && email != null) {
                     UserDto userDto = null;
                     if (!email.isBlank()) {
-                        userDto = controller.getUser(email);
+                        userDto = service.getUser(email);
                     }
                     if (userDto != null) {
                         if (userId.equals(userDto.getId()) &&

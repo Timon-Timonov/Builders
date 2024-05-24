@@ -11,7 +11,6 @@ import it.academy.pojo.*;
 import it.academy.pojo.enums.*;
 import it.academy.pojo.legalEntities.Contractor;
 import it.academy.pojo.legalEntities.Developer;
-import it.academy.pojo.legalEntities.LegalEntity;
 import it.academy.service.ContractorService;
 import it.academy.util.Util;
 import lombok.extern.log4j.Log4j2;
@@ -28,7 +27,6 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import static it.academy.util.constants.Constants.FIRST_PAGE_NUMBER;
-import static it.academy.util.constants.Constants.ZERO_INT_VALUE;
 import static it.academy.util.constants.JspURLs.*;
 import static it.academy.util.constants.Messages.*;
 import static it.academy.util.constants.ServletURLs.*;
@@ -159,8 +157,11 @@ public class ContractorServiceImpl implements ContractorService {
                 try {
                     long totalCount = projectDao.getCountOfProjectsByContractorId(dto.getId(), projectStatus);
                     page1 = Util.getPageWithCorrectNumbers(dto.getPage(), count, totalCount);
-                    page1.getList().addAll(projectDao.getProjectsByContractorId(
-                        dto.getId(), projectStatus, page1.getPageNumber(), count));
+
+                    Map<Project, Integer[]> map = projectDao.getProjectsByContractorId(
+                        dto.getId(), projectStatus, page1.getPageNumber(), count);
+
+                    page1.setMap(map);
                 } catch (NoResultException e) {
                     log.error(THERE_IS_NO_SUCH_DATA_IN_DB_WITH_CONTRACTOR_ID + dto.getId());
                 }
@@ -171,10 +172,17 @@ public class ContractorServiceImpl implements ContractorService {
             status = projectStatus;
             page = projectPage.getPageNumber();
             lastPageNumber = projectPage.getLastPageNumber();
-            list.addAll(projectPage.getList()
+            Map<Project, Integer[]> projectMap = projectPage.getMap();
+
+            list.addAll(projectMap.keySet()
                             .stream()
-                            .map(project -> ProjectConverter.getProjectDtoForContractor(dto.getId(), project))
+                            .map(project -> {
+                                Integer[] values = projectMap.get(project);
+                                Integer projectDebt = values[1] - values[2];
+                                return ProjectConverter.convertToDto(project, values[0], projectDebt);
+                            })
                             .collect(Collectors.toList()));
+
         } catch (ClassCastException e) {
             exceptionMessage = INVALID_VALUE;
             log.error(INVALID_VALUE + dto.getStatus().toString(), e);
@@ -220,7 +228,7 @@ public class ContractorServiceImpl implements ContractorService {
                     long totalCount = projectDao.getCountOfProjectsByDeveloperIdContractorId(
                         dto.getId(), dto.getSecondId(), projectStatus);
                     page1 = Util.getPageWithCorrectNumbers(dto.getPage(), count, totalCount);
-                    page1.getList().addAll(projectDao.getProjectsByDeveloperIdContractorId(
+                    page1.setMap(projectDao.getProjectsByDeveloperIdContractorId(
                         dto.getId(), dto.getSecondId(), projectStatus, page1.getPageNumber(), count));
                 } catch (NoResultException e) {
                     log.error(THERE_IS_NO_SUCH_DATA_IN_DB_WITH_CONTRACTOR_ID + dto.getSecondId() +
@@ -233,8 +241,14 @@ public class ContractorServiceImpl implements ContractorService {
             status = projectStatus;
             page = projectPage.getPageNumber();
             lastPageNumber = projectPage.getLastPageNumber();
-            list.addAll(projectPage.getList().stream()
-                            .map(project -> ProjectConverter.getProjectDtoForContractor(dto.getSecondId(), project))
+            Map<Project, Integer[]> map = projectPage.getMap();
+            list.addAll(map.keySet().stream()
+                            .map(project -> {
+                                Integer[] arr = map.get(project);
+                                int price = arr[0];
+                                int debt = arr[1] - arr[2];
+                                return ProjectConverter.convertToDto(project, price, debt);
+                            })
                             .collect(Collectors.toList()));
         } catch (ClassCastException e) {
             exceptionMessage = INVALID_VALUE;
@@ -334,7 +348,7 @@ public class ContractorServiceImpl implements ContractorService {
             lastPageNumber = chapterPage.getLastPageNumber();
             list.addAll(chapterPage.getList()
                             .stream()
-                            .map(chapter -> ChapterConverter.getChapterDtoForContractor(chapter, null))
+                            .map(chapter -> ChapterConverter.convertToDto(chapter, null))
                             .collect(Collectors.toList()));
         } catch (ClassCastException e) {
             exceptionMessage = INVALID_VALUE;
@@ -366,74 +380,6 @@ public class ContractorServiceImpl implements ContractorService {
         return dtoWithListForUi;
     }
 
-   /* @Override
-    public DtoWithPageForUi<DeveloperDto> getMyDevelopers(FilterPageDto dto) {
-
-        String exceptionMessage = null;
-        List<DeveloperDto> list = new ArrayList<>();
-        Integer page = FIRST_PAGE_NUMBER;
-        Integer count = dto.getCount();
-        Integer lastPageNumber = FIRST_PAGE_NUMBER;
-        ProjectStatus status = null;
-        try {
-            ProjectStatus projectStatus = (ProjectStatus) dto.getStatus();
-            Page<Developer> developerPage = developerDao.executeInOnePageTransaction(() -> {
-                Page<Developer> page1 = null;
-                try {
-                    long totalCount = developerDao.getCountOfDevelopers(dto.getId(), projectStatus);
-                    page1 = Util.getPageWithCorrectNumbers(dto.getPage(), count, totalCount);
-                    page1.getList().addAll(developerDao.getDevelopersByContractorId(
-                        dto.getId(), projectStatus, page1.getPageNumber(), count));
-                } catch (NoResultException e) {
-                    log.error(THERE_IS_NO_SUCH_DATA_IN_DB, e);
-                }
-                return page1 != null ? page1
-                           : new Page<>(new ArrayList<>(), FIRST_PAGE_NUMBER, FIRST_PAGE_NUMBER);
-            });
-
-            status = projectStatus;
-            page = developerPage.getPageNumber();
-            lastPageNumber = developerPage.getLastPageNumber();
-            list.addAll(developerPage.getList()
-                            .stream()
-                            .map(developer -> {
-                                Integer developerDebt = null;
-                                try {
-                                    developerDebt = getTotalDeptByDeveloper(dto.getId(), developer.getId());
-                                } catch (IOException e) {
-                                    log.error(GETTING_OF_DEBT + dto.getId() + WITH_DEVELOPER_ID + developer.getId() + FAILED, e);
-                                }
-                                return DeveloperConverter.convertToDto(developer, developerDebt);
-                            })
-                            .collect(Collectors.toList()));
-        } catch (ClassCastException e) {
-            exceptionMessage = INVALID_VALUE;
-            log.error(INVALID_VALUE + dto.getStatus().toString(), e);
-        } catch (IOException e) {
-            exceptionMessage = BAD_CONNECTION;
-            log.error(BAD_CONNECTION, e);
-        } catch (Exception e) {
-            exceptionMessage = SOMETHING_WENT_WRONG;
-            log.error(SOMETHING_WENT_WRONG, e);
-        }
-
-        DtoWithPageForUi<DeveloperDto> dtoWithPageForUi;
-        if (exceptionMessage != null) {
-            dtoWithPageForUi = DtoWithPageForUi.<DeveloperDto>builder()
-                                   .exceptionMessage(exceptionMessage)
-                                   .build();
-        } else {
-            dtoWithPageForUi = DtoWithPageForUi.<DeveloperDto>builder()
-                                   .page(page)
-                                   .countOnPage(count)
-                                   .lastPageNumber(lastPageNumber)
-                                   .list(list)
-                                   .status(status)
-                                   .url(CONTRACTOR_PAGES_LIST_WITH_DEVELOPERS_JSP)
-                                   .build();
-        }
-        return dtoWithPageForUi;
-    }*/
 
     @Override
     public DtoWithPageForUi<DeveloperDto> getMyDevelopers(FilterPageDto dto) {
@@ -443,6 +389,7 @@ public class ContractorServiceImpl implements ContractorService {
         Integer page = FIRST_PAGE_NUMBER;
         Integer count = dto.getCount();
         Integer lastPageNumber = FIRST_PAGE_NUMBER;
+        String search=dto.getSearch();
         ProjectStatus status = null;
         try {
             ProjectStatus projectStatus = (ProjectStatus) dto.getStatus();
@@ -452,7 +399,7 @@ public class ContractorServiceImpl implements ContractorService {
                     long totalCount = developerDao.getCountOfDevelopers(dto.getId(), projectStatus);
                     page1 = Util.getPageWithCorrectNumbers(dto.getPage(), count, totalCount);
 
-                    Map<Developer, Integer> map = developerDao.getDevelopersForContractor(
+                    Map<Developer, Integer[]> map = developerDao.getDevelopersForContractor(
                         dto.getId(), projectStatus, page1.getPageNumber(), count);
 
                     page1.setMap(map);
@@ -466,11 +413,13 @@ public class ContractorServiceImpl implements ContractorService {
             status = projectStatus;
             page = developerPage.getPageNumber();
             lastPageNumber = developerPage.getLastPageNumber();
+            Map<Developer, Integer[]> developerMap = developerPage.getMap();
 
-            list.addAll(developerPage.getMap().keySet()
+            list.addAll(developerMap.keySet()
                             .stream()
                             .map(developer -> {
-                                Integer developerDebt = developerPage.getMap().get(developer);
+                                Integer[] values = developerMap.get(developer);
+                                Integer developerDebt = values[0] - values[1];
                                 return DeveloperConverter.convertToDto(developer, developerDebt);
                             })
                             .collect(Collectors.toList()));
@@ -498,6 +447,7 @@ public class ContractorServiceImpl implements ContractorService {
                                    .list(list)
                                    .status(status)
                                    .url(CONTRACTOR_PAGES_LIST_WITH_DEVELOPERS_JSP)
+                                   .search(search)
                                    .build();
         }
         return dtoWithPageForUi;
@@ -519,6 +469,8 @@ public class ContractorServiceImpl implements ContractorService {
                 try {
                     long totalCount = proposalDao.getCountOfProposalsByContractorId(dto.getId(), proposalStatus);
                     page1 = Util.getPageWithCorrectNumbers(dto.getPage(), count, totalCount);
+
+
                     page1.getList().addAll(proposalDao.getProposalsByContractorId(
                         dto.getId(), proposalStatus, page1.getPageNumber(), count));
                 } catch (NoResultException e) {
@@ -571,20 +523,23 @@ public class ContractorServiceImpl implements ContractorService {
         List<ChapterDto> list = new ArrayList<>();
 
         try {
-            list = chapterDao.executeInOneListTransaction(() -> {
-                List<Chapter> chapterList = new ArrayList<>();
+            Page<Chapter> page;
+            page = chapterDao.executeInOnePageTransaction(() -> {
+                Page<Chapter> page1 = new Page<>(new ArrayList<>(), FIRST_PAGE_NUMBER, FIRST_PAGE_NUMBER);
                 try {
-                    chapterList.addAll(chapterDao.getChaptersByProjectIdContractorId(dto.getId(), dto.getSecondId()));
+                    page1.setMap(chapterDao.getChaptersByProjectIdContractorId(dto.getId(), dto.getSecondId()));
                 } catch (NoResultException e) {
                     log.error(THERE_IS_NO_SUCH_DATA_IN_DB, e);
                 }
-                return chapterList;
-            }).stream()
-                       .map(chapter -> {
-                           Integer chapterDebt = Util.getDebtByChapter(chapter);
-                           return ChapterConverter.getChapterDtoForContractor(chapter, chapterDebt);
-                       })
-                       .collect(Collectors.toList());
+                return page1;
+            });
+            Map<Chapter, Integer[]> map = page.getMap();
+            list.addAll(map.keySet().stream()
+                            .map(chapter -> {
+                                Integer[] values = map.get(chapter);
+                                return ChapterConverter.convertToDto(chapter, values[0] - values[1]);
+                            })
+                            .collect(Collectors.toList()));
         } catch (IOException e) {
             exceptionMessage = BAD_CONNECTION;
             log.error(BAD_CONNECTION, e);
@@ -624,7 +579,7 @@ public class ContractorServiceImpl implements ContractorService {
                 try {
                     long totalCount = calculationDao.getCountOfCalculationsByChapterId(dto.getId());
                     page1 = Util.getPageWithCorrectNumbers(dto.getPage(), count, totalCount);
-                    page1.getList().addAll(calculationDao.getCalculationsByChapterId(
+                    page1.setMap(calculationDao.getCalculationsByChapterId(
                         dto.getId(), page1.getPageNumber(), count));
                 } catch (NoResultException e) {
                     log.error(THERE_IS_NO_SUCH_DATA_IN_DB, e);
@@ -634,10 +589,11 @@ public class ContractorServiceImpl implements ContractorService {
             });
             page = calculationPage.getPageNumber();
             lastPageNumber = calculationPage.getLastPageNumber();
-            list.addAll(calculationPage.getList().stream()
+            Map<Calculation, Integer[]> map = calculationPage.getMap();
+            list.addAll(map.keySet().stream()
                             .map(calculation -> {
-                                Integer[] sums = Util.getCalculationSums(calculation);
-                                return CalculationConverter.convertToDto(calculation, sums[0], sums[1], sums[2]);
+                                Integer[] values = map.get(calculation);
+                                return CalculationConverter.convertToDto(calculation, values[0], values[1]);
                             })
                             .collect(Collectors.toList()));
         } catch (IOException e) {
@@ -935,21 +891,5 @@ public class ContractorServiceImpl implements ContractorService {
                                    .build();
         }
         return dtoWithPageForUi;
-    }
-
-    private int getTotalDeptByDeveloper(long contractorId, long developerId) throws IOException {
-
-        int debt = ZERO_INT_VALUE;
-        try {
-            debt = chapterDao.getAllChaptersByDeveloperIdContractorId(developerId, contractorId)
-                       .stream()
-                       .map(Util::getDebtByChapter)
-                       .reduce(0, Integer::sum);
-        } catch (NoResultException | IOException e) {
-            log.debug(e);
-        } finally {
-            chapterDao.closeManager();
-        }
-        return debt;
     }
 }

@@ -77,7 +77,7 @@
             </td>
             <td> |</td>
             <td>
-                <%if (ChapterStatus.OCCUPIED.equals(chapterStatus)) {%>
+                <%if (!ChapterStatus.FREE.equals(chapterStatus)) {%>
                 <form action="<%=GET_MY_CALCULATION_DEVELOPER_SERVLET%>" method="get">
                     <input type="hidden" value="<%=chapterDto.getId().toString()%>" name="<%=CHAPTER_ID_PARAM%>">
                     <input type="hidden" value="<%=chapterName%>" name="<%=CHAPTER_NAME_PARAM%>">

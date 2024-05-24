@@ -27,6 +27,5 @@ public class DtoWithPageForUi<T> {
     List<T> list = new ArrayList<>();
     @Builder.Default
     String url = LOGOUT_SERVLET;
-
-
+    String search;
 }

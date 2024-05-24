@@ -19,4 +19,5 @@ public class FilterPageDto {
 
     String name;
     String address;
+    String search;
 }

@@ -5,17 +5,18 @@ import it.academy.pojo.enums.ProjectStatus;
 
 import javax.persistence.NoResultException;
 import java.util.List;
+import java.util.Map;
 
 public interface ProjectDao extends Dao<Project, Long> {
 
-    List<Project> getProjectsByContractorId(Long contractorId, ProjectStatus status, int page, int count)
+    Map<Project, Integer[]> getProjectsByContractorId(Long contractorId, ProjectStatus status, int page, int count)
         throws NoResultException;
 
-    List<Project> getProjectsByDeveloperIdContractorId
+    Map<Project, Integer[]> getProjectsByDeveloperIdContractorId
         (Long developerId, Long contractorId, ProjectStatus status, int page, int count)
         throws NoResultException;
 
-    List<Project> getProjectsByDeveloperId(Long developerId, ProjectStatus status, int page, int count)
+    Map<Project, Integer[]> getProjectsByDeveloperId(Long developerId, ProjectStatus status, int page, int count)
         throws NoResultException;
 
     Long getCountOfProjectsByContractorId(Long contractorId, ProjectStatus status)

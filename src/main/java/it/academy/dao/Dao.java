@@ -1,7 +1,7 @@
 package it.academy.dao;
 
 import it.academy.dto.Page;
-import it.academy.util.functionalInterfaces.*;
+import it.academy.dao.functionalInterfaces.*;
 import org.hibernate.exception.ConstraintViolationException;
 
 import javax.persistence.EntityNotFoundException;

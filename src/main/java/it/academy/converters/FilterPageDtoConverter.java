@@ -86,12 +86,14 @@ public class FilterPageDtoConverter {
         ProjectStatus status = ParameterFinder.getProjectStatusFromParameter(req, PROJECT_STATUS_PARAM, DEFAULT_PROJECT_STATUS);
         int page = ParameterFinder.getNumberValueFromParameter(req, DEVELOPER_PAGE_PARAM, FIRST_PAGE_NUMBER);
         int count = ParameterFinder.getNumberValueFromParameter(req, DEVELOPER_COUNT_ON_PAGE_PARAM, DEFAULT_COUNT_ON_PAGE_5);
+        String search = ParameterFinder.getStringValueFromParameter(req, SEARCH_PARAM, null);
 
         return FilterPageDto.builder()
                    .id(contractorId)
                    .status(status)
                    .page(page)
                    .count(count)
+                   .search(search)
                    .build();
     }
 

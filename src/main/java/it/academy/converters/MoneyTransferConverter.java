@@ -11,13 +11,14 @@ public class MoneyTransferConverter {
 
     public static MoneyTransferDto convertToDto(MoneyTransfer from) {
 
-        CalculationDto calculationDto = CalculationConverter.convertToDto(from.getCalculation(), null, null, null);
+        //CalculationDto calculationDto = CalculationConverter.convertToDto(from.getCalculation(), null, null);
+
         return MoneyTransferDto.builder()
                    .id(from.getId())
                    .calculationDate(from.getCalculationDate())
                    .paymentType(from.getType())
                    .sum(from.getSum())
-                   .calculationDto(calculationDto)
+                  // .calculationDto(calculationDto)
                    .build();
     }
 }

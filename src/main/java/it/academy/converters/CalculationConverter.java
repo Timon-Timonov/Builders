@@ -4,8 +4,9 @@ import it.academy.dto.CalculationDto;
 import it.academy.pojo.Calculation;
 import it.academy.pojo.Chapter;
 
-import static it.academy.util.constants.Constants.MONTH;
-import static it.academy.util.constants.Constants.YEAR;
+import java.util.Optional;
+
+import static it.academy.util.constants.Constants.*;
 
 public class CalculationConverter {
 
@@ -13,7 +14,7 @@ public class CalculationConverter {
     private CalculationConverter() {
     }
 
-    public static CalculationDto convertToDto(Calculation from, Integer calculationDebt, Integer sumAdvance, Integer sumForWork) {
+    public static CalculationDto convertToDto(Calculation from, Integer sumAdvance, Integer sumForWork) {
 
         Chapter chapter = from.getChapter();
         if (chapter == null) {
@@ -21,11 +22,15 @@ public class CalculationConverter {
         }
         int YYYY = from.getMonth().getYear() + YEAR;
         int MM = from.getMonth().getMonth() + MONTH;
+        int workPriceFact = Optional.ofNullable(from.getWorkPriceFact()).orElse(ZERO_INT_VALUE);
+        int calculationDebt = workPriceFact
+                                  - Optional.ofNullable(sumAdvance).orElse(ZERO_INT_VALUE)
+                                  - Optional.ofNullable(sumForWork).orElse(ZERO_INT_VALUE);
 
         return CalculationDto.builder()
 
                    .id(from.getId())
-                   .workPriceFact(from.getWorkPriceFact())
+                   .workPriceFact(workPriceFact)
                    .workPricePlan(from.getWorkPricePlan())
                    .chapterName(chapter.getName())
                    .YYYY(YYYY)

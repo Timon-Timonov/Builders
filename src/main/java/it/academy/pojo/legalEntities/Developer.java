@@ -7,6 +7,7 @@ import lombok.experimental.SuperBuilder;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.OneToMany;
 import java.util.HashSet;
 import java.util.Set;
@@ -23,6 +24,6 @@ import java.util.Set;
 public class Developer extends LegalEntity {
 
     @Builder.Default
-    @OneToMany(mappedBy = "developer")
+    @OneToMany(mappedBy = "developer",fetch = FetchType.LAZY)
     private Set<Project> projects = new HashSet<>();
 }

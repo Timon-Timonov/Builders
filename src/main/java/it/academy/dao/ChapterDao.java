@@ -6,6 +6,7 @@ import it.academy.pojo.enums.ProjectStatus;
 import javax.persistence.NoResultException;
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 public interface ChapterDao extends Dao<Chapter, Long> {
 
@@ -15,11 +16,11 @@ public interface ChapterDao extends Dao<Chapter, Long> {
 
     List<Chapter> getFreeChapters(long contractorId, String chapterName, ProjectStatus projectStatus, int page, int count) throws NoResultException, IOException;
 
-    List<Chapter> getChaptersByProjectIdContractorId(long projectId, long contractorId) throws NoResultException, IOException;
+    Map<Chapter,Integer[]> getChaptersByProjectIdContractorId(long projectId, long contractorId) throws NoResultException, IOException;
 
-    List<Chapter> getChaptersByProjectId(long projectId) throws NoResultException, IOException;
+    Map<Chapter,Integer[]> getChaptersByProjectId(long projectId) throws NoResultException, IOException;
 
-    List<Chapter> getChaptersByContractorIdAndDeveloperId(long developerId, long contractorId, ProjectStatus status, int page, int count)
+    Map<Chapter,Integer[]> getChaptersByContractorIdAndDeveloperId(long developerId, long contractorId, ProjectStatus status, int page, int count)
         throws NoResultException, IOException;
 
     long getCountOfFreeChaptersByName(long contractorId, String chapterName, ProjectStatus projectStatus) throws NoResultException, IOException;

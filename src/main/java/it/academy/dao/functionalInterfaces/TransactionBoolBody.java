@@ -1,4 +1,4 @@
-package it.academy.util.functionalInterfaces;
+package it.academy.dao.functionalInterfaces;
 
 @FunctionalInterface
 public interface TransactionBoolBody {

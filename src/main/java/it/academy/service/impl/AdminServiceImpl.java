@@ -23,6 +23,7 @@ import javax.persistence.NoResultException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static it.academy.util.constants.Constants.FIRST_PAGE_NUMBER;
@@ -437,7 +438,7 @@ public class AdminServiceImpl implements AdminService {
                 try {
                     long totalCount = projectDao.getCountOfProjectsByDeveloperId(dto.getId(), projectStatus);
                     page1 = Util.getPageWithCorrectNumbers(dto.getPage(), count, totalCount);
-                    page1.getList().addAll(projectDao.getProjectsByDeveloperId(
+                    page1.setMap(projectDao.getProjectsByDeveloperId(
                         dto.getId(), projectStatus, page1.getPageNumber(), count));
                 } catch (NoResultException e) {
                     log.error(THERE_IS_NO_SUCH_DATA_IN_DB, e);
@@ -449,9 +450,12 @@ public class AdminServiceImpl implements AdminService {
             status = projectStatus;
             page = projectPage.getPageNumber();
             lastPageNumber = projectPage.getLastPageNumber();
-            list.addAll(projectPage.getList()
-                            .stream()
-                            .map(project -> ProjectConverter.convertToDto(project, null, null))
+            Map<Project, Integer[]> map = projectPage.getMap();
+            list.addAll(map.keySet().stream()
+                            .map(project -> {
+                                Integer[] values = map.get(project);
+                                return ProjectConverter.convertToDto(project, values[0], values[1] - values[2]);
+                            })
                             .collect(Collectors.toList()));
         } catch (ClassCastException e) {
             exceptionMessage = INVALID_VALUE;
@@ -491,9 +495,9 @@ public class AdminServiceImpl implements AdminService {
 
         try {
             list.addAll(chapterDao.executeInOneListTransaction(
-                () -> new ArrayList<>(chapterDao.getChaptersByProjectId(projectId)))
+                () -> new ArrayList<>(chapterDao.getChaptersByProjectId(projectId).keySet()))
                             .stream()
-                            .map(chapter -> ChapterConverter.getChapterDtoForContractor(chapter, null))
+                            .map(chapter -> ChapterConverter.convertToDto(chapter, null))
                             .collect(Collectors.toList()));
         } catch (NoResultException e) {
             log.error(THERE_IS_NO_SUCH_DATA_IN_DB, e);
@@ -549,7 +553,7 @@ public class AdminServiceImpl implements AdminService {
             lastPageNumber = chapterPage.getLastPageNumber();
             list.addAll(chapterPage.getList()
                             .stream()
-                            .map(chapter -> ChapterConverter.getChapterDtoForContractor(chapter, null))
+                            .map(chapter -> ChapterConverter.convertToDto(chapter, null))
                             .collect(Collectors.toList()));
         } catch (IOException e) {
             exceptionMessage = BAD_CONNECTION;
@@ -629,7 +633,7 @@ public class AdminServiceImpl implements AdminService {
                 try {
                     long totalCount = calculationDao.getCountOfCalculationsByChapterId(dto.getId());
                     page1 = Util.getPageWithCorrectNumbers(dto.getPage(), count, totalCount);
-                    page1.getList().addAll(calculationDao.getCalculationsByChapterId(
+                    page1.setMap(calculationDao.getCalculationsByChapterId(
                         dto.getId(), page1.getPageNumber(), count));
                 } catch (NoResultException e) {
                     log.trace(THERE_IS_NO_SUCH_DATA_IN_DB, e);
@@ -639,10 +643,11 @@ public class AdminServiceImpl implements AdminService {
             });
             page = calculationPage.getPageNumber();
             lastPageNumber = calculationPage.getLastPageNumber();
-            list.addAll(calculationPage.getList().stream()
+            Map<Calculation, Integer[]> map = calculationPage.getMap();
+            list.addAll(map.keySet().stream()
                             .map(calculation -> {
-                                Integer[] sums = Util.getCalculationSums(calculation);
-                                return CalculationConverter.convertToDto(calculation, sums[0], sums[1], sums[2]);
+                                Integer[] values = map.get(calculation);
+                                return CalculationConverter.convertToDto(calculation, values[0], values[1]);
                             })
                             .collect(Collectors.toList()));
 

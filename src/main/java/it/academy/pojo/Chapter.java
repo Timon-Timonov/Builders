@@ -46,6 +46,6 @@ public class Chapter {
     private Set<Proposal> proposalSet = new HashSet<>();
 
     @Builder.Default
-    @OneToMany(mappedBy = "chapter", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "chapter", fetch = FetchType.LAZY)
     private Set<Calculation> calculationSet = new HashSet<>();
 }

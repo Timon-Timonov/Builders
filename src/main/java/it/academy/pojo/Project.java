@@ -39,6 +39,6 @@ public class Project {
     private Address address = new Address();
 
     @Builder.Default
-    @OneToMany(mappedBy = "project", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "project", fetch = FetchType.LAZY)
     private Set<Chapter> chapters = new HashSet<>();
 }

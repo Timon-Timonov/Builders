@@ -9,10 +9,10 @@ import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import java.io.IOException;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
+
+import static it.academy.util.constants.Constants.ZERO_INT_VALUE;
+import static it.academy.util.constants.Constants.ZERO_LONG_VALUE;
 
 public class DeveloperDaoImpl extends DaoImpl<Developer, Long> implements DeveloperDao {
 
@@ -26,7 +26,9 @@ public class DeveloperDaoImpl extends DaoImpl<Developer, Long> implements Develo
         throws IOException {
 
         TypedQuery<Developer> query = getEm().createQuery(
-            "SELECT d FROM Developer d WHERE d.user.status=:status ORDER BY d.name",
+            "SELECT d FROM Developer d " +
+                "WHERE d.user.status=:status " +
+                "ORDER BY d.name",
             Developer.class);
         return query.setParameter("status", status)
                    .setMaxResults(count)
@@ -34,51 +36,72 @@ public class DeveloperDaoImpl extends DaoImpl<Developer, Long> implements Develo
                    .getResultList();
     }
 
-    @Override
-    public List<Developer> getDevelopersByContractorId(Long contractorId, ProjectStatus status, int page, int count)
+
+    public Map<Developer, Integer[]> getDevelopersForContractor(Long contractorId, ProjectStatus status, int page, int count)
         throws IOException {
 
-        TypedQuery<Developer> query = getEm().createQuery(
-            "SELECT DISTINCT (d) FROM Developer d, Chapter c WHERE c.project.developer.id=d.id AND c.contractor.id=:contractorId AND c.project.status=:status ORDER BY d.name",
-            Developer.class);
-        return query.setParameter("contractorId", contractorId)
-                   .setParameter("status", status)
-                   .setMaxResults(count)
-                   .setFirstResult((page - 1) * count)
-                   .getResultList();
-    }
+        Query queryPrice = getEm().createQuery(
+            "SELECT dev, SUM(calc.workPriceFact), us " +
+                "FROM Developer dev INNER JOIN User us " +
+                "ON us.id=dev.id INNER JOIN Project proj " +
+                "ON proj.developer.id=dev.id  INNER JOIN Chapter ch " +
+                "ON proj.id=ch.project.id LEFT JOIN Calculation calc " +
+                "ON calc.chapter.id=ch.id " +
 
-    public Map<Developer, Integer> getDevelopersForContractor(Long contractorId, ProjectStatus status, int page, int count)
-        throws IOException {
+                "WHERE proj.status=:status " +
+                "AND ch.contractor.id=:contractorId " +
 
-        Map<Developer, Integer> map = new TreeMap<>(Comparator.comparing(Developer::getName));
-
-        // Query query = getEm().createQuery("SELECT le AS developer, (SUM(calc.workPriceFact)-SUM(tr.sum)) AS debt FROM LegalEntity le, Developer dev, Chapter  ch, Calculation calc, MoneyTransfer tr WHERE ch.project.developer.id=dev.id AND ch.contractor.id=:contractorId AND ch.project.status=:status AND calc.chapter=ch AND tr.calculation=calc AND dev.id=le.id GROUP BY dev ORDER BY dev.name");
-
-        Query query = getEm().createQuery(
-            "SELECT dev AS developer, (SUM(calc.workPriceFact)-SUM(tr.sum)) AS debt FROM " +
-                " Chapter ch LEFT JOIN Contractor contr " +
-                "ON ch.contractor.id=contr.id LEFT JOIN Developer dev " +
-                "ON ch.project.developer.id=dev.id JOIN Calculation calc " +
-                "ON calc.chapter.id=ch.id JOIN MoneyTransfer tr " +
-                "ON tr.calculation.id=calc.id  " +
-                "WHERE contr.id=:contractorId AND ch.project.status=:status " +
                 "GROUP BY dev " +
-                "ORDER BY dev.name");
+                "ORDER BY dev.name"
+        );
 
+        Query querySum = getEm().createQuery(
+            "SELECT dev, SUM(tr.sum) " +
+                "FROM Developer dev INNER JOIN User us " +
+                "ON us.id=dev.id INNER JOIN Project proj " +
+                "ON proj.developer.id=dev.id INNER JOIN Chapter ch " +
+                "ON proj.id=ch.project.id LEFT JOIN Calculation calc " +
+                "ON ch.id=calc.chapter.id LEFT JOIN MoneyTransfer tr " +
+                "ON calc.id=tr.calculation.id " +
 
-        query.setParameter("contractorId", contractorId)
-            .setParameter("status", status)
-            .setMaxResults(count)
-            .setFirstResult((page - 1) * count);
+                "WHERE proj.status=:status " +
+                "AND ch.contractor.id=:contractorId " +
 
-        List<Object[]> list = (List<Object[]>) query.getResultList();
+                "GROUP BY dev " +
+                "ORDER BY dev.name"
+        );
 
-        list.forEach(result -> {
-            Developer dev = (Developer) result[0];
-            long i = (long) result[1];
-            map.put(dev, (int) i);
+        List<Query> queries = new ArrayList<>();
+        queries.add(queryPrice);
+        queries.add(querySum);
+
+        queries.forEach(query -> query.setParameter("contractorId", contractorId)
+                                     .setParameter("status", status)
+                                     .setMaxResults(count)
+                                     .setFirstResult((page - 1) * count));
+
+        List<Object[]> listWorkPrice = (List<Object[]>) queryPrice.getResultList();
+        List<Object[]> listTransferSum = (List<Object[]>) querySum.getResultList();
+
+        Map<Developer, Integer[]> map = new TreeMap<>(Comparator.comparing(Developer::getName));
+        listWorkPrice.forEach(res -> {
+            Integer[] arr = new Integer[2];
+            Arrays.fill(arr, ZERO_INT_VALUE);
+
+            Developer dev = (Developer) res[0];
+            long price = res[1] != null ? (long) res[1] : ZERO_LONG_VALUE;
+            arr[0] = (int) price;
+
+            map.put(dev, arr);
         });
+
+        listTransferSum.forEach(res -> {
+            Developer dev = (Developer) res[0];
+            long sum = res[1] != null ? (long) res[1] : ZERO_LONG_VALUE;
+
+            map.get(dev)[1] = (int) sum;
+        });
+
         return map;
     }
 
@@ -96,7 +119,11 @@ public class DeveloperDaoImpl extends DaoImpl<Developer, Long> implements Develo
     public Long getCountOfDevelopers(Long contractorId, ProjectStatus status) throws NoResultException, IOException {
 
         TypedQuery<Long> query = getEm().createQuery(
-            "SELECT COUNT (d) FROM Developer d, Chapter c WHERE c.project.developer.id=d.id AND c.contractor.id=:contractorId AND c.project.status=:status",
+            "SELECT COUNT (DISTINCT d) " +
+                "FROM Developer d, Chapter c " +
+                "WHERE c.project.developer.id=d.id " +
+                "AND c.contractor.id=:contractorId " +
+                "AND c.project.status=:status",
 
             Long.class);
         return query.setParameter("contractorId", contractorId)

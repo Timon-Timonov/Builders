@@ -7,6 +7,8 @@ import java.sql.Date;
 import java.util.HashSet;
 import java.util.Set;
 
+import static it.academy.util.constants.Constants.ZERO_INT_VALUE;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -28,14 +30,15 @@ public class Calculation {
     @Column(name = "work_price_plan")
     private Integer workPricePlan;
 
+    @Builder.Default
     @Column(name = "work_price_fact")
-    private Integer workPriceFact;
+    private Integer workPriceFact = ZERO_INT_VALUE;
 
     @ManyToOne
     @JoinColumn(name = "chapter_id")
     private Chapter chapter;
 
     @Builder.Default
-    @OneToMany(mappedBy = "calculation", fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "calculation", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     private Set<MoneyTransfer> transferSet = new HashSet<>();
 }

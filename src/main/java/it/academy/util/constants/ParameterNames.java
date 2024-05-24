@@ -76,6 +76,8 @@ public final class ParameterNames {
     public static final String CHAPTER_PRICE_PARAM = "chapter_price";
     public static final String WORK_PRICE_PLAN_PARAM = "work_price_plan";
 
+    public static final String SEARCH_PARAM = "search";
+
     private ParameterNames() {
     }
 }
