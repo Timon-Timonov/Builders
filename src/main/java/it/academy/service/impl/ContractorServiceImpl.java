@@ -26,7 +26,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static it.academy.util.constants.Constants.FIRST_PAGE_NUMBER;
+import static it.academy.util.constants.Constants.*;
 import static it.academy.util.constants.JspURLs.*;
 import static it.academy.util.constants.Messages.*;
 import static it.academy.util.constants.ServletURLs.*;
@@ -389,18 +389,18 @@ public class ContractorServiceImpl implements ContractorService {
         Integer page = FIRST_PAGE_NUMBER;
         Integer count = dto.getCount();
         Integer lastPageNumber = FIRST_PAGE_NUMBER;
-        String search=dto.getSearch();
+        String search = PER_CENT_STRING + dto.getSearch() + PER_CENT_STRING;
         ProjectStatus status = null;
         try {
             ProjectStatus projectStatus = (ProjectStatus) dto.getStatus();
             Page<Developer> developerPage = developerDao.executeInOnePageTransaction(() -> {
                 Page<Developer> page1 = null;
                 try {
-                    long totalCount = developerDao.getCountOfDevelopers(dto.getId(), projectStatus);
+                    long totalCount = developerDao.getCountOfDevelopers(dto.getId(), projectStatus, search);
                     page1 = Util.getPageWithCorrectNumbers(dto.getPage(), count, totalCount);
 
                     Map<Developer, Integer[]> map = developerDao.getDevelopersForContractor(
-                        dto.getId(), projectStatus, page1.getPageNumber(), count);
+                        dto.getId(), projectStatus, search, page1.getPageNumber(), count);
 
                     page1.setMap(map);
                 } catch (NoResultException e) {
@@ -446,8 +446,8 @@ public class ContractorServiceImpl implements ContractorService {
                                    .lastPageNumber(lastPageNumber)
                                    .list(list)
                                    .status(status)
+                                   .search(dto.getSearch())
                                    .url(CONTRACTOR_PAGES_LIST_WITH_DEVELOPERS_JSP)
-                                   .search(search)
                                    .build();
         }
         return dtoWithPageForUi;
@@ -683,7 +683,7 @@ public class ContractorServiceImpl implements ContractorService {
                 if (chapter != null) {
                     Calculation newCalculation = Calculation.builder()
                                                      .chapter(chapter)
-                                                     .month(Date.valueOf("" + dto.getInt1() + "-" + dto.getInt2() + "-" + "01"))
+                                                     .month(Date.valueOf(BLANK_STRING + dto.getInt1() + DELIMITER_STRING + dto.getInt2() + DELIMITER_STRING + DEFAULT_DAY_NUMBER))
                                                      .workPricePlan(dto.getInt3())
                                                      .build();
                     calculationDao.create(newCalculation);

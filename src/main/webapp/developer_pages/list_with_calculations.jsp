@@ -21,8 +21,6 @@
     int pageNumber = (Integer) session.getAttribute(pageNumberParamName);
     int lastPageNumber = (Integer) session.getAttribute(LAST_PAGE_NUMBER_PARAM);
 
-    String actionParameterToDoValue = null;
-
     List<CalculationDto> calculationDtoList = (List<CalculationDto>) request.getAttribute(DTO_LIST_PARAM);
 
     Long projectId = (Long) session.getAttribute(PROJECT_ID_PARAM);
@@ -115,7 +113,7 @@
                 <%if (calculationDto.getCalculationDebt() > ZERO_INT_VALUE) {%>
                 <form action="<%=PAY_MONEY_DEVELOPER_SERVLET%>" method="get">
                     <input type="hidden" value="<%=calculationDto.getId().toString()%>"
-                    name="<%=CALCULATION_ID_PARAM%>">
+                           name="<%=CALCULATION_ID_PARAM%>">
                     <input type="hidden" value="<%=calculationDto.getCalculationDebt()%>"
                            name="<%=CALCULATION_DEBT_PARAM%>">
                     Sum for work: <label>

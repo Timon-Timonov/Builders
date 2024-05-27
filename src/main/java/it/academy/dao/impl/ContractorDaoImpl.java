@@ -22,42 +22,57 @@ public class ContractorDaoImpl extends DaoImpl<Contractor, Long> implements Cont
     }
 
     @Override
-    public List<Contractor> getContractors(UserStatus status, int page, int count)
-        throws IOException {
+    public List<Contractor> getContractors(UserStatus status, String search, int page, int count) {
 
         TypedQuery<Contractor> query = getEm().createQuery(
-            "SELECT co FROM Contractor co WHERE co.user.status=:status ORDER BY co.name ASC",
+            "SELECT contr FROM Contractor contr " +
+                "WHERE contr.user.status=:status " +
+
+                "GROUP BY contr " +
+
+                "HAVING contr.name LIKE :searchString " +
+                "OR contr.address.building LIKE :searchString " +
+                "OR contr.address.street LIKE :searchString " +
+                "OR contr.address.city LIKE :searchString " +
+
+                "ORDER BY contr.name ASC",
             Contractor.class);
         return query.setParameter("status", status)
+                   .setParameter("searchString", search)
                    .setMaxResults(count)
                    .setFirstResult((page - 1) * count)
                    .getResultList();
     }
 
     @Override
-    public Map<Contractor, Integer[]> getContractorsByDeveloperId(Long developerId, ProjectStatus status, int page, int count)
-        throws IOException {
+    public Map<Contractor, Integer[]> getContractorsByDeveloperId(Long developerId, ProjectStatus status, String search, int page, int count) {
 
         Query queryWorkPrice = getEm().createQuery(
             "SELECT contr, SUM(calc.workPriceFact), us " +
                 "FROM Project proj INNER JOIN Chapter ch " +
                 "ON ch.project.id=proj.id INNER JOIN Contractor contr " +
-                "ON contr.id=ch.contractor.id LEFT JOIN User us " +
-                "ON contr.id=us.id LEFT JOIN Developer dev " +
+                "ON contr.id=ch.contractor.id JOIN Developer dev " +
                 "ON dev.id=proj.developer.id LEFT JOIN Calculation calc " +
-                "ON calc.chapter.id=ch.id " +
+                "ON calc.chapter.id=ch.id LEFT JOIN User us " +
+                "ON us.id=contr.id " +
 
                 "WHERE dev.id=:developerId " +
                 "AND proj.status=:status " +
 
                 "GROUP BY contr " +
+
+                "HAVING contr.name LIKE :searchString " +
+                "OR contr.address.building LIKE :searchString " +
+                "OR contr.address.street LIKE :searchString " +
+                "OR contr.address.city LIKE :searchString " +
+
                 "ORDER BY contr.name ASC");
 
         Query queryTransferSum = getEm().createQuery(
             "SELECT contr, SUM(tr.sum) " +
                 "FROM Project proj INNER JOIN Chapter ch " +
                 "ON ch.project.id=proj.id INNER JOIN Contractor contr " +
-                "ON contr.id=ch.contractor.id LEFT JOIN Developer dev " +
+                "ON contr.id=ch.contractor.id JOIN Developer dev " +
                 "ON dev.id=proj.developer.id LEFT JOIN Calculation calc " +
                 "ON calc.chapter.id=ch.id LEFT JOIN MoneyTransfer tr " +
                 "ON tr.calculation.id=calc.id " +
@@ -66,6 +81,11 @@ public class ContractorDaoImpl extends DaoImpl<Contractor, Long> implements Cont
                 "AND proj.status=:status " +
 
                 "GROUP BY contr " +
+                "HAVING contr.name LIKE :searchString " +
+                "OR contr.address.building LIKE :searchString " +
+                "OR contr.address.street LIKE :searchString " +
+                "OR contr.address.city LIKE :searchString " +
+
                 "ORDER BY contr.name ASC");
 
         List<Query> queries = new ArrayList<>();
@@ -73,9 +93,10 @@ public class ContractorDaoImpl extends DaoImpl<Contractor, Long> implements Cont
         queries.add(queryTransferSum);
 
         queries.forEach(query -> query.setParameter("developerId", developerId)
-            .setParameter("status", status)
-            .setMaxResults(count)
-            .setFirstResult((page - 1) * count));
+                                     .setParameter("status", status)
+                                     .setParameter("searchString", search)
+                                     .setMaxResults(count)
+                                     .setFirstResult((page - 1) * count));
 
         Map<Contractor, Integer[]> map = new TreeMap<>(Comparator.comparing(Contractor::getName));
 
@@ -98,28 +119,48 @@ public class ContractorDaoImpl extends DaoImpl<Contractor, Long> implements Cont
             long transferSum = res[1] != null ? (long) res[1] : ZERO_LONG_VALUE;
             map.get(contractor)[1] = (int) transferSum;
         });
-
         return map;
     }
 
     @Override
-    public Long getCountOfContractors(UserStatus status) throws NoResultException, IOException {
+    public Long getCountOfContractors(UserStatus status, String search) throws NoResultException {
 
         TypedQuery<Long> query = getEm().createQuery(
-            "SELECT COUNT(co) FROM Contractor co WHERE co.user.status=:status",
+            "SELECT COUNT(DISTINCT contr) " +
+                "FROM Contractor contr " +
+                "WHERE contr.user.status=:status " +
+
+                "AND contr.name LIKE :searchString " +
+                "OR contr.address.building LIKE :searchString " +
+                "OR contr.address.street LIKE :searchString " +
+                "OR contr.address.city LIKE :searchString ",
             Long.class);
         return query.setParameter("status", status)
+                   .setParameter("searchString", search)
                    .getSingleResult();
     }
 
     @Override
-    public Long getCountOfContractorsByDeveloperId(Long developerId, ProjectStatus status) throws NoResultException, IOException {
+    public Long getCountOfContractorsByDeveloperId(Long developerId, ProjectStatus status, String search) throws NoResultException {
 
         TypedQuery<Long> query = getEm().createQuery(
-            "SELECT COUNT(DISTINCT co) FROM Contractor co LEFT JOIN Chapter ch ON co.id=ch.contractor.id  WHERE  ch.project.developer.id=:developerId AND ch.project.status=:status ",
+            "SELECT COUNT(DISTINCT contr) " +
+                "FROM Contractor contr INNER JOIN Chapter ch " +
+                "ON contr.id=ch.contractor.id  INNER JOIN Project proj " +
+                "ON ch.project.id=proj.id JOIN Developer dev " +
+                "ON dev.id=proj.developer.id " +
+
+                "WHERE dev.id=:developerId " +
+                "AND proj.status=:status " +
+
+                "AND contr.name LIKE :searchString " +
+                "OR contr.address.building LIKE :searchString " +
+                "OR contr.address.street LIKE :searchString " +
+                "OR contr.address.city LIKE :searchString ",
             Long.class);
         return query.setParameter("developerId", developerId)
                    .setParameter("status", status)
+                   .setParameter("searchString", search)
                    .getSingleResult();
     }
 }

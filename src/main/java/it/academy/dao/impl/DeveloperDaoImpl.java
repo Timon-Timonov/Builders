@@ -22,23 +22,28 @@ public class DeveloperDaoImpl extends DaoImpl<Developer, Long> implements Develo
     }
 
     @Override
-    public List<Developer> getDevelopers(UserStatus status, int page, int count)
-        throws IOException {
+    public List<Developer> getDevelopers(UserStatus status, String search, int page, int count) {
 
         TypedQuery<Developer> query = getEm().createQuery(
-            "SELECT d FROM Developer d " +
-                "WHERE d.user.status=:status " +
-                "ORDER BY d.name",
+            "SELECT DISTINCT dev FROM Developer dev " +
+                "WHERE dev.user.status=:status " +
+
+                "AND dev.name LIKE :searchString " +
+                "OR dev.address.building LIKE :searchString " +
+                "OR dev.address.street LIKE :searchString " +
+                "OR dev.address.city LIKE :searchString " +
+
+                "ORDER BY dev.name ",
             Developer.class);
         return query.setParameter("status", status)
+                   .setParameter("searchString", search)
                    .setMaxResults(count)
                    .setFirstResult((page - 1) * count)
                    .getResultList();
     }
 
-
-    public Map<Developer, Integer[]> getDevelopersForContractor(Long contractorId, ProjectStatus status, int page, int count)
-        throws IOException {
+    @Override
+    public Map<Developer, Integer[]> getDevelopersForContractor(Long contractorId, ProjectStatus status, String search, int page, int count) {
 
         Query queryPrice = getEm().createQuery(
             "SELECT dev, SUM(calc.workPriceFact), us " +
@@ -52,6 +57,12 @@ public class DeveloperDaoImpl extends DaoImpl<Developer, Long> implements Develo
                 "AND ch.contractor.id=:contractorId " +
 
                 "GROUP BY dev " +
+
+                "HAVING dev.name LIKE :searchString " +
+                "OR dev.address.building LIKE :searchString " +
+                "OR dev.address.street LIKE :searchString " +
+                "OR dev.address.city LIKE :searchString " +
+
                 "ORDER BY dev.name"
         );
 
@@ -68,6 +79,12 @@ public class DeveloperDaoImpl extends DaoImpl<Developer, Long> implements Develo
                 "AND ch.contractor.id=:contractorId " +
 
                 "GROUP BY dev " +
+
+                "HAVING dev.name LIKE :searchString " +
+                "OR dev.address.building LIKE :searchString " +
+                "OR dev.address.street LIKE :searchString " +
+                "OR dev.address.city LIKE :searchString " +
+
                 "ORDER BY dev.name"
         );
 
@@ -77,6 +94,7 @@ public class DeveloperDaoImpl extends DaoImpl<Developer, Long> implements Develo
 
         queries.forEach(query -> query.setParameter("contractorId", contractorId)
                                      .setParameter("status", status)
+                                     .setParameter("searchString", search)
                                      .setMaxResults(count)
                                      .setFirstResult((page - 1) * count));
 
@@ -106,28 +124,42 @@ public class DeveloperDaoImpl extends DaoImpl<Developer, Long> implements Develo
     }
 
     @Override
-    public Long getCountOfDevelopers(UserStatus status) throws NoResultException, IOException {
+    public Long getCountOfDevelopers(UserStatus status, String search) throws NoResultException {
 
         TypedQuery<Long> query = getEm().createQuery(
-            "SELECT COUNT (d) FROM Developer d WHERE d.user.status=:status",
+            "SELECT COUNT (DISTINCT dev) FROM Developer dev " +
+                "WHERE dev.user.status=:status " +
+
+                "AND dev.name LIKE :searchString " +
+                "OR dev.address.building LIKE :searchString " +
+                "OR dev.address.street LIKE :searchString " +
+                "OR dev.address.city LIKE :searchString ",
             Long.class);
         return query.setParameter("status", status)
+                   .setParameter("searchString", search)
                    .getSingleResult();
     }
 
     @Override
-    public Long getCountOfDevelopers(Long contractorId, ProjectStatus status) throws NoResultException, IOException {
+    public Long getCountOfDevelopers(Long contractorId, ProjectStatus status, String search) throws NoResultException {
 
         TypedQuery<Long> query = getEm().createQuery(
-            "SELECT COUNT (DISTINCT d) " +
-                "FROM Developer d, Chapter c " +
-                "WHERE c.project.developer.id=d.id " +
-                "AND c.contractor.id=:contractorId " +
-                "AND c.project.status=:status",
+            "SELECT COUNT (DISTINCT dev) " +
+                "FROM Developer dev INNER JOIN Project proj " +
+                "ON proj.developer.id=dev.id INNER JOIN Chapter chapt " +
+                "ON chapt.project.id=proj.id " +
 
+                "WHERE chapt.contractor.id=:contractorId " +
+                "AND proj.status=:status " +
+
+                "AND dev.name LIKE :searchString " +
+                "OR dev.address.building LIKE :searchString " +
+                "OR dev.address.street LIKE :searchString " +
+                "OR dev.address.city LIKE :searchString ",
             Long.class);
         return query.setParameter("contractorId", contractorId)
                    .setParameter("status", status)
+                   .setParameter("searchString", search)
                    .getSingleResult();
     }
 }

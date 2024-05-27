@@ -34,5 +34,4 @@ public class ExceptionRedirector {
         req.setAttribute(MESSAGE_PARAM, message);
         th.getServletContext().getRequestDispatcher(EXCEPTION_PAGES_EXCEPTION_IN_WORK_PAGE_3_JSP).forward(req, resp);
     }
-
 }

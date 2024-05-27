@@ -34,7 +34,10 @@ public class SessionAttributeSetter {
 
         HttpSession session = req.getSession();
         req.setAttribute(DTO_LIST_PARAM, dto.getList());
+
         req.setAttribute(SEARCH_PARAM, dto.getSearch());
+        session.setAttribute(SEARCH_PARAM, dto.getSearch());
+
         if (pageParamName != null) {
             session.setAttribute(pageParamName, dto.getPage());
             session.setAttribute(countParamName, dto.getCountOnPage());

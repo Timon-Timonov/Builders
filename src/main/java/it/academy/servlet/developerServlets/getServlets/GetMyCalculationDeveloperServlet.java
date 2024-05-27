@@ -18,8 +18,8 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
+import static it.academy.util.constants.Constants.BLANK_STRING;
 import static it.academy.util.constants.Constants.ZERO_INT_VALUE;
-import static it.academy.util.constants.Messages.BLANK_STRING;
 import static it.academy.util.constants.ParameterNames.*;
 import static it.academy.util.constants.ServletURLs.GET_MY_CALCULATION_DEVELOPER_SERVLET;
 import static it.academy.util.constants.ServletURLs.SLASH_STRING;

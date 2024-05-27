@@ -1,25 +1,25 @@
 package it.academy.servlet.contractorServlets.getServlets;
 
-import it.academy.service.ContractorService;
+import it.academy.converters.FilterPageDtoConverter;
+import it.academy.dto.DeveloperDto;
 import it.academy.dto.DtoWithPageForUi;
 import it.academy.dto.FilterPageDto;
+import it.academy.service.ContractorService;
 import it.academy.service.impl.ContractorServiceImpl;
-import it.academy.dto.DeveloperDto;
 import it.academy.util.ExceptionRedirector;
 import it.academy.util.SessionAttributeSetter;
 import it.academy.util.SessionCleaner;
-import it.academy.converters.FilterPageDtoConverter;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import java.io.IOException;
 
 import static it.academy.util.constants.ParameterNames.*;
-import static it.academy.util.constants.ServletURLs.*;
+import static it.academy.util.constants.ServletURLs.GET_ALL_MY_DEVELOPERS_CONTRACTOR_SERVLET;
+import static it.academy.util.constants.ServletURLs.SLASH_STRING;
 
 @WebServlet(name = "getAllMyDevelopersContractorServlet", urlPatterns = SLASH_STRING + GET_ALL_MY_DEVELOPERS_CONTRACTOR_SERVLET)
 public class GetAllMyDevelopersContractorServlet extends HttpServlet {

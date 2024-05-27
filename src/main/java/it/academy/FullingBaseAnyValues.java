@@ -1,12 +1,16 @@
 package it.academy;
 
 import it.academy.dao.CalculationDao;
+import it.academy.dao.ChapterDao;
 import it.academy.dao.ProjectDao;
 import it.academy.dao.impl.CalculationDaoImpl;
+import it.academy.dao.impl.ChapterDaoImpl;
 import it.academy.dao.impl.ProjectDaoImpl;
 import it.academy.dto.*;
 import it.academy.pojo.Calculation;
+import it.academy.pojo.Chapter;
 import it.academy.pojo.Project;
+import it.academy.pojo.enums.ChapterStatus;
 import it.academy.pojo.enums.ProjectStatus;
 import it.academy.pojo.enums.ProposalStatus;
 import it.academy.pojo.enums.UserStatus;
@@ -23,8 +27,7 @@ import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
-import static it.academy.util.constants.Constants.FIRST_PAGE_NUMBER;
-import static it.academy.util.constants.Constants.ZERO_INT_VALUE;
+import static it.academy.util.constants.Constants.*;
 
 public class FullingBaseAnyValues {
 
@@ -45,7 +48,6 @@ public class FullingBaseAnyValues {
     public static final int INT8 = 8;
     public static final int INT9 = 9;
     public static final int INT10 = 10;
-    public static final int INT11 = 11;
     public static final int INT12 = 12;
 
     public static final int INT115 = 115;
@@ -71,7 +73,8 @@ public class FullingBaseAnyValues {
     private final ContractorService CONTRACTOR_SERVICE = ContractorServiceImpl.getInstance();
 
     private final ProjectDao projectDao = new ProjectDaoImpl();
-    CalculationDao calculationDao = new CalculationDaoImpl();
+    private final ChapterDao chapterDao = new ChapterDaoImpl();
+    private final CalculationDao calculationDao = new CalculationDaoImpl();
 
     private int proposalCount = 1;
     private int userCount = 1;
@@ -79,19 +82,19 @@ public class FullingBaseAnyValues {
     private int chapterCount = 1;
 
 
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) {
 
         FullingBaseAnyValues fuller = new FullingBaseAnyValues();
         fuller.MakeBaseFull();
     }
 
-    private void MakeBaseFull() throws Exception {
+    private void MakeBaseFull() {
 
         CreationOfBaseData();
         startInteraction();
     }
 
-    private void startInteraction() throws Exception {
+    private void startInteraction() {
 
         List<Project> allProjectList = projectDao.getAll();
 
@@ -104,7 +107,7 @@ public class FullingBaseAnyValues {
         payMoney(calculationList);
     }
 
-    private List<ProposalDto> getAllConsiderationsProposals() throws Exception {
+    private List<ProposalDto> getAllConsiderationsProposals() {
 
         List<ProposalDto> proposalList = new ArrayList<>();
         List<ChapterDto> activeChapterList = new ArrayList<>();
@@ -112,6 +115,7 @@ public class FullingBaseAnyValues {
                                                                                                     .status(UserStatus.ACTIVE)
                                                                                                     .count(DEVELOPER_COUNT)
                                                                                                     .page(FIRST_PAGE_NUMBER)
+                                                                                                    .search(BLANK_STRING)
                                                                                                     .build()).getList());
         allActiveDevelopers.forEach(developer -> {
             try {
@@ -152,7 +156,7 @@ public class FullingBaseAnyValues {
         calculationList.forEach(calculation -> {
             try {
                 if (calculationIndex.get() % INT2 == INT0) {
-                    int sum = calculation.getWorkPricePlan() / ONE_PART_OF_PRICE_FOR_ADVANCE;
+                    int sum = (calculation.getWorkPricePlan() / ONE_PART_OF_PRICE_FOR_ADVANCE)+1;
 
                     DEVELOPER_SERVICE.payMoney(CreateRequestDto.builder()
                                                    .id(calculation.getId())
@@ -163,12 +167,12 @@ public class FullingBaseAnyValues {
                     DEVELOPER_SERVICE.payMoney(CreateRequestDto.builder()
                                                    .id(calculation.getId())
                                                    .int1(ZERO_INT_VALUE)
-                                                   .int2(sum * (calculationIndex.get() % INT9))
+                                                   .int2(sum * (calculationIndex.get() % INT9)+1)
                                                    .int3(Integer.MAX_VALUE)
                                                    .build());
                 } else {
-                    int k = (calculationIndex.get() % INT5 * INT2);
-                    int sum = calculation.getWorkPricePlan() * k / INT10;
+                    double k = (calculationIndex.get() % INT5 * INT2)*1.0;
+                    int sum = (int)(calculation.getWorkPricePlan() * k / INT10)+1;
                     DEVELOPER_SERVICE.payMoney(CreateRequestDto.builder()
                                                    .id(calculation.getId())
                                                    .int1(ZERO_INT_VALUE)
@@ -185,41 +189,46 @@ public class FullingBaseAnyValues {
     private List<Calculation> createCalculations(List<Long> chaptersInWork) {
 
         List<Calculation> calculationList = new ArrayList<>();
-        chaptersInWork.forEach(chapterId -> {
-            int thisCalculationCount = RANDOM.nextInt(MAX_COUNT_OF_CALCULATIONS);
-            for (int i = 0; i < thisCalculationCount; i++) {
-                int mm = i % INT12 + INT1;
-                try {
-                    int workPricePlan = (BOUND3 * (i + INT8)) / (i + INT2);
-
-                    CONTRACTOR_SERVICE.createCalculation(CreateRequestDto.builder()
-                                                             .id(chapterId)
-                                                             .int1(BOUND4)
-                                                             .int2(mm)
-                                                             .int3(workPricePlan)
-                                                             .build());
-                } catch (Exception ignored) {
-                }
-            }
-            try {
-                List<Calculation> list = new ArrayList<>(calculationDao.getCalculationsByChapterId(chapterId, FIRST_PAGE_NUMBER, Integer.MAX_VALUE).keySet());
-                calculationList.addAll(list);
-                list.forEach(calculation -> {
-                    int workPriceFact = calculation.getWorkPricePlan() * INT115 / INT100;
+        chaptersInWork.stream()
+            .map(chapterDao::get)
+            .filter(chapter -> ChapterStatus.OCCUPIED.equals(chapter.getStatus()))
+            .filter(chapter -> ProjectStatus.IN_PROCESS.equals(chapter.getProject().getStatus()))
+            .map(Chapter::getId)
+            .forEach(chapterId -> {
+                int thisCalculationCount = RANDOM.nextInt(MAX_COUNT_OF_CALCULATIONS);
+                for (int i = 0; i < thisCalculationCount; i++) {
+                    int mm = i % INT12 + INT1;
                     try {
-                        CONTRACTOR_SERVICE.updateWorkPriceFact(ChangeRequestDto.builder()
-                                                                   .id(calculation.getId())
-                                                                   .count(workPriceFact)
-                                                                   .build());
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
+                        int workPricePlan = (BOUND3 * (i + INT8)) / (i + INT2);
 
-                });
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        });
+                        CONTRACTOR_SERVICE.createCalculation(CreateRequestDto.builder()
+                                                                 .id(chapterId)
+                                                                 .int1(BOUND4)
+                                                                 .int2(mm)
+                                                                 .int3(workPricePlan)
+                                                                 .build());
+                    } catch (Exception ignored) {
+                    }
+                }
+                try {
+                    List<Calculation> list = new ArrayList<>(calculationDao.getCalculationsByChapterId(chapterId, FIRST_PAGE_NUMBER, Integer.MAX_VALUE).keySet());
+                    calculationList.addAll(list);
+                    list.forEach(calculation -> {
+                        int workPriceFact = calculation.getWorkPricePlan() * INT115 / INT100;
+                        try {
+                            CONTRACTOR_SERVICE.updateWorkPriceFact(ChangeRequestDto.builder()
+                                                                       .id(calculation.getId())
+                                                                       .count(workPriceFact)
+                                                                       .build());
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+
+                    });
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            });
         return calculationList;
     }
 
@@ -320,7 +329,7 @@ public class FullingBaseAnyValues {
         });
     }
 
-    private void CreationOfBaseData() throws Exception {
+    private void CreationOfBaseData() {
 
         ADMIN_SERVICE.createAdmin(CreateRequestDto.builder()
                                       .email(getUniqEmail())
@@ -394,7 +403,7 @@ public class FullingBaseAnyValues {
 
     private String getUserName() {
 
-        return UNIQUE_USER_NAME + userCount;
+        return UNIQUE_USER_NAME + (userCount-1);
     }
 
     private String getStreet() {

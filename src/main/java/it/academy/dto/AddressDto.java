@@ -17,6 +17,6 @@ public class AddressDto {
 
     @Override
     public String toString() {
-        return city + ", " + ", " + street + ", " + building;
+        return city + ", " + street + ", " + building;
     }
 }

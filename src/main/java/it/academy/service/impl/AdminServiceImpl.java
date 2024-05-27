@@ -27,6 +27,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import static it.academy.util.constants.Constants.FIRST_PAGE_NUMBER;
+import static it.academy.util.constants.Constants.PER_CENT_STRING;
 import static it.academy.util.constants.JspURLs.*;
 import static it.academy.util.constants.Messages.*;
 import static it.academy.util.constants.ServletURLs.*;
@@ -235,6 +236,7 @@ public class AdminServiceImpl implements AdminService {
         Integer page = FIRST_PAGE_NUMBER;
         Integer count = dto.getCount();
         Integer lastPageNumber = FIRST_PAGE_NUMBER;
+        String search = PER_CENT_STRING + dto.getSearch() + PER_CENT_STRING;
         UserStatus status = null;
         try {
             UserStatus userStatus = (UserStatus) dto.getStatus();
@@ -242,9 +244,9 @@ public class AdminServiceImpl implements AdminService {
             contractorPage = contractorDao.executeInOnePageTransaction(() -> {
                 Page<Contractor> page1 = null;
                 try {
-                    long totalCount = contractorDao.getCountOfContractors(userStatus);
+                    long totalCount = contractorDao.getCountOfContractors(userStatus, search);
                     page1 = Util.getPageWithCorrectNumbers(dto.getPage(), count, totalCount);
-                    page1.getList().addAll(contractorDao.getContractors(userStatus, page1.getPageNumber(), count));
+                    page1.getList().addAll(contractorDao.getContractors(userStatus, search, page1.getPageNumber(), count));
                 } catch (NoResultException e) {
                     log.error(THERE_IS_NO_SUCH_DATA_IN_DB_WITH_USER_STATUS + userStatus, e);
                 }
@@ -281,6 +283,7 @@ public class AdminServiceImpl implements AdminService {
                                    .lastPageNumber(lastPageNumber)
                                    .list(list)
                                    .status(status)
+                                   .search(dto.getSearch())
                                    .url(ADMIN_PAGES_LIST_WITH_CONTRACTORS_JSP)
                                    .build();
         }
@@ -369,6 +372,7 @@ public class AdminServiceImpl implements AdminService {
         Integer page = FIRST_PAGE_NUMBER;
         Integer count = dto.getCount();
         Integer lastPageNumber = FIRST_PAGE_NUMBER;
+        String search = PER_CENT_STRING + dto.getSearch() + PER_CENT_STRING;
         UserStatus status = null;
         try {
             UserStatus userStatus = (UserStatus) dto.getStatus();
@@ -376,9 +380,9 @@ public class AdminServiceImpl implements AdminService {
             developerPage = developerDao.executeInOnePageTransaction(() -> {
                 Page<Developer> page1 = null;
                 try {
-                    long totalCount = developerDao.getCountOfDevelopers(userStatus);
+                    long totalCount = developerDao.getCountOfDevelopers(userStatus, search);
                     page1 = Util.getPageWithCorrectNumbers(dto.getPage(), count, totalCount);
-                    page1.getList().addAll(developerDao.getDevelopers(userStatus, page1.getPageNumber(), count));
+                    page1.getList().addAll(developerDao.getDevelopers(userStatus, search, page1.getPageNumber(), count));
                 } catch (NoResultException e) {
                     log.error(THERE_IS_NO_SUCH_DATA_IN_DB_WITH_USER_STATUS + userStatus, e);
                 }
@@ -415,6 +419,7 @@ public class AdminServiceImpl implements AdminService {
                                    .lastPageNumber(lastPageNumber)
                                    .list(list)
                                    .status(status)
+                                   .search(dto.getSearch())
                                    .url(ADMIN_PAGES_LIST_WITH_DEVELOPERS_JSP)
                                    .build();
         }

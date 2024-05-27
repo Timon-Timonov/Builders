@@ -1,9 +1,11 @@
+<%@ page import="it.academy.dto.AddressDto" %>
 <%@ page import="it.academy.dto.ContractorDto" %>
 <%@ page import="it.academy.pojo.enums.ProjectStatus" %>
-<%@ page import="java.util.List" %>
 <%@ page import="static it.academy.util.constants.ParameterNames.*" %>
 <%@ page import="static it.academy.util.constants.ServletURLs.GET_CHAPTERS_OF_CONTRACTOR_DEVELOPER_SERVLET" %>
 <%@ page import="static it.academy.util.constants.ServletURLs.*" %>
+<%@ page import="java.util.List" %>
+<%@ page import="java.util.Optional" %>
 <%@ page contentType="text/html;charset=UTF-8" %>
 <html>
 <head>
@@ -25,7 +27,6 @@
     String countName = CONTRACTOR_COUNT_ON_PAGE_PARAM;
     String pageNumberParamName = CONTRACTOR_PAGE_PARAM;
 
-
     int countOnPage = (Integer) session.getAttribute(countName);
     int pageNumber = (Integer) session.getAttribute(pageNumberParamName);
     int lastPageNumber = (Integer) session.getAttribute(LAST_PAGE_NUMBER_PARAM);
@@ -33,12 +34,17 @@
     List<ContractorDto> contractorDtoList = (List<ContractorDto>) request.getAttribute(DTO_LIST_PARAM);
 %>
 <div class="container text-center">
+
     <%@include file="/include_files/count_on_page_buttons_group.jsp" %>
     <br>
     <%@include file="/include_files/project_status_buttons_group.jsp" %>
     <br>
     <%@include file="/include_files/pagination_buttons_group.jsp" %>
 </div>
+<br>
+<%@include file="/include_files/search_line.jsp" %>
+>
+
 <br>
 
 
@@ -49,6 +55,8 @@
             <th> |</th>
             <th>Name</th>
             <th> |</th>
+            <th>Address of contractor</th>
+            <th> |</th>
             <th>Contractor debt</th>
             <th> |</th>
             <th></th>
@@ -56,8 +64,8 @@
         <%for (int i = 0; i < contractorDtoList.size(); i++) {%>
         <%
             ContractorDto contractorDto = contractorDtoList.get(i);
-            Long contractorId = contractorDto.getId();
             String contractorName = contractorDto.getContractorName();
+            String contractorAddress = Optional.ofNullable(contractorDto.getContractorAddress()).orElse(new AddressDto()).toString();
             Integer contractorDebt = contractorDto.getContractorDebt();
         %>
         <tr>
@@ -66,6 +74,8 @@
             <td> |</td>
             <td><%=contractorName%>
             </td>
+            <td> |</td>
+            <td><%=contractorAddress%>
             <td> |</td>
             <td><%=contractorDebt%>
             </td>

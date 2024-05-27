@@ -8,7 +8,6 @@
 <%@ page import="static it.academy.util.constants.ParameterNames.*" %>
 <%@ page import="static it.academy.util.constants.ServletURLs.GET_MY_PROJECTS_BY_DEVELOPER_CONTRACTOR_SERVLET" %>
 <%@ page import="static it.academy.util.constants.ServletURLs.*" %>
-<%@ page import="static it.academy.util.constants.Messages.BLANK_STRING" %>
 <%@ page contentType="text/html;charset=UTF-8" %>
 <html>
 <head>
@@ -33,9 +32,6 @@
     int lastPageNumber = (Integer) session.getAttribute(LAST_PAGE_NUMBER_PARAM);
     ProjectStatus status = (ProjectStatus) session.getAttribute(PROJECT_STATUS_PARAM);
     List<DeveloperDto> developerDtoList = (List<DeveloperDto>) request.getAttribute(DTO_LIST_PARAM);
-    String search = request.getAttribute(SEARCH_PARAM) != null ?
-            (String) request.getAttribute(SEARCH_PARAM)
-            : BLANK_STRING;
 %>
 
 <div class="container text-center">
@@ -47,14 +43,9 @@
 </div>
 
 <br>
-<%--<%@include file="/include_files/search_line.jsp"%>>--%>
-<form action="<%=actionName%>" method="post">
+<%@include file="/include_files/search_line.jsp" %>
+>
 
-    Search: <label>
-    <input name="<%=SEARCH_PARAM%>" value="<%=request.getAttribute(SEARCH_PARAM)%>" type="text">
-</label>
-    <button class="btn btn-primary" type="submit">Search</button>
-</form>
 <br>
 
 <div class="container text-center">

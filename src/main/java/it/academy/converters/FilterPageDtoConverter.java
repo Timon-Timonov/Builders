@@ -10,7 +10,6 @@ import it.academy.util.constants.Constants;
 import javax.servlet.http.HttpServletRequest;
 
 import static it.academy.util.constants.Constants.*;
-import static it.academy.util.constants.Messages.BLANK_STRING;
 import static it.academy.util.constants.ParameterNames.*;
 
 public class FilterPageDtoConverter {
@@ -56,12 +55,14 @@ public class FilterPageDtoConverter {
         ProjectStatus status = ParameterFinder.getProjectStatusFromParameter(req, PROJECT_STATUS_PARAM, DEFAULT_PROJECT_STATUS);
         int page = ParameterFinder.getNumberValueFromParameter(req, CONTRACTOR_PAGE_PARAM, FIRST_PAGE_NUMBER);
         int count = ParameterFinder.getNumberValueFromParameter(req, CONTRACTOR_COUNT_ON_PAGE_PARAM, DEFAULT_COUNT_ON_PAGE_5);
+        String search = ParameterFinder.getSearchStringValue(req);
 
         return FilterPageDto.builder()
                    .id(developerId)
                    .status(status)
                    .page(page)
                    .count(count)
+                   .search(search)
                    .build();
     }
 
@@ -86,7 +87,7 @@ public class FilterPageDtoConverter {
         ProjectStatus status = ParameterFinder.getProjectStatusFromParameter(req, PROJECT_STATUS_PARAM, DEFAULT_PROJECT_STATUS);
         int page = ParameterFinder.getNumberValueFromParameter(req, DEVELOPER_PAGE_PARAM, FIRST_PAGE_NUMBER);
         int count = ParameterFinder.getNumberValueFromParameter(req, DEVELOPER_COUNT_ON_PAGE_PARAM, DEFAULT_COUNT_ON_PAGE_5);
-        String search = ParameterFinder.getStringValueFromParameter(req, SEARCH_PARAM, null);
+        String search = ParameterFinder.getSearchStringValue(req);
 
         return FilterPageDto.builder()
                    .id(contractorId)
@@ -102,11 +103,13 @@ public class FilterPageDtoConverter {
         UserStatus status = ParameterFinder.getUserStatusFromParameter(req, USER_STATUS_PARAM, DEFAULT_USER_STATUS);
         int page = ParameterFinder.getNumberValueFromParameter(req, userPageParam, FIRST_PAGE_NUMBER);
         int count = ParameterFinder.getNumberValueFromParameter(req, userCountOnPageParam, DEFAULT_COUNT_ON_PAGE_5);
+        String search=ParameterFinder.getSearchStringValue(req);
 
         return FilterPageDto.builder()
                    .status(status)
                    .page(page)
                    .count(count)
+                   .search(search)
                    .build();
     }
 

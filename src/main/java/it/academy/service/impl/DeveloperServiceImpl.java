@@ -25,8 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static it.academy.util.constants.Constants.FIRST_PAGE_NUMBER;
-import static it.academy.util.constants.Constants.ZERO_INT_VALUE;
+import static it.academy.util.constants.Constants.*;
 import static it.academy.util.constants.JspURLs.*;
 import static it.academy.util.constants.Messages.*;
 import static it.academy.util.constants.ServletURLs.*;
@@ -214,6 +213,7 @@ public class DeveloperServiceImpl implements DeveloperService {
         Integer count = dto.getCount();
         Integer lastPageNumber = FIRST_PAGE_NUMBER;
         Integer page = FIRST_PAGE_NUMBER;
+        String search = PER_CENT_STRING + dto.getSearch() + PER_CENT_STRING;
         ProjectStatus status = null;
 
         try {
@@ -221,10 +221,10 @@ public class DeveloperServiceImpl implements DeveloperService {
             Page<Contractor> contractorPage = contractorDao.executeInOnePageTransaction(() -> {
                 Page<Contractor> page1 = null;
                 try {
-                    long totalCount = contractorDao.getCountOfContractorsByDeveloperId(dto.getId(), projectStatus);
+                    long totalCount = contractorDao.getCountOfContractorsByDeveloperId(dto.getId(), projectStatus, search);
                     page1 = Util.getPageWithCorrectNumbers(dto.getPage(), count, totalCount);
                     int correctPage = page1.getPageNumber();
-                    page1.setMap(contractorDao.getContractorsByDeveloperId(dto.getId(), projectStatus, correctPage, count));
+                    page1.setMap(contractorDao.getContractorsByDeveloperId(dto.getId(), projectStatus, search, correctPage, count));
                 } catch (NoResultException e) {
                     log.error(THERE_IS_NO_SUCH_DATA_IN_DB_WITH_USER_STATUS + projectStatus, e);
                 }
@@ -264,6 +264,7 @@ public class DeveloperServiceImpl implements DeveloperService {
                                    .lastPageNumber(lastPageNumber)
                                    .list(list)
                                    .status(status)
+                                   .search(dto.getSearch())
                                    .url(DEVELOPER_PAGES_LIST_WITH_CONTRACTORS_JSP)
                                    .build();
         }
@@ -945,8 +946,8 @@ public class DeveloperServiceImpl implements DeveloperService {
             if (sum > debt) {
                 throw new NotCreateDataInDbException();
             }
-            int sum1 = sum;
-            PaymentType paymentType = type;
+            final int sum1 = sum;
+            final PaymentType paymentType = type;
 
             boolean isCreated = moneyTransferDao.executeInOneBoolTransaction(() -> {
                 Calculation calculation = null;

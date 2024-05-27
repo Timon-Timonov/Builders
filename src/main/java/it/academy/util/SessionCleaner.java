@@ -34,6 +34,7 @@ public class SessionCleaner {
         session.removeAttribute(CALCULATION_ID_PARAM);
         session.removeAttribute(CALCULATION_PAGE_PARAM);
         session.removeAttribute(CALCULATION_COUNT_ON_PAGE_PARAM);
+        session.removeAttribute(SEARCH_PARAM);
     }
 
     public static void clearDeveloperAttributes(HttpServletRequest req) {
@@ -43,6 +44,13 @@ public class SessionCleaner {
         session.removeAttribute(DEVELOPER_NAME_PARAM);
         session.removeAttribute(DEVELOPER_ADDRESS_PARAM);
         session.removeAttribute(DEVELOPER_DEBT_PARAM);
+        session.removeAttribute(SEARCH_PARAM);
+    }
+    public static void clearContractorAttributes(HttpServletRequest req) {
+
+        HttpSession session = req.getSession();
+        session.removeAttribute(CONTRACTOR_ID_PARAM);
+        session.removeAttribute(SEARCH_PARAM);
     }
 
     public static void clearProposalAttributes(HttpServletRequest req) {
@@ -100,6 +108,7 @@ public class SessionCleaner {
         session.removeAttribute(PROPOSAL_PAGE_PARAM);
         session.removeAttribute(PROPOSAL_COUNT_ON_PAGE_PARAM);
         session.removeAttribute(PROPOSAL_STATUS_PARAM);
+        session.removeAttribute(SEARCH_PARAM);
     }
 
     public static void logOutClean(HttpServletRequest req) {
@@ -109,5 +118,6 @@ public class SessionCleaner {
         session.removeAttribute(PASSWORD_PARAM);
         session.removeAttribute(ROLE_PARAM);
         session.removeAttribute(ID_PARAM);
+        session.removeAttribute(SEARCH_PARAM);
     }
 }

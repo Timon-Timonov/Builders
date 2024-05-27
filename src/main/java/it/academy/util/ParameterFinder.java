@@ -8,7 +8,10 @@ import lombok.extern.log4j.Log4j2;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import static it.academy.util.constants.Constants.BLANK_STRING;
+import static it.academy.util.constants.Constants.NULL_STRING;
 import static it.academy.util.constants.Messages.INVALID_VALUE;
+import static it.academy.util.constants.ParameterNames.SEARCH_PARAM;
 
 @Log4j2
 public class ParameterFinder {
@@ -146,6 +149,31 @@ public class ParameterFinder {
         } catch (Exception e) {
             log.debug(parameterName, e);
             return defaultValue;
+        }
+        return returnValue;
+    }
+
+    public static String getSearchStringValue(
+
+        HttpServletRequest req) {
+
+        String valueFromReq = req.getParameter(SEARCH_PARAM);
+        String value = null;
+        if (valueFromReq != null && !NULL_STRING.equalsIgnoreCase(valueFromReq)) {
+            value = valueFromReq.isBlank() ? BLANK_STRING : valueFromReq;
+        }
+
+        HttpSession session = req.getSession();
+        String returnValue;
+        try {
+            returnValue = value != null ?
+                              value
+                              : (session.getAttribute(SEARCH_PARAM) != null ?
+                                     session.getAttribute(SEARCH_PARAM).toString()
+                                     : BLANK_STRING);
+        } catch (Exception e) {
+            log.debug(SEARCH_PARAM, e);
+            return BLANK_STRING;
         }
         return returnValue;
     }

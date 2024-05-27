@@ -8,6 +8,7 @@ import it.academy.service.AdminService;
 import it.academy.service.impl.AdminServiceImpl;
 import it.academy.util.ExceptionRedirector;
 import it.academy.util.SessionAttributeSetter;
+import it.academy.util.SessionCleaner;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -34,6 +35,7 @@ public class GetAllContractorsAdministratorServlet extends HttpServlet {
         if (dto.getExceptionMessage() != null) {
             ExceptionRedirector.forwardToException3(req, resp, this, dto.getExceptionMessage());
         } else {
+            SessionCleaner.clearContractorAttributes(req);
             SessionAttributeSetter.setPageData(req, USER_STATUS_PARAM,
                 CONTRACTOR_PAGE_PARAM, CONTRACTOR_COUNT_ON_PAGE_PARAM,
                 null, null, dto);

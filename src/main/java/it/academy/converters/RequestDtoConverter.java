@@ -10,7 +10,6 @@ import it.academy.util.ParameterFinder;
 import javax.servlet.http.HttpServletRequest;
 
 import static it.academy.util.constants.Constants.*;
-import static it.academy.util.constants.Messages.BLANK_STRING;
 import static it.academy.util.constants.ParameterNames.*;
 
 public class RequestDtoConverter {
@@ -23,7 +22,7 @@ public class RequestDtoConverter {
         long calculationId = ParameterFinder.getNumberValueFromParameter(req, CALCULATION_ID_PARAM, ZERO_LONG_VALUE);
         int sumAdvance = ParameterFinder.getNumberValueFromParameter(req, SUM_ADVANCE_PARAM, ZERO_INT_VALUE);
         int sumForWork = ParameterFinder.getNumberValueFromParameter(req, SUM_FOR_WORK_PARAM, ZERO_INT_VALUE);
-        int calculationDebt=ParameterFinder.getNumberValueFromParameter(req, CALCULATION_DEBT_PARAM, ZERO_INT_VALUE);
+        int calculationDebt = ParameterFinder.getNumberValueFromParameter(req, CALCULATION_DEBT_PARAM, ZERO_INT_VALUE);
 
         return CreateRequestDto.builder()
                    .id(calculationId)

@@ -9,11 +9,6 @@ public final class Messages {
     public static final String CALCULATION_NOT_UPDATED = "Calculation not updated!";
     public static final String INVALID_VALUE = "Invalid Value!";
     public static final String BAD_CONNECTION = "Bad connection...";
-    public static final String GETTING_OF_DEBT = "Getting of debt ";
-    public static final String WITH_DEVELOPER_ID = " with developerId ";
-    public static final String FAILED = " failed.";
-    public static final String GETING_OF_CONTRACTOR_DEBT_BY_CONTRACTOR_ID = "Geting of contractorDebt by contractorId ";
-    public static final String AND_DEVELOPER_ID = " and developerId ";
     public static final String THERE_IS_NO_SUCH_DATA_IN_DB_WITH_EMAIL = "There is no such data in DB with email=";
     public static final String NOT_OCCUPIED = " not occupied";
     public static final String OCCUPIED = " occupied";
@@ -25,7 +20,6 @@ public final class Messages {
     public static final String DELETE_FAIL_USER_ID = "delete fail user id=";
     public static final String CHANGING_OF_CHAPTER_STATUS_FAILED = "Changing of chapter status failed. ";
     public static final String FAILED_BY_CONSTRAINT = "Failed by constraint.";
-    public static final String CALCULATION_DELETE_ID = "Calculation delete id=";
     public static final String THERE_IS_NO_SUCH_DATA_IN_DB_WITH_ID1 = "There is no such data in DB with id=";
     public static final String DELETE_FAIL_CALCULATION_ID = "delete fail calculation id=";
     public static final String CHAPTER_DELETE_ID = "Chapter delete id=";
@@ -73,7 +67,6 @@ public final class Messages {
     public static final String PASSWORD_IS_EMPTY = "Password is empty!";
     public static final String EMAIL_IS_INVALID = "Email is invalid!";
     public static final String EMAIL_IS_EMPTY = "Email is empty!";
-    public static final String BLANK_STRING = "";
     public static final String CALCULATION_NOT_FOUND_WITH_ID = "Calculation not found with id=";
     public static final String PROPOSAL_NOT_CREATE = "Proposal not create.";
     public static final String NOT_SUCCESS_OPERATION = "Not success operation";
@@ -83,12 +76,9 @@ public final class Messages {
     public static final String CHAPTER_NOT_CREATE = "Chapter not create!";
     public static final String NEW_STATUS = " new status ";
     public static final String PROJECT_NOT_CREATE = "Project not create!";
-    public static final String USER_NOT_DELETE = "User not delete.";
-    public static final String PROJECT_NOT_DELETE = "Project not delete.";
     public static final String PROPOSAL_STATUSES_OF_ALL_CHAPTER_CHANGED_CHAPTER_ID = "Proposal statuses of all chapter changed. Chapter id= ";
     public static final String DEVELOPER_CREATED_ID = "Developer created: id=";
     public static final String SOMETHING_WENT_WRONG = "Something went wrong.";
-    public static final String PROPOSAL_DELETE_FAILED = "Proposal delete failed!";
 
     private Messages() {
     }

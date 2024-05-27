@@ -11,13 +11,13 @@ import java.util.Map;
 
 public interface ContractorDao extends Dao<Contractor, Long> {
 
-    List<Contractor> getContractors(UserStatus status, int page, int count) throws NoResultException, IOException;
+    List<Contractor> getContractors(UserStatus status,String search, int page, int count) throws NoResultException, IOException;
 
-    Map<Contractor, Integer[]> getContractorsByDeveloperId(Long developerId, ProjectStatus status, int page, int count)
+    Map<Contractor, Integer[]> getContractorsByDeveloperId(Long developerId, ProjectStatus status, String search, int page, int count)
         throws NoResultException, IOException;
 
-    Long getCountOfContractors(UserStatus status) throws NoResultException, IOException;
+    Long getCountOfContractors(UserStatus status,String search) throws NoResultException, IOException;
 
-    Long getCountOfContractorsByDeveloperId(Long developerId, ProjectStatus status)
+    Long getCountOfContractorsByDeveloperId(Long developerId, ProjectStatus status, String search)
         throws NoResultException, IOException;
 }

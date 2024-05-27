@@ -40,7 +40,10 @@
     <%@include file="/include_files/pagination_buttons_group.jsp" %>
 </div>
 <br>
+<%@include file="/include_files/search_line.jsp" %>
+>
 
+<br>
 
 <div class="container text-center">
     <table>
