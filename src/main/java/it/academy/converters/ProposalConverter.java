@@ -7,7 +7,7 @@ import it.academy.pojo.Proposal;
 import it.academy.pojo.legalEntities.Contractor;
 import it.academy.pojo.legalEntities.Developer;
 
-public class ProposalConverter {
+public final class ProposalConverter {
 
     private ProposalConverter() {
     }
@@ -33,7 +33,7 @@ public class ProposalConverter {
         return ProposalDto.builder()
                    .id(proposal.getId())
                    .chapterName(chapter.getName())
-                   .ProjectName(project.getName())
+                   .projectName(project.getName())
                    .chapterPrice(chapter.getPrice())
                    .createdDate(proposal.getCreatedDate())
                    .contractorName(contractor.getName())

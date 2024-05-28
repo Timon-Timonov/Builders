@@ -33,7 +33,9 @@ import static it.academy.util.constants.Messages.*;
 import static it.academy.util.constants.ServletURLs.*;
 
 @Log4j2
-public class AdminServiceImpl implements AdminService {
+public final class AdminServiceImpl implements AdminService {
+
+    private static AdminServiceImpl instance;
 
     private final ContractorDao contractorDao = new ContractorDaoImpl();
     private final DeveloperDao developerDao = new DeveloperDaoImpl();
@@ -43,8 +45,6 @@ public class AdminServiceImpl implements AdminService {
     private final ProjectDao projectDao = new ProjectDaoImpl();
     private final ProposalDao proposalDao = new ProposalDaoImpl();
     private final UserDao userDao = new UserDaoImpl();
-
-    private static AdminServiceImpl instance;
 
     private AdminServiceImpl() {
     }
@@ -787,7 +787,7 @@ public class AdminServiceImpl implements AdminService {
                     calculationDao.delete(calculationId);
                     log.trace(CHAPTER_DELETE_ID + calculationId);
                 } catch (EntityNotFoundException e) {
-                    log.error(THERE_IS_NO_SUCH_DATA_IN_DB_WITH_ID1 + calculationId, e);
+                    log.error(THERE_IS_NO_SUCH_DATA_IN_DB_WITH_ID + calculationId, e);
                 }
             });
         } catch (ConstraintViolationException e) {

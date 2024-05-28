@@ -4,7 +4,7 @@ import it.academy.dto.ContractorDto;
 import it.academy.pojo.Address;
 import it.academy.pojo.legalEntities.Contractor;
 
-public class ContractorConverter {
+public final class ContractorConverter {
 
     private ContractorConverter() {
     }

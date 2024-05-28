@@ -20,7 +20,6 @@ public final class Messages {
     public static final String DELETE_FAIL_USER_ID = "delete fail user id=";
     public static final String CHANGING_OF_CHAPTER_STATUS_FAILED = "Changing of chapter status failed. ";
     public static final String FAILED_BY_CONSTRAINT = "Failed by constraint.";
-    public static final String THERE_IS_NO_SUCH_DATA_IN_DB_WITH_ID1 = "There is no such data in DB with id=";
     public static final String DELETE_FAIL_CALCULATION_ID = "delete fail calculation id=";
     public static final String CHAPTER_DELETE_ID = "Chapter delete id=";
     public static final String DELETE_FAIL_CHAPTER_ID = "delete failchapter id=";

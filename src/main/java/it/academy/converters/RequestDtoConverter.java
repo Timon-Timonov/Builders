@@ -12,7 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 import static it.academy.util.constants.Constants.*;
 import static it.academy.util.constants.ParameterNames.*;
 
-public class RequestDtoConverter {
+public final class RequestDtoConverter {
 
     private RequestDtoConverter() {
     }

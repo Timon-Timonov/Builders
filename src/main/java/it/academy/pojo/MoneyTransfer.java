@@ -8,6 +8,8 @@ import org.hibernate.annotations.CreationTimestamp;
 import javax.persistence.*;
 import java.sql.Timestamp;
 
+import static it.academy.util.constants.Constants.ZERO_INT_VALUE;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -25,7 +27,7 @@ public class MoneyTransfer {
 
     @Column
     @Builder.Default
-    private int sum = 0;
+    private int sum = ZERO_INT_VALUE;
 
     @CreationTimestamp
     @Column(updatable = false)

@@ -9,7 +9,7 @@ import javax.servlet.http.HttpSession;
 
 import static it.academy.util.constants.ParameterNames.*;
 
-public class SessionAttributeSetter {
+public final class SessionAttributeSetter {
 
     private SessionAttributeSetter() {
     }

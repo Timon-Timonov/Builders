@@ -32,7 +32,9 @@ import static it.academy.util.constants.Messages.*;
 import static it.academy.util.constants.ServletURLs.*;
 
 @Log4j2
-public class ContractorServiceImpl implements ContractorService {
+public final class ContractorServiceImpl implements ContractorService {
+
+    private static ContractorServiceImpl instance;
 
     private final ContractorDao contractorDao = new ContractorDaoImpl();
     private final DeveloperDao developerDao = new DeveloperDaoImpl();
@@ -41,8 +43,6 @@ public class ContractorServiceImpl implements ContractorService {
     private final ProjectDao projectDao = new ProjectDaoImpl();
     private final ProposalDao proposalDao = new ProposalDaoImpl();
     private final UserDao userDao = new UserDaoImpl();
-
-    private static ContractorServiceImpl instance;
 
     private ContractorServiceImpl() {
     }

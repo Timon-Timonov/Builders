@@ -19,7 +19,6 @@ import static it.academy.util.constants.ServletURLs.*;
 @WebFilter(urlPatterns = {"/*"})
 public class LogInFilter implements Filter {
 
-
     private final AdminService service = AdminServiceImpl.getInstance();
 
     @Override

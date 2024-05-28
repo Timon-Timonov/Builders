@@ -3,7 +3,7 @@ package it.academy.converters;
 import it.academy.dto.MoneyTransferDto;
 import it.academy.pojo.MoneyTransfer;
 
-public class MoneyTransferConverter {
+public final class MoneyTransferConverter {
 
     private MoneyTransferConverter() {
     }

@@ -4,6 +4,9 @@ import lombok.*;
 
 import javax.persistence.Embeddable;
 
+import static it.academy.util.constants.Constants.COMMA;
+import static it.academy.util.constants.Constants.DOT;
+
 
 @Getter
 @Setter
@@ -22,6 +25,7 @@ public class Address {
 
     @Override
     public String toString() {
-        return city + ", " + street + ", " + building + ".";
+
+        return city + COMMA + street + COMMA + building + DOT;
     }
 }

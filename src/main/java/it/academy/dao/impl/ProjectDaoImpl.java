@@ -10,8 +10,7 @@ import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import java.util.*;
 
-import static it.academy.util.constants.Constants.ZERO_INT_VALUE;
-import static it.academy.util.constants.Constants.ZERO_LONG_VALUE;
+import static it.academy.util.constants.Constants.*;
 
 public class ProjectDaoImpl extends DaoImpl<Project, Long> implements ProjectDao {
 
@@ -21,8 +20,8 @@ public class ProjectDaoImpl extends DaoImpl<Project, Long> implements ProjectDao
     }
 
     @Override
-    public Map<Project, Integer[]> getProjectsByContractorId
-        (Long contractorId, ProjectStatus status, int page, int count) throws NoResultException {
+    public Map<Project, Integer[]> getProjectsByContractorId(
+        Long contractorId, ProjectStatus status, int page, int count) throws NoResultException {
 
         Query queryTotalPrice = getEm().createQuery(
             "SELECT  p, SUM(ch.price), dev, us " +
@@ -77,8 +76,8 @@ public class ProjectDaoImpl extends DaoImpl<Project, Long> implements ProjectDao
     }
 
     @Override
-    public Map<Project, Integer[]> getProjectsByDeveloperIdContractorId
-        (Long developerId, Long contractorId, ProjectStatus status, int page, int count)
+    public Map<Project, Integer[]> getProjectsByDeveloperIdContractorId(
+        Long developerId, Long contractorId, ProjectStatus status, int page, int count)
         throws NoResultException {
 
         Query queryPrice = getEm().createQuery(
@@ -264,7 +263,7 @@ public class ProjectDaoImpl extends DaoImpl<Project, Long> implements ProjectDao
         List<Object[]> listTransferSum = (List<Object[]>) queryTransferSum.getResultList();
 
         listPrice.forEach(res -> {
-            Integer[] arr = new Integer[3];
+            Integer[] arr = new Integer[DEBT_ARRAY_LENGTH];
             Arrays.fill(arr, ZERO_INT_VALUE);
 
             Project project = (Project) res[0];

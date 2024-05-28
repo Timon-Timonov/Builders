@@ -8,7 +8,7 @@ import java.util.Optional;
 
 import static it.academy.util.constants.Constants.*;
 
-public class CalculationConverter {
+public final class CalculationConverter {
 
 
     private CalculationConverter() {
@@ -33,8 +33,8 @@ public class CalculationConverter {
                    .workPriceFact(workPriceFact)
                    .workPricePlan(from.getWorkPricePlan())
                    .chapterName(chapter.getName())
-                   .YYYY(YYYY)
-                   .MM(MM)
+                   .yyyy(YYYY)
+                   .mm(MM)
                    .sumAdvance(sumAdvance)
                    .sumForWork(sumForWork)
                    .calculationDebt(calculationDebt)

@@ -4,7 +4,7 @@ import it.academy.dto.DeveloperDto;
 import it.academy.pojo.Address;
 import it.academy.pojo.legalEntities.LegalEntity;
 
-public class DeveloperConverter {
+public final class DeveloperConverter {
 
     private DeveloperConverter() {
     }

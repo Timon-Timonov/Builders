@@ -7,7 +7,7 @@ import it.academy.pojo.Project;
 import it.academy.pojo.legalEntities.Contractor;
 import it.academy.pojo.legalEntities.Developer;
 
-public class ChapterConverter {
+public final class ChapterConverter {
 
     private ChapterConverter() {
     }
@@ -36,7 +36,7 @@ public class ChapterConverter {
                    .chapterPrice(from.getPrice())
                    .chapterStatus(from.getStatus())
                    .contractorName(contractor.getName())
-                   .DeveloperName(developer.getName())
+                   .developerName(developer.getName())
                    .projectAddress(address.toString())
                    .projectStatus(project.getStatus())
                    .projectName(project.getName())

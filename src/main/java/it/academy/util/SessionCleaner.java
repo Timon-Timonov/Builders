@@ -5,7 +5,7 @@ import javax.servlet.http.HttpSession;
 
 import static it.academy.util.constants.ParameterNames.*;
 
-public class SessionCleaner {
+public final class SessionCleaner {
 
     private SessionCleaner() {
     }

@@ -3,7 +3,7 @@ package it.academy.converters;
 import it.academy.dto.UserDto;
 import it.academy.pojo.User;
 
-public class UserConverter {
+public final class UserConverter {
 
     private UserConverter() {
     }

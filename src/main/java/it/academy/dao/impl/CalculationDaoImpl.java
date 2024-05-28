@@ -7,7 +7,6 @@ import it.academy.pojo.enums.PaymentType;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
-import java.io.IOException;
 import java.util.*;
 
 import static it.academy.util.constants.Constants.ZERO_INT_VALUE;

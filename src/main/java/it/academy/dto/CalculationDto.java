@@ -1,10 +1,6 @@
 package it.academy.dto;
 
-import it.academy.pojo.MoneyTransfer;
 import lombok.*;
-
-import java.util.HashSet;
-import java.util.Set;
 
 @Getter
 @Setter
@@ -15,9 +11,9 @@ public class CalculationDto {
 
     private Long id;
 
-    private Integer YYYY;
+    private Integer yyyy;
 
-    private Integer MM;
+    private Integer mm;
 
     private Integer workPricePlan;
 

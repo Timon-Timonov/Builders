@@ -30,6 +30,6 @@ public class ChapterDto {
 
     private String contractorName;
 
-    private String DeveloperName;
+    private String developerName;
 }
 

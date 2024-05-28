@@ -71,10 +71,10 @@
             <td><%=(i + 1)%>
             </td>
             <td> |</td>
-            <td><%=calculationDto.getYYYY()%>
+            <td><%=calculationDto.getYyyy()%>
             </td>
             <td> |</td>
-            <td><%=calculationDto.getMM()%>
+            <td><%=calculationDto.getMm()%>
             </td>
             <td> |</td>
             <td><%=calculationDto.getSumAdvance()%>

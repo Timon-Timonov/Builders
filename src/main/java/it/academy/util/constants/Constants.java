@@ -20,8 +20,11 @@ public final class Constants {
     public static final int YEAR = 1900;
     public static final int MONTH = 1;
     public static final int DEFAULT_DAY_NUMBER = 1;
+    public static final int DEBT_ARRAY_LENGTH = 3;
 
     public static final String DELIMITER_STRING = "-";
+    public static final String COMMA = ", ";
+    public static final String DOT = ". ";
     public static final String BLANK_STRING = "";
     public static final String PER_CENT_STRING = "%";
     public static final String NULL_STRING = "null";

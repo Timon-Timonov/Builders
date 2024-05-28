@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import static it.academy.util.constants.Constants.*;
 
 @Log4j2
-public class Util {
+public final class Util {
 
     private Util() {
     }

@@ -5,7 +5,7 @@ import it.academy.pojo.Address;
 import it.academy.pojo.Project;
 import it.academy.pojo.legalEntities.Developer;
 
-public class ProjectConverter {
+public final class ProjectConverter {
 
     private ProjectConverter() {
     }

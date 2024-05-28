@@ -14,13 +14,13 @@ import static it.academy.util.constants.Messages.INVALID_VALUE;
 import static it.academy.util.constants.ParameterNames.SEARCH_PARAM;
 
 @Log4j2
-public class ParameterFinder {
+public final class ParameterFinder {
 
     private ParameterFinder() {
     }
 
-    public static ProposalStatus getProposalStatusFromParameter
-        (HttpServletRequest req, String parameterName, ProposalStatus defaultValue) {
+    public static ProposalStatus getProposalStatusFromParameter(
+        HttpServletRequest req, String parameterName, ProposalStatus defaultValue) {
 
         String valueFromReq = req.getParameter(parameterName);
         ProposalStatus value = null;
@@ -47,8 +47,8 @@ public class ParameterFinder {
         return returnValue;
     }
 
-    public static ProjectStatus getProjectStatusFromParameter
-        (HttpServletRequest req, String parameterName, ProjectStatus defaultValue) {
+    public static ProjectStatus getProjectStatusFromParameter(
+        HttpServletRequest req, String parameterName, ProjectStatus defaultValue) {
 
         String valueFromReq = req.getParameter(parameterName);
         ProjectStatus value = null;

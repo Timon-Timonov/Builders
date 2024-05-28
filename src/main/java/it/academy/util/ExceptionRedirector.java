@@ -9,7 +9,7 @@ import java.io.IOException;
 import static it.academy.util.constants.JspURLs.*;
 import static it.academy.util.constants.ParameterNames.MESSAGE_PARAM;
 
-public class ExceptionRedirector {
+public final class ExceptionRedirector {
 
     private ExceptionRedirector() {
     }

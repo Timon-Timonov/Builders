@@ -22,7 +22,7 @@ public class ProposalDto {
     @Builder.Default
     private ProposalStatus status = ProposalStatus.CONSIDERATION;
 
-    private String ProjectName;
+    private String projectName;
 
     private String chapterName;
 
