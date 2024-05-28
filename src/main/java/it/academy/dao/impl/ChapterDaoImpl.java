@@ -9,7 +9,6 @@ import javax.persistence.EntityNotFoundException;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
-import java.io.IOException;
 import java.util.*;
 
 import static it.academy.util.constants.Constants.ZERO_INT_VALUE;
@@ -23,10 +22,14 @@ public class ChapterDaoImpl extends DaoImpl<Chapter, Long> implements ChapterDao
     }
 
     @Override
-    public Chapter getChapterForCalculation(long id) throws NoResultException, IOException {
+    public Chapter getChapterForCalculation(long id) throws NoResultException {
 
         TypedQuery<Chapter> query = getEm().createQuery(
-            "SELECT ch FROM Chapter ch WHERE ch.id=:chapterId AND ch.project.status=:projectStatus AND ch.status=:chapterStatus",
+            "SELECT ch FROM Chapter ch INNER JOIN Project proj " +
+                "ON proj.id=ch.project.id " +
+                "WHERE ch.id=:chapterId " +
+                "AND proj.status=:projectStatus " +
+                "AND ch.status=:chapterStatus",
             Chapter.class);
         return query.setParameter("chapterId", id)
                    .setParameter("chapterStatus", ChapterStatus.OCCUPIED)
@@ -35,15 +38,16 @@ public class ChapterDaoImpl extends DaoImpl<Chapter, Long> implements ChapterDao
     }
 
     @Override
-    public long getCountOfFreeChaptersByName(long contractorId, String chapterName, ProjectStatus projectStatus) throws NoResultException, IOException {
+    public long getCountOfFreeChaptersByName(long contractorId, String chapterName, ProjectStatus projectStatus) throws NoResultException {
 
         TypedQuery<Long> query = getEm().createQuery(
             "SELECT COUNT (DISTINCT ch) " +
                 "FROM Chapter ch LEFT JOIN Proposal  prop " +
-                "ON ch.id=prop.chapter.id " +
+                "ON ch.id=prop.chapter.id LEFT JOIN Project proj " +
+                "ON proj.id=ch.project.id " +
                 "WHERE ch.name=:chapterName " +
                 "AND ch.status=:chapterStatus " +
-                "AND ch.project.status=:projectStatus " +
+                "AND proj.status=:projectStatus " +
                 "AND ch.id NOT IN (SELECT prop.chapter.id FROM Proposal prop WHERE prop.contractor.id=:contractorId)",
             Long.class);
         return query.setParameter("chapterName", chapterName)
@@ -54,8 +58,7 @@ public class ChapterDaoImpl extends DaoImpl<Chapter, Long> implements ChapterDao
     }
 
     @Override
-    public List<Chapter> getFreeChapters(long contractorId, String chapterName, ProjectStatus projectStatus, int page, int count)
-        throws IOException {
+    public List<Chapter> getFreeChapters(long contractorId, String chapterName, ProjectStatus projectStatus, int page, int count) {
 
         TypedQuery<Chapter> query = getEm().createQuery(
             "SELECT DISTINCT ch " +
@@ -76,8 +79,7 @@ public class ChapterDaoImpl extends DaoImpl<Chapter, Long> implements ChapterDao
     }
 
     @Override
-    public List<String> getAllChapterNames()
-        throws IOException {
+    public List<String> getAllChapterNames() {
 
         TypedQuery<String> query = getEm().createQuery(
             "SELECT DISTINCT (ch.name) FROM Chapter ch ORDER BY ch.name ASC ",
@@ -86,13 +88,14 @@ public class ChapterDaoImpl extends DaoImpl<Chapter, Long> implements ChapterDao
     }
 
     @Override
-    public Map<Chapter, Integer[]> getChaptersByProjectIdContractorId(long projectId, long contractorId)
-        throws IOException {
+    public Map<Chapter, Integer[]> getChaptersByProjectIdContractorId(long projectId, long contractorId) {
 
         Query queryWorkPrice = getEm().createQuery(
             "SELECT ch, SUM(calc.workPriceFact) " +
                 "FROM Project proj INNER JOIN Chapter ch " +
-                "ON proj.id=:projectId AND ch.contractor.id=:contractorId AND ch.project.id=proj.id LEFT JOIN Calculation calc " +
+                "ON proj.id=:projectId " +
+                "AND ch.contractor.id=:contractorId " +
+                "AND ch.project.id=proj.id LEFT JOIN Calculation calc " +
                 "ON calc.chapter.id=ch.id " +
 
                 "GROUP BY ch " +
@@ -101,7 +104,9 @@ public class ChapterDaoImpl extends DaoImpl<Chapter, Long> implements ChapterDao
         Query queryTransferSum = getEm().createQuery(
             "SELECT ch, SUM(tr.sum) " +
                 "FROM Project proj INNER JOIN Chapter ch " +
-                "ON proj.id=:projectId AND ch.contractor.id=:contractorId AND ch.project.id=proj.id LEFT JOIN Calculation calc " +
+                "ON proj.id=:projectId " +
+                "AND ch.contractor.id=:contractorId " +
+                "AND ch.project.id=proj.id LEFT JOIN Calculation calc " +
                 "ON calc.chapter.id=ch.id LEFT JOIN MoneyTransfer tr " +
                 "ON tr.calculation.id=calc.id " +
 
@@ -141,8 +146,7 @@ public class ChapterDaoImpl extends DaoImpl<Chapter, Long> implements ChapterDao
     }
 
     @Override
-    public Map<Chapter, Integer[]> getChaptersByProjectId(long projectId)
-        throws IOException {
+    public Map<Chapter, Integer[]> getChaptersByProjectId(long projectId) {
 
         Query queryWorkPrice = getEm().createQuery(
             "SELECT ch, SUM(calc.workPriceFact) " +
@@ -195,8 +199,7 @@ public class ChapterDaoImpl extends DaoImpl<Chapter, Long> implements ChapterDao
     }
 
     @Override
-    public Map<Chapter, Integer[]> getChaptersByContractorIdAndDeveloperId(long developerId, long contractorId, ProjectStatus status, int page, int count)
-        throws IOException {
+    public Map<Chapter, Integer[]> getChaptersByContractorIdAndDeveloperId(long developerId, long contractorId, ProjectStatus status, int page, int count) {
 
         Query queryWorkPrice = getEm().createQuery(
             "SELECT ch, SUM(calc.workPriceFact) " +
@@ -230,10 +233,10 @@ public class ChapterDaoImpl extends DaoImpl<Chapter, Long> implements ChapterDao
         queries.add(queryTransferSum);
 
         queries.forEach(query -> query.setParameter("developerId", developerId)
-            .setParameter("contractorId", contractorId)
-            .setParameter("status", status)
-            .setMaxResults(count)
-            .setFirstResult((page - 1) * count));
+                                     .setParameter("contractorId", contractorId)
+                                     .setParameter("status", status)
+                                     .setMaxResults(count)
+                                     .setFirstResult((page - 1) * count));
 
         Map<Chapter, Integer[]> map = new TreeMap<>(Comparator.comparing(Chapter::getName));
 
@@ -273,7 +276,7 @@ public class ChapterDaoImpl extends DaoImpl<Chapter, Long> implements ChapterDao
     }
 
     @Override
-    public long getCountOfChaptersByContractorIdAndDeveloperId(long developerId, long contractorId, ProjectStatus status) throws NoResultException, IOException {
+    public long getCountOfChaptersByContractorIdAndDeveloperId(long developerId, long contractorId, ProjectStatus status) throws NoResultException {
 
         TypedQuery<Long> query = getEm().createQuery(
             "SELECT COUNT(ch) FROM Chapter ch LEFT JOIN Project proj " +
@@ -289,8 +292,7 @@ public class ChapterDaoImpl extends DaoImpl<Chapter, Long> implements ChapterDao
     }
 
     @Override
-    public List<Chapter> getAllChaptersByDeveloperIdContractorId(long developerId, long contractorId) throws NoResultException, IOException {
-
+    public List<Chapter> getAllChaptersByDeveloperIdContractorId(long developerId, long contractorId) throws NoResultException {
 
         TypedQuery<Chapter> query = getEm().createQuery(
             "SELECT ch FROM Chapter ch" +
@@ -303,7 +305,7 @@ public class ChapterDaoImpl extends DaoImpl<Chapter, Long> implements ChapterDao
     }
 
     @Override
-    public List<Chapter> getChaptersByContractorId(long contractorId, int page, int count) throws NoResultException, IOException {
+    public List<Chapter> getChaptersByContractorId(long contractorId, int page, int count) throws NoResultException {
 
         TypedQuery<Chapter> query = getEm().createQuery(
             "SELECT ch FROM Chapter ch WHERE ch.contractor.id=:contractorId ",
@@ -315,7 +317,7 @@ public class ChapterDaoImpl extends DaoImpl<Chapter, Long> implements ChapterDao
     }
 
     @Override
-    public long getCountOfChaptersByContractorId(long contractorId) throws NoResultException, IOException {
+    public long getCountOfChaptersByContractorId(long contractorId) throws NoResultException {
 
         TypedQuery<Long> query = getEm().createQuery(
             "SELECT COUNT (ch) FROM Chapter ch WHERE ch.contractor.id=:contractorId ",
@@ -325,13 +327,12 @@ public class ChapterDaoImpl extends DaoImpl<Chapter, Long> implements ChapterDao
     }
 
     @Override
-    public void cancelChaptersByProjectId(long projectId) throws IOException {
+    public void cancelChaptersByProjectId(long projectId) {
 
         Query query = getEm().createQuery(
             "UPDATE Chapter ch SET ch.status=:status WHERE ch.project.id=:projectId ");
         query.setParameter("projectId", projectId)
             .setParameter("status", ChapterStatus.CANCELED)
             .executeUpdate();
-
     }
 }

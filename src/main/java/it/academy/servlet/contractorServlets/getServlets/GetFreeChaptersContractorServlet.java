@@ -1,11 +1,11 @@
 package it.academy.servlet.contractorServlets.getServlets;
 
-import it.academy.service.ContractorService;
-import it.academy.service.impl.ContractorServiceImpl;
 import it.academy.converters.FilterPageDtoConverter;
 import it.academy.dto.ChapterDto;
 import it.academy.dto.DtoWithPageForUi;
 import it.academy.dto.FilterPageDto;
+import it.academy.service.ContractorService;
+import it.academy.service.impl.ContractorServiceImpl;
 import it.academy.util.ExceptionRedirector;
 import it.academy.util.SessionAttributeSetter;
 

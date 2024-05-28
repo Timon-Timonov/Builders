@@ -8,7 +8,6 @@ import it.academy.pojo.legalEntities.Developer;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
-import java.io.IOException;
 import java.util.*;
 
 import static it.academy.util.constants.Constants.ZERO_INT_VALUE;
@@ -25,15 +24,19 @@ public class DeveloperDaoImpl extends DaoImpl<Developer, Long> implements Develo
     public List<Developer> getDevelopers(UserStatus status, String search, int page, int count) {
 
         TypedQuery<Developer> query = getEm().createQuery(
-            "SELECT DISTINCT dev FROM Developer dev " +
-                "WHERE dev.user.status=:status " +
+            "SELECT dev " +
+                "FROM Developer dev INNER JOIN User us " +
+                "ON dev.id=us.id " +
+                "WHERE us.status=:status " +
 
-                "AND dev.name LIKE :searchString " +
+                "GROUP BY dev " +
+
+                "HAVING dev.name LIKE :searchString " +
                 "OR dev.address.building LIKE :searchString " +
                 "OR dev.address.street LIKE :searchString " +
                 "OR dev.address.city LIKE :searchString " +
 
-                "ORDER BY dev.name ",
+                "ORDER BY dev.name ASC ",
             Developer.class);
         return query.setParameter("status", status)
                    .setParameter("searchString", search)
@@ -127,13 +130,15 @@ public class DeveloperDaoImpl extends DaoImpl<Developer, Long> implements Develo
     public Long getCountOfDevelopers(UserStatus status, String search) throws NoResultException {
 
         TypedQuery<Long> query = getEm().createQuery(
-            "SELECT COUNT (DISTINCT dev) FROM Developer dev " +
-                "WHERE dev.user.status=:status " +
+            "SELECT COUNT (dev) " +
+                "FROM Developer dev INNER JOIN User us " +
+                "ON dev.id=us.id " +
+                "WHERE us.status=:status " +
 
-                "AND dev.name LIKE :searchString " +
+                "AND(dev.name LIKE :searchString " +
                 "OR dev.address.building LIKE :searchString " +
                 "OR dev.address.street LIKE :searchString " +
-                "OR dev.address.city LIKE :searchString ",
+                "OR dev.address.city LIKE :searchString) ",
             Long.class);
         return query.setParameter("status", status)
                    .setParameter("searchString", search)

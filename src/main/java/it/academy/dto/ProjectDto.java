@@ -18,7 +18,7 @@ public class ProjectDto {
 
     private String developerName;
 
-    private AddressDto projectAddress;
+    private String projectAddress;
 
     private Integer debtByProject;
 

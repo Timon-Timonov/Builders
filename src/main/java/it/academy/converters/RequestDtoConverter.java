@@ -32,6 +32,21 @@ public class RequestDtoConverter {
                    .build();
     }
 
+    public static CreateRequestDto getCreateRequestDtoCreateCalculation(HttpServletRequest req) {
+
+        long chapterId = ParameterFinder.getNumberValueFromParameter(req, CHAPTER_ID_PARAM, ZERO_LONG_VALUE);
+        int year = ParameterFinder.getNumberValueFromParameter(req, YYYY_PARAM, ZERO_INT_VALUE);
+        int month = ParameterFinder.getNumberValueFromParameter(req, MM_PARAM, ZERO_INT_VALUE);
+        int workPrice = ParameterFinder.getNumberValueFromParameter(req, WORK_PRICE_PLAN_PARAM, ZERO_INT_VALUE);
+
+        return CreateRequestDto.builder()
+                   .id(chapterId)
+                   .int1(year)
+                   .int2(month)
+                   .int3(workPrice)
+                   .build();
+    }
+
     public static CreateRequestDto getCreateRequestDtoCreateProject(HttpServletRequest req) {
 
         long developerId = ParameterFinder.getNumberValueFromParameter(req, ID_PARAM, ZERO_LONG_VALUE);
@@ -115,21 +130,6 @@ public class RequestDtoConverter {
         return CreateRequestDto.builder()
                    .id(chapterId)
                    .secondId(contractorId)
-                   .build();
-    }
-
-    public static CreateRequestDto getCreateRequestDtoCreateCalculation(HttpServletRequest req) {
-
-        long chapterId = ParameterFinder.getNumberValueFromParameter(req, CHAPTER_ID_PARAM, ZERO_LONG_VALUE);
-        int year = ParameterFinder.getNumberValueFromParameter(req, YYYY_PARAM, ZERO_INT_VALUE);
-        int month = ParameterFinder.getNumberValueFromParameter(req, MM_PARAM, ZERO_INT_VALUE);
-        int workPrice = ParameterFinder.getNumberValueFromParameter(req, WORK_PRICE_PLAN_PARAM, ZERO_INT_VALUE);
-
-        return CreateRequestDto.builder()
-                   .id(chapterId)
-                   .int1(year)
-                   .int2(month)
-                   .int3(workPrice)
                    .build();
     }
 

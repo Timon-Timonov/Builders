@@ -1,4 +1,3 @@
-<%@ page import="it.academy.dto.AddressDto" %>
 <%@ page import="it.academy.dto.ContractorDto" %>
 <%@ page import="it.academy.pojo.enums.Roles" %>
 <%@ page import="static it.academy.util.constants.ParameterNames.*" %>
@@ -62,7 +61,7 @@
             ContractorDto contractorDto = contractorDtoList.get(i);
             Long contractorId = contractorDto.getId();
             String contractorName = contractorDto.getContractorName();
-            AddressDto contractorAddress = contractorDto.getContractorAddress();
+            String contractorAddress = contractorDto.getContractorAddress();
         %>
         <tr>
             <td><%=(i + 1)%>
@@ -71,7 +70,7 @@
             <td><%=contractorName%>
             </td>
             <td> |</td>
-            <td><%=contractorAddress.toString()%>
+            <td><%=contractorAddress%>
             </td>
             <td> |</td>
             <td>

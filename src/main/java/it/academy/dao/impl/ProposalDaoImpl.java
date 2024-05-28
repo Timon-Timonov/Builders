@@ -56,7 +56,9 @@ public class ProposalDaoImpl extends DaoImpl<Proposal, Long> implements Proposal
         throws NoResultException {
 
         TypedQuery<Proposal> query = getEm().createQuery(
-            "SELECT p FROM Proposal p WHERE p.chapter.id=:chapterId AND p.contractor.id=:contractorId",
+            "SELECT p FROM Proposal p " +
+                "WHERE p.chapter.id=:chapterId " +
+                "AND p.contractor.id=:contractorId",
             Proposal.class);
         return query.setParameter("chapterId", chapterId)
                    .setParameter("contractorId", contractorId)
@@ -68,10 +70,10 @@ public class ProposalDaoImpl extends DaoImpl<Proposal, Long> implements Proposal
         throws NoResultException {
 
         TypedQuery<Proposal> query = getEm().createQuery(
-            "SELECT p FROM Proposal p " +
-                "WHERE p.chapter.id=:chapterId " +
-                "AND p.status=:proposalStatus " +
-                "ORDER BY p.contractor.name ASC",
+            "SELECT prop FROM Proposal prop " +
+                "WHERE prop.chapter.id=:chapterId " +
+                "AND prop.status=:proposalStatus " +
+                "ORDER BY prop.contractor.name ASC",
             Proposal.class);
         return query.setParameter("chapterId", chapterId)
                    .setParameter("proposalStatus", status)
@@ -158,10 +160,12 @@ public class ProposalDaoImpl extends DaoImpl<Proposal, Long> implements Proposal
     }
 
     @Override
-    public boolean isAnyProposalOfChapterApproved(Long chapterId) throws IOException {
+    public boolean isAnyProposalOfChapterApproved(Long chapterId) {
 
         TypedQuery<Long> query = getEm().createQuery(
-            "SELECT COUNT(p) FROM Proposal p WHERE p.chapter.id=:chapterId AND p.status=:proposalStatus",
+            "SELECT COUNT(p) FROM Proposal p " +
+                "WHERE p.chapter.id=:chapterId " +
+                "AND p.status=:proposalStatus",
             Long.class);
         Long countOfApprovedProposals = query.setParameter("chapterId", chapterId)
                                             .setParameter("proposalStatus", ProposalStatus.APPROVED)
@@ -170,10 +174,12 @@ public class ProposalDaoImpl extends DaoImpl<Proposal, Long> implements Proposal
     }
 
     @Override
-    public void rejectAllConsiderateProposalsOfChapter(long chapterId) throws IOException {
+    public void rejectAllConsiderateProposalsOfChapter(long chapterId) {
 
         Query query = getEm().createQuery(
-            "UPDATE Proposal p SET p.status=:newStatus WHERE p.chapter.id=:chapterId AND p.status=:oldStatus ");
+            "UPDATE Proposal p SET p.status=:newStatus " +
+                "WHERE p.chapter.id=:chapterId " +
+                "AND p.status=:oldStatus ");
         query.setParameter("newStatus", ProposalStatus.REJECTED)
             .setParameter("oldStatus", ProposalStatus.CONSIDERATION)
             .setParameter("chapterId", chapterId)

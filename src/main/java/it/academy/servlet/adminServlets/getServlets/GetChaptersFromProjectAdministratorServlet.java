@@ -22,7 +22,6 @@ import static it.academy.util.constants.ParameterNames.*;
 import static it.academy.util.constants.ServletURLs.GET_CHAPTERS_FROM_PROJECT_ADMINISTRATOR_SERVLET;
 import static it.academy.util.constants.ServletURLs.SLASH_STRING;
 
-
 @WebServlet(name = "getChaptersFromProjectAdministratorServlet", urlPatterns = SLASH_STRING + GET_CHAPTERS_FROM_PROJECT_ADMINISTRATOR_SERVLET)
 public class GetChaptersFromProjectAdministratorServlet extends HttpServlet {
 

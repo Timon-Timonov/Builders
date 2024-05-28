@@ -1,7 +1,6 @@
 package it.academy.dto;
 
 
-import it.academy.dto.UserDto;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;

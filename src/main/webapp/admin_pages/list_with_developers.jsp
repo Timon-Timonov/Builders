@@ -1,4 +1,3 @@
-<%@ page import="it.academy.dto.AddressDto" %>
 <%@ page import="it.academy.dto.DeveloperDto" %>
 <%@ page import="it.academy.pojo.enums.Roles" %>
 <%@ page import="it.academy.pojo.enums.UserStatus" %>
@@ -64,7 +63,7 @@
             DeveloperDto developerDto = developerDtoList.get(i);
             Long developerId = developerDto.getId();
             String developerName = developerDto.getDeveloperName();
-            String developerAddress = Optional.ofNullable(developerDto.getDeveloperAddress()).orElse(new AddressDto()).toString();
+            String developerAddress = Optional.ofNullable(developerDto.getDeveloperAddress()).orElse(BLANK_STRING);
         %>
         <tr>
             <td><%=(i + 1)%>

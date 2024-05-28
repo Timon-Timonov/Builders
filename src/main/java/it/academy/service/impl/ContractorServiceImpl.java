@@ -193,22 +193,8 @@ public class ContractorServiceImpl implements ContractorService {
             exceptionMessage = SOMETHING_WENT_WRONG;
             log.error(SOMETHING_WENT_WRONG, e);
         }
-        DtoWithPageForUi<ProjectDto> dtoWithPageForUi;
-        if (exceptionMessage != null) {
-            dtoWithPageForUi = DtoWithPageForUi.<ProjectDto>builder()
-                                   .exceptionMessage(exceptionMessage)
-                                   .build();
-        } else {
-            dtoWithPageForUi = DtoWithPageForUi.<ProjectDto>builder()
-                                   .list(list)
-                                   .page(page)
-                                   .countOnPage(count)
-                                   .lastPageNumber(lastPageNumber)
-                                   .status(status)
-                                   .url(CONTRACTOR_PAGES_LIST_WITH_PROJECTS_JSP)
-                                   .build();
-        }
-        return dtoWithPageForUi;
+        return new DtoWithPageForUi<>(page, count, lastPageNumber, status,
+            exceptionMessage, null, null, list, CONTRACTOR_PAGES_LIST_WITH_PROJECTS_JSP, null);
     }
 
     @Override
@@ -260,24 +246,8 @@ public class ContractorServiceImpl implements ContractorService {
             exceptionMessage = SOMETHING_WENT_WRONG;
             log.error(SOMETHING_WENT_WRONG, e);
         }
-        DtoWithPageForUi<ProjectDto> dtoWithPageForUi;
-        if (exceptionMessage != null) {
-            dtoWithPageForUi = DtoWithPageForUi.<ProjectDto>builder()
-                                   .exceptionMessage(exceptionMessage)
-                                   .build();
-        } else {
-            dtoWithPageForUi = DtoWithPageForUi.<ProjectDto>builder()
-                                   .list(list)
-                                   .status(status)
-                                   .page(page)
-                                   .countOnPage(count)
-                                   .lastPageNumber(lastPageNumber)
-                                   .id(dto.getId())
-                                   .name(dto.getName())
-                                   .url(CONTRACTOR_PAGES_LIST_WITH_PROJECTS_JSP)
-                                   .build();
-        }
-        return dtoWithPageForUi;
+        return new DtoWithPageForUi<>(page, count, lastPageNumber, status,
+            exceptionMessage, dto.getId(), dto.getName(), list, CONTRACTOR_PAGES_LIST_WITH_PROJECTS_JSP, null);
     }
 
     @Override
@@ -301,19 +271,8 @@ public class ContractorServiceImpl implements ContractorService {
         } finally {
             chapterDao.closeManager();
         }
-
-        DtoWithPageForUi<ChapterDto> dtoWithListForUi;
-        if (exceptionMessage != null) {
-            dtoWithListForUi = DtoWithPageForUi.<ChapterDto>builder()
-                                   .exceptionMessage(exceptionMessage)
-                                   .build();
-        } else {
-            dtoWithListForUi = DtoWithPageForUi.<ChapterDto>builder()
-                                   .list(list)
-                                   .url(LIST_WITH_CHAPTER_NAMES_JSP)
-                                   .build();
-        }
-        return dtoWithListForUi;
+        return new DtoWithPageForUi<>(null, null, null, null,
+            exceptionMessage, null, null, list, LIST_WITH_CHAPTER_NAMES_JSP, null);
     }
 
     @Override
@@ -360,24 +319,8 @@ public class ContractorServiceImpl implements ContractorService {
             exceptionMessage = SOMETHING_WENT_WRONG;
             log.error(SOMETHING_WENT_WRONG, e);
         }
-
-        DtoWithPageForUi<ChapterDto> dtoWithListForUi;
-        if (exceptionMessage != null) {
-            dtoWithListForUi = DtoWithPageForUi.<ChapterDto>builder()
-                                   .exceptionMessage(exceptionMessage)
-                                   .build();
-        } else {
-            dtoWithListForUi = DtoWithPageForUi.<ChapterDto>builder()
-                                   .list(list)
-                                   .status(status)
-                                   .page(page)
-                                   .countOnPage(count)
-                                   .lastPageNumber(lastPageNumber)
-                                   .name(dto.getName())
-                                   .url(CONTRACTOR_PAGES_LIST_WITH_FREE_CHAPTERS_JSP)
-                                   .build();
-        }
-        return dtoWithListForUi;
+        return new DtoWithPageForUi<>(page, count, lastPageNumber, status,
+            exceptionMessage, null, dto.getName(), list, CONTRACTOR_PAGES_LIST_WITH_FREE_CHAPTERS_JSP, null);
     }
 
 
@@ -433,24 +376,8 @@ public class ContractorServiceImpl implements ContractorService {
             exceptionMessage = SOMETHING_WENT_WRONG;
             log.error(SOMETHING_WENT_WRONG, e);
         }
-
-        DtoWithPageForUi<DeveloperDto> dtoWithPageForUi;
-        if (exceptionMessage != null) {
-            dtoWithPageForUi = DtoWithPageForUi.<DeveloperDto>builder()
-                                   .exceptionMessage(exceptionMessage)
-                                   .build();
-        } else {
-            dtoWithPageForUi = DtoWithPageForUi.<DeveloperDto>builder()
-                                   .page(page)
-                                   .countOnPage(count)
-                                   .lastPageNumber(lastPageNumber)
-                                   .list(list)
-                                   .status(status)
-                                   .search(dto.getSearch())
-                                   .url(CONTRACTOR_PAGES_LIST_WITH_DEVELOPERS_JSP)
-                                   .build();
-        }
-        return dtoWithPageForUi;
+        return new DtoWithPageForUi<>(page, count, lastPageNumber, status,
+            exceptionMessage, null, null, list, CONTRACTOR_PAGES_LIST_WITH_DEVELOPERS_JSP, dto.getSearch());
     }
 
     @Override
@@ -497,23 +424,8 @@ public class ContractorServiceImpl implements ContractorService {
             exceptionMessage = SOMETHING_WENT_WRONG;
             log.error(SOMETHING_WENT_WRONG, e);
         }
-
-        DtoWithPageForUi<ProposalDto> dtoWithPageForUi;
-        if (exceptionMessage != null) {
-            dtoWithPageForUi = DtoWithPageForUi.<ProposalDto>builder()
-                                   .exceptionMessage(exceptionMessage)
-                                   .build();
-        } else {
-            dtoWithPageForUi = DtoWithPageForUi.<ProposalDto>builder()
-                                   .page(page)
-                                   .countOnPage(count)
-                                   .lastPageNumber(lastPageNumber)
-                                   .list(list)
-                                   .status(status)
-                                   .url(CONTRACTOR_PAGES_LIST_WITH_PROPOSALS_JSP)
-                                   .build();
-        }
-        return dtoWithPageForUi;
+        return new DtoWithPageForUi<>(page, count, lastPageNumber, status,
+            exceptionMessage, null, null, list, CONTRACTOR_PAGES_LIST_WITH_PROPOSALS_JSP, null);
     }
 
     @Override
@@ -547,21 +459,8 @@ public class ContractorServiceImpl implements ContractorService {
             exceptionMessage = SOMETHING_WENT_WRONG;
             log.error(SOMETHING_WENT_WRONG, e);
         }
-
-        DtoWithPageForUi<ChapterDto> dtoWithPageForUi;
-        if (exceptionMessage != null) {
-            dtoWithPageForUi = DtoWithPageForUi.<ChapterDto>builder()
-                                   .exceptionMessage(exceptionMessage)
-                                   .build();
-        } else {
-            dtoWithPageForUi = DtoWithPageForUi.<ChapterDto>builder()
-                                   .list(list)
-                                   .name(dto.getName())
-                                   .id(dto.getId())
-                                   .url(CONTRACTOR_PAGES_LIST_WITH_CHAPTERS_JSP)
-                                   .build();
-        }
-        return dtoWithPageForUi;
+        return new DtoWithPageForUi<>(null, null, null, null,
+            exceptionMessage, dto.getId(), dto.getName(), list, CONTRACTOR_PAGES_LIST_WITH_CHAPTERS_JSP, null);
     }
 
     @Override
@@ -603,24 +502,8 @@ public class ContractorServiceImpl implements ContractorService {
             exceptionMessage = SOMETHING_WENT_WRONG;
             log.error(SOMETHING_WENT_WRONG, e);
         }
-
-        DtoWithPageForUi<CalculationDto> dtoWithPageForUi;
-        if (exceptionMessage != null) {
-            dtoWithPageForUi = DtoWithPageForUi.<CalculationDto>builder()
-                                   .exceptionMessage(exceptionMessage)
-                                   .build();
-        } else {
-            dtoWithPageForUi = DtoWithPageForUi.<CalculationDto>builder()
-                                   .page(page)
-                                   .countOnPage(count)
-                                   .lastPageNumber(lastPageNumber)
-                                   .id(dto.getId())
-                                   .name(dto.getName())
-                                   .list(list)
-                                   .url(CONTRACTOR_PAGES_LIST_WITH_CALCULATIONS_JSP)
-                                   .build();
-        }
-        return dtoWithPageForUi;
+        return new DtoWithPageForUi<>(page, count, lastPageNumber, null,
+            exceptionMessage, dto.getId(), dto.getName(), list, CONTRACTOR_PAGES_LIST_WITH_CALCULATIONS_JSP, null);
     }
 
     @Override
@@ -651,18 +534,8 @@ public class ContractorServiceImpl implements ContractorService {
             exceptionMessage = SOMETHING_WENT_WRONG;
             log.error(SOMETHING_WENT_WRONG, e);
         }
-
-        DtoWithPageForUi<CalculationDto> dtoWithPageForUi;
-        if (exceptionMessage != null) {
-            dtoWithPageForUi = DtoWithPageForUi.<CalculationDto>builder()
-                                   .exceptionMessage(exceptionMessage)
-                                   .build();
-        } else {
-            dtoWithPageForUi = DtoWithPageForUi.<CalculationDto>builder()
-                                   .url(SLASH_STRING + GET_MY_CALCULATION_CONTRACTOR_SERVLET)
-                                   .build();
-        }
-        return dtoWithPageForUi;
+        return new DtoWithPageForUi<>(null, null, null, null,
+            exceptionMessage, null, null, null, SLASH_STRING + GET_MY_CALCULATION_CONTRACTOR_SERVLET, null);
     }
 
     @Override
@@ -706,18 +579,8 @@ public class ContractorServiceImpl implements ContractorService {
             exceptionMessage = SOMETHING_WENT_WRONG;
             log.error(SOMETHING_WENT_WRONG, e);
         }
-
-        DtoWithPageForUi<CalculationDto> dtoWithPageForUi;
-        if (exceptionMessage != null) {
-            dtoWithPageForUi = DtoWithPageForUi.<CalculationDto>builder()
-                                   .exceptionMessage(exceptionMessage)
-                                   .build();
-        } else {
-            dtoWithPageForUi = DtoWithPageForUi.<CalculationDto>builder()
-                                   .url(SLASH_STRING + GET_MY_CALCULATION_CONTRACTOR_SERVLET)
-                                   .build();
-        }
-        return dtoWithPageForUi;
+        return new DtoWithPageForUi<>(null, null, null, null,
+            exceptionMessage, null, null, null, SLASH_STRING + GET_MY_CALCULATION_CONTRACTOR_SERVLET, null);
     }
 
     @Override
@@ -803,19 +666,8 @@ public class ContractorServiceImpl implements ContractorService {
             exceptionMessage = SOMETHING_WENT_WRONG;
             log.error(SOMETHING_WENT_WRONG, e);
         }
-
-        DtoWithPageForUi<ProposalDto> dtoWithPageForUi;
-        if (exceptionMessage != null) {
-            dtoWithPageForUi = DtoWithPageForUi.<ProposalDto>builder()
-                                   .exceptionMessage(exceptionMessage)
-                                   .build();
-        } else {
-            dtoWithPageForUi = DtoWithPageForUi.<ProposalDto>builder()
-                                   .url(SLASH_STRING + GET_ALL_MY_PROPOSALS_CONTRACTOR_SERVLET)
-                                   .status(dto.getStatus())
-                                   .build();
-        }
-        return dtoWithPageForUi;
+        return new DtoWithPageForUi<>(null, null, null, dto.getStatus(),
+            exceptionMessage, null, null, null, SLASH_STRING + GET_ALL_MY_PROPOSALS_CONTRACTOR_SERVLET, null);
     }
 
     @Override
@@ -879,17 +731,7 @@ public class ContractorServiceImpl implements ContractorService {
             exceptionMessage = SOMETHING_WENT_WRONG;
             log.error(SOMETHING_WENT_WRONG, e);
         }
-
-        DtoWithPageForUi<ProposalDto> dtoWithPageForUi;
-        if (exceptionMessage != null) {
-            dtoWithPageForUi = DtoWithPageForUi.<ProposalDto>builder()
-                                   .exceptionMessage(exceptionMessage)
-                                   .build();
-        } else {
-            dtoWithPageForUi = DtoWithPageForUi.<ProposalDto>builder()
-                                   .url(SLASH_STRING + GET_FREE_CHAPTERS_CONTRACTOR_SERVLET)
-                                   .build();
-        }
-        return dtoWithPageForUi;
+        return new DtoWithPageForUi<>(null, null, null, null,
+            exceptionMessage, null, null, null, SLASH_STRING + GET_FREE_CHAPTERS_CONTRACTOR_SERVLET, null);
     }
 }

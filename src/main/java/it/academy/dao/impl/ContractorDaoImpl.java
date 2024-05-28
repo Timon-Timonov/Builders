@@ -8,7 +8,6 @@ import it.academy.pojo.legalEntities.Contractor;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
-import java.io.IOException;
 import java.util.*;
 
 import static it.academy.util.constants.Constants.ZERO_INT_VALUE;
@@ -25,8 +24,10 @@ public class ContractorDaoImpl extends DaoImpl<Contractor, Long> implements Cont
     public List<Contractor> getContractors(UserStatus status, String search, int page, int count) {
 
         TypedQuery<Contractor> query = getEm().createQuery(
-            "SELECT contr FROM Contractor contr " +
-                "WHERE contr.user.status=:status " +
+            "SELECT contr " +
+                "FROM Contractor contr INNER JOIN User us " +
+                "ON contr.id=us.id " +
+                "WHERE us.status=:status " +
 
                 "GROUP BY contr " +
 
@@ -126,14 +127,15 @@ public class ContractorDaoImpl extends DaoImpl<Contractor, Long> implements Cont
     public Long getCountOfContractors(UserStatus status, String search) throws NoResultException {
 
         TypedQuery<Long> query = getEm().createQuery(
-            "SELECT COUNT(DISTINCT contr) " +
-                "FROM Contractor contr " +
-                "WHERE contr.user.status=:status " +
+            "SELECT COUNT (contr) " +
+                "FROM Contractor contr INNER JOIN User us " +
+                "ON contr.id=us.id " +
+                "WHERE us.status=:status " +
 
-                "AND contr.name LIKE :searchString " +
+                "AND(contr.name LIKE :searchString " +
                 "OR contr.address.building LIKE :searchString " +
                 "OR contr.address.street LIKE :searchString " +
-                "OR contr.address.city LIKE :searchString ",
+                "OR contr.address.city LIKE :searchString) ",
             Long.class);
         return query.setParameter("status", status)
                    .setParameter("searchString", search)

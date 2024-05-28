@@ -4,8 +4,6 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.sql.Date;
-import java.util.HashSet;
-import java.util.Set;
 
 import static it.academy.util.constants.Constants.ZERO_INT_VALUE;
 
@@ -14,8 +12,6 @@ import static it.academy.util.constants.Constants.ZERO_INT_VALUE;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@EqualsAndHashCode(exclude = "transferSet")
-@ToString(exclude = "transferSet")
 @Entity
 @Table(name = "calculations")
 public class Calculation {
@@ -37,8 +33,4 @@ public class Calculation {
     @ManyToOne
     @JoinColumn(name = "chapter_id")
     private Chapter chapter;
-
-    @Builder.Default
-    @OneToMany(mappedBy = "calculation", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
-    private Set<MoneyTransfer> transferSet = new HashSet<>();
 }

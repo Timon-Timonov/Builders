@@ -1,14 +1,14 @@
 package it.academy.servlet.contractorServlets.getServlets;
 
-import it.academy.service.ContractorService;
+import it.academy.converters.FilterPageDtoConverter;
 import it.academy.dto.DtoWithPageForUi;
 import it.academy.dto.FilterPageDto;
-import it.academy.service.impl.ContractorServiceImpl;
 import it.academy.dto.ProposalDto;
+import it.academy.service.ContractorService;
+import it.academy.service.impl.ContractorServiceImpl;
 import it.academy.util.ExceptionRedirector;
 import it.academy.util.SessionAttributeSetter;
 import it.academy.util.SessionCleaner;
-import it.academy.converters.FilterPageDtoConverter;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -20,7 +20,6 @@ import java.io.IOException;
 import static it.academy.util.constants.ParameterNames.*;
 import static it.academy.util.constants.ServletURLs.GET_ALL_MY_PROPOSALS_CONTRACTOR_SERVLET;
 import static it.academy.util.constants.ServletURLs.SLASH_STRING;
-
 
 @WebServlet(name = "getAllMyProposalsContractorServlet", urlPatterns = SLASH_STRING + GET_ALL_MY_PROPOSALS_CONTRACTOR_SERVLET)
 public class GetAllMyProposalsContractorServlet extends HttpServlet {

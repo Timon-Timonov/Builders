@@ -1,6 +1,5 @@
 package it.academy.converters;
 
-import it.academy.dto.AddressDto;
 import it.academy.dto.ContractorDto;
 import it.academy.pojo.Address;
 import it.academy.pojo.legalEntities.Contractor;
@@ -17,11 +16,7 @@ public class ContractorConverter {
             address = new Address();
         }
         return ContractorDto.builder()
-                   .contractorAddress(AddressDto.builder()
-                                          .city(address.getCity())
-                                          .street(address.getStreet())
-                                          .building(address.getBuilding())
-                                          .build())
+                   .contractorAddress(address.toString())
                    .id(contractor.getId())
                    .contractorName(contractor.getName())
                    .contractorDebt(contractorDebt)

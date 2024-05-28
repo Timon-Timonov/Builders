@@ -1,11 +1,11 @@
 package it.academy.servlet.contractorServlets.changeServlets;
 
-import it.academy.service.ContractorService;
-import it.academy.service.impl.ContractorServiceImpl;
 import it.academy.converters.RequestDtoConverter;
 import it.academy.dto.CalculationDto;
 import it.academy.dto.ChangeRequestDto;
 import it.academy.dto.DtoWithPageForUi;
+import it.academy.service.ContractorService;
+import it.academy.service.impl.ContractorServiceImpl;
 import it.academy.util.ExceptionRedirector;
 
 import javax.servlet.ServletException;

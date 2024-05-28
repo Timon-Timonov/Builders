@@ -12,12 +12,18 @@ import lombok.ToString;
 public class FilterPageDto {
 
     Long id;
+
     Long secondId;
+
     Object status;
+
     Integer page;
+
     Integer count;
 
     String name;
+
     String address;
+
     String search;
 }

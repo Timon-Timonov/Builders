@@ -1,6 +1,5 @@
 package it.academy.converters;
 
-import it.academy.dto.AddressDto;
 import it.academy.dto.ChapterDto;
 import it.academy.pojo.Address;
 import it.academy.pojo.Chapter;
@@ -38,11 +37,7 @@ public class ChapterConverter {
                    .chapterStatus(from.getStatus())
                    .contractorName(contractor.getName())
                    .DeveloperName(developer.getName())
-                   .projectAddress(AddressDto.builder()
-                                       .city(address.getCity())
-                                       .street(address.getStreet())
-                                       .building(address.getBuilding())
-                                       .build())
+                   .projectAddress(address.toString())
                    .projectStatus(project.getStatus())
                    .projectName(project.getName())
                    .chapterDebt(chapterDebt)

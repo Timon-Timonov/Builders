@@ -29,7 +29,7 @@
         </td>
         <td>
             <%
-                if(lastPageNumber!=FIRST_PAGE_NUMBER) {
+                if (lastPageNumber != FIRST_PAGE_NUMBER) {
             %>
             <form action="<%=actionName%>" method="get">
                 <input type="hidden" value="<%=pageNumber+1%>" name="<%=pageNumberParamName%>">
@@ -39,7 +39,7 @@
         </td>
         <td>
             <%
-                if(lastPageNumber!=FIRST_PAGE_NUMBER) {
+                if (lastPageNumber != FIRST_PAGE_NUMBER) {
             %>
             <form action="<%=actionName%>" method="get">
                 <input type="hidden" value="<%=DEFAULT_LAST_PAGE_NUMBER%>" name="<%=pageNumberParamName%>">

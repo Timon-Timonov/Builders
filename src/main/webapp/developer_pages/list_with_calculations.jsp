@@ -96,7 +96,11 @@
             <td><%=calculationDto.getWorkPricePlan()%>
             </td>
             <td>
-                <%if (calculationDto.getSumAdvance() == ZERO_INT_VALUE) {%>
+                <%
+                    if (calculationDto.getSumAdvance() == ZERO_INT_VALUE &&
+                            calculationDto.getSumForWork() == ZERO_INT_VALUE &&
+                            calculationDto.getCalculationDebt() == ZERO_INT_VALUE) {
+                %>
                 <form action="<%=PAY_MONEY_DEVELOPER_SERVLET%>" method="get">
                     <input type="hidden" value="<%=calculationDto.getId().toString()%>"
                            name="<%=CALCULATION_ID_PARAM%>">

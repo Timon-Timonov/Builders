@@ -1,6 +1,5 @@
 package it.academy.dto;
 
-import it.academy.pojo.legalEntities.Developer;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;

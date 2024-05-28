@@ -5,7 +5,6 @@ import it.academy.pojo.MoneyTransfer;
 
 import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
-import java.io.IOException;
 import java.util.List;
 
 public class MoneyTransferDaoImpl extends DaoImpl<MoneyTransfer, Long> implements MoneyTransferDao {
@@ -16,9 +15,10 @@ public class MoneyTransferDaoImpl extends DaoImpl<MoneyTransfer, Long> implement
     }
 
     @Override
-    public List<MoneyTransfer> getMoneyTransfersByCalculationId(Long calculationId) throws NoResultException, IOException {
+    public List<MoneyTransfer> getMoneyTransfersByCalculationId(Long calculationId) throws NoResultException {
 
-        TypedQuery<MoneyTransfer> query = getEm().createQuery("SELECT  mt from MoneyTransfer mt WHERE mt.calculation.id=:calculationId ",
+        TypedQuery<MoneyTransfer> query = getEm().createQuery("SELECT  tr from MoneyTransfer tr " +
+                                                                  "WHERE tr.calculation.id=:calculationId ",
             MoneyTransfer.class);
         return query.setParameter("calculationId", calculationId)
                    .getResultList();

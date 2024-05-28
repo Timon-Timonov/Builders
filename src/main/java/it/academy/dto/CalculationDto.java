@@ -30,7 +30,4 @@ public class CalculationDto {
     private Integer calculationDebt;
 
     private String chapterName;
-
-    @Builder.Default
-    private Set<MoneyTransfer> transferSet = new HashSet<>();
 }

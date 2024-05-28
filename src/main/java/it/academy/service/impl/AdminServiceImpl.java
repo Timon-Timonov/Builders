@@ -196,19 +196,8 @@ public class AdminServiceImpl implements AdminService {
         } else {
             exceptionMessage = ROLE_IS_INVALID;
         }
-
-        DtoWithPageForUi<UserDto> dtoWithPageForUi;
-        if (exceptionMessage != null) {
-            dtoWithPageForUi = DtoWithPageForUi.<UserDto>builder()
-                                   .exceptionMessage(exceptionMessage)
-                                   .build();
-        } else {
-            dtoWithPageForUi = DtoWithPageForUi.<UserDto>builder()
-                                   .url(CREATE_USER_PAGE_JSP)
-                                   .status(roles)
-                                   .build();
-        }
-        return dtoWithPageForUi;
+        return new DtoWithPageForUi<>(null, null, null, roles,
+            exceptionMessage, null, null, null, CREATE_USER_PAGE_JSP, null);
     }
 
     @Override
@@ -270,24 +259,8 @@ public class AdminServiceImpl implements AdminService {
             exceptionMessage = SOMETHING_WENT_WRONG;
             log.error(SOMETHING_WENT_WRONG, e);
         }
-
-        DtoWithPageForUi<ContractorDto> dtoWithPageForUi;
-        if (exceptionMessage != null) {
-            dtoWithPageForUi = DtoWithPageForUi.<ContractorDto>builder()
-                                   .exceptionMessage(exceptionMessage)
-                                   .build();
-        } else {
-            dtoWithPageForUi = DtoWithPageForUi.<ContractorDto>builder()
-                                   .page(page)
-                                   .countOnPage(count)
-                                   .lastPageNumber(lastPageNumber)
-                                   .list(list)
-                                   .status(status)
-                                   .search(dto.getSearch())
-                                   .url(ADMIN_PAGES_LIST_WITH_CONTRACTORS_JSP)
-                                   .build();
-        }
-        return dtoWithPageForUi;
+        return new DtoWithPageForUi<>(page, count, lastPageNumber, status,
+            exceptionMessage, null, null, list, ADMIN_PAGES_LIST_WITH_CONTRACTORS_JSP, dto.getSearch());
     }
 
     @Override
@@ -317,17 +290,8 @@ public class AdminServiceImpl implements AdminService {
                 exceptionMessage = ROLE_IS_INVALID;
                 log.debug(ROLE_IS_INVALID + roles);
         }
-        DtoWithPageForUi<UserDto> dtoWithPageForUi;
-        if (exceptionMessage != null) {
-            dtoWithPageForUi = DtoWithPageForUi.<UserDto>builder()
-                                   .exceptionMessage(exceptionMessage)
-                                   .build();
-        } else {
-            dtoWithPageForUi = DtoWithPageForUi.<UserDto>builder()
-                                   .url(url)
-                                   .build();
-        }
-        return dtoWithPageForUi;
+        return new DtoWithPageForUi<>(null, null, null, null,
+            exceptionMessage, null, null, null, url, null);
     }
 
     @Override
@@ -349,19 +313,8 @@ public class AdminServiceImpl implements AdminService {
             exceptionMessage = SOMETHING_WENT_WRONG;
             log.error(SOMETHING_WENT_WRONG, e);
         }
-
-        DtoWithPageForUi<UserDto> dtoWithPageForUi;
-        if (exceptionMessage != null) {
-            dtoWithPageForUi = DtoWithPageForUi.<UserDto>builder()
-                                   .exceptionMessage(exceptionMessage)
-                                   .build();
-        } else {
-            dtoWithPageForUi = DtoWithPageForUi.<UserDto>builder()
-                                   .list(list)
-                                   .url(ADMIN_PAGES_LIST_WITH_ADMINS_JSP)
-                                   .build();
-        }
-        return dtoWithPageForUi;
+        return new DtoWithPageForUi<>(null, null, null, null,
+            exceptionMessage, null, null, list, ADMIN_PAGES_LIST_WITH_ADMINS_JSP, null);
     }
 
     @Override
@@ -406,24 +359,8 @@ public class AdminServiceImpl implements AdminService {
             exceptionMessage = SOMETHING_WENT_WRONG;
             log.error(SOMETHING_WENT_WRONG, e);
         }
-
-        DtoWithPageForUi<DeveloperDto> dtoWithPageForUi;
-        if (exceptionMessage != null) {
-            dtoWithPageForUi = DtoWithPageForUi.<DeveloperDto>builder()
-                                   .exceptionMessage(exceptionMessage)
-                                   .build();
-        } else {
-            dtoWithPageForUi = DtoWithPageForUi.<DeveloperDto>builder()
-                                   .page(page)
-                                   .countOnPage(count)
-                                   .lastPageNumber(lastPageNumber)
-                                   .list(list)
-                                   .status(status)
-                                   .search(dto.getSearch())
-                                   .url(ADMIN_PAGES_LIST_WITH_DEVELOPERS_JSP)
-                                   .build();
-        }
-        return dtoWithPageForUi;
+        return new DtoWithPageForUi<>(page, count, lastPageNumber, status,
+            exceptionMessage, null, null, list, ADMIN_PAGES_LIST_WITH_DEVELOPERS_JSP, dto.getSearch());
     }
 
     @Override
@@ -472,24 +409,8 @@ public class AdminServiceImpl implements AdminService {
             exceptionMessage = SOMETHING_WENT_WRONG;
             log.error(SOMETHING_WENT_WRONG, e);
         }
-        DtoWithPageForUi<ProjectDto> dtoWithPageForUi;
-        if (exceptionMessage != null) {
-            dtoWithPageForUi = DtoWithPageForUi.<ProjectDto>builder()
-                                   .exceptionMessage(exceptionMessage)
-                                   .build();
-        } else {
-            dtoWithPageForUi = DtoWithPageForUi.<ProjectDto>builder()
-                                   .list(list)
-                                   .page(page)
-                                   .lastPageNumber(lastPageNumber)
-                                   .countOnPage(count)
-                                   .status(status)
-                                   .url(ADMIN_PAGES_LIST_WITH_PROJECTS_JSP)
-                                   .id(dto.getId())
-                                   .name(dto.getName())
-                                   .build();
-        }
-        return dtoWithPageForUi;
+        return new DtoWithPageForUi<>(page, count, lastPageNumber, status,
+            exceptionMessage, dto.getId(), dto.getName(), list, ADMIN_PAGES_LIST_WITH_PROJECTS_JSP, null);
     }
 
     @Override
@@ -513,20 +434,8 @@ public class AdminServiceImpl implements AdminService {
             exceptionMessage = SOMETHING_WENT_WRONG;
             log.error(SOMETHING_WENT_WRONG, e);
         }
-
-        DtoWithPageForUi<ChapterDto> dtoWithListForUi;
-        if (exceptionMessage != null) {
-            dtoWithListForUi = DtoWithPageForUi.<ChapterDto>builder()
-                                   .exceptionMessage(exceptionMessage)
-                                   .build();
-        } else {
-            dtoWithListForUi = DtoWithPageForUi.<ChapterDto>builder()
-                                   .id(projectId)
-                                   .list(list)
-                                   .url(ADMIN_PAGES_LIST_WITH_CHAPTERS_FROM_PROJECT_JSP)
-                                   .build();
-        }
-        return dtoWithListForUi;
+        return new DtoWithPageForUi<>(null, null, null, null,
+            exceptionMessage, projectId, null, list, ADMIN_PAGES_LIST_WITH_CHAPTERS_FROM_PROJECT_JSP, null);
     }
 
     @Override
@@ -567,24 +476,8 @@ public class AdminServiceImpl implements AdminService {
             exceptionMessage = SOMETHING_WENT_WRONG;
             log.error(SOMETHING_WENT_WRONG, e);
         }
-
-        DtoWithPageForUi<ChapterDto> dtoWithPageForUi;
-        if (exceptionMessage != null) {
-            dtoWithPageForUi = DtoWithPageForUi.<ChapterDto>builder()
-                                   .exceptionMessage(exceptionMessage)
-                                   .build();
-        } else {
-            dtoWithPageForUi = DtoWithPageForUi.<ChapterDto>builder()
-                                   .page(page)
-                                   .countOnPage(count)
-                                   .lastPageNumber(lastPageNumber)
-                                   .list(list)
-                                   .name(dto.getName())
-                                   .id(dto.getId())
-                                   .url(ADMIN_PAGES_LIST_WITH_CHAPTERS_FROM_CONTRACTOR_JSP)
-                                   .build();
-        }
-        return dtoWithPageForUi;
+        return new DtoWithPageForUi<>(page, count, lastPageNumber, null,
+            exceptionMessage, dto.getId(), dto.getName(), list, ADMIN_PAGES_LIST_WITH_CHAPTERS_FROM_CONTRACTOR_JSP, null);
     }
 
     @Override
@@ -607,20 +500,8 @@ public class AdminServiceImpl implements AdminService {
             exceptionMessage = SOMETHING_WENT_WRONG;
             log.error(SOMETHING_WENT_WRONG, e);
         }
-
-        DtoWithPageForUi<MoneyTransferDto> dtoWithPageForUi;
-        if (exceptionMessage != null) {
-            dtoWithPageForUi = DtoWithPageForUi.<MoneyTransferDto>builder()
-                                   .exceptionMessage(exceptionMessage)
-                                   .build();
-        } else {
-            dtoWithPageForUi = DtoWithPageForUi.<MoneyTransferDto>builder()
-                                   .id(calculationId)
-                                   .list(list)
-                                   .url(ADMIN_PAGES_LIST_WITH_MONEY_TRANSFERS_JSP)
-                                   .build();
-        }
-        return dtoWithPageForUi;
+        return new DtoWithPageForUi<>(null, null, null, null,
+            exceptionMessage, calculationId, null, list, ADMIN_PAGES_LIST_WITH_MONEY_TRANSFERS_JSP, null);
     }
 
     @Override
@@ -663,24 +544,8 @@ public class AdminServiceImpl implements AdminService {
             exceptionMessage = SOMETHING_WENT_WRONG;
             log.error(SOMETHING_WENT_WRONG, e);
         }
-
-        DtoWithPageForUi<CalculationDto> dtoWithPageForUi;
-        if (exceptionMessage != null) {
-            dtoWithPageForUi = DtoWithPageForUi.<CalculationDto>builder()
-                                   .exceptionMessage(exceptionMessage)
-                                   .build();
-        } else {
-            dtoWithPageForUi = DtoWithPageForUi.<CalculationDto>builder()
-                                   .page(page)
-                                   .countOnPage(count)
-                                   .lastPageNumber(lastPageNumber)
-                                   .id(dto.getId())
-                                   .name(dto.getName())
-                                   .list(list)
-                                   .url(ADMIN_PAGES_LIST_WITH_CALCULATIONS_JSP)
-                                   .build();
-        }
-        return dtoWithPageForUi;
+        return new DtoWithPageForUi<>(page, count, lastPageNumber, null,
+            exceptionMessage, dto.getId(), dto.getName(), list, ADMIN_PAGES_LIST_WITH_CALCULATIONS_JSP, null);
     }
 
     @Override
@@ -725,25 +590,8 @@ public class AdminServiceImpl implements AdminService {
             exceptionMessage = SOMETHING_WENT_WRONG;
             log.error(SOMETHING_WENT_WRONG, e);
         }
-
-        DtoWithPageForUi<ProposalDto> dtoWithPageForUi;
-        if (exceptionMessage != null) {
-            dtoWithPageForUi = DtoWithPageForUi.<ProposalDto>builder()
-                                   .exceptionMessage(exceptionMessage)
-                                   .build();
-        } else {
-            dtoWithPageForUi = DtoWithPageForUi.<ProposalDto>builder()
-                                   .page(page)
-                                   .countOnPage(count)
-                                   .lastPageNumber(lastPageNumber)
-                                   .list(list)
-                                   .status(status)
-                                   .name(dto.getName())
-                                   .id(dto.getId())
-                                   .url(ADMIN_PAGES_LIST_WITH_PROPOSALS_FROM_CHAPTER_JSP)
-                                   .build();
-        }
-        return dtoWithPageForUi;
+        return new DtoWithPageForUi<>(page, count, lastPageNumber, status,
+            exceptionMessage, dto.getId(), dto.getName(), list, ADMIN_PAGES_LIST_WITH_PROPOSALS_FROM_CHAPTER_JSP, null);
     }
 
     @Override
@@ -788,24 +636,8 @@ public class AdminServiceImpl implements AdminService {
             exceptionMessage = SOMETHING_WENT_WRONG;
             log.error(SOMETHING_WENT_WRONG, e);
         }
-
-        DtoWithPageForUi<ProposalDto> dtoWithPageForUi;
-        if (exceptionMessage != null) {
-            dtoWithPageForUi = DtoWithPageForUi.<ProposalDto>builder()
-                                   .exceptionMessage(exceptionMessage)
-                                   .build();
-        } else {
-            dtoWithPageForUi = DtoWithPageForUi.<ProposalDto>builder()
-                                   .page(page)
-                                   .countOnPage(count)
-                                   .lastPageNumber(lastPageNumber)
-                                   .list(list)
-                                   .status(status)
-                                   .id(dto.getId())
-                                   .url(ADMIN_PAGES_LIST_WITH_PROPOSALS_FROM_CONTRACTOR_JSP)
-                                   .build();
-        }
-        return dtoWithPageForUi;
+        return new DtoWithPageForUi<>(page, count, lastPageNumber, status,
+            exceptionMessage, dto.getId(), null, list, ADMIN_PAGES_LIST_WITH_PROPOSALS_FROM_CONTRACTOR_JSP, null);
     }
 
     @Override
@@ -871,18 +703,8 @@ public class AdminServiceImpl implements AdminService {
         } else {
             exceptionMessage = ROLE_IS_INVALID;
         }
-
-        DtoWithPageForUi<UserDto> dtoWithPageForUi;
-        if (exceptionMessage != null) {
-            dtoWithPageForUi = DtoWithPageForUi.<UserDto>builder()
-                                   .exceptionMessage(exceptionMessage)
-                                   .build();
-        } else {
-            dtoWithPageForUi = DtoWithPageForUi.<UserDto>builder()
-                                   .url(SLASH_STRING + url)
-                                   .build();
-        }
-        return dtoWithPageForUi;
+        return new DtoWithPageForUi<>(null, null, null, null,
+            exceptionMessage, null, null, null, SLASH_STRING + url, null);
     }
 
     @Override
@@ -951,18 +773,8 @@ public class AdminServiceImpl implements AdminService {
                 log.error(SOMETHING_WENT_WRONG, e);
             }
         }
-
-        DtoWithPageForUi<UserDto> dtoWithPageForUi;
-        if (exceptionMessage != null) {
-            dtoWithPageForUi = DtoWithPageForUi.<UserDto>builder()
-                                   .exceptionMessage(exceptionMessage)
-                                   .build();
-        } else {
-            dtoWithPageForUi = DtoWithPageForUi.<UserDto>builder()
-                                   .url(SLASH_STRING + url)
-                                   .build();
-        }
-        return dtoWithPageForUi;
+        return new DtoWithPageForUi<>(null, null, null, null,
+            exceptionMessage, null, null, null, SLASH_STRING + url, null);
     }
 
     @Override
@@ -988,18 +800,8 @@ public class AdminServiceImpl implements AdminService {
             exceptionMessage = SOMETHING_WENT_WRONG;
             log.error(SOMETHING_WENT_WRONG, e);
         }
-
-        DtoWithPageForUi<CalculationDto> dtoWithPageForUi;
-        if (exceptionMessage != null) {
-            dtoWithPageForUi = DtoWithPageForUi.<CalculationDto>builder()
-                                   .exceptionMessage(exceptionMessage)
-                                   .build();
-        } else {
-            dtoWithPageForUi = DtoWithPageForUi.<CalculationDto>builder()
-                                   .url(SLASH_STRING + GET_CALCULATION_ADMINISTRATOR_SERVLET)
-                                   .build();
-        }
-        return dtoWithPageForUi;
+        return new DtoWithPageForUi<>(null, null, null, null,
+            exceptionMessage, null, null, null, SLASH_STRING + GET_CALCULATION_ADMINISTRATOR_SERVLET, null);
     }
 
     @Override
@@ -1025,18 +827,8 @@ public class AdminServiceImpl implements AdminService {
             exceptionMessage = SOMETHING_WENT_WRONG;
             log.error(SOMETHING_WENT_WRONG, e);
         }
-
-        DtoWithPageForUi<ChapterDto> dtoWithPageForUi;
-        if (exceptionMessage != null) {
-            dtoWithPageForUi = DtoWithPageForUi.<ChapterDto>builder()
-                                   .exceptionMessage(exceptionMessage)
-                                   .build();
-        } else {
-            dtoWithPageForUi = DtoWithPageForUi.<ChapterDto>builder()
-                                   .url(SLASH_STRING + GET_CHAPTERS_FROM_PROJECT_ADMINISTRATOR_SERVLET)
-                                   .build();
-        }
-        return dtoWithPageForUi;
+        return new DtoWithPageForUi<>(null, null, null, null,
+            exceptionMessage, null, null, null, SLASH_STRING + GET_CHAPTERS_FROM_PROJECT_ADMINISTRATOR_SERVLET, null);
     }
 
     @Override
@@ -1062,18 +854,8 @@ public class AdminServiceImpl implements AdminService {
             exceptionMessage = SOMETHING_WENT_WRONG;
             log.error(SOMETHING_WENT_WRONG, e);
         }
-
-        DtoWithPageForUi<ProjectDto> dtoWithPageForUi;
-        if (exceptionMessage != null) {
-            dtoWithPageForUi = DtoWithPageForUi.<ProjectDto>builder()
-                                   .exceptionMessage(exceptionMessage)
-                                   .build();
-        } else {
-            dtoWithPageForUi = DtoWithPageForUi.<ProjectDto>builder()
-                                   .url(SLASH_STRING + GET_MONEY_TRANSFER_ADMINISTRATOR_SERVLET)
-                                   .build();
-        }
-        return dtoWithPageForUi;
+        return new DtoWithPageForUi<>(null, null, null, null,
+            exceptionMessage, null, null, null, SLASH_STRING + GET_MONEY_TRANSFER_ADMINISTRATOR_SERVLET, null);
     }
 
     @Override
@@ -1100,18 +882,8 @@ public class AdminServiceImpl implements AdminService {
             exceptionMessage = SOMETHING_WENT_WRONG;
             log.error(SOMETHING_WENT_WRONG, e);
         }
-
-        DtoWithPageForUi<ProjectDto> dtoWithPageForUi;
-        if (exceptionMessage != null) {
-            dtoWithPageForUi = DtoWithPageForUi.<ProjectDto>builder()
-                                   .exceptionMessage(exceptionMessage)
-                                   .build();
-        } else {
-            dtoWithPageForUi = DtoWithPageForUi.<ProjectDto>builder()
-                                   .url(SLASH_STRING + GET_PROJECTS_ADMINISTRATOR_SERVLET)
-                                   .build();
-        }
-        return dtoWithPageForUi;
+        return new DtoWithPageForUi<>(null, null, null, null,
+            exceptionMessage, null, null, null, SLASH_STRING + GET_PROJECTS_ADMINISTRATOR_SERVLET, null);
     }
 
     @Override
@@ -1142,17 +914,7 @@ public class AdminServiceImpl implements AdminService {
             exceptionMessage = SOMETHING_WENT_WRONG;
             log.error(SOMETHING_WENT_WRONG + dto.getId(), e);
         }
-
-        DtoWithPageForUi<ProposalDto> dtoWithPageForUi;
-        if (exceptionMessage != null) {
-            dtoWithPageForUi = DtoWithPageForUi.<ProposalDto>builder()
-                                   .exceptionMessage(exceptionMessage)
-                                   .build();
-        } else {
-            dtoWithPageForUi = DtoWithPageForUi.<ProposalDto>builder()
-                                   .url(url)
-                                   .build();
-        }
-        return dtoWithPageForUi;
+        return new DtoWithPageForUi<>(null, null, null, null,
+            exceptionMessage, null, null, null, url, null);
     }
 }

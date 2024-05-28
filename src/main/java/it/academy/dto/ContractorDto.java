@@ -15,7 +15,7 @@ public class ContractorDto {
 
     private String contractorName;
 
-    private AddressDto contractorAddress;
+    private String contractorAddress;
 
     @Builder.Default
     private Integer contractorDebt = ZERO_INT_VALUE;

@@ -18,7 +18,6 @@ import java.io.IOException;
 import static it.academy.util.constants.ServletURLs.GET_ALL_CHAPTER_NAMES_CONTRACTOR_SERVLET;
 import static it.academy.util.constants.ServletURLs.SLASH_STRING;
 
-
 @WebServlet(name = "getAllChapterNamesContractorServlet", urlPatterns = SLASH_STRING + GET_ALL_CHAPTER_NAMES_CONTRACTOR_SERVLET)
 public class GetAllChapterNamesContractorServlet extends HttpServlet {
 

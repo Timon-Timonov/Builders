@@ -1,4 +1,3 @@
-<%@ page import="it.academy.dto.AddressDto" %>
 <%@ page import="it.academy.dto.ChapterDto" %>
 <%@ page import="it.academy.pojo.enums.ProjectStatus" %>
 <%@ page import="java.util.List" %>
@@ -90,7 +89,7 @@
                 String chapterId = chapterDto.getId().toString();
                 String projectName = chapterDto.getProjectName();
                 String projectAddress = Optional.ofNullable(
-                        chapterDto.getProjectAddress()).orElse(new AddressDto()).toString();
+                        chapterDto.getProjectAddress()).orElse(BLANK_STRING);
                 String projectDeveloperName = chapterDto.getDeveloperName();
         %>
         <tr>

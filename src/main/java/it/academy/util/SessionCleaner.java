@@ -46,6 +46,7 @@ public class SessionCleaner {
         session.removeAttribute(DEVELOPER_DEBT_PARAM);
         session.removeAttribute(SEARCH_PARAM);
     }
+
     public static void clearContractorAttributes(HttpServletRequest req) {
 
         HttpSession session = req.getSession();

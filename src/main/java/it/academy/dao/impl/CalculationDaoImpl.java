@@ -21,8 +21,7 @@ public class CalculationDaoImpl extends DaoImpl<Calculation, Long> implements Ca
     }
 
     @Override
-    public Map<Calculation, Integer[]> getCalculationsByChapterId(Long chapterId, int page, int count)
-        throws IOException {
+    public Map<Calculation, Integer[]> getCalculationsByChapterId(Long chapterId, int page, int count) {
 
         TypedQuery<Calculation> query = getEm().createQuery(
             "SELECT calc " +
@@ -38,24 +37,24 @@ public class CalculationDaoImpl extends DaoImpl<Calculation, Long> implements Ca
 
         List<Calculation> calculationList = query.getResultList();
 
-        Query queryA = getEm().createQuery(
+        Query queryMtr = getEm().createQuery(
             "SELECT calc, SUM (tr.sum) " +
                 "FROM Chapter ch INNER JOIN Calculation calc " +
                 "ON calc.chapter.id=ch.id LEFT JOIN MoneyTransfer tr " +
                 "ON tr.calculation.id=calc.id " +
 
-                "WHERE tr.type=:type " +
+                "WHERE tr.type=:trType " +
                 "AND calc IN :list " +
 
                 "GROUP BY calc " +
                 "ORDER BY calc.month DESC ");
 
-        queryA.setParameter("type", PaymentType.ADVANCE_PAYMENT)
+        queryMtr.setParameter("trType", PaymentType.ADVANCE_PAYMENT)
             .setParameter("list", calculationList);
 
-        List<Object[]> listTransferSumA = (List<Object[]>) queryA.getResultList();
-        queryA.setParameter("type", PaymentType.PAYMENT_FOR_WORK);
-        List<Object[]> listTransferSumP = (List<Object[]>) queryA.getResultList();
+        List<Object[]> listTransferSumAdv = (List<Object[]>) queryMtr.getResultList();
+        queryMtr.setParameter("trType", PaymentType.PAYMENT_FOR_WORK);
+        List<Object[]> listTransferSumWork = (List<Object[]>) queryMtr.getResultList();
 
         Map<Calculation, Integer[]> map = new TreeMap<>(Comparator.comparing(Calculation::getMonth).reversed());
         calculationList.forEach(calculation -> {
@@ -64,12 +63,12 @@ public class CalculationDaoImpl extends DaoImpl<Calculation, Long> implements Ca
 
             map.put(calculation, arr);
         });
-        listTransferSumA.forEach(res -> {
+        listTransferSumAdv.forEach(res -> {
             Calculation calculation = (Calculation) res[0];
-            long transferSumP = res[1] != null ? (long) res[1] : ZERO_LONG_VALUE;
-            map.get(calculation)[1] = (int) transferSumP;
+            long transferSumA = res[1] != null ? (long) res[1] : ZERO_LONG_VALUE;
+            map.get(calculation)[0] = (int) transferSumA;
         });
-        listTransferSumP.forEach(res -> {
+        listTransferSumWork.forEach(res -> {
             Calculation calculation = (Calculation) res[0];
             long transferSumP = res[1] != null ? (long) res[1] : ZERO_LONG_VALUE;
             map.get(calculation)[1] = (int) transferSumP;
@@ -78,7 +77,7 @@ public class CalculationDaoImpl extends DaoImpl<Calculation, Long> implements Ca
     }
 
     @Override
-    public Long getCountOfCalculationsByChapterId(Long chapterId) throws NoResultException, IOException {
+    public Long getCountOfCalculationsByChapterId(Long chapterId) throws NoResultException {
 
         TypedQuery<Long> query = getEm().createQuery(
             "SELECT COUNT(ca) FROM Calculation ca WHERE ca.chapter.id=:chapterId ",

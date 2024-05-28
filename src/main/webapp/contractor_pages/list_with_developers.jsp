@@ -1,4 +1,3 @@
-<%@ page import="it.academy.dto.AddressDto" %>
 <%@ page import="it.academy.dto.DeveloperDto" %>
 <%@ page import="it.academy.pojo.enums.ProjectStatus" %>
 <%@ page import="java.util.List" %>
@@ -66,7 +65,7 @@
         <%
             DeveloperDto developerDto = developerDtoList.get(i);
             String developerName = developerDto.getDeveloperName();
-            String developerAddress = Optional.ofNullable(developerDto.getDeveloperAddress()).orElse(new AddressDto()).toString();
+            String developerAddress = Optional.ofNullable(developerDto.getDeveloperAddress()).orElse(BLANK_STRING);
             int developerDebt = developerDto.getDeveloperDebt();
         %>
         <tr>

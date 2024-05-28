@@ -1,6 +1,5 @@
 package it.academy.converters;
 
-import it.academy.dto.AddressDto;
 import it.academy.dto.ProjectDto;
 import it.academy.pojo.Address;
 import it.academy.pojo.Project;
@@ -25,11 +24,7 @@ public class ProjectConverter {
                    .id(from.getId())
                    .projectName(from.getName())
                    .status(from.getStatus())
-                   .projectAddress(AddressDto.builder()
-                                       .city(address.getCity())
-                                       .street(address.getStreet())
-                                       .building(address.getBuilding())
-                                       .build())
+                   .projectAddress(address.toString())
                    .developerName(developer.getName())
                    .projectPrice(projectPrice)
                    .debtByProject(projectDebt)

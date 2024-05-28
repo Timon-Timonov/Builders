@@ -5,16 +5,12 @@ import it.academy.pojo.legalEntities.Contractor;
 import lombok.*;
 
 import javax.persistence.*;
-import java.util.HashSet;
-import java.util.Set;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@EqualsAndHashCode(exclude = {"proposalSet", "calculationSet"})
-@ToString(exclude = {"proposalSet", "calculationSet"})
 @Entity
 @Table(name = "chapters")
 public class Chapter {
@@ -40,12 +36,4 @@ public class Chapter {
     @ManyToOne
     @JoinColumn(name = "contractor_id")
     private Contractor contractor;
-
-    @Builder.Default
-    @OneToMany(mappedBy = "chapter", cascade = CascadeType.REMOVE)
-    private Set<Proposal> proposalSet = new HashSet<>();
-
-    @Builder.Default
-    @OneToMany(mappedBy = "chapter", fetch = FetchType.LAZY)
-    private Set<Calculation> calculationSet = new HashSet<>();
 }

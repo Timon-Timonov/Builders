@@ -15,7 +15,7 @@ public class DeveloperDto {
 
     private String developerName;
 
-    private AddressDto developerAddress;
+    private String developerAddress;
 
     @Builder.Default
     private Integer developerDebt = ZERO_INT_VALUE;

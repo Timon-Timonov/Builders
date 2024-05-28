@@ -25,7 +25,7 @@ public class MoneyTransfer {
 
     @Column
     @Builder.Default
-    private Integer sum = 0;
+    private int sum = 0;
 
     @CreationTimestamp
     @Column(updatable = false)

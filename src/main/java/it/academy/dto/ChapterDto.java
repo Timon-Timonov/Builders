@@ -19,21 +19,17 @@ public class ChapterDto {
 
     @Builder.Default
     private ChapterStatus chapterStatus = ChapterStatus.FREE;
+
     private ProjectStatus projectStatus;
 
     private String projectName;
 
-    private AddressDto projectAddress;
+    private String projectAddress;
 
     private Integer chapterDebt;
 
     private String contractorName;
 
     private String DeveloperName;
-
-    public ChapterDto(AddressDto projectAddress) {
-
-        this.projectAddress = projectAddress;
-    }
 }
 

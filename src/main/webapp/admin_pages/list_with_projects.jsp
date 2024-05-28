@@ -1,4 +1,3 @@
-<%@ page import="it.academy.dto.AddressDto" %>
 <%@ page import="it.academy.dto.ProjectDto" %>
 <%@ page import="it.academy.pojo.enums.ProjectStatus" %>
 <%@ page import="java.util.List" %>
@@ -67,7 +66,7 @@
             for (int i = 0; i < projectDtoList.size(); i++) {
                 ProjectDto projectDto = projectDtoList.get(i);
                 String projectName = projectDto.getProjectName();
-                String projectAddress = Optional.ofNullable(projectDto.getProjectAddress()).orElse(new AddressDto()).toString();
+                String projectAddress = Optional.ofNullable(projectDto.getProjectAddress()).orElse(BLANK_STRING);
         %>
         <tr>
             <td><%=(i + 1)%>

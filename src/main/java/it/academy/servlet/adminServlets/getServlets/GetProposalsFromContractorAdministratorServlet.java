@@ -20,7 +20,6 @@ import static it.academy.util.constants.ParameterNames.*;
 import static it.academy.util.constants.ServletURLs.GET_PROPOSALS_FROM_CONTRACTOR_ADMINISTRATOR_SERVLET;
 import static it.academy.util.constants.ServletURLs.SLASH_STRING;
 
-
 @WebServlet(name = "getProposalsFromContractorAdministratorServlet", urlPatterns = SLASH_STRING + GET_PROPOSALS_FROM_CONTRACTOR_ADMINISTRATOR_SERVLET)
 public class GetProposalsFromContractorAdministratorServlet extends HttpServlet {
 

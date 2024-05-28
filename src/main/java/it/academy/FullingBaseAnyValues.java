@@ -156,7 +156,7 @@ public class FullingBaseAnyValues {
         calculationList.forEach(calculation -> {
             try {
                 if (calculationIndex.get() % INT2 == INT0) {
-                    int sum = (calculation.getWorkPricePlan() / ONE_PART_OF_PRICE_FOR_ADVANCE)+1;
+                    int sum = (calculation.getWorkPricePlan() / ONE_PART_OF_PRICE_FOR_ADVANCE) + 1;
 
                     DEVELOPER_SERVICE.payMoney(CreateRequestDto.builder()
                                                    .id(calculation.getId())
@@ -167,12 +167,12 @@ public class FullingBaseAnyValues {
                     DEVELOPER_SERVICE.payMoney(CreateRequestDto.builder()
                                                    .id(calculation.getId())
                                                    .int1(ZERO_INT_VALUE)
-                                                   .int2(sum * (calculationIndex.get() % INT9)+1)
+                                                   .int2(sum * (calculationIndex.get() % INT9) + 1)
                                                    .int3(Integer.MAX_VALUE)
                                                    .build());
                 } else {
-                    double k = (calculationIndex.get() % INT5 * INT2)*1.0;
-                    int sum = (int)(calculation.getWorkPricePlan() * k / INT10)+1;
+                    double k = (calculationIndex.get() % INT5 * INT2) * 1.0;
+                    int sum = (int) (calculation.getWorkPricePlan() * k / INT10) + 1;
                     DEVELOPER_SERVICE.payMoney(CreateRequestDto.builder()
                                                    .id(calculation.getId())
                                                    .int1(ZERO_INT_VALUE)
@@ -403,7 +403,7 @@ public class FullingBaseAnyValues {
 
     private String getUserName() {
 
-        return UNIQUE_USER_NAME + (userCount-1);
+        return UNIQUE_USER_NAME + (userCount - 1);
     }
 
     private String getStreet() {

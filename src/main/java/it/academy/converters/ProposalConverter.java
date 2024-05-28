@@ -45,19 +45,4 @@ public class ProposalConverter {
                    .projectStatus(project.getStatus())
                    .build();
     }
-
-    public static Proposal convertToEntity(ProposalDto from) {
-
-        return Proposal.builder()
-                   .id(from.getId())
-                   .contractor(Contractor
-                                   .builder()
-                                   .id(from.getContractorId())
-                                   .build())
-                   .chapter(Chapter
-                                .builder()
-                                .id(from.getChapterId())
-                                .build())
-                   .build();
-    }
 }

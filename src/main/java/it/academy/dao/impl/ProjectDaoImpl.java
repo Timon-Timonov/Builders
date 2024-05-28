@@ -70,45 +70,10 @@ public class ProjectDaoImpl extends DaoImpl<Project, Long> implements ProjectDao
         queries.add(queryTransferSum);
 
         queries.forEach(query -> query.setParameter("contractorId", contractorId)
-            .setParameter("status", status)
-            .setMaxResults(count)
-            .setFirstResult((page - 1) * count));
-
-        Map<Project, Integer[]> map = new TreeMap<>(Comparator.comparing(Project::getName));
-
-        List<Object[]> listTotalPrice = (List<Object[]>) queryTotalPrice.getResultList();
-        List<Object[]> listWorkPrice = (List<Object[]>) queryWorkPrice.getResultList();
-        List<Object[]> listTransferSum = (List<Object[]>) queryTransferSum.getResultList();
-
-
-        listTotalPrice.forEach(res -> {
-            Integer[] arr = new Integer[3];
-            Arrays.fill(arr, ZERO_INT_VALUE);
-
-            Project project = (Project) res[0];
-            long price = res[1] != null ? (long) res[1] : ZERO_LONG_VALUE;
-            arr[0] = (int) price;
-
-            map.put(project, arr);
-        });
-
-        listWorkPrice.forEach(res -> {
-            Project project = (Project) res[0];
-            long workPrice = res[1] != null ? (long) res[1] : ZERO_LONG_VALUE;
-            if (map.containsKey(project)) {
-                map.get(project)[1] = (int) workPrice;
-            }
-        });
-
-        listTransferSum.forEach(res -> {
-            Project project = (Project) res[0];
-            long transferSum = res[1] != null ? (long) res[1] : ZERO_LONG_VALUE;
-            if (map.containsKey(project)) {
-                map.get(project)[2] = (int) transferSum;
-            }
-        });
-
-        return map;
+                                     .setParameter("status", status)
+                                     .setMaxResults(count)
+                                     .setFirstResult((page - 1) * count));
+        return getProjectMap(queryTotalPrice, queryWorkPrice, queryTransferSum);
     }
 
     @Override
@@ -165,10 +130,10 @@ public class ProjectDaoImpl extends DaoImpl<Project, Long> implements ProjectDao
         queries.add(queryTransferSum);
 
         queries.forEach(query -> query.setParameter("contractorId", contractorId)
-            .setParameter("developerId", developerId)
-            .setParameter("status", status)
-            .setMaxResults(count)
-            .setFirstResult((page - 1) * count));
+                                     .setParameter("developerId", developerId)
+                                     .setParameter("status", status)
+                                     .setMaxResults(count)
+                                     .setFirstResult((page - 1) * count));
 
         return getProjectMap(queryPrice, queryWorkPrice, queryTransferSum);
     }
@@ -223,9 +188,9 @@ public class ProjectDaoImpl extends DaoImpl<Project, Long> implements ProjectDao
         queries.add(queryTransferSum);
 
         queries.forEach(query -> query.setParameter("developerId", developerId)
-            .setParameter("status", status)
-            .setMaxResults(count)
-            .setFirstResult((page - 1) * count));
+                                     .setParameter("status", status)
+                                     .setMaxResults(count)
+                                     .setFirstResult((page - 1) * count));
 
         return getProjectMap(queryPrice, queryWorkPrice, queryTransferSum);
     }
@@ -235,7 +200,11 @@ public class ProjectDaoImpl extends DaoImpl<Project, Long> implements ProjectDao
     public Long getCountOfProjectsByContractorId(Long contractorId, ProjectStatus status) throws NoResultException {
 
         TypedQuery<Long> query = getEm().createQuery(
-            "SELECT COUNT(DISTINCT p) FROM Project p JOIN Chapter ch ON p.id=ch.project.id WHERE p.status=:status AND ch.contractor.id=:contractorId ",
+            "SELECT COUNT(DISTINCT p) " +
+                "FROM Project p JOIN Chapter ch " +
+                "ON p.id=ch.project.id " +
+                "WHERE p.status=:status " +
+                "AND ch.contractor.id=:contractorId ",
             Long.class);
         return query.setParameter("contractorId", contractorId)
                    .setParameter("status", status)
@@ -246,7 +215,13 @@ public class ProjectDaoImpl extends DaoImpl<Project, Long> implements ProjectDao
     public Long getCountOfProjectsByDeveloperIdContractorId(Long developerId, Long contractorId, ProjectStatus status) throws NoResultException {
 
         TypedQuery<Long> query = getEm().createQuery(
-            "SELECT COUNT(p) FROM Project p, Chapter ch WHERE p.developer.id=:developerId AND p.status=:status AND ch MEMBER OF p.chapters AND ch.contractor.id=:contractorId",
+            "SELECT COUNT(DISTINCT proj) " +
+                "FROM Project proj INNER JOIN Chapter ch " +
+                "ON ch.project.id=proj.id INNER JOIN Developer dev " +
+                "ON proj.developer.id=dev.id " +
+                "WHERE dev.id=:developerId " +
+                "AND proj.status=:status " +
+                "AND ch.contractor.id=:contractorId",
             Long.class);
         return query.setParameter("contractorId", contractorId)
                    .setParameter("developerId", developerId)
@@ -258,7 +233,10 @@ public class ProjectDaoImpl extends DaoImpl<Project, Long> implements ProjectDao
     public Long getCountOfProjectsByDeveloperId(Long developerId, ProjectStatus status) throws NoResultException {
 
         TypedQuery<Long> query = getEm().createQuery(
-            "SELECT COUNT(p) FROM Project p WHERE p.developer.id=:developerId AND p.status=:status",
+            "SELECT COUNT(p) " +
+                "FROM Project p " +
+                "WHERE p.developer.id=:developerId " +
+                "AND p.status=:status",
             Long.class);
         return query.setParameter("developerId", developerId)
                    .setParameter("status", status)
@@ -269,7 +247,9 @@ public class ProjectDaoImpl extends DaoImpl<Project, Long> implements ProjectDao
     public List<Project> getAll() {
 
         TypedQuery<Project> query = getEm().createQuery(
-            "SELECT p FROM Project p WHERE  p.developer.user.status=:status ORDER BY p.name ASC",
+            "SELECT p FROM Project p " +
+                "WHERE  p.developer.user.status=:status " +
+                "ORDER BY p.name ASC",
             Project.class);
         return query.setParameter("status", UserStatus.ACTIVE)
                    .getResultList();

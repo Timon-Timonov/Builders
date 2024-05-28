@@ -1,4 +1,3 @@
-<%@ page import="it.academy.dto.AddressDto" %>
 <%@ page import="it.academy.dto.ContractorDto" %>
 <%@ page import="it.academy.pojo.enums.ProjectStatus" %>
 <%@ page import="static it.academy.util.constants.ParameterNames.*" %>
@@ -65,7 +64,7 @@
         <%
             ContractorDto contractorDto = contractorDtoList.get(i);
             String contractorName = contractorDto.getContractorName();
-            String contractorAddress = Optional.ofNullable(contractorDto.getContractorAddress()).orElse(new AddressDto()).toString();
+            String contractorAddress = Optional.ofNullable(contractorDto.getContractorAddress()).orElse(BLANK_STRING);
             Integer contractorDebt = contractorDto.getContractorDebt();
         %>
         <tr>

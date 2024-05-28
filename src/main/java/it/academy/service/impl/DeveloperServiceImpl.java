@@ -147,8 +147,8 @@ public class DeveloperServiceImpl implements DeveloperService {
         List<ProjectDto> list = new ArrayList<>();
         Integer page = FIRST_PAGE_NUMBER;
         Integer count = dto.getCount();
-        Integer lastPageNumber = FIRST_PAGE_NUMBER;
         ProjectStatus status = null;
+        Integer lastPageNumber = FIRST_PAGE_NUMBER;
 
         try {
             ProjectStatus projectStatus = (ProjectStatus) dto.getStatus();
@@ -186,23 +186,8 @@ public class DeveloperServiceImpl implements DeveloperService {
             exceptionMessage = SOMETHING_WENT_WRONG;
             log.error(SOMETHING_WENT_WRONG, e);
         }
-
-        DtoWithPageForUi<ProjectDto> dtoWithPageForUi;
-        if (exceptionMessage != null) {
-            dtoWithPageForUi = DtoWithPageForUi.<ProjectDto>builder()
-                                   .exceptionMessage(exceptionMessage)
-                                   .build();
-        } else {
-            dtoWithPageForUi = DtoWithPageForUi.<ProjectDto>builder()
-                                   .list(list)
-                                   .page(page)
-                                   .countOnPage(count)
-                                   .lastPageNumber(lastPageNumber)
-                                   .status(status)
-                                   .url(DEVELOPER_PAGES_LIST_WITH_PROJECTS_JSP)
-                                   .build();
-        }
-        return dtoWithPageForUi;
+        return new DtoWithPageForUi<>(page, count, lastPageNumber, status,
+            exceptionMessage, null, null, list, DEVELOPER_PAGES_LIST_WITH_PROJECTS_JSP, null);
     }
 
     @Override
@@ -251,24 +236,8 @@ public class DeveloperServiceImpl implements DeveloperService {
             exceptionMessage = SOMETHING_WENT_WRONG;
             log.error(SOMETHING_WENT_WRONG, e);
         }
-
-        DtoWithPageForUi<ContractorDto> dtoWithPageForUi;
-        if (exceptionMessage != null) {
-            dtoWithPageForUi = DtoWithPageForUi.<ContractorDto>builder()
-                                   .exceptionMessage(exceptionMessage)
-                                   .build();
-        } else {
-            dtoWithPageForUi = DtoWithPageForUi.<ContractorDto>builder()
-                                   .page(page)
-                                   .countOnPage(count)
-                                   .lastPageNumber(lastPageNumber)
-                                   .list(list)
-                                   .status(status)
-                                   .search(dto.getSearch())
-                                   .url(DEVELOPER_PAGES_LIST_WITH_CONTRACTORS_JSP)
-                                   .build();
-        }
-        return dtoWithPageForUi;
+        return new DtoWithPageForUi<>(page, count, lastPageNumber, status,
+            exceptionMessage, null, null, list, DEVELOPER_PAGES_LIST_WITH_CONTRACTORS_JSP, dto.getSearch());
     }
 
     @Override
@@ -311,23 +280,8 @@ public class DeveloperServiceImpl implements DeveloperService {
             exceptionMessage = SOMETHING_WENT_WRONG;
             log.error(SOMETHING_WENT_WRONG, e);
         }
-
-        DtoWithPageForUi<ProposalDto> dtoWithPageForUi;
-        if (exceptionMessage != null) {
-            dtoWithPageForUi = DtoWithPageForUi.<ProposalDto>builder()
-                                   .exceptionMessage(exceptionMessage)
-                                   .build();
-        } else {
-            dtoWithPageForUi = DtoWithPageForUi.<ProposalDto>builder()
-                                   .page(page)
-                                   .countOnPage(count)
-                                   .lastPageNumber(lastPageNumber)
-                                   .list(list)
-                                   .status(status)
-                                   .url(DEVELOPER_PAGES_LIST_WITH_ALL_PROPOSALS_JSP)
-                                   .build();
-        }
-        return dtoWithPageForUi;
+        return new DtoWithPageForUi<>(page, count, lastPageNumber, status,
+            exceptionMessage, null, null, list, DEVELOPER_PAGES_LIST_WITH_ALL_PROPOSALS_JSP, null);
     }
 
     @Override
@@ -377,22 +331,9 @@ public class DeveloperServiceImpl implements DeveloperService {
             exceptionMessage = SOMETHING_WENT_WRONG;
             log.error(SOMETHING_WENT_WRONG, e);
         }
-
-        DtoWithPageForUi<ProjectDto> dtoWithPageForUi;
-        if (exceptionMessage != null) {
-            dtoWithPageForUi = DtoWithPageForUi.<ProjectDto>builder()
-                                   .exceptionMessage(exceptionMessage)
-                                   .build();
-        } else {
-            dtoWithPageForUi = DtoWithPageForUi.<ProjectDto>builder()
-                                   .id(project.getId())
-                                   .name(project.getName())
-                                   .status(project.getStatus())
-                                   .list(list)
-                                   .url(DEVELOPER_PAGES_CREATE_CHAPTER_PAGE_JSP)
-                                   .build();
-        }
-        return dtoWithPageForUi;
+        project = project != null ? project : new Project();
+        return new DtoWithPageForUi<>(null, null, null, project.getStatus(),
+            exceptionMessage, project.getId(), project.getName(), list, DEVELOPER_PAGES_CREATE_CHAPTER_PAGE_JSP, null);
     }
 
     @Override
@@ -434,18 +375,8 @@ public class DeveloperServiceImpl implements DeveloperService {
             exceptionMessage = SOMETHING_WENT_WRONG;
             log.error(SOMETHING_WENT_WRONG, e);
         }
-
-        DtoWithPageForUi<ChapterDto> dtoWithPageForUi;
-        if (exceptionMessage != null) {
-            dtoWithPageForUi = DtoWithPageForUi.<ChapterDto>builder()
-                                   .exceptionMessage(exceptionMessage)
-                                   .build();
-        } else {
-            dtoWithPageForUi = DtoWithPageForUi.<ChapterDto>builder()
-                                   .url(SLASH_STRING + GET_CHAPTERS_OF_PROJECT_DEVELOPER_SERVLET)
-                                   .build();
-        }
-        return dtoWithPageForUi;
+        return new DtoWithPageForUi<>(null, null, null, null,
+            exceptionMessage, null, null, null, SLASH_STRING + GET_CHAPTERS_OF_PROJECT_DEVELOPER_SERVLET, null);
     }
 
     @Override
@@ -488,17 +419,8 @@ public class DeveloperServiceImpl implements DeveloperService {
             exceptionMessage = SOMETHING_WENT_WRONG;
             log.error(SOMETHING_WENT_WRONG, e);
         }
-        DtoWithPageForUi<ChapterDto> dtoWithPageForUi;
-        if (exceptionMessage != null) {
-            dtoWithPageForUi = DtoWithPageForUi.<ChapterDto>builder()
-                                   .exceptionMessage(exceptionMessage)
-                                   .build();
-        } else {
-            dtoWithPageForUi = DtoWithPageForUi.<ChapterDto>builder()
-                                   .url(SLASH_STRING + GET_CHAPTERS_OF_PROJECT_DEVELOPER_SERVLET)
-                                   .build();
-        }
-        return dtoWithPageForUi;
+        return new DtoWithPageForUi<>(null, null, null, null,
+            exceptionMessage, null, null, null, SLASH_STRING + GET_CHAPTERS_OF_PROJECT_DEVELOPER_SERVLET, null);
     }
 
     @Override
@@ -531,21 +453,8 @@ public class DeveloperServiceImpl implements DeveloperService {
             exceptionMessage = SOMETHING_WENT_WRONG;
             log.error(SOMETHING_WENT_WRONG, e);
         }
-
-        DtoWithPageForUi<ChapterDto> dtoWithListForUi;
-        if (exceptionMessage != null) {
-            dtoWithListForUi = DtoWithPageForUi.<ChapterDto>builder()
-                                   .exceptionMessage(exceptionMessage)
-                                   .build();
-        } else {
-            dtoWithListForUi = DtoWithPageForUi.<ChapterDto>builder()
-                                   .id(dto.getId())
-                                   .list(list)
-                                   .name(dto.getName())
-                                   .url(DEVELOPER_PAGES_LIST_WITH_CHAPTERS_JSP)
-                                   .build();
-        }
-        return dtoWithListForUi;
+        return new DtoWithPageForUi<>(null, null, null, null,
+            exceptionMessage, dto.getId(), dto.getName(), list, DEVELOPER_PAGES_LIST_WITH_CHAPTERS_JSP, null);
     }
 
     @Override
@@ -594,25 +503,8 @@ public class DeveloperServiceImpl implements DeveloperService {
             exceptionMessage = SOMETHING_WENT_WRONG;
             log.error(SOMETHING_WENT_WRONG, e);
         }
-
-        DtoWithPageForUi<ChapterDto> dtoWithPageForUi;
-        if (exceptionMessage != null) {
-            dtoWithPageForUi = DtoWithPageForUi.<ChapterDto>builder()
-                                   .exceptionMessage(exceptionMessage)
-                                   .build();
-        } else {
-            dtoWithPageForUi = DtoWithPageForUi.<ChapterDto>builder()
-                                   .page(page)
-                                   .countOnPage(count)
-                                   .lastPageNumber(lastPageNumber)
-                                   .list(list)
-                                   .name(dto.getName())
-                                   .id(dto.getId())
-                                   .status(status)
-                                   .url(DEVELOPER_PAGES_LIST_WITH_CHAPTERS_BY_ONE_CONTRACTOR_JSP)
-                                   .build();
-        }
-        return dtoWithPageForUi;
+        return new DtoWithPageForUi<>(page, count, lastPageNumber, status,
+            exceptionMessage, dto.getId(), dto.getName(), list, DEVELOPER_PAGES_LIST_WITH_CHAPTERS_BY_ONE_CONTRACTOR_JSP, null);
     }
 
     @Override
@@ -699,20 +591,8 @@ public class DeveloperServiceImpl implements DeveloperService {
             exceptionMessage = SOMETHING_WENT_WRONG;
             log.error(SOMETHING_WENT_WRONG, e);
         }
-
-
-        DtoWithPageForUi<ProposalDto> dtoWithPageForUi;
-        if (exceptionMessage != null) {
-            dtoWithPageForUi = DtoWithPageForUi.<ProposalDto>builder()
-                                   .exceptionMessage(exceptionMessage)
-                                   .build();
-        } else {
-            dtoWithPageForUi = DtoWithPageForUi.<ProposalDto>builder()
-                                   .url(url)
-                                   .status(dto.getStatus())
-                                   .build();
-        }
-        return dtoWithPageForUi;
+        return new DtoWithPageForUi<>(null, null, null, dto.getStatus(),
+            exceptionMessage, null, null, null, url, null);
     }
 
     @Override
@@ -756,25 +636,8 @@ public class DeveloperServiceImpl implements DeveloperService {
             exceptionMessage = SOMETHING_WENT_WRONG;
             log.error(SOMETHING_WENT_WRONG, e);
         }
-
-        DtoWithPageForUi<ProposalDto> dtoWithPageForUi;
-        if (exceptionMessage != null) {
-            dtoWithPageForUi = DtoWithPageForUi.<ProposalDto>builder()
-                                   .exceptionMessage(exceptionMessage)
-                                   .build();
-        } else {
-            dtoWithPageForUi = DtoWithPageForUi.<ProposalDto>builder()
-                                   .page(page)
-                                   .countOnPage(count)
-                                   .lastPageNumber(lastPageNumber)
-                                   .list(list)
-                                   .status(status)
-                                   .name(dto.getName())
-                                   .id(dto.getId())
-                                   .url(DEVELOPER_PAGES_LIST_WITH_PROPOSALS_OF_CHAPTER_JSP)
-                                   .build();
-        }
-        return dtoWithPageForUi;
+        return new DtoWithPageForUi<>(page, count, lastPageNumber, status,
+            exceptionMessage, dto.getId(), dto.getName(), list, DEVELOPER_PAGES_LIST_WITH_PROPOSALS_OF_CHAPTER_JSP, null);
     }
 
     @Override
@@ -851,17 +714,8 @@ public class DeveloperServiceImpl implements DeveloperService {
             exceptionMessage = SOMETHING_WENT_WRONG;
             log.error(SOMETHING_WENT_WRONG, e);
         }
-        DtoWithPageForUi<ProjectDto> dtoWithPageForUi;
-        if (exceptionMessage != null) {
-            dtoWithPageForUi = DtoWithPageForUi.<ProjectDto>builder()
-                                   .exceptionMessage(exceptionMessage)
-                                   .build();
-        } else {
-            dtoWithPageForUi = DtoWithPageForUi.<ProjectDto>builder()
-                                   .url(SLASH_STRING + GET_CHAPTERS_OF_PROJECT_DEVELOPER_SERVLET)
-                                   .build();
-        }
-        return dtoWithPageForUi;
+        return new DtoWithPageForUi<>(null, null, null, null,
+            exceptionMessage, null, null, null, SLASH_STRING + GET_CHAPTERS_OF_PROJECT_DEVELOPER_SERVLET, null);
     }
 
     @Override
@@ -905,23 +759,8 @@ public class DeveloperServiceImpl implements DeveloperService {
             exceptionMessage = SOMETHING_WENT_WRONG;
             log.error(SOMETHING_WENT_WRONG, e);
         }
-        DtoWithPageForUi<CalculationDto> dtoWithPageForUi;
-        if (exceptionMessage != null) {
-            dtoWithPageForUi = DtoWithPageForUi.<CalculationDto>builder()
-                                   .exceptionMessage(exceptionMessage)
-                                   .build();
-        } else {
-            dtoWithPageForUi = DtoWithPageForUi.<CalculationDto>builder()
-                                   .id(dto.getId())
-                                   .page(page)
-                                   .countOnPage(dto.getCount())
-                                   .lastPageNumber(lastPageNumber)
-                                   .name(dto.getName())
-                                   .list(list)
-                                   .url(DEVELOPER_PAGES_LIST_WITH_CALCULATIONS_JSP)
-                                   .build();
-        }
-        return dtoWithPageForUi;
+        return new DtoWithPageForUi<>(page, dto.getCount(), lastPageNumber, null,
+            exceptionMessage, dto.getId(), dto.getName(), list, DEVELOPER_PAGES_LIST_WITH_CALCULATIONS_JSP, null);
     }
 
     @Override
@@ -942,10 +781,11 @@ public class DeveloperServiceImpl implements DeveloperService {
             } else if (sumForWork > ZERO_INT_VALUE) {
                 type = PaymentType.PAYMENT_FOR_WORK;
                 sum = sumForWork;
+                if (sum > debt) {
+                    throw new NotCreateDataInDbException();
+                }
             }
-            if (sum > debt) {
-                throw new NotCreateDataInDbException();
-            }
+
             final int sum1 = sum;
             final PaymentType paymentType = type;
 
@@ -982,16 +822,7 @@ public class DeveloperServiceImpl implements DeveloperService {
             exceptionMessage = SOMETHING_WENT_WRONG;
             log.error(SOMETHING_WENT_WRONG, e);
         }
-        DtoWithPageForUi<MoneyTransferDto> dtoWithPageForUi;
-        if (exceptionMessage != null) {
-            dtoWithPageForUi = DtoWithPageForUi.<MoneyTransferDto>builder()
-                                   .exceptionMessage(exceptionMessage)
-                                   .build();
-        } else {
-            dtoWithPageForUi = DtoWithPageForUi.<MoneyTransferDto>builder()
-                                   .url(SLASH_STRING + GET_MY_CALCULATION_DEVELOPER_SERVLET)
-                                   .build();
-        }
-        return dtoWithPageForUi;
+        return new DtoWithPageForUi<>(null, null, null, null,
+            exceptionMessage, null, null, null, SLASH_STRING + GET_MY_CALCULATION_DEVELOPER_SERVLET, null);
     }
 }

@@ -12,7 +12,10 @@ import lombok.ToString;
 public class ChangeRequestDto {
 
     private Long id;
+
     private Object status;
+
     private String name;
+
     private int count;
 }
