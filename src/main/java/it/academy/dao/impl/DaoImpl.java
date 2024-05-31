@@ -17,40 +17,40 @@ import java.util.List;
 import static it.academy.util.constants.Messages.CREATED_SUCCESSFUL;
 
 @Log4j2
-public class DaoImpl<T, R> implements Dao<T, R> {
+public class DaoImpl<E, ID> implements Dao<E, ID> {
 
-    private final Class<T> clazz;
+    private final Class<E> clazz;
     private EntityManager em;
 
-    protected DaoImpl(Class<T> clazz) {
+    protected DaoImpl(Class<E> clazz) {
 
         this.clazz = clazz;
     }
 
     @Override
-    public T get(R r) throws EntityNotFoundException {
+    public E get(ID id) throws EntityNotFoundException {
 
-        return getEm().find(clazz, r);
+        return getEm().find(clazz, id);
     }
 
     @Override
-    public void update(T object) {
+    public void update(E e) {
 
-        getEm().merge(object);
+        getEm().merge(e);
     }
 
     @Override
-    public void delete(R key) throws EntityNotFoundException {
+    public void delete(ID id) throws EntityNotFoundException {
 
-        Object rootEntity = getEm().getReference(clazz, key);
+        Object rootEntity = getEm().getReference(clazz, id);
         getEm().remove(rootEntity);
     }
 
     @Override
-    public void create(T object) {
+    public void create(E e) {
 
-        getEm().persist(object);
-        log.info(CREATED_SUCCESSFUL + object);
+        getEm().persist(e);
+        log.info(CREATED_SUCCESSFUL + e);
     }
 
     @Override
@@ -70,10 +70,10 @@ public class DaoImpl<T, R> implements Dao<T, R> {
     }
 
     @Override
-    public T executeInOneEntityTransaction(TransactionEntityBody<T> body)
+    public E executeInOneEntityTransaction(TransactionEntityBody<E> body)
         throws Exception {
 
-        T o;
+        E o;
         try {
             getEm().getTransaction().begin();
             o = body.execute();
@@ -88,9 +88,9 @@ public class DaoImpl<T, R> implements Dao<T, R> {
     }
 
     @Override
-    public Page<T> executeInOnePageTransaction(TransactionPageBody<T> body) throws Exception {
+    public Page<E> executeInOnePageTransaction(TransactionPageBody<E> body) throws Exception {
 
-        Page<T> o;
+        Page<E> o;
         try {
             getEm().getTransaction().begin();
             o = body.execute();
@@ -105,9 +105,9 @@ public class DaoImpl<T, R> implements Dao<T, R> {
     }
 
     @Override
-    public List<T> executeInOneListTransaction(TransactionListBody<T> body) throws Exception {
+    public List<E> executeInOneListTransaction(TransactionListBody<E> body) throws Exception {
 
-        List<T> o;
+        List<E> o;
         try {
             getEm().getTransaction().begin();
             o = body.execute();

@@ -7,38 +7,32 @@ import it.academy.pojo.Proposal;
 import it.academy.pojo.legalEntities.Contractor;
 import it.academy.pojo.legalEntities.Developer;
 
+import java.util.Optional;
+
 public final class ProposalConverter {
 
     private ProposalConverter() {
     }
 
-    public static ProposalDto convertToDto(Proposal proposal) {
+    public static ProposalDto convertToDto(Proposal from) {
 
-        Chapter chapter = proposal.getChapter();
-        if (chapter == null) {
-            chapter = new Chapter();
+        if (from == null) {
+            return null;
         }
-        Project project = chapter.getProject();
-        if (project == null) {
-            project = new Project();
-        }
-        Contractor contractor = proposal.getContractor();
-        if (contractor == null) {
-            contractor = new Contractor();
-        }
-        Developer developer = project.getDeveloper();
-        if (developer == null) {
-            developer = new Developer();
-        }
+        Contractor contractor = Optional.ofNullable(from.getContractor()).orElse(new Contractor());
+        Chapter chapter = Optional.ofNullable(from.getChapter()).orElse(new Chapter());
+        Project project = Optional.ofNullable(chapter.getProject()).orElse(new Project());
+        Developer developer = Optional.ofNullable(project.getDeveloper()).orElse(new Developer());
+
         return ProposalDto.builder()
-                   .id(proposal.getId())
+                   .id(from.getId())
                    .chapterName(chapter.getName())
                    .projectName(project.getName())
                    .chapterPrice(chapter.getPrice())
-                   .createdDate(proposal.getCreatedDate())
+                   .createdDate(from.getCreatedDate())
                    .contractorName(contractor.getName())
                    .developerName(developer.getName())
-                   .status(proposal.getStatus())
+                   .status(from.getStatus())
                    .chapterId(chapter.getId())
                    .contractorId(contractor.getId())
                    .projectAddress(project.getAddress().toString())

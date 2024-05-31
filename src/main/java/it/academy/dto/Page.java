@@ -10,13 +10,13 @@ import java.util.Map;
 @Getter
 @Setter
 @RequiredArgsConstructor
-public class Page<D> {
+public class Page<DTO> {
 
-    private final List<D> list;
+    private final List<DTO> list;
 
     private final Integer pageNumber;
 
     private final Integer lastPageNumber;
 
-    private Map<D, Integer[]> map;
+    private Map<DTO, Integer[]> map;
 }

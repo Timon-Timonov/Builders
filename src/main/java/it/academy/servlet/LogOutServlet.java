@@ -20,7 +20,7 @@ public class LogOutServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
-        SessionCleaner.clearSession(req.getSession());
+        SessionCleaner.clearSession(req);
         logOutClean(req);
         getServletContext().getRequestDispatcher(INDEX_JSP).forward(req, resp);
     }

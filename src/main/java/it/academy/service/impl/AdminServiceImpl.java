@@ -394,10 +394,7 @@ public final class AdminServiceImpl implements AdminService {
             lastPageNumber = projectPage.getLastPageNumber();
             Map<Project, Integer[]> map = projectPage.getMap();
             list.addAll(map.keySet().stream()
-                            .map(project -> {
-                                Integer[] values = map.get(project);
-                                return ProjectConverter.convertToDto(project, values[0], values[1] - values[2]);
-                            })
+                            .map(project -> ProjectConverter.convertToDto(project, map.get(project)))
                             .collect(Collectors.toList()));
         } catch (ClassCastException e) {
             exceptionMessage = INVALID_VALUE;
@@ -531,10 +528,7 @@ public final class AdminServiceImpl implements AdminService {
             lastPageNumber = calculationPage.getLastPageNumber();
             Map<Calculation, Integer[]> map = calculationPage.getMap();
             list.addAll(map.keySet().stream()
-                            .map(calculation -> {
-                                Integer[] values = map.get(calculation);
-                                return CalculationConverter.convertToDto(calculation, values[0], values[1]);
-                            })
+                            .map(calculation -> CalculationConverter.convertToDto(calculation, map.get(calculation)))
                             .collect(Collectors.toList()));
 
         } catch (IOException e) {

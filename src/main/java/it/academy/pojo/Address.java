@@ -3,6 +3,7 @@ package it.academy.pojo;
 import lombok.*;
 
 import javax.persistence.Embeddable;
+import java.io.Serializable;
 
 import static it.academy.util.constants.Constants.COMMA;
 import static it.academy.util.constants.Constants.DOT;
@@ -15,7 +16,7 @@ import static it.academy.util.constants.Constants.DOT;
 @AllArgsConstructor
 @Builder
 @Embeddable
-public class Address {
+public class Address implements Serializable {
 
     private String city;
 

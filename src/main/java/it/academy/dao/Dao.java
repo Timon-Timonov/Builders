@@ -1,7 +1,7 @@
 package it.academy.dao;
 
-import it.academy.dto.Page;
 import it.academy.dao.functionalInterfaces.*;
+import it.academy.dto.Page;
 import org.hibernate.exception.ConstraintViolationException;
 
 import javax.persistence.EntityNotFoundException;
@@ -9,28 +9,28 @@ import javax.persistence.NoResultException;
 import java.io.IOException;
 import java.util.List;
 
-public interface Dao<T, R> {
+public interface Dao<E, ID> {
 
-    T get(R id) throws EntityNotFoundException;
+    E get(ID id) throws EntityNotFoundException;
 
-    void update(T t);
+    void update(E e);
 
-    void delete(R id) throws EntityNotFoundException;
+    void delete(ID id) throws EntityNotFoundException;
 
-    void create(T t);
+    void create(E e);
 
     void closeManager();
 
     void executeInOneVoidTransaction(TransactionVoidBody body)
         throws IOException, EntityNotFoundException, NoResultException, ConstraintViolationException;
 
-    T executeInOneEntityTransaction(TransactionEntityBody<T> body)
+    E executeInOneEntityTransaction(TransactionEntityBody<E> body)
         throws Exception;
 
-    Page<T> executeInOnePageTransaction(TransactionPageBody<T> body)
+    Page<E> executeInOnePageTransaction(TransactionPageBody<E> body)
         throws Exception;
 
-    List<T> executeInOneListTransaction(TransactionListBody<T> body)
+    List<E> executeInOneListTransaction(TransactionListBody<E> body)
         throws Exception;
 
     boolean executeInOneBoolTransaction(TransactionBoolBody body)

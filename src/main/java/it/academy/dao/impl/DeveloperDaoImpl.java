@@ -48,7 +48,7 @@ public class DeveloperDaoImpl extends DaoImpl<Developer, Long> implements Develo
     @Override
     public Map<Developer, Integer[]> getDevelopersForContractor(Long contractorId, ProjectStatus status, String search, int page, int count) {
 
-        Query queryPrice = getEm().createQuery(
+        TypedQuery<Object[]> queryPrice = getEm().createQuery(
             "SELECT dev, SUM(calc.workPriceFact), us " +
                 "FROM Developer dev INNER JOIN User us " +
                 "ON us.id=dev.id INNER JOIN Project proj " +
@@ -66,15 +66,15 @@ public class DeveloperDaoImpl extends DaoImpl<Developer, Long> implements Develo
                 "OR dev.address.street LIKE :searchString " +
                 "OR dev.address.city LIKE :searchString " +
 
-                "ORDER BY dev.name"
-        );
+                "ORDER BY dev.name",
+            Object[].class);
 
-        Query querySum = getEm().createQuery(
+        TypedQuery<Object[]> querySum = getEm().createQuery(
             "SELECT dev, SUM(tr.sum) " +
-                "FROM Developer dev INNER JOIN User us " +
-                "ON us.id=dev.id INNER JOIN Project proj " +
+                "FROM Developer dev INNER JOIN Project proj " +
                 "ON proj.developer.id=dev.id INNER JOIN Chapter ch " +
-                "ON proj.id=ch.project.id LEFT JOIN Calculation calc " +
+                "ON proj.id=ch.project.id LEFT JOIN Contractor contr " +
+                "ON ch.contractor.id=contr.id LEFT JOIN Calculation calc " +
                 "ON ch.id=calc.chapter.id LEFT JOIN MoneyTransfer tr " +
                 "ON calc.id=tr.calculation.id " +
 
@@ -88,8 +88,8 @@ public class DeveloperDaoImpl extends DaoImpl<Developer, Long> implements Develo
                 "OR dev.address.street LIKE :searchString " +
                 "OR dev.address.city LIKE :searchString " +
 
-                "ORDER BY dev.name"
-        );
+                "ORDER BY dev.name",
+            Object[].class);
 
         List<Query> queries = new ArrayList<>();
         queries.add(queryPrice);
@@ -101,8 +101,8 @@ public class DeveloperDaoImpl extends DaoImpl<Developer, Long> implements Develo
                                      .setMaxResults(count)
                                      .setFirstResult((page - 1) * count));
 
-        List<Object[]> listWorkPrice = (List<Object[]>) queryPrice.getResultList();
-        List<Object[]> listTransferSum = (List<Object[]>) querySum.getResultList();
+        List<Object[]> listWorkPrice = queryPrice.getResultList();
+        List<Object[]> listTransferSum = querySum.getResultList();
 
         Map<Developer, Integer[]> map = new TreeMap<>(Comparator.comparing(Developer::getName));
         listWorkPrice.forEach(res -> {

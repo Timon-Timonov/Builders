@@ -172,15 +172,11 @@ public final class ContractorServiceImpl implements ContractorService {
             status = projectStatus;
             page = projectPage.getPageNumber();
             lastPageNumber = projectPage.getLastPageNumber();
-            Map<Project, Integer[]> projectMap = projectPage.getMap();
+            Map<Project, Integer[]> map = projectPage.getMap();
 
-            list.addAll(projectMap.keySet()
+            list.addAll(map.keySet()
                             .stream()
-                            .map(project -> {
-                                Integer[] values = projectMap.get(project);
-                                Integer projectDebt = values[1] - values[2];
-                                return ProjectConverter.convertToDto(project, values[0], projectDebt);
-                            })
+                            .map(project -> ProjectConverter.convertToDto(project, map.get(project)))
                             .collect(Collectors.toList()));
 
         } catch (ClassCastException e) {
@@ -229,12 +225,7 @@ public final class ContractorServiceImpl implements ContractorService {
             lastPageNumber = projectPage.getLastPageNumber();
             Map<Project, Integer[]> map = projectPage.getMap();
             list.addAll(map.keySet().stream()
-                            .map(project -> {
-                                Integer[] arr = map.get(project);
-                                int price = arr[0];
-                                int debt = arr[1] - arr[2];
-                                return ProjectConverter.convertToDto(project, price, debt);
-                            })
+                            .map(project -> ProjectConverter.convertToDto(project, map.get(project)))
                             .collect(Collectors.toList()));
         } catch (ClassCastException e) {
             exceptionMessage = INVALID_VALUE;
@@ -356,15 +347,11 @@ public final class ContractorServiceImpl implements ContractorService {
             status = projectStatus;
             page = developerPage.getPageNumber();
             lastPageNumber = developerPage.getLastPageNumber();
-            Map<Developer, Integer[]> developerMap = developerPage.getMap();
+            Map<Developer, Integer[]> map = developerPage.getMap();
 
-            list.addAll(developerMap.keySet()
+            list.addAll(map.keySet()
                             .stream()
-                            .map(developer -> {
-                                Integer[] values = developerMap.get(developer);
-                                Integer developerDebt = values[0] - values[1];
-                                return DeveloperConverter.convertToDto(developer, developerDebt);
-                            })
+                            .map(developer -> DeveloperConverter.convertToDto(developer, map.get(developer)))
                             .collect(Collectors.toList()));
         } catch (ClassCastException e) {
             exceptionMessage = INVALID_VALUE;
@@ -435,8 +422,8 @@ public final class ContractorServiceImpl implements ContractorService {
         List<ChapterDto> list = new ArrayList<>();
 
         try {
-            Page<Chapter> page;
-            page = chapterDao.executeInOnePageTransaction(() -> {
+            Page<Chapter> chapterPage;
+            chapterPage = chapterDao.executeInOnePageTransaction(() -> {
                 Page<Chapter> page1 = new Page<>(new ArrayList<>(), FIRST_PAGE_NUMBER, FIRST_PAGE_NUMBER);
                 try {
                     page1.setMap(chapterDao.getChaptersByProjectIdContractorId(dto.getId(), dto.getSecondId()));
@@ -445,13 +432,7 @@ public final class ContractorServiceImpl implements ContractorService {
                 }
                 return page1;
             });
-            Map<Chapter, Integer[]> map = page.getMap();
-            list.addAll(map.keySet().stream()
-                            .map(chapter -> {
-                                Integer[] values = map.get(chapter);
-                                return ChapterConverter.convertToDto(chapter, values[0] - values[1]);
-                            })
-                            .collect(Collectors.toList()));
+            ChapterConverter.convertToDtoWithDebt(list, chapterPage);
         } catch (IOException e) {
             exceptionMessage = BAD_CONNECTION;
             log.error(BAD_CONNECTION, e);
@@ -490,10 +471,7 @@ public final class ContractorServiceImpl implements ContractorService {
             lastPageNumber = calculationPage.getLastPageNumber();
             Map<Calculation, Integer[]> map = calculationPage.getMap();
             list.addAll(map.keySet().stream()
-                            .map(calculation -> {
-                                Integer[] values = map.get(calculation);
-                                return CalculationConverter.convertToDto(calculation, values[0], values[1]);
-                            })
+                            .map(calculation -> CalculationConverter.convertToDto(calculation, map.get(calculation)))
                             .collect(Collectors.toList()));
         } catch (IOException e) {
             exceptionMessage = BAD_CONNECTION;
@@ -516,14 +494,14 @@ public final class ContractorServiceImpl implements ContractorService {
                 if (1 == count) {
                     return true;
                 } else {
-                    log.debug(WORKPRICE_NOT_UPDATED_ID + dto.getId());
+                    log.debug(WORK_PRICE_NOT_UPDATED_ID + dto.getId());
                     return false;
                 }
             });
             if (!isUpdated) {
                 throw new NotUpdateDataInDbException();
             }
-            log.trace(WORKPRICE_UPDATED_ID + dto.getId() + VALUE + dto.getCount());
+            log.trace(WORK_PRICE_UPDATED_ID + dto.getId() + VALUE + dto.getCount());
         } catch (NotUpdateDataInDbException e) {
             exceptionMessage = CALCULATION_NOT_UPDATED;
             log.debug(CALCULATION_NOT_UPDATED + dto.toString(), e);
@@ -679,7 +657,7 @@ public final class ContractorServiceImpl implements ContractorService {
                 Proposal proposalFromDB;
                 try {
                     proposalFromDB = proposalDao.getProposalByChapterIdContractorId(dto.getId(), dto.getSecondId());
-                    log.debug(DATA_ALREDY_EXIST_IN_DB_ID + proposalFromDB.getId());
+                    log.debug(DATA_ALREADY_EXIST_IN_DB_ID + proposalFromDB.getId());
                     return proposalFromDB;
                 } catch (NoResultException e) {
                     log.trace(THERE_IS_NO_SUCH_DATA_IN_DB, e);

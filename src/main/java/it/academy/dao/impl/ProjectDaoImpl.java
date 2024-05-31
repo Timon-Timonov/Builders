@@ -23,7 +23,7 @@ public class ProjectDaoImpl extends DaoImpl<Project, Long> implements ProjectDao
     public Map<Project, Integer[]> getProjectsByContractorId(
         Long contractorId, ProjectStatus status, int page, int count) throws NoResultException {
 
-        Query queryTotalPrice = getEm().createQuery(
+        TypedQuery<Object[]> queryTotalPrice = getEm().createQuery(
             "SELECT  p, SUM(ch.price), dev, us " +
                 "FROM Project p INNER JOIN Chapter ch " +
                 "ON p=ch.project LEFT JOIN Developer dev " +
@@ -34,10 +34,10 @@ public class ProjectDaoImpl extends DaoImpl<Project, Long> implements ProjectDao
                 "AND p.status=:status " +
 
                 "GROUP BY p " +
-                "ORDER BY  p.name ");
+                "ORDER BY  p.name ", Object[].class);
 
 
-        Query queryWorkPrice = getEm().createQuery(
+        TypedQuery<Object[]> queryWorkPrice = getEm().createQuery(
             "SELECT  p, SUM(calc.workPriceFact) " +
                 "FROM Project p INNER JOIN Chapter ch " +
                 "ON p.id=ch.project.id LEFT JOIN Calculation calc " +
@@ -47,10 +47,10 @@ public class ProjectDaoImpl extends DaoImpl<Project, Long> implements ProjectDao
                 "AND p.status=:status " +
 
                 "GROUP BY p " +
-                "ORDER BY  p.name ");
+                "ORDER BY  p.name ", Object[].class);
 
 
-        Query queryTransferSum = getEm().createQuery(
+        TypedQuery<Object[]> queryTransferSum = getEm().createQuery(
             "SELECT  p, SUM(tr.sum) " +
                 "FROM Project p INNER JOIN Chapter ch " +
                 "ON p.id=ch.project.id LEFT JOIN Calculation calc " +
@@ -61,7 +61,7 @@ public class ProjectDaoImpl extends DaoImpl<Project, Long> implements ProjectDao
                 "AND p.status=:status " +
 
                 "GROUP BY p " +
-                "ORDER BY  p.name ");
+                "ORDER BY  p.name ", Object[].class);
 
         List<Query> queries = new ArrayList<>();
         queries.add(queryTotalPrice);
@@ -80,7 +80,7 @@ public class ProjectDaoImpl extends DaoImpl<Project, Long> implements ProjectDao
         Long developerId, Long contractorId, ProjectStatus status, int page, int count)
         throws NoResultException {
 
-        Query queryPrice = getEm().createQuery(
+        TypedQuery<Object[]> queryPrice = getEm().createQuery(
             "SELECT proj, SUM(ch.price), us, dev " +
                 "FROM Project proj INNER JOIN Chapter ch " +
                 "ON ch.project.id=proj.id INNER JOIN Developer dev " +
@@ -92,9 +92,9 @@ public class ProjectDaoImpl extends DaoImpl<Project, Long> implements ProjectDao
                 "AND proj.status=:status " +
 
                 "GROUP BY proj " +
-                "ORDER BY proj.name ASC");
+                "ORDER BY proj.name ASC", Object[].class);
 
-        Query queryWorkPrice = getEm().createQuery(
+        TypedQuery<Object[]> queryWorkPrice = getEm().createQuery(
             "SELECT proj,SUM(calc.workPriceFact) " +
                 "FROM Project proj INNER JOIN Developer dev " +
                 "ON dev.id=proj.developer.id INNER JOIN Chapter ch " +
@@ -106,9 +106,9 @@ public class ProjectDaoImpl extends DaoImpl<Project, Long> implements ProjectDao
                 "AND proj.status=:status " +
 
                 "GROUP BY proj " +
-                "ORDER BY proj.name ASC");
+                "ORDER BY proj.name ASC", Object[].class);
 
-        Query queryTransferSum = getEm().createQuery(
+        TypedQuery<Object[]> queryTransferSum = getEm().createQuery(
             "SELECT proj,SUM(tr.sum) " +
                 "FROM Project proj INNER JOIN Developer dev " +
                 "ON dev.id=proj.developer.id INNER JOIN Chapter ch " +
@@ -121,7 +121,7 @@ public class ProjectDaoImpl extends DaoImpl<Project, Long> implements ProjectDao
                 "AND proj.status=:status " +
 
                 "GROUP BY proj " +
-                "ORDER BY proj.name ASC");
+                "ORDER BY proj.name ASC", Object[].class);
 
         List<Query> queries = new ArrayList<>();
         queries.add(queryPrice);
@@ -141,7 +141,7 @@ public class ProjectDaoImpl extends DaoImpl<Project, Long> implements ProjectDao
     public Map<Project, Integer[]> getProjectsByDeveloperId(Long developerId, ProjectStatus status, int page, int count)
         throws NoResultException {
 
-        Query queryPrice = getEm().createQuery(
+        TypedQuery<Object[]> queryPrice = getEm().createQuery(
             "SELECT proj, SUM(ch.price), us, dev " +
                 "FROM Project proj LEFT JOIN Chapter ch " +
                 "ON ch.project.id=proj.id INNER JOIN Developer dev " +
@@ -152,9 +152,9 @@ public class ProjectDaoImpl extends DaoImpl<Project, Long> implements ProjectDao
                 "AND dev.id=:developerId " +
 
                 "GROUP BY proj " +
-                "ORDER BY proj.name ASC");
+                "ORDER BY proj.name ASC", Object[].class);
 
-        Query queryWorkPrice = getEm().createQuery(
+        TypedQuery<Object[]> queryWorkPrice = getEm().createQuery(
             "SELECT proj,SUM(calc.workPriceFact) " +
                 "FROM Project proj LEFT JOIN Chapter ch " +
                 "ON ch.project.id=proj.id INNER JOIN Developer dev " +
@@ -165,9 +165,9 @@ public class ProjectDaoImpl extends DaoImpl<Project, Long> implements ProjectDao
                 "AND dev.id=:developerId " +
 
                 "GROUP BY proj " +
-                "ORDER BY proj.name ASC");
+                "ORDER BY proj.name ASC", Object[].class);
 
-        Query queryTransferSum = getEm().createQuery(
+        TypedQuery<Object[]> queryTransferSum = getEm().createQuery(
             "SELECT proj,SUM(tr.sum) " +
                 "FROM Project proj LEFT JOIN Chapter ch " +
                 "ON ch.project.id=proj.id INNER JOIN Developer dev " +
@@ -179,7 +179,7 @@ public class ProjectDaoImpl extends DaoImpl<Project, Long> implements ProjectDao
                 "AND dev.id=:developerId " +
 
                 "GROUP BY proj " +
-                "ORDER BY proj.name ASC");
+                "ORDER BY proj.name ASC", Object[].class);
 
         List<Query> queries = new ArrayList<>();
         queries.add(queryPrice);
@@ -254,13 +254,13 @@ public class ProjectDaoImpl extends DaoImpl<Project, Long> implements ProjectDao
                    .getResultList();
     }
 
-    private Map<Project, Integer[]> getProjectMap(Query queryPrice, Query queryWorkPrice, Query queryTransferSum) {
+    private Map<Project, Integer[]> getProjectMap(TypedQuery<Object[]> queryPrice, TypedQuery<Object[]> queryWorkPrice, TypedQuery<Object[]> queryTransferSum) {
 
         Map<Project, Integer[]> map = new TreeMap<>(Comparator.comparing(Project::getName));
 
-        List<Object[]> listPrice = (List<Object[]>) queryPrice.getResultList();
-        List<Object[]> listWorkPrice = (List<Object[]>) queryWorkPrice.getResultList();
-        List<Object[]> listTransferSum = (List<Object[]>) queryTransferSum.getResultList();
+        List<Object[]> listPrice = queryPrice.getResultList();
+        List<Object[]> listWorkPrice = queryWorkPrice.getResultList();
+        List<Object[]> listTransferSum = queryTransferSum.getResultList();
 
         listPrice.forEach(res -> {
             Integer[] arr = new Integer[DEBT_ARRAY_LENGTH];

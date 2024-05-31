@@ -85,7 +85,6 @@ public final class DeveloperServiceImpl implements DeveloperService {
                 } catch (RollbackException e) {
                     log.error(e);
                 }
-
                 if (userFromDB != null) {
                     Developer newDeveloper = Developer.builder()
                                                  .name(dto.getName())
@@ -171,10 +170,7 @@ public final class DeveloperServiceImpl implements DeveloperService {
             lastPageNumber = projectPage.getLastPageNumber();
             Map<Project, Integer[]> map = projectPage.getMap();
             list.addAll(map.keySet().stream()
-                            .map(project -> {
-                                Integer[] values = map.get(project);
-                                return ProjectConverter.convertToDto(project, values[0], values[1] - values[2]);
-                            })
+                            .map(project -> ProjectConverter.convertToDto(project, map.get(project)))
                             .collect(Collectors.toList()));
         } catch (ClassCastException e) {
             exceptionMessage = INVALID_VALUE;
@@ -221,10 +217,7 @@ public final class DeveloperServiceImpl implements DeveloperService {
             lastPageNumber = contractorPage.getLastPageNumber();
             Map<Contractor, Integer[]> map = contractorPage.getMap();
             list.addAll(map.keySet().stream()
-                            .map(contractor -> {
-                                Integer[] values = map.get(contractor);
-                                return ContractorConverter.convertToDto(contractor, values[0] - values[1]);
-                            })
+                            .map(contractor -> ContractorConverter.convertToDto(contractor, map.get(contractor)))
                             .collect(Collectors.toList()));
         } catch (ClassCastException e) {
             exceptionMessage = INVALID_VALUE;
@@ -319,7 +312,7 @@ public final class DeveloperServiceImpl implements DeveloperService {
             if (project == null) {
                 throw new NotCreateDataInDbException();
             }
-            list.add(ProjectConverter.convertToDto(project, null, null));
+            list.add(ProjectConverter.convertToDto(project, null));
             log.trace(PROJECT + CREATED_SUCCESSFUL + project.getId());
         } catch (NotCreateDataInDbException e) {
             exceptionMessage = PROJECT_NOT_CREATE;
@@ -430,7 +423,7 @@ public final class DeveloperServiceImpl implements DeveloperService {
         List<ChapterDto> list = new ArrayList<>();
 
         try {
-            Page<Chapter> page = ((chapterDao.executeInOnePageTransaction(() -> {
+            Page<Chapter> chapterPage = ((chapterDao.executeInOnePageTransaction(() -> {
                 Page<Chapter> page1 = new Page<>(new ArrayList<>(), FIRST_PAGE_NUMBER, FIRST_PAGE_NUMBER);
                 try {
                     page1.setMap(chapterDao.getChaptersByProjectId(dto.getId()));
@@ -439,13 +432,7 @@ public final class DeveloperServiceImpl implements DeveloperService {
                 }
                 return page1;
             })));
-            Map<Chapter, Integer[]> map = page.getMap();
-            list.addAll(map.keySet().stream()
-                            .map(chapter -> {
-                                Integer[] values = map.get(chapter);
-                                return ChapterConverter.convertToDto(chapter, values[0] - values[1]);
-                            })
-                            .collect(Collectors.toList()));
+            ChapterConverter.convertToDtoWithDebt(list, chapterPage);
         } catch (IOException e) {
             exceptionMessage = BAD_CONNECTION;
             log.error(BAD_CONNECTION, e);
@@ -486,13 +473,7 @@ public final class DeveloperServiceImpl implements DeveloperService {
             status = projectStatus;
             page = chapterPage.getPageNumber();
             lastPageNumber = chapterPage.getLastPageNumber();
-            Map<Chapter, Integer[]> map = chapterPage.getMap();
-            list.addAll(map.keySet().stream()
-                            .map(chapter -> {
-                                Integer[] values = map.get(chapter);
-                                return ChapterConverter.convertToDto(chapter, values[0] - values[1]);
-                            })
-                            .collect(Collectors.toList()));
+            ChapterConverter.convertToDtoWithDebt(list, chapterPage);
         } catch (ClassCastException e) {
             exceptionMessage = INVALID_VALUE;
             log.error(INVALID_VALUE + dto.getStatus().toString(), e);
@@ -747,10 +728,7 @@ public final class DeveloperServiceImpl implements DeveloperService {
             lastPageNumber = calculationPage.getLastPageNumber();
             Map<Calculation, Integer[]> map = calculationPage.getMap();
             list.addAll(map.keySet().stream()
-                            .map(calculation -> {
-                                Integer[] values = map.get(calculation);
-                                return CalculationConverter.convertToDto(calculation, values[0], values[1]);
-                            })
+                            .map(calculation -> CalculationConverter.convertToDto(calculation, map.get(calculation)))
                             .collect(Collectors.toList()));
         } catch (IOException e) {
             exceptionMessage = BAD_CONNECTION;

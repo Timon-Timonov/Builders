@@ -3,6 +3,7 @@ package it.academy.pojo;
 import lombok.*;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.sql.Date;
 
 import static it.academy.util.constants.Constants.ZERO_INT_VALUE;
@@ -14,7 +15,7 @@ import static it.academy.util.constants.Constants.ZERO_INT_VALUE;
 @Builder
 @Entity
 @Table(name = "calculations")
-public class Calculation {
+public class Calculation implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

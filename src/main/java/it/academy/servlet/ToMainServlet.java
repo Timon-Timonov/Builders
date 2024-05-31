@@ -34,7 +34,7 @@ public class ToMainServlet extends HttpServlet {
         if (dto.getExceptionMessage() != null) {
             ExceptionRedirector.forwardToException3(req, resp, this, dto.getExceptionMessage());
         } else {
-            SessionCleaner.clearSession(session);
+            SessionCleaner.clearSession(req);
             getServletContext().getRequestDispatcher(dto.getUrl()).forward(req, resp);
         }
     }

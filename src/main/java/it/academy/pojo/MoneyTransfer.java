@@ -6,6 +6,7 @@ import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.sql.Timestamp;
 
 import static it.academy.util.constants.Constants.ZERO_INT_VALUE;
@@ -19,7 +20,7 @@ import static it.academy.util.constants.Constants.ZERO_INT_VALUE;
 @ToString
 @Entity
 @Table(name = "money_transfer")
-public class MoneyTransfer {
+public class MoneyTransfer implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

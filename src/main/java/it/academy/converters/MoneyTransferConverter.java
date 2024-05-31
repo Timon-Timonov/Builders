@@ -10,6 +10,9 @@ public final class MoneyTransferConverter {
 
     public static MoneyTransferDto convertToDto(MoneyTransfer from) {
 
+        if (from == null) {
+            return null;
+        }
         return MoneyTransferDto.builder()
                    .id(from.getId())
                    .calculationDate(from.getCalculationDate())

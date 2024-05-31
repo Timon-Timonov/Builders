@@ -36,7 +36,7 @@ public class CalculationDaoImpl extends DaoImpl<Calculation, Long> implements Ca
 
         List<Calculation> calculationList = query.getResultList();
 
-        Query queryMtr = getEm().createQuery(
+        TypedQuery<Object[]> queryMtr = getEm().createQuery(
             "SELECT calc, SUM (tr.sum) " +
                 "FROM Chapter ch INNER JOIN Calculation calc " +
                 "ON calc.chapter.id=ch.id LEFT JOIN MoneyTransfer tr " +
@@ -46,14 +46,14 @@ public class CalculationDaoImpl extends DaoImpl<Calculation, Long> implements Ca
                 "AND calc IN :list " +
 
                 "GROUP BY calc " +
-                "ORDER BY calc.month DESC ");
+                "ORDER BY calc.month DESC ", Object[].class);
 
         queryMtr.setParameter("trType", PaymentType.ADVANCE_PAYMENT)
             .setParameter("list", calculationList);
 
-        List<Object[]> listTransferSumAdv = (List<Object[]>) queryMtr.getResultList();
+        List<Object[]> listTransferSumAdv = queryMtr.getResultList();
         queryMtr.setParameter("trType", PaymentType.PAYMENT_FOR_WORK);
-        List<Object[]> listTransferSumWork = (List<Object[]>) queryMtr.getResultList();
+        List<Object[]> listTransferSumWork = queryMtr.getResultList();
 
         Map<Calculation, Integer[]> map = new TreeMap<>(Comparator.comparing(Calculation::getMonth).reversed());
         calculationList.forEach(calculation -> {

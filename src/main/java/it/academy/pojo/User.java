@@ -2,10 +2,10 @@ package it.academy.pojo;
 
 import it.academy.pojo.enums.Roles;
 import it.academy.pojo.enums.UserStatus;
-import it.academy.pojo.legalEntities.LegalEntity;
 import lombok.*;
 
 import javax.persistence.*;
+import java.io.Serializable;
 
 @Getter
 @Setter
@@ -16,7 +16,7 @@ import javax.persistence.*;
 @ToString
 @Entity
 @Table(name = "users")
-public class User {
+public class User implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -34,7 +34,4 @@ public class User {
     @Column(nullable = false)
     @Builder.Default
     private UserStatus status = UserStatus.ACTIVE;
-
-    @OneToOne(mappedBy = "user", fetch = FetchType.LAZY)
-    private LegalEntity legalEntity;
 }

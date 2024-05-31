@@ -90,7 +90,7 @@ public class ChapterDaoImpl extends DaoImpl<Chapter, Long> implements ChapterDao
     @Override
     public Map<Chapter, Integer[]> getChaptersByProjectIdContractorId(long projectId, long contractorId) {
 
-        Query queryWorkPrice = getEm().createQuery(
+        TypedQuery<Object[]> queryWorkPrice = getEm().createQuery(
             "SELECT ch, SUM(calc.workPriceFact) " +
                 "FROM Project proj INNER JOIN Chapter ch " +
                 "ON proj.id=:projectId " +
@@ -99,9 +99,9 @@ public class ChapterDaoImpl extends DaoImpl<Chapter, Long> implements ChapterDao
                 "ON calc.chapter.id=ch.id " +
 
                 "GROUP BY ch " +
-                "ORDER BY ch.name ASC");
+                "ORDER BY ch.name ASC", Object[].class);
 
-        Query queryTransferSum = getEm().createQuery(
+        TypedQuery<Object[]> queryTransferSum = getEm().createQuery(
             "SELECT ch, SUM(tr.sum) " +
                 "FROM Project proj INNER JOIN Chapter ch " +
                 "ON proj.id=:projectId " +
@@ -111,7 +111,7 @@ public class ChapterDaoImpl extends DaoImpl<Chapter, Long> implements ChapterDao
                 "ON tr.calculation.id=calc.id " +
 
                 "GROUP BY ch " +
-                "ORDER BY ch.name ASC");
+                "ORDER BY ch.name ASC", Object[].class);
 
         List<Query> queries = new ArrayList<>();
         queries.add(queryWorkPrice);
@@ -123,8 +123,8 @@ public class ChapterDaoImpl extends DaoImpl<Chapter, Long> implements ChapterDao
 
         Map<Chapter, Integer[]> map = new TreeMap<>(Comparator.comparing(Chapter::getName));
 
-        List<Object[]> listWorkPrice = (List<Object[]>) queryWorkPrice.getResultList();
-        List<Object[]> listTransferSum = (List<Object[]>) queryTransferSum.getResultList();
+        List<Object[]> listWorkPrice = queryWorkPrice.getResultList();
+        List<Object[]> listTransferSum = queryTransferSum.getResultList();
 
         listWorkPrice.forEach(res -> {
             Integer[] arr = new Integer[2];
@@ -148,16 +148,16 @@ public class ChapterDaoImpl extends DaoImpl<Chapter, Long> implements ChapterDao
     @Override
     public Map<Chapter, Integer[]> getChaptersByProjectId(long projectId) {
 
-        Query queryWorkPrice = getEm().createQuery(
+        TypedQuery<Object[]> queryWorkPrice = getEm().createQuery(
             "SELECT ch, SUM(calc.workPriceFact) " +
                 "FROM Project proj INNER JOIN Chapter ch " +
                 "ON ch.project.id=proj.id AND proj.id=:projectId LEFT JOIN Calculation calc " +
                 "ON calc.chapter.id=ch.id " +
 
                 "GROUP BY ch " +
-                "ORDER BY ch.name ASC");
+                "ORDER BY ch.name ASC", Object[].class);
 
-        Query queryTransferSum = getEm().createQuery(
+        TypedQuery<Object[]> queryTransferSum = getEm().createQuery(
             "SELECT ch, SUM(tr.sum) " +
                 "FROM Project proj INNER JOIN Chapter ch " +
                 "ON ch.project.id=proj.id AND proj.id=:projectId LEFT JOIN Calculation calc " +
@@ -165,7 +165,7 @@ public class ChapterDaoImpl extends DaoImpl<Chapter, Long> implements ChapterDao
                 "ON tr.calculation.id=calc.id " +
 
                 "GROUP BY ch " +
-                "ORDER BY ch.name ASC");
+                "ORDER BY ch.name ASC", Object[].class);
 
         List<Query> queries = new ArrayList<>();
         queries.add(queryWorkPrice);
@@ -175,8 +175,8 @@ public class ChapterDaoImpl extends DaoImpl<Chapter, Long> implements ChapterDao
 
         Map<Chapter, Integer[]> map = new TreeMap<>(Comparator.comparing(Chapter::getName));
 
-        List<Object[]> listWorkPrice = (List<Object[]>) queryWorkPrice.getResultList();
-        List<Object[]> listTransferSum = (List<Object[]>) queryTransferSum.getResultList();
+        List<Object[]> listWorkPrice = queryWorkPrice.getResultList();
+        List<Object[]> listTransferSum = queryTransferSum.getResultList();
 
         listWorkPrice.forEach(res -> {
             Integer[] arr = new Integer[2];
@@ -201,7 +201,7 @@ public class ChapterDaoImpl extends DaoImpl<Chapter, Long> implements ChapterDao
     @Override
     public Map<Chapter, Integer[]> getChaptersByContractorIdAndDeveloperId(long developerId, long contractorId, ProjectStatus status, int page, int count) {
 
-        Query queryWorkPrice = getEm().createQuery(
+        TypedQuery<Object[]> queryWorkPrice = getEm().createQuery(
             "SELECT ch, SUM(calc.workPriceFact) " +
                 "FROM Project proj INNER JOIN Chapter ch " +
                 "ON ch.project.id=proj.id LEFT JOIN Calculation calc " +
@@ -212,9 +212,9 @@ public class ChapterDaoImpl extends DaoImpl<Chapter, Long> implements ChapterDao
                 "AND proj.status=:status " +
 
                 "GROUP BY ch " +
-                "ORDER BY proj.name, ch.name");
+                "ORDER BY proj.name, ch.name", Object[].class);
 
-        Query queryTransferSum = getEm().createQuery(
+        TypedQuery<Object[]> queryTransferSum = getEm().createQuery(
             "SELECT ch, SUM(tr.sum) " +
                 "FROM Project proj INNER JOIN Chapter ch " +
                 "ON ch.project.id=proj.id LEFT JOIN Calculation calc " +
@@ -226,7 +226,7 @@ public class ChapterDaoImpl extends DaoImpl<Chapter, Long> implements ChapterDao
                 "AND proj.status=:status " +
 
                 "GROUP BY ch " +
-                "ORDER BY proj.name, ch.name");
+                "ORDER BY proj.name, ch.name", Object[].class);
 
         List<Query> queries = new ArrayList<>();
         queries.add(queryWorkPrice);
@@ -240,8 +240,8 @@ public class ChapterDaoImpl extends DaoImpl<Chapter, Long> implements ChapterDao
 
         Map<Chapter, Integer[]> map = new TreeMap<>(Comparator.comparing(Chapter::getName));
 
-        List<Object[]> listWorkPrice = (List<Object[]>) queryWorkPrice.getResultList();
-        List<Object[]> listTransferSum = (List<Object[]>) queryTransferSum.getResultList();
+        List<Object[]> listWorkPrice = queryWorkPrice.getResultList();
+        List<Object[]> listTransferSum = queryTransferSum.getResultList();
 
         listWorkPrice.forEach(res -> {
             Integer[] arr = new Integer[2];

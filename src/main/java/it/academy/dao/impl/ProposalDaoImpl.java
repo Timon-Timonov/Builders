@@ -25,7 +25,7 @@ public class ProposalDaoImpl extends DaoImpl<Proposal, Long> implements Proposal
     public List<Proposal> getProposalsByContractorId(Long contractorId, ProposalStatus status, int page, int count)
         throws NoResultException {
 
-        Query query = getEm().createQuery(
+        TypedQuery<Object[]> query = getEm().createQuery(
             "SELECT prop, proj, ch, dev, us, contr " +
                 "FROM Proposal prop LEFT JOIN Chapter ch " +
                 "ON prop.chapter.id=ch.id LEFT JOIN Project proj " +
@@ -37,14 +37,14 @@ public class ProposalDaoImpl extends DaoImpl<Proposal, Long> implements Proposal
                 "WHERE contr.id=:contractorId " +
                 "AND prop.status=:proposalStatus " +
 
-                "ORDER BY dev.name ASC, proj.name ASC, ch.name ASC");
+                "ORDER BY dev.name ASC, proj.name ASC, ch.name ASC", Object[].class);
 
         query.setParameter("contractorId", contractorId)
             .setParameter("proposalStatus", status)
             .setMaxResults(count)
             .setFirstResult((page - 1) * count);
 
-        List<Object[]> list = (List<Object[]>) query.getResultList();
+        List<Object[]> list = query.getResultList();
         return list.stream()
                    .map(arr -> (Proposal) arr[0])
                    .collect(Collectors.toList());

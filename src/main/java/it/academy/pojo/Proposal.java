@@ -7,6 +7,7 @@ import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.sql.Timestamp;
 
 @Getter
@@ -18,7 +19,7 @@ import java.sql.Timestamp;
 @ToString
 @Entity
 @Table(name = "proposals")
-public class Proposal {
+public class Proposal implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -48,7 +48,7 @@ public class ContractorDaoImpl extends DaoImpl<Contractor, Long> implements Cont
     @Override
     public Map<Contractor, Integer[]> getContractorsByDeveloperId(Long developerId, ProjectStatus status, String search, int page, int count) {
 
-        Query queryWorkPrice = getEm().createQuery(
+        TypedQuery<Object[]> queryWorkPrice = getEm().createQuery(
             "SELECT contr, SUM(calc.workPriceFact), us " +
                 "FROM Project proj INNER JOIN Chapter ch " +
                 "ON ch.project.id=proj.id INNER JOIN Contractor contr " +
@@ -67,9 +67,9 @@ public class ContractorDaoImpl extends DaoImpl<Contractor, Long> implements Cont
                 "OR contr.address.street LIKE :searchString " +
                 "OR contr.address.city LIKE :searchString " +
 
-                "ORDER BY contr.name ASC");
+                "ORDER BY contr.name ASC", Object[].class);
 
-        Query queryTransferSum = getEm().createQuery(
+        TypedQuery<Object[]> queryTransferSum = getEm().createQuery(
             "SELECT contr, SUM(tr.sum) " +
                 "FROM Project proj INNER JOIN Chapter ch " +
                 "ON ch.project.id=proj.id INNER JOIN Contractor contr " +
@@ -87,7 +87,7 @@ public class ContractorDaoImpl extends DaoImpl<Contractor, Long> implements Cont
                 "OR contr.address.street LIKE :searchString " +
                 "OR contr.address.city LIKE :searchString " +
 
-                "ORDER BY contr.name ASC");
+                "ORDER BY contr.name ASC", Object[].class);
 
         List<Query> queries = new ArrayList<>();
         queries.add(queryWorkPrice);
@@ -101,8 +101,8 @@ public class ContractorDaoImpl extends DaoImpl<Contractor, Long> implements Cont
 
         Map<Contractor, Integer[]> map = new TreeMap<>(Comparator.comparing(Contractor::getName));
 
-        List<Object[]> listWorkPrice = (List<Object[]>) queryWorkPrice.getResultList();
-        List<Object[]> listTransferSum = (List<Object[]>) queryTransferSum.getResultList();
+        List<Object[]> listWorkPrice = queryWorkPrice.getResultList();
+        List<Object[]> listTransferSum = queryTransferSum.getResultList();
 
         listWorkPrice.forEach(res -> {
             Integer[] arr = new Integer[2];

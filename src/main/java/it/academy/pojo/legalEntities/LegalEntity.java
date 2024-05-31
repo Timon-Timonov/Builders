@@ -7,6 +7,7 @@ import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
+import java.io.Serializable;
 
 @Getter
 @Setter
@@ -20,12 +21,11 @@ import javax.persistence.*;
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "entity_type", discriminatorType = DiscriminatorType.CHAR)
 @DiscriminatorValue("E")
-public class LegalEntity {
+public class LegalEntity implements Serializable {
 
     @GenericGenerator(name = "one-to-one",
         strategy = "foreign",
-        parameters = @org.hibernate.annotations.Parameter(name = "property",
-            value = "user"))
+        parameters = @org.hibernate.annotations.Parameter(name = "property", value = "user"))
     @GeneratedValue(generator = "one-to-one")
     @Id
     private Long id;

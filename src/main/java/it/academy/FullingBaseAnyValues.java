@@ -85,10 +85,10 @@ public class FullingBaseAnyValues {
     public static void main(String[] args) {
 
         FullingBaseAnyValues fuller = new FullingBaseAnyValues();
-        fuller.makeBaseFullakeBaseFull();
+        fuller.makeBaseFull();
     }
 
-    private void makeBaseFullakeBaseFull() {
+    private void makeBaseFull() {
 
         creationOfBaseData();
         startInteraction();

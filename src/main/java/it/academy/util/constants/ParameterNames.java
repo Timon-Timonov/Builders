@@ -55,7 +55,6 @@ public final class ParameterNames {
     public static final String MESSAGE_PARAM = "message";
     public static final String ROLE_OF_UPDATING_USER_PARAM = "user_role";
 
-
     public static final String PROJECT_ADDRESS_PARAM = "project_address";
     public static final String DEVELOPER_ADDRESS_PARAM = "developer_address";
 

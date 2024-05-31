@@ -5,6 +5,7 @@ import it.academy.pojo.legalEntities.Contractor;
 import lombok.*;
 
 import javax.persistence.*;
+import java.io.Serializable;
 
 @Getter
 @Setter
@@ -13,7 +14,7 @@ import javax.persistence.*;
 @Builder
 @Entity
 @Table(name = "chapters")
-public class Chapter {
+public class Chapter implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
