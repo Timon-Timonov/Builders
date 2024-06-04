@@ -11,23 +11,23 @@ import java.util.List;
 @AllArgsConstructor
 public class DtoWithPageForUi<T> {
 
-    Integer page;
+    private Integer page;
 
-    Integer countOnPage;
+    private Integer countOnPage;
 
-    Integer lastPageNumber;
+    private Integer lastPageNumber;
 
-    Object status;
+    private Object status;
 
-    String exceptionMessage;
+    private String exceptionMessage;
 
-    Long id;
+    private Long id;
 
-    String name;
+    private String name;
 
-    List<T> list;
+    private List<T> list;
 
-    String url;
+    private String url;
 
-    String search;
+    private String search;
 }

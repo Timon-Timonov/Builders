@@ -12,11 +12,11 @@ import static it.academy.util.constants.ServletURLs.LOGOUT_SERVLET;
 @Setter
 public class LoginDto {
 
-    String exceptionMessage;
+    private String exceptionMessage;
 
     @Builder.Default
-    UserDto userFromDb = new UserDto();
+    private UserDto userFromDb = new UserDto();
 
     @Builder.Default
-    String url = LOGOUT_SERVLET;
+    private String url = LOGOUT_SERVLET;
 }

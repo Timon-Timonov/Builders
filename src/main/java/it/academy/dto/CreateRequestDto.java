@@ -11,25 +11,25 @@ import lombok.ToString;
 @ToString
 public class CreateRequestDto {
 
-    Long id;
+    private Long id;
 
-    String email;
+    private String email;
 
-    String password;
+    private String password;
 
-    String name;
+    private String name;
 
-    String city;
+    private String city;
 
-    String street;
+    private String street;
 
-    String building;
+    private String building;
 
-    Integer int1;
+    private Integer int1;
 
-    Integer int2;
+    private Integer int2;
 
-    Integer int3;
+    private Integer int3;
 
-    Long secondId;
+    private Long secondId;
 }
