@@ -5,6 +5,8 @@ import it.academy.pojo.legalEntities.Developer;
 import lombok.*;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
 @Getter
@@ -21,6 +23,7 @@ public class Project implements Serializable {
     private Long id;
 
     @Column
+    @NotBlank
     private String name;
 
     @Column
@@ -29,9 +32,11 @@ public class Project implements Serializable {
 
     @ManyToOne
     @JoinColumn(name = "developer_id")
+    @NotNull
     private Developer developer;
 
     @Builder.Default
     @Embedded
+    @NotNull
     private Address address = new Address();
 }

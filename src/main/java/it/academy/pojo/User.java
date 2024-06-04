@@ -5,6 +5,7 @@ import it.academy.pojo.enums.UserStatus;
 import lombok.*;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
 
 @Getter
@@ -23,9 +24,11 @@ public class User implements Serializable {
     private Long id;
 
     @Column(unique = true, nullable = false)
+    @NotBlank
     private String email;
 
     @Column(nullable = false)
+    @NotBlank
     private String password;
 
     @Column(nullable = false)

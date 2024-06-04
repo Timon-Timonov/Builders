@@ -7,6 +7,8 @@ import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
 @Getter
@@ -31,6 +33,7 @@ public class LegalEntity implements Serializable {
     private Long id;
 
     @Column
+    @NotBlank
     private String name;
 
     @OneToOne(fetch = FetchType.LAZY)
@@ -38,5 +41,6 @@ public class LegalEntity implements Serializable {
     private User user;
 
     @Embedded
+    @NotNull
     private Address address;
 }

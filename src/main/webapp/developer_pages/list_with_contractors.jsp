@@ -42,7 +42,7 @@
 </div>
 <br>
 <%@include file="/include_files/search_line.jsp" %>
->
+
 
 <br>
 
